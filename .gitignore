@@ -1,25 +1,21 @@
 node_modules/
+.git.zip
+scratch/
 .env
 .env.*
-<<<<<<< HEAD
 !.env.example
+# Ignore local environment secrets and credentials
+.env.local
+PRIVATE_SECRETS/
+docs/OPS_GATE_TEMP_CODE.txt
 !shared/js/supabase-config.example.js
-=======
-*.env.local
-!.env.example
-!shared/js/supabase-config.example.js
-shared/js/supabase-config.js
+# supabase-config.js contains only publishable keys, safe for frontend deployment
+# shared/js/supabase-config.js
 server.*.log
 supabase/VAPID_SECRETS_TO_SET.env
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 .DS_Store
 public/generated-reports/*
 !public/generated-reports/.gitkeep
 public/uploads/avatars/*
 !public/uploads/avatars/.gitkeep
 supabase/.temp/
-<<<<<<< HEAD
-supabase/VAPID_SECRETS_TO_SET.env
-server.*.log
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

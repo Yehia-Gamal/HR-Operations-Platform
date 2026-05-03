@@ -1,4 +1,4 @@
-const CACHE_NAME = "hr-attendance-management-suite-20260502-production";
+const CACHE_NAME = "hr-attendance-management-suite-20260502-01";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./index.html",

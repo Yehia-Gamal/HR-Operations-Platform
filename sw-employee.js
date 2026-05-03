@@ -1,4 +1,5 @@
-const CACHE_NAME = "hr-attendance-employee-management-suite-20260502-01";
+// Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
+const CACHE_NAME = "hr-attendance-employee-v8-security-20260503";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./employee/index.html",

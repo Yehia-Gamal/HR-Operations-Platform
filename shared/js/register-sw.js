@@ -4,10 +4,10 @@ const HR_SW_VERSION = "management-suite-20260502-01";
 
 function portalServiceWorkerConfig() {
   const path = location.pathname.toLowerCase();
-  if (path.includes("/admin/")) return { url: "../sw-admin.js", scope: "/admin/" };
-  if (path.includes("/executive/")) return { url: "../sw-executive.js", scope: "/executive/" };
-  if (path.includes("/employee/")) return { url: "../sw-employee.js", scope: "/employee/" };
-  return { url: "./sw-employee.js", scope: "/employee/" };
+  if (path.includes("/admin/")) return { url: "../sw-admin.js", scope: "./" };
+  if (path.includes("/executive/")) return { url: "../sw-executive.js", scope: "./" };
+  if (path.includes("/employee/")) return { url: "../sw-employee.js", scope: "./" };
+  return { url: "./sw-employee.js", scope: "./employee/" };
 }
 
 async function clearOldHrCaches() {
