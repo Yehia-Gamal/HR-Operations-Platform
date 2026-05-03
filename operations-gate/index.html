@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+<<<<<<< HEAD
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#070f1e" />
+    <link rel="icon" href="../shared/images/favicon-64.png" />
+    <script src="../shared/js/supabase-config.js?v=server-runtime-push-20260501-01"></script>
+    <title>بوابة التشغيل — أحلى شباب</title>
+    <style>
+      *{box-sizing:border-box}
+      body{min-height:100vh;margin:0;display:grid;place-items:center;background:radial-gradient(circle at top,#17233d,#050b16 58%);color:#eef5ff;font-family:Arial,Tahoma,sans-serif;padding:24px}
+      .card{width:min(520px,100%);background:#0d1729;border:1px solid #344766;border-radius:24px;padding:26px;box-shadow:0 28px 80px rgba(0,0,0,.42)}
+      .brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+      .brand img{width:64px;height:64px;object-fit:contain}
+      h1{font-size:25px;margin:0 0 6px}
+      p{margin:0;color:#9aa8bd;line-height:1.8}
+      label{display:grid;gap:8px;margin-top:18px;font-weight:800}
+      input,select{width:100%;border:1px solid #344766;background:#08111f;color:#fff;border-radius:14px;padding:14px;font-size:16px;outline:none}
+      input:focus,select:focus{border-color:#38c7f4;box-shadow:0 0 0 3px rgba(56,199,244,.18)}
+      button{width:100%;border:0;border-radius:14px;background:#38c7f4;color:#04111d;font-weight:900;padding:14px;margin-top:18px;font-size:16px;cursor:pointer}
+      button:disabled{opacity:.55;cursor:not-allowed}
+      .msg{margin-top:14px;border-radius:14px;padding:12px;background:#12213a;color:#d8e7ff;line-height:1.8}
+      .err{background:#3a1420;color:#fecdd3}.warn{background:#3b2b10;color:#fde68a}.small{font-size:13px;color:#7f8da3;margin-top:14px}
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <div class="brand">
+        <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
+        <div>
+          <h1>بوابة التشغيل</h1>
+          <p>هذه البوابة مخصصة للإدارة وHR والمتابعة التنفيذية فقط.</p>
+        </div>
+      </div>
+      <form id="gate-form" autocomplete="off">
+        <label>وجهة الدخول
+          <select id="target">
+            <option value="admin">لوحة التشغيل والإدارة</option>
+            <option value="executive">المتابعة التنفيذية للمدير التنفيذي</option>
+          </select>
+        </label>
+        <label>كود بوابة التشغيل
+          <input id="code" name="code" inputmode="latin" autocomplete="one-time-code" placeholder="أدخل كود البوابة" required />
+        </label>
+        <button type="submit">متابعة</button>
+      </form>
+      <div id="message" class="msg warn">كود البوابة طبقة تنظيمية فقط. الحماية الحقيقية تتم بعد ذلك بتسجيل الدخول والصلاحيات.</div>
+      <p class="small">غيّر كود البوابة قبل النشر الحقيقي من <b>shared/js/supabase-config.js</b>، ولا تعتمد على إخفاء الرابط وحده كوسيلة أمان.</p>
+    </main>
+    <script>
+      (function(){
+        const cfg = window.HR_SUPABASE_CONFIG || {};
+        const gate = cfg.adminGateway || {};
+        const expectedCode = String(gate.accessCode || "LOCAL-DEMO-GATE");
+        const maxAttempts = Number(gate.maxAttempts || 5);
+        const lockMinutes = Number(gate.lockMinutes || 15);
+        const sessionMinutes = Number(gate.sessionMinutes || 480);
+        const form = document.getElementById("gate-form");
+        const code = document.getElementById("code");
+        const target = document.getElementById("target");
+        const msg = document.getElementById("message");
+        const params = new URLSearchParams(location.search);
+        const requested = params.get("next");
+        if (["admin","executive"].includes(requested)) target.value = requested;
+        function logGate(result, metadata) {
+          try {
+            const logs = JSON.parse(localStorage.getItem("HR_ADMIN_GATE_LOGS") || "[]");
+            logs.unshift({ result, route: location.pathname + location.search, metadata: metadata || {}, userAgent: navigator.userAgent, createdAt: new Date().toISOString() });
+            localStorage.setItem("HR_ADMIN_GATE_LOGS", JSON.stringify(logs.slice(0, 500)));
+          } catch {}
+        }
+        function setMessage(text, type) { msg.className = "msg" + (type ? " " + type : ""); msg.textContent = text; }
+        function lockUntil() { return Number(localStorage.getItem("HR_GATE_LOCK_UNTIL") || 0); }
+        function attempts() { return Number(localStorage.getItem("HR_GATE_ATTEMPTS") || 0); }
+        function checkLock() {
+          const until = lockUntil();
+          if (until > Date.now()) {
+            const mins = Math.ceil((until - Date.now()) / 60000);
+            setMessage("تم قفل البوابة مؤقتًا بسبب محاولات خاطئة. حاول بعد " + mins + " دقيقة.", "err");
+            form.querySelector("button").disabled = true;
+            return true;
+          }
+          form.querySelector("button").disabled = false;
+          return false;
+        }
+        function destination() { return target.value === "executive" ? "../executive/" : "../admin/"; }
+        checkLock();
+        form.addEventListener("submit", function(event) {
+          event.preventDefault();
+          if (checkLock()) return;
+          const value = String(code.value || "").trim();
+          if (value === expectedCode) {
+            localStorage.removeItem("HR_GATE_ATTEMPTS");
+            localStorage.removeItem("HR_GATE_LOCK_UNTIL");
+            sessionStorage.setItem("HR_ADMIN_GATE_PASSED", String(Date.now() + sessionMinutes * 60000));
+            sessionStorage.setItem("HR_ADMIN_GATE_TARGET", target.value);
+            logGate("SUCCESS", { target: target.value });
+            setMessage("تم قبول بوابة التشغيل. جاري التحويل...", "");
+            location.replace(destination());
+            return;
+          }
+          const nextAttempts = attempts() + 1;
+          localStorage.setItem("HR_GATE_ATTEMPTS", String(nextAttempts));
+          logGate("FAILED", { target: target.value, attempts: nextAttempts });
+          if (nextAttempts >= maxAttempts) {
+            localStorage.setItem("HR_GATE_LOCK_UNTIL", String(Date.now() + lockMinutes * 60000));
+            checkLock();
+            return;
+          }
+          setMessage("كود البوابة غير صحيح. المحاولات المتبقية: " + (maxAttempts - nextAttempts), "err");
+          code.select();
+=======
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#070f1e" />
+    <link rel="icon" href="../shared/images/favicon-64.png" />
+    <title>بوابة تشغيل الإدارة والتنفيذي — أحلى شباب</title>
+    <style>
+      :root{color-scheme:dark;--bg:#050b16;--panel:#0d1729;--border:#29415f;--brand:#38c7f4;--muted:#9aa8bd;--text:#eef5ff;--danger:#fb7185;--ok:#22c55e}
+      *{box-sizing:border-box}
+      body{min-height:100vh;margin:0;display:grid;place-items:center;background:radial-gradient(circle at 20% 10%,rgba(56,199,244,.16),transparent 30%),var(--bg);color:var(--text);font-family:"Cairo",Tahoma,Arial,sans-serif;padding:32px;line-height:1.8}
+      .gate{width:min(560px,100%);background:rgba(13,23,41,.98);border:1px solid var(--border);border-radius:28px;padding:36px;box-shadow:0 32px 84px rgba(0,0,0,.5);backdrop-filter:blur(20px)}
+      .brand{display:flex;gap:18px;align-items:center;margin-bottom:24px}.brand img{width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(56,199,244,.2))}.kicker{color:var(--brand);font-weight:900;font-size:12px;letter-spacing:.05em;text-transform:uppercase}h1{margin:4px 0 10px;font-size:26px;font-weight:900}p{margin:0;color:var(--muted);line-height:1.8;font-size:14px}
+      .target-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0}.target{border:1px solid var(--border);background:#071120;color:var(--text);border-radius:20px;padding:18px;text-align:right;cursor:pointer;transition:all .2s ease}.target strong{display:block;margin-bottom:8px;font-size:16px}.target small{color:var(--muted);line-height:1.6;font-size:12px}.target.is-active{border-color:var(--brand);background:rgba(56,199,244,.08);box-shadow:0 0 0 4px rgba(56,199,244,.1)}
+      label{display:grid;gap:10px;margin-top:24px;font-weight:900;font-size:14px;color:var(--muted)}input{width:100%;border:1px solid var(--border);border-radius:18px;background:#071120;color:var(--text);padding:16px;font-size:20px;letter-spacing:.12em;text-align:center;transition:border-color .2s ease}input:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 4px rgba(56,199,244,.15)}button.submit{width:100%;margin-top:20px;border:0;border-radius:18px;padding:16px 20px;background:var(--brand);color:#04111d;font-weight:900;font-size:16px;cursor:pointer;transition:transform .15s ease,background .15s ease}button.submit:hover{transform:translateY(-2px);background:#57daf5}button.submit:active{transform:translateY(0)}.msg{margin-top:20px;border-radius:16px;padding:14px;font-size:13px;background:rgba(56,199,244,.12);color:#c9f6ff;line-height:1.6}.msg.error{background:rgba(251,113,133,.12);color:#fecdd3;border:1px solid rgba(251,113,133,.2)}.msg.ok{background:rgba(34,197,94,.12);color:#bbf7d0;border:1px solid rgba(34,197,94,.2)}
+      @media(max-width:620px){body{padding:16px}.gate{padding:24px}.brand{flex-direction:column;align-items:flex-start;gap:12px}.brand img{width:60px;height:60px}.target-grid{grid-template-columns:1fr}h1{font-size:22px}}
+    </style>
+  </head>
+  <body>
+    <main class="gate">
+      <div class="brand">
+        <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
+        <div><div class="kicker">بوابة تشغيل الإدارة</div><h1>اختر الوجهة ثم أدخل كود التشغيل الخاص</h1><p>الأدمن للتهيئة والصلاحيات. المتابعة التنفيذية شاشة مختصرة للقرارات والمتابعة بدون أدوات تقنية.</p></div>
+      </div>
+      <div class="target-grid" aria-label="اختيار وجهة البوابة">
+        <button class="target" type="button" data-target="executive"><strong>المتابعة التنفيذية</strong><small>مؤشرات، غياب، تأخير، طلب موقع، وقرارات.</small></button>
+        <button class="target" type="button" data-target="admin"><strong>لوحة الأدمن</strong><small>المستخدمون، الصلاحيات، الإعدادات، Database، وBackup.</small></button>
+      </div>
+      <form id="gate-form" autocomplete="off">
+        <label>كود التشغيل<input id="gate-code" name="code" inputmode="text" autocomplete="one-time-code" placeholder="كود التشغيل" required /></label>
+        <button class="submit" id="submit-button" type="submit">فتح المتابعة التنفيذية</button>
+      </form>
+      <div id="gate-message" class="msg">اضبط كود التشغيل في نسخة نشر خاصة ولا تضع كوداً حقيقياً داخل نسخة عامة.</div>
+    </main>
+    <script>
+      (function(){
+        async function sha256(message) {
+          const msgBuffer = new TextEncoder().encode(message);
+          const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        const CODE_HASH = '7e071fd9b023ed8f18458a73613a0834f6220bd5cc50357ba3493c6040a9ea8c'; // Hash of '00000000'
+        const UNLOCK_KEY = 'hr.opsGatewayUnlockedUntil';
+        const TARGET_KEY = 'hr.opsGatewayUnlockedTarget';
+        const FAIL_KEY = 'hr.opsGatewayFailures';
+        const LOCK_KEY = 'hr.opsGatewayLockedUntil';
+        const params = new URLSearchParams(location.search);
+        const msg = document.getElementById('gate-message');
+        const form = document.getElementById('gate-form');
+        const input = document.getElementById('gate-code');
+        const submitButton = document.getElementById('submit-button');
+        const targetButtons = Array.from(document.querySelectorAll('[data-target]'));
+        const targetMap = { admin: '../admin/', executive: '../executive/' };
+        function sameOriginAdminTarget(value){
+          try {
+            const fallback = new URL(targetMap.executive, location.href);
+            const url = value ? new URL(value, location.href) : fallback;
+            if (url.origin !== location.origin) return fallback.href;
+            if (!/(?:^|\/)(admin|executive)(?:\/|$)/.test(url.pathname)) return fallback.href;
+            return url.href;
+          } catch { return new URL(targetMap.executive, location.href).href; }
+        }
+        let next = sameOriginAdminTarget(params.get('next') || targetMap.executive);
+        function targetFromNext() { const path = new URL(next).pathname; return /(?:^|\/)admin(?:\/|\/index\.html$|$)/.test(path) ? 'admin' : 'executive'; }
+        function setMessage(text, status){ msg.textContent = text; msg.className = 'msg' + (status ? ' ' + status : ''); }
+        function setTarget(target){
+          next = sameOriginAdminTarget(targetMap[target] || targetMap.executive);
+          targetButtons.forEach((button) => button.classList.toggle('is-active', button.dataset.target === target));
+          submitButton.textContent = target === 'admin' ? 'فتح لوحة الأدمن' : 'فتح المتابعة التنفيذية';
+        }
+        targetButtons.forEach((button) => button.addEventListener('click', () => setTarget(button.dataset.target)));
+        setTarget(targetFromNext());
+        const unlockedUntil = Number(sessionStorage.getItem(UNLOCK_KEY) || 0);
+        const unlockedTarget = sessionStorage.getItem(TARGET_KEY) || '';
+        if (unlockedUntil > Date.now() && unlockedTarget === targetFromNext()) location.replace(next);
+        const lockedUntil = Number(localStorage.getItem(LOCK_KEY) || 0);
+        if (lockedUntil > Date.now()) {
+          const minutes = Math.ceil((lockedUntil - Date.now()) / 60000);
+          input.disabled = true;
+          submitButton.disabled = true;
+          setMessage('تم قفل البوابة مؤقتًا بعد محاولات خاطئة. حاول مرة أخرى بعد ' + minutes + ' دقيقة.', 'error');
+        }
+        form.addEventListener('submit', async function(event){
+          event.preventDefault();
+          const locked = Number(localStorage.getItem(LOCK_KEY) || 0);
+          if (locked > Date.now()) return;
+          const value = String(input.value || '').trim().toUpperCase();
+          const hashed = await sha256(value);
+          if (hashed === CODE_HASH) {
+            localStorage.removeItem(FAIL_KEY);
+            localStorage.removeItem(LOCK_KEY);
+            sessionStorage.setItem(UNLOCK_KEY, String(Date.now() + 6 * 60 * 60 * 1000));
+            sessionStorage.setItem(TARGET_KEY, targetFromNext());
+            setMessage('تم فتح البوابة بنجاح.', 'ok');
+            location.replace(next);
+            return;
+          }
+          const failures = Number(localStorage.getItem(FAIL_KEY) || 0) + 1;
+          localStorage.setItem(FAIL_KEY, String(failures));
+          if (failures >= 5) {
+            localStorage.setItem(LOCK_KEY, String(Date.now() + 10 * 60 * 1000));
+            localStorage.removeItem(FAIL_KEY);
+            input.disabled = true;
+            submitButton.disabled = true;
+            setMessage('تم قفل البوابة لمدة 10 دقائق بسبب تكرار كود خاطئ.', 'error');
+          } else {
+            setMessage('كود التشغيل غير صحيح. المحاولات المتبقية: ' + (5 - failures), 'error');
+          }
+>>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
+        });
+      })();
+    </script>
+  </body>
+</html>

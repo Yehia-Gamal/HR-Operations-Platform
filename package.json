@@ -1,0 +1,42 @@
+{
+  "name": "ahla-shabab-hr-supabase",
+<<<<<<< HEAD
+  "version": "1.0.6-final-deployment-fix",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node tools/smoke-check.mjs",
+    "check:js": "node tools/check-js.mjs",
+    "supabase:issue-passwords": "node tools/issue-supabase-passwords.mjs",
+    "serve": "npx http-server . -p 4173 -c-1",
+    "test": "node tools/check-js.mjs && node tools/smoke-check.mjs"
+  },
+  "devDependencies": {
+    "postgres": "^3.4.9"
+=======
+  "version": "1.3.4-executive-presence-risk-decisions-pdf",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node tools/check-all-fast.mjs",
+    "check:js": "node tools/check-js.mjs",
+    "serve": "npx http-server . -p 4173 -c-1",
+    "test": "node tools/check-all-fast.mjs",
+    "check:html": "node tools/check-html-scripts.mjs",
+    "check:guards": "node tools/check-web-guards.mjs",
+    "check:prepublish": "node tools/check-prepublish-consistency.mjs",
+    "check:all": "node tools/check-all-fast.mjs",
+    "check:production": "node tools/check-production-hardening.mjs",
+    "check:final": "node tools/check-final-lockdown.mjs",
+    "check:sanitization": "node tools/check-final-sanitization.mjs",
+    "check:kpi-policy": "node tools/check-kpi-policy.mjs",
+    "check:kpi-cycle": "node tools/check-kpi-cycle-control.mjs",
+    "check:management-suite": "node tools/check-management-suite.mjs",
+    "check:sql": "node tools/check-sql-runtime.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.1",
+    "pg": "^8.20.0"
+>>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
+  }
+}

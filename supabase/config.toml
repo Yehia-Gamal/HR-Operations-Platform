@@ -1,0 +1,24 @@
+project_id = "ahla-shabab-hr"
+
+[functions.admin-create-user]
+verify_jwt = true
+
+[functions.admin-update-user]
+verify_jwt = true
+
+[functions.resolve-login-identifier]
+verify_jwt = false
+
+[functions.passkey-register]
+verify_jwt = true
+
+<<<<<<< HEAD
+[functions.send-push-notifications]
+verify_jwt = true
+=======
+[functions.send-push-notification]
+verify_jwt = true
+
+[functions.employee-register]
+verify_jwt = false
+>>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

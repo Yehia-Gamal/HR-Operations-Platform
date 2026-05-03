@@ -1,0 +1,541 @@
+{
+  "sourceFile": "بيانات الموظفين.xlsx",
+  "version": "2026-05-02-authorized-roster",
+  "loginPolicy": "identifier=employee phone, initial password=employee phone/personal number as provided in roster",
+  "employees": [
+    {
+      "order": 1,
+      "employeeCode": "AHS-001",
+      "fullName": "الشيخ محمد يوسف",
+      "phone": "010040455849",
+      "initialPassword": "010040455849",
+      "jobTitle": "المدير لتنفيذي للجمعية",
+      "managerName": "المدير التنفيذي للجمعية بلا مدير",
+      "managerEmployeeId": "",
+      "roleId": "role-executive",
+      "departmentId": "d-executive",
+      "photoUrl": "employee-avatars/emp-executive-director.png",
+      "email": "emp.010040455849@ahla.local"
+    },
+    {
+      "order": 2,
+      "employeeCode": "AHS-002",
+      "fullName": "يحيي جمال السبع",
+      "phone": "01154869616",
+      "initialPassword": "01154869616",
+      "jobTitle": "السكرتير التنفيذي + تكنولوجيا المعلومات (IT) والبرمجة",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-executive-secretary",
+      "departmentId": "d-executive",
+      "photoUrl": "employee-avatars/emp-executive-secretary.png",
+      "email": "emp.01154869616@ahla.local"
+    },
+    {
+      "order": 3,
+      "employeeCode": "AHS-003",
+      "fullName": "محمد ابو عمار",
+      "phone": "01226905602",
+      "initialPassword": "01226905602",
+      "jobTitle": "مدير تشغيل 1",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-direct-manager-01.png",
+      "email": "emp.01226905602@ahla.local"
+    },
+    {
+      "order": 4,
+      "employeeCode": "AHS-004",
+      "fullName": "محمد عبدالعظيم محمد",
+      "phone": "01092701744",
+      "initialPassword": "01092701744",
+      "jobTitle": "مسؤول اللجنة الطبية",
+      "managerName": "محمد ابو عمار",
+      "managerEmployeeId": "emp-direct-manager-01",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-004.png",
+      "email": "emp.01092701744@ahla.local"
+    },
+    {
+      "order": 5,
+      "employeeCode": "AHS-005",
+      "fullName": "بلال محمد الشاكر",
+      "phone": "01028403239",
+      "initialPassword": "01028403239",
+      "jobTitle": "مسؤول الموارد البشرية + الاعلام",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-hr",
+      "departmentId": "d-hr",
+      "photoUrl": "employee-avatars/emp-hr-manager.png",
+      "email": "emp.01028403239@ahla.local"
+    },
+    {
+      "order": 6,
+      "employeeCode": "AHS-006",
+      "fullName": "ياسر فتحي نور الدين",
+      "phone": "01145809595",
+      "initialPassword": "01145809595",
+      "jobTitle": "مدير تشغيل 2",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-direct-manager-06.png",
+      "email": "emp.01145809595@ahla.local"
+    },
+    {
+      "order": 7,
+      "employeeCode": "AHS-007",
+      "fullName": "مصطفي فايد",
+      "phone": "01009052140",
+      "initialPassword": "01009052140",
+      "jobTitle": "مدير الحسابات",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-007.png",
+      "email": "emp.01009052140@ahla.local"
+    },
+    {
+      "order": 8,
+      "employeeCode": "AHS-008",
+      "fullName": "حامد محمود العمدة",
+      "phone": "01008214530",
+      "initialPassword": "01008214530",
+      "jobTitle": "مسؤول لجنة أسرة كريمة",
+      "managerName": "محمد ابو عمار",
+      "managerEmployeeId": "emp-direct-manager-01",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-direct-manager-02.png",
+      "email": "emp.01008214530@ahla.local"
+    },
+    {
+      "order": 9,
+      "employeeCode": "AHS-009",
+      "fullName": "مصطفي احمد",
+      "phone": "01099505229",
+      "initialPassword": "01099505229",
+      "jobTitle": "ادارة اللوجيستك",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-direct-manager-03.png",
+      "email": "emp.01099505229@ahla.local"
+    },
+    {
+      "order": 10,
+      "employeeCode": "AHS-010",
+      "fullName": "محمد سيد",
+      "phone": "01015398047",
+      "initialPassword": "01015398047",
+      "jobTitle": "موظف مشتريات",
+      "managerName": "مصطفي احمد",
+      "managerEmployeeId": "emp-direct-manager-03",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "employee-avatars/emp-xlsx-010.png",
+      "email": "emp.01015398047@ahla.local"
+    },
+    {
+      "order": 11,
+      "employeeCode": "AHS-011",
+      "fullName": "حاتم محمد سالم",
+      "phone": "01096842589",
+      "initialPassword": "01096842589",
+      "jobTitle": "سائق العربية عزيزة",
+      "managerName": "مصطفي احمد",
+      "managerEmployeeId": "emp-direct-manager-03",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "employee-avatars/emp-xlsx-011.png",
+      "email": "emp.01096842589@ahla.local"
+    },
+    {
+      "order": 12,
+      "employeeCode": "AHS-012",
+      "fullName": "ربيع محمد ابو زيد",
+      "phone": "0114321080",
+      "initialPassword": "0114321080",
+      "jobTitle": "سائق العربية مسك",
+      "managerName": "مصطفي احمد",
+      "managerEmployeeId": "emp-direct-manager-03",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "",
+      "email": "emp.0114321080@ahla.local"
+    },
+    {
+      "order": 13,
+      "employeeCode": "AHS-013",
+      "fullName": "طارق سيد إبراهيم",
+      "phone": "01008083891",
+      "initialPassword": "01008083891",
+      "jobTitle": "مدير الحركة سائق + مطبخ المتععفين 2",
+      "managerName": "مصطفي احمد",
+      "managerEmployeeId": "emp-direct-manager-03",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-013.png",
+      "email": "emp.01008083891@ahla.local"
+    },
+    {
+      "order": 14,
+      "employeeCode": "AHS-014",
+      "fullName": "عمار محمد عبدالباسط",
+      "phone": "01115714930",
+      "initialPassword": "01115714930",
+      "jobTitle": "جرافيك ديزاينر",
+      "managerName": "بلال محمد الشاكر",
+      "managerEmployeeId": "emp-hr-manager",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "",
+      "email": "emp.01115714930@ahla.local"
+    },
+    {
+      "order": 15,
+      "employeeCode": "AHS-015",
+      "fullName": "احمد محمد محجوب",
+      "phone": "01033447012",
+      "initialPassword": "01033447012",
+      "jobTitle": "مدير الشؤون الادارية",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-direct-manager-04.png",
+      "email": "emp.01033447012@ahla.local"
+    },
+    {
+      "order": 16,
+      "employeeCode": "AHS-016",
+      "fullName": "عبدالله حسين حافظ",
+      "phone": "01110867632",
+      "initialPassword": "01110867632",
+      "jobTitle": "شؤون ادارية",
+      "managerName": "احمد محمد محجوب",
+      "managerEmployeeId": "emp-direct-manager-04",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-016.png",
+      "email": "emp.01110867632@ahla.local"
+    },
+    {
+      "order": 17,
+      "employeeCode": "AHS-017",
+      "fullName": "عبد القادر جمال",
+      "phone": "01024962522",
+      "initialPassword": "01024962522",
+      "jobTitle": "شؤون إدارية",
+      "managerName": "احمد محمد محجوب",
+      "managerEmployeeId": "emp-direct-manager-04",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-017.png",
+      "email": "emp.01024962522@ahla.local"
+    },
+    {
+      "order": 18,
+      "employeeCode": "AHS-018",
+      "fullName": "هاني احمد نصير",
+      "phone": "01012141949",
+      "initialPassword": "01012141949",
+      "jobTitle": "مسؤول المشروعات و طلاب العلم",
+      "managerName": "محمد ابو عمار",
+      "managerEmployeeId": "emp-direct-manager-01",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-018.png",
+      "email": "emp.01012141949@ahla.local"
+    },
+    {
+      "order": 19,
+      "employeeCode": "AHS-019",
+      "fullName": "يوسف رسمي شعبان",
+      "phone": "01000719835",
+      "initialPassword": "01000719835",
+      "jobTitle": "المشرف الفني لمجمع منيل شيحة",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "",
+      "email": "emp.01000719835@ahla.local"
+    },
+    {
+      "order": 20,
+      "employeeCode": "AHS-020",
+      "fullName": "اسماعيل عبدالله",
+      "phone": "01093976980",
+      "initialPassword": "01093976980",
+      "jobTitle": "موظف بالمجمع",
+      "managerName": "يوسف رسمي شعبان",
+      "managerEmployeeId": "emp-direct-manager-05",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "employee-avatars/emp-xlsx-020.png",
+      "email": "emp.01093976980@ahla.local"
+    },
+    {
+      "order": 21,
+      "employeeCode": "AHS-021",
+      "fullName": "عبدالرحمن حسين مرعي",
+      "phone": "01116164951",
+      "initialPassword": "01116164951",
+      "jobTitle": "موظف لجنة أسرة كريمة",
+      "managerName": "حامد محمود العمدة",
+      "managerEmployeeId": "emp-direct-manager-02",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "employee-avatars/emp-xlsx-021.png",
+      "email": "emp.01116164951@ahla.local"
+    },
+    {
+      "order": 22,
+      "employeeCode": "AHS-022",
+      "fullName": "محمد عبده مزار",
+      "phone": "01004466039",
+      "initialPassword": "01004466039",
+      "jobTitle": "طباخ بمجمع أحلى شباب",
+      "managerName": "يوسف رسمي شعبان",
+      "managerEmployeeId": "emp-direct-manager-05",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "",
+      "email": "emp.01004466039@ahla.local"
+    },
+    {
+      "order": 23,
+      "employeeCode": "AHS-023",
+      "fullName": "حسام عفيفي جمعة",
+      "phone": "010023827201",
+      "initialPassword": "010023827201",
+      "jobTitle": "موظف بالمجمع",
+      "managerName": "يوسف رسمي شعبان",
+      "managerEmployeeId": "emp-direct-manager-05",
+      "roleId": "role-employee",
+      "departmentId": "d-field-operations",
+      "photoUrl": "",
+      "email": "emp.010023827201@ahla.local"
+    },
+    {
+      "order": 24,
+      "employeeCode": "AHS-024",
+      "fullName": "محمد الاندونيسي",
+      "phone": "01111144881",
+      "initialPassword": "01111144881",
+      "jobTitle": "مسؤول الدعايا",
+      "managerName": "ياسر فتحي نور الدين",
+      "managerEmployeeId": "emp-direct-manager-06",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-024.png",
+      "email": "emp.01111144881@ahla.local"
+    },
+    {
+      "order": 25,
+      "employeeCode": "AHS-025",
+      "fullName": "ياسين طارق الباسل",
+      "phone": "01127260359",
+      "initialPassword": "01127260359",
+      "jobTitle": "مسؤول الدعايا",
+      "managerName": "ياسر فتحي نور الدين",
+      "managerEmployeeId": "emp-direct-manager-06",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "",
+      "email": "emp.01127260359@ahla.local"
+    },
+    {
+      "order": 26,
+      "employeeCode": "AHS-026",
+      "fullName": "عبد العزيز طارق الباسل",
+      "phone": "01000867705",
+      "initialPassword": "01000867705",
+      "jobTitle": "مسؤول سفير + مطيخ المتعففين 3",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "employee-avatars/emp-xlsx-026.png",
+      "email": "emp.01000867705@ahla.local"
+    },
+    {
+      "order": 27,
+      "employeeCode": "AHS-027",
+      "fullName": "محمد عبد المنعم",
+      "phone": "01009919558",
+      "initialPassword": "01009919558",
+      "jobTitle": "مسؤول الاستكشاف",
+      "managerName": "الشيخ محمد يوسف",
+      "managerEmployeeId": "emp-executive-director",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "",
+      "email": "emp.01009919558@ahla.local"
+    },
+    {
+      "order": 28,
+      "employeeCode": "AHS-028",
+      "fullName": "عبداالله نصر",
+      "phone": "01016664229",
+      "initialPassword": "01016664229",
+      "jobTitle": "أدارة المتطوعين",
+      "managerName": "ياسر فتحي نور الدين",
+      "managerEmployeeId": "emp-direct-manager-06",
+      "roleId": "role-manager",
+      "departmentId": "d-field-management",
+      "photoUrl": "",
+      "email": "emp.01016664229@ahla.local"
+    }
+  ],
+  "photoMappings": [
+    {
+      "employee": "الشيخ محمد يوسف",
+      "photoUrl": "employee-avatars/emp-executive-director.png",
+      "source": "محمد يوسف.png"
+    },
+    {
+      "employee": "يحيي جمال السبع",
+      "photoUrl": "employee-avatars/emp-executive-secretary.png",
+      "source": "يحيى.png"
+    },
+    {
+      "employee": "محمد ابو عمار",
+      "photoUrl": "employee-avatars/emp-direct-manager-01.png",
+      "source": "ابو عمار.png"
+    },
+    {
+      "employee": "محمد عبدالعظيم محمد",
+      "photoUrl": "employee-avatars/emp-xlsx-004.png",
+      "source": "دكتور عبد العظيم.png"
+    },
+    {
+      "employee": "بلال محمد الشاكر",
+      "photoUrl": "employee-avatars/emp-hr-manager.png",
+      "source": "بلال.png"
+    },
+    {
+      "employee": "ياسر فتحي نور الدين",
+      "photoUrl": "employee-avatars/emp-direct-manager-06.png",
+      "source": "ياسر فتحي.png"
+    },
+    {
+      "employee": "مصطفي فايد",
+      "photoUrl": "employee-avatars/emp-xlsx-007.png",
+      "source": "مصطفي فايد.png"
+    },
+    {
+      "employee": "حامد محمود العمدة",
+      "photoUrl": "employee-avatars/emp-direct-manager-02.png",
+      "source": "حامد.png"
+    },
+    {
+      "employee": "مصطفي احمد",
+      "photoUrl": "employee-avatars/emp-direct-manager-03.png",
+      "source": "مصطفي أحمد.png"
+    },
+    {
+      "employee": "محمد سيد",
+      "photoUrl": "employee-avatars/emp-xlsx-010.png",
+      "source": "محمد سيد مشتريات.png"
+    },
+    {
+      "employee": "حاتم محمد سالم",
+      "photoUrl": "employee-avatars/emp-xlsx-011.png",
+      "source": "حاتم.png"
+    },
+    {
+      "employee": "ربيع محمد ابو زيد",
+      "photoUrl": "",
+      "source": ""
+    },
+    {
+      "employee": "طارق سيد إبراهيم",
+      "photoUrl": "employee-avatars/emp-xlsx-013.png",
+      "source": "الشيخ طارق.png"
+    },
+    {
+      "employee": "عمار محمد عبدالباسط",
+      "photoUrl": "",
+      "source": ""
+    },
+    {
+      "employee": "احمد محمد محجوب",
+      "photoUrl": "employee-avatars/emp-direct-manager-04.png",
+      "source": "محجوب.png"
+    },
+    {
+      "employee": "عبدالله حسين حافظ",
+      "photoUrl": "employee-avatars/emp-xlsx-016.png",
+      "source": "عبدالله حسين.png"
+    },
+    {
+      "employee": "عبد القادر جمال",
+      "photoUrl": "employee-avatars/emp-xlsx-017.png",
+      "source": "عبد القادر.png"
+    },
+    {
+      "employee": "هاني احمد نصير",
+      "photoUrl": "employee-avatars/emp-xlsx-018.png",
+      "source": "هاني نصير.png"
+    },
+    {
+      "employee": "يوسف رسمي شعبان",
+      "photoUrl": "",
+      "source": ""
+    },
+    {
+      "employee": "اسماعيل عبدالله",
+      "photoUrl": "employee-avatars/emp-xlsx-020.png",
+      "source": "عم اسماعيل.png"
+    },
+    {
+      "employee": "عبدالرحمن حسين مرعي",
+      "photoUrl": "employee-avatars/emp-xlsx-021.png",
+      "source": "عبد الرحمن حسين.png"
+    },
+    {
+      "employee": "محمد عبده مزار",
+      "photoUrl": "",
+      "source": ""
+    },
+    {
+      "employee": "حسام عفيفي جمعة",
+      "photoUrl": "",
+      "source": ""
+    },
+    {
+      "employee": "محمد الاندونيسي",
+      "photoUrl": "employee-avatars/emp-xlsx-024.png",
+      "source": "محمد سيد اندو.png"
+    },
+    {
+      "employee": "ياسين طارق الباسل",
+      "photoUrl": "",
+      "source": ""
+    },
+    {
+      "employee": "عبد العزيز طارق الباسل",
+      "photoUrl": "employee-avatars/emp-xlsx-026.png",
+      "source": "عبد العزيز الباسل.png"
+    },
+    {
+      "employee": "محمد عبد المنعم",
+      "photoUrl": "",
+      "source": ""
+    },
+    {
+      "employee": "عبداالله نصر",
+      "photoUrl": "",
+      "source": ""
+    }
+  ]
+}

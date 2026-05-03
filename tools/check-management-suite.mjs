@@ -1,0 +1,16 @@
+import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
+const root = process.cwd();
+const read = (file) => readFileSync(join(root, file), 'utf8');
+const assert = (ok, message) => { if (!ok) { console.error(message); process.exit(1); } };
+const app = read('shared/js/app-admin.js');
+const api = read('shared/js/api.js');
+const db = read('shared/js/database.js');
+assert(existsSync(join(root, 'supabase/sql/patches/039_management_hr_reports_workflow.sql')), 'Patch 039 must exist.');
+assert(read('package.json').includes('1.3.4-executive-presence-risk-decisions-pdf'), 'Package version must be 1.3.4 executive presence risk decisions pdf.');
+for (const route of ['management-structure','team-dashboard','hr-operations','dispute-workflow','report-center']) assert(app.includes(route), `Admin app must include ${route}.`);
+for (const fn of ['managementStructure','assignManager','teamDashboard','hrOperations','disputeWorkflow','reportCenter','exportManagementReport']) assert(api.includes(`${fn}: async`), `API must include ${fn}.`);
+for (const scope of ['organization:manage','team:dashboard','hr:operations','disputes:escalate','reports:pdf','reports:excel']) assert(api.includes(scope) && db.includes(scope), `Permissions must include ${scope}.`);
+assert(api.includes('expectedPatch: "043_executive_presence_risk_decisions_reports.sql"'), 'Expected patch must be 043.');
+assert(read('sw.js').includes('hr-attendance-management-suite-20260502-01'), 'Service Worker cache must be management suite cache.');
+console.log('Management/HR/reports suite check passed.');
