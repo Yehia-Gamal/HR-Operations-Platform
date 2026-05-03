@@ -5,8 +5,6 @@ function strongEnough(password: string) {
   return typeof password === 'string' && password.length >= 10 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /\d/.test(password) && /[^A-Za-z0-9]/.test(password);
 }
 
-<<<<<<< HEAD
-=======
 function normalizePhone(value: unknown) {
   const ar = '٠١٢٣٤٥٦٧٨٩';
   const fa = '۰۱۲۳۴۵۶۷۸۹';
@@ -19,7 +17,6 @@ function passwordAllowedForRoster(password: string, phone: string) {
   return Boolean(phone && password === phone);
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function generateTemporaryPassword() {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
   const bytes = new Uint8Array(18);
@@ -91,17 +88,6 @@ Deno.serve(async (req) => {
   if (profileError) return json(req, { error: profileError.message }, 400);
   const role = Array.isArray(callerProfile?.roles) ? callerProfile.roles[0] : callerProfile?.roles;
   const permissions = role?.permissions || [];
-<<<<<<< HEAD
-  const allowed = permissions.includes('*') || ['admin', 'executive', 'executive-secretary', 'hr-manager'].includes(role?.slug);
-  if (!allowed) return json(req, { error: 'FORBIDDEN' }, 403);
-
-  const body = await req.json().catch(() => ({}));
-  const email = String(body.email || '').trim().toLowerCase();
-  const explicitPassword = typeof body.password === 'string' && body.password.length > 0;
-  const password = explicitPassword ? String(body.password) : generateTemporaryPassword();
-  if (!email) return json(req, { error: 'EMAIL_REQUIRED' }, 400);
-  if (explicitPassword && !strongEnough(password)) return json(req, { error: 'PASSWORD_WEAK: استخدم 10 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز.' }, 400);
-=======
   const allowed = permissions.includes('*') || permissions.includes('users:manage') || ['admin', 'hr-manager'].includes(role?.slug);
   if (!allowed) return json(req, { error: 'FORBIDDEN_ADMIN_USER_MANAGEMENT_ONLY' }, 403);
 
@@ -113,7 +99,6 @@ Deno.serve(async (req) => {
   const isRosterPhonePassword = passwordAllowedForRoster(password, phone);
   if (!email) return json(req, { error: 'EMAIL_REQUIRED' }, 400);
   if (explicitPassword && !strongEnough(password) && !isRosterPhonePassword) return json(req, { error: 'PASSWORD_WEAK: كلمة المرور يجب أن تكون قوية أو مطابقة لرقم هاتف الموظف المعتمد.' }, 400);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
   const { data: created, error: createError } = await adminClient.auth.admin.createUser({
     email,
@@ -153,11 +138,7 @@ Deno.serve(async (req) => {
   const patch = {
     full_name: body.fullName || body.name || email,
     email,
-<<<<<<< HEAD
-    phone: body.phone || null,
-=======
     phone: phone || null,
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     avatar_url: body.avatarUrl || body.photoUrl || '',
     employee_id: body.employeeId || null,
     role_id: body.roleId || null,
@@ -166,21 +147,12 @@ Deno.serve(async (req) => {
     governorate_id: body.governorateId || null,
     complex_id: body.complexId || null,
     status: body.status || 'ACTIVE',
-<<<<<<< HEAD
-    temporary_password: true,
-    must_change_password: true,
-  };
-
-  await adminClient.from('profiles').upsert({ id: userId, ...patch }, { onConflict: 'id' });
-  if (body.employeeId) await adminClient.from('employees').update({ user_id: userId, email, phone: body.phone || null }).eq('id', body.employeeId);
-=======
     temporary_password: !isRosterPhonePassword,
     must_change_password: false,
   };
 
   await adminClient.from('profiles').upsert({ id: userId, ...patch }, { onConflict: 'id' });
   if (body.employeeId) await adminClient.from('employees').update({ user_id: userId, email, phone: phone || null }).eq('id', body.employeeId);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
   return json(req, {
     ok: true,

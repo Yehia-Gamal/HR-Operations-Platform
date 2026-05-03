@@ -23,10 +23,7 @@ create table if not exists public.roles (
   slug text unique not null,
   key text,
   name text not null,
-<<<<<<< HEAD
-=======
   description text default '',
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   permissions text[] not null default '{}',
   active boolean not null default true,
   created_at timestamptz not null default now(),
@@ -914,9 +911,6 @@ insert into public.permissions (scope, name) values
 ('payroll:manage','تكامل الرواتب'),
 ('ai:view','تحليلات AI'),
 ('access_control:manage','الأجهزة والبوابات'),
-<<<<<<< HEAD
-('offline:manage','مزامنة Offline')
-=======
 ('offline:manage','مزامنة Offline'),
 ('executive:report','تقارير المدير التنفيذي'),
 ('executive:mobile','المتابعة التنفيذية المختصرة'),
@@ -928,18 +922,12 @@ insert into public.permissions (scope, name) values
 ('alerts:manage','إدارة التنبيهات'),
 ('control-room:view','عرض غرفة التحكم'),
 ('daily-report:review','مراجعة التقارير اليومية')
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 on conflict (scope) do update set name = excluded.name;
 
 insert into public.roles (slug, key, name, permissions) values
 ('admin','ADMIN','مدير النظام', array['*']),
-<<<<<<< HEAD
-('executive','EXECUTIVE','المدير التنفيذي', array['*']),
-('executive-secretary','EXECUTIVE_SECRETARY','السكرتير التنفيذي', array['*']),
-=======
 ('executive','EXECUTIVE','المدير التنفيذي', array['dashboard:view','employees:view','reports:export','executive:report','executive:mobile','executive:presence-map','live-location:request','sensitive-actions:approve','approvals:manage','alerts:manage','control-room:view','daily-report:review']),
 ('executive-secretary','EXECUTIVE_SECRETARY','السكرتير التنفيذي', array['dashboard:view','employees:view','reports:export','executive:report','executive:mobile','executive:presence-map','live-location:request','sensitive-actions:request','daily-report:review','alerts:manage']),
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 ('hr-manager','HR','الموارد البشرية', array['*']),
 ('manager','MANAGER','مدير مباشر', array['dashboard:view','employees:view','attendance:manage','requests:approve','kpi:team','reports:export','realtime:view']),
 ('employee','EMPLOYEE','موظف', array['dashboard:view','attendance:self','kpi:self'])
@@ -986,19 +974,11 @@ on conflict do nothing;
 -- موظفون مبدئيون. أنشئ مستخدمي Auth بنفس الإيميلات، وسيتم ربط profile تلقائيًا.
 insert into public.employees (employee_code, full_name, phone, email, job_title, role_id, branch_id, department_id, governorate_id, complex_id, shift_id, status, hire_date)
 select * from (
-<<<<<<< HEAD
-  select 'EMP-001' employee_code, 'الشيخ محمد يوسف' full_name, '01070000046' phone, 'demo.user.024@demo.local' email, 'المدير التنفيذي' job_title, (select id from public.roles where slug='executive') role_id, (select id from public.branches where code='MAIN') branch_id, (select id from public.departments where code='EXEC') department_id, (select id from public.governorates where code='GZ') governorate_id, (select id from public.complexes where code='AHLA-MANIL') complex_id, (select id from public.shifts where name='وردية 9ص إلى 5م' limit 1) shift_id, 'ACTIVE' status, current_date hire_date
-  union all select 'EMP-002','يحيى جمال السبع','01070000047','demo.executive.secretary@demo.local','السكرتير التنفيذي',(select id from public.roles where slug='executive-secretary'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='EXEC'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
-  union all select 'EMP-003','مسؤول الموارد البشرية','01070000048','demo.user.025@demo.local','HR',(select id from public.roles where slug='hr-manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='HR'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
-  union all select 'EMP-004','مدير التشغيل','01070000049','demo.user.026@demo.local','مدير مباشر',(select id from public.roles where slug='manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
-  union all select 'EMP-005','موظف تجريبي','01070000050','demo.user.027@demo.local','موظف',(select id from public.roles where slug='employee'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
-=======
   select 'EMP-001' employee_code, 'المدير التنفيذي' full_name, '01000000001' phone, 'executive.director@organization.local' email, 'المدير التنفيذي' job_title, (select id from public.roles where slug='executive') role_id, (select id from public.branches where code='MAIN') branch_id, (select id from public.departments where code='EXEC') department_id, (select id from public.governorates where code='GZ') governorate_id, (select id from public.complexes where code='AHLA-MANIL') complex_id, (select id from public.shifts where name='وردية 9ص إلى 5م' limit 1) shift_id, 'ACTIVE' status, current_date hire_date
   union all select 'EMP-002','السكرتير التنفيذي','01000000002','executive.secretary@organization.local','السكرتير التنفيذي',(select id from public.roles where slug='executive-secretary'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='EXEC'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
   union all select 'EMP-003','مسؤول الموارد البشرية','01000000003','hr@ahla.local','HR',(select id from public.roles where slug='hr-manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='HR'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
   union all select 'EMP-004','مدير التشغيل','01000000004','manager.ops@ahla.local','مدير مباشر',(select id from public.roles where slug='manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
   union all select 'EMP-005','موظف تجريبي','01000000005','employee@ahla.local','موظف',(select id from public.roles where slug='employee'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 ) s
 on conflict (employee_code) do update set full_name = excluded.full_name, email = excluded.email, role_id = excluded.role_id, branch_id = excluded.branch_id, department_id = excluded.department_id, shift_id = excluded.shift_id;
 

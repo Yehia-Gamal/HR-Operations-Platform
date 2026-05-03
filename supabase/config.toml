@@ -12,13 +12,8 @@ verify_jwt = false
 [functions.passkey-register]
 verify_jwt = true
 
-<<<<<<< HEAD
-[functions.send-push-notifications]
-verify_jwt = true
-=======
 [functions.send-push-notification]
 verify_jwt = true
 
 [functions.employee-register]
 verify_jwt = false
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

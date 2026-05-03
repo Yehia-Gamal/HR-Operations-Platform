@@ -6,19 +6,7 @@ function normalizeEmail(value: unknown) {
 }
 
 function normalizePhone(value: unknown) {
-<<<<<<< HEAD
-  return String(value || '').trim();
-}
-
-function strongEnough(pwd: string): boolean {
-  return pwd.length >= 10
-    && /[A-Z]/.test(pwd)
-    && /[a-z]/.test(pwd)
-    && /[0-9]/.test(pwd)
-    && /[^A-Za-z0-9]/.test(pwd);
-=======
   return String(value || '').replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d))).replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d))).replace(/\D/g, '');
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 Deno.serve(async (req) => {
@@ -46,13 +34,8 @@ Deno.serve(async (req) => {
 
   const role = Array.isArray(callerProfile?.roles) ? callerProfile.roles[0] : callerProfile?.roles;
   const permissions = role?.permissions || [];
-<<<<<<< HEAD
-  const allowed = permissions.includes('*') || ['admin', 'executive', 'executive-secretary', 'hr-manager'].includes(role?.slug);
-  if (!allowed) return json(req, { error: 'FORBIDDEN' }, 403);
-=======
   const allowed = permissions.includes('*') || permissions.includes('users:manage') || ['admin', 'hr-manager'].includes(role?.slug);
   if (!allowed) return json(req, { error: 'FORBIDDEN_ADMIN_USER_MANAGEMENT_ONLY' }, 403);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
   const body = await req.json().catch(() => ({}));
   const userId = String(body.id || body.userId || '').trim();
@@ -62,15 +45,7 @@ Deno.serve(async (req) => {
   const phone = normalizePhone(body.phone);
   const authPatch: Record<string, unknown> = {};
   if (email) authPatch.email = email;
-<<<<<<< HEAD
-  if (body.password) {
-    const password = String(body.password);
-    if (!strongEnough(password)) return json(req, { error: 'PASSWORD_WEAK' }, 400);
-    authPatch.password = password;
-  }
-=======
   if (body.password) authPatch.password = String(body.password);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   if (Object.keys(authPatch).length) {
     const { error: authError } = await adminClient.auth.admin.updateUserById(userId, {
       ...authPatch,

@@ -10,8 +10,6 @@ export const seedDatabase = {
     { id: "perm-requests-approve", scope: "requests:approve", name: "اعتماد الطلبات" },
     { id: "perm-org-manage", scope: "organization:manage", name: "إدارة الهيكل الإداري" },
     { id: "perm-reports-export", scope: "reports:export", name: "تصدير التقارير" },
-<<<<<<< HEAD
-=======
     { id: "perm-hr-operations", scope: "hr:operations", name: "لوحة عمليات الموارد البشرية" },
     { id: "perm-organization-manage", scope: "organization:manage", name: "إدارة هيكل الإدارة والفرق" },
     { id: "perm-team-dashboard", scope: "team:dashboard", name: "لوحة الفريق للمدير المباشر" },
@@ -23,7 +21,6 @@ export const seedDatabase = {
     { id: "perm-decisions-acknowledge", scope: "decisions:acknowledge", name: "تأكيد الاطلاع على القرارات" },
     { id: "perm-disputes-minutes", scope: "disputes:minutes", name: "محاضر لجنة حل الخلافات" },
     { id: "perm-reports-monthly-pdf-auto", scope: "reports:monthly-pdf-auto", name: "تقارير PDF شهرية تلقائية" },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     { id: "perm-settings-manage", scope: "settings:manage", name: "إدارة الإعدادات" },
     { id: "perm-audit-view", scope: "audit:view", name: "عرض سجل التدقيق" },
     { id: "perm-kpi-manage", scope: "kpi:manage", name: "إدارة تقييمات الأداء كاملة" },
@@ -39,17 +36,6 @@ export const seedDatabase = {
     { id: "perm-attendance-review", scope: "attendance:review", name: "مراجعة البصمات المرفوضة" },
     { id: "perm-devices-manage", scope: "devices:manage", name: "إدارة الأجهزة المعتمدة" },
     { id: "perm-security-view", scope: "security:view", name: "عرض سجل الأمان" },
-<<<<<<< HEAD
-    { id: "perm-demo-manage", scope: "demo:manage", name: "إدارة وضع التدريب" },
-  ],
-  roles: [
-    { id: "role-admin", name: "مدير النظام", key: "ADMIN", slug: "admin", description: "صلاحيات كاملة", permissions: ["*"] },
-    { id: "role-executive", name: "المدير التنفيذي", key: "EXECUTIVE", slug: "executive", description: "صلاحيات كاملة للمدير التنفيذي في بيانات العرض", permissions: ["*"] },
-    { id: "role-executive-secretary", name: "السكرتير التنفيذي", key: "EXECUTIVE_SECRETARY", slug: "executive-secretary", description: "صلاحيات كاملة للسكرتير التنفيذي في بيانات العرض", permissions: ["*"] },
-    { id: "role-hr", name: "مدير موارد بشرية", key: "HR_MANAGER", slug: "hr-manager", description: "صلاحيات كاملة لإدارة الموارد البشرية", permissions: ["*"] },
-    { id: "role-manager", name: "مدير مباشر", key: "DIRECT_MANAGER", slug: "direct-manager", description: "يرى فريقه المباشر ويعتمد تقييماتهم", permissions: ["dashboard:view","employees:view","attendance:manage","requests:approve","reports:export","kpi:team","disputes:manage","realtime:view","ai:view","attendance:review"] },
-    { id: "role-employee", name: "موظف", key: "EMPLOYEE", slug: "employee", description: "يرى بياناته وبصماته وتقييمه الذاتي فقط", permissions: ["dashboard:view","attendance:self","kpi:self","disputes:create","location:self"] },
-=======
   ],
   roles: [
     { id: "role-admin", name: "مدير النظام", key: "ADMIN", slug: "admin", description: "صلاحيات كاملة", permissions: ["*"] },
@@ -58,23 +44,15 @@ export const seedDatabase = {
     { id: "role-hr", name: "مدير موارد بشرية", key: "HR_MANAGER", slug: "hr-manager", description: "صلاحيات موارد بشرية فقط بدون إعدادات تقنية", permissions: ["dashboard:view","employees:view","employees:write","users:manage","attendance:manage","attendance:review","attendance:rules","attendance:smart","requests:approve","leave:balance","documents:manage","reports:export","kpi:hr","kpi:monthly","kpi:manage","daily-report:review","disputes:committee","disputes:manage","disputes:minutes","notifications:manage","decisions:manage","attendance:risk","reports:monthly-pdf-auto"] },
     { id: "role-manager", name: "مدير مباشر", key: "DIRECT_MANAGER", slug: "direct-manager", description: "يرى فريقه المباشر فقط ويعتمد تقييماتهم", permissions: ["dashboard:view","employees:view","manager:team","manager:suite","attendance:manage","requests:approve","reports:export","kpi:team","daily-report:review","disputes:manage","realtime:view","manager:team-only","decisions:acknowledge"] },
     { id: "role-employee", name: "موظف", key: "EMPLOYEE", slug: "employee", description: "يرى بياناته وبصماته وتقييمه الذاتي فقط", permissions: ["dashboard:view","attendance:self","kpi:self","disputes:create","location:self","tasks:self","documents:self","requests:self","daily-report:self","action-center:self","live-location:respond","decisions:acknowledge"] },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ],
   governorates: [
     { id: "gov-giza", code: "GIZ", name: "الجيزة", latitude: 29.951196809090636, longitude: 31.238367688465857, active: true },
   ],
   complexes: [
-<<<<<<< HEAD
-    { id: "cx-ahla-manil", code: "CX-AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", branchId: "b-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.951196809090636, longitude: 31.238367688465857, radiusMeters: 300, maxAccuracyMeters: 500, managerEmployeeId: "emp-demo-001", active: true },
-  ],
-  branches: [
-    { id: "b-ahla-manil", code: "AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", complexId: "cx-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.951196809090636, longitude: 31.238367688465857, radiusMeters: 300, geofenceRadiusMeters: 300, maxAccuracyMeters: 500, managerEmployeeId: "emp-demo-001", active: true },
-=======
     { id: "cx-ahla-manil", code: "CX-AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", branchId: "b-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.951196809090636, longitude: 31.238367688465857, radiusMeters: 300, maxAccuracyMeters: 500, managerEmployeeId: "emp-executive-director", active: true },
   ],
   branches: [
     { id: "b-ahla-manil", code: "AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", complexId: "cx-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.951196809090636, longitude: 31.238367688465857, radiusMeters: 300, geofenceRadiusMeters: 300, maxAccuracyMeters: 500, managerEmployeeId: "emp-executive-director", active: true },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ],
   departments: [
     {
@@ -82,11 +60,7 @@ export const seedDatabase = {
         "code": "EXEC",
         "name": "الإدارة التنفيذية",
         "branchId": "b-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-=======
         "managerEmployeeId": "emp-executive-director",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "description": "المدير التنفيذي والسكرتارية التنفيذية",
         "active": true
     },
@@ -95,11 +69,7 @@ export const seedDatabase = {
         "code": "MGT",
         "name": "الإشراف والمديرون المباشرون",
         "branchId": "b-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-=======
         "managerEmployeeId": "emp-executive-director",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "description": "المديرون المباشرون التابعون للمدير التنفيذي",
         "active": true
     },
@@ -108,11 +78,7 @@ export const seedDatabase = {
         "code": "OPS",
         "name": "فرق التشغيل والخدمات",
         "branchId": "b-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-006",
-=======
         "managerEmployeeId": "emp-direct-manager-03",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "description": "الموظفون والفرق التابعة للمديرين المباشرين",
         "active": true
     },
@@ -121,11 +87,7 @@ export const seedDatabase = {
         "code": "HR",
         "name": "الموارد البشرية",
         "branchId": "b-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-002",
-=======
         "managerEmployeeId": "emp-executive-secretary",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "description": "شؤون العاملين والتقييمات والحضور",
         "active": true
     }
@@ -133,15 +95,6 @@ export const seedDatabase = {
   shifts: [],
   employees: [
     {
-<<<<<<< HEAD
-        "id": "emp-demo-001",
-        "employeeCode": "EMP-001",
-        "fullName": "Demo Employee 001",
-        "phone": "01070000001",
-        "email": "demo.user.001@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "id": "emp-executive-director",
         "employeeCode": "AHS-001",
         "fullName": "الشيخ محمد يوسف",
@@ -150,7 +103,6 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-executive-director.png",
         "avatarUrl": "employee-avatars/emp-executive-director.png",
         "jobTitle": "المدير لتنفيذي للجمعية",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-executive",
         "branchId": "b-ahla-manil",
         "departmentId": "d-executive",
@@ -159,19 +111,6 @@ export const seedDatabase = {
         "managerEmployeeId": "",
         "status": "ACTIVE",
         "isDeleted": false,
-<<<<<<< HEAD
-        "hireDate": "2020-01-01",
-        "userId": "u-demo-001"
-    },
-    {
-        "id": "emp-demo-002",
-        "employeeCode": "EMP-002",
-        "fullName": "Demo Employee 002",
-        "phone": "01070000002",
-        "email": "demo.executive.secretary@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "hireDate": "2026-05-02",
         "userId": "u-executive-director",
         "rosterSource": "بيانات الموظفين.xlsx"
@@ -185,28 +124,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-executive-secretary.png",
         "avatarUrl": "employee-avatars/emp-executive-secretary.png",
         "jobTitle": "السكرتير التنفيذي + تكنولوجيا المعلومات (IT) والبرمجة",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-executive-secretary",
         "branchId": "b-ahla-manil",
         "departmentId": "d-executive",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-01-01",
-        "userId": "u-demo-002"
-    },
-    {
-        "id": "emp-demo-003",
-        "employeeCode": "EMP-003",
-        "fullName": "Demo Employee 003",
-        "phone": "01070000003",
-        "email": "demo.user.002@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-executive-director",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -223,28 +145,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-01.png",
         "avatarUrl": "employee-avatars/emp-direct-manager-01.png",
         "jobTitle": "مدير تشغيل 1",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-02-01",
-        "userId": "u-demo-003"
-    },
-    {
-        "id": "emp-demo-004",
-        "employeeCode": "EMP-004",
-        "fullName": "Demo Employee 004",
-        "phone": "01070000004",
-        "email": "demo.user.003@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-executive-director",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -261,28 +166,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-004.png",
         "avatarUrl": "employee-avatars/emp-xlsx-004.png",
         "jobTitle": "مسؤول اللجنة الطبية",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-02-01",
-        "userId": "u-demo-004"
-    },
-    {
-        "id": "emp-demo-005",
-        "employeeCode": "EMP-005",
-        "fullName": "Demo Employee 005",
-        "phone": "01070000005",
-        "email": "demo.user.004@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-direct-manager-01",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -320,28 +208,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-06.png",
         "avatarUrl": "employee-avatars/emp-direct-manager-06.png",
         "jobTitle": "مدير تشغيل 2",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-02-01",
-        "userId": "u-demo-005"
-    },
-    {
-        "id": "emp-demo-006",
-        "employeeCode": "EMP-006",
-        "fullName": "Demo Employee 006",
-        "phone": "01070000006",
-        "email": "demo.user.005@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-executive-director",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -358,28 +229,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-007.png",
         "avatarUrl": "employee-avatars/emp-xlsx-007.png",
         "jobTitle": "مدير الحسابات",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-02-01",
-        "userId": "u-demo-006"
-    },
-    {
-        "id": "emp-demo-007",
-        "employeeCode": "EMP-007",
-        "fullName": "Demo Employee 007",
-        "phone": "01070000007",
-        "email": "demo.user.006@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-executive-director",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -396,28 +250,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-02.png",
         "avatarUrl": "employee-avatars/emp-direct-manager-02.png",
         "jobTitle": "مسؤول لجنة أسرة كريمة",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-02-01",
-        "userId": "u-demo-007"
-    },
-    {
-        "id": "emp-demo-008",
-        "employeeCode": "EMP-008",
-        "fullName": "Demo Employee 008",
-        "phone": "01070000008",
-        "email": "demo.user.007@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-direct-manager-01",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -434,28 +271,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-03.png",
         "avatarUrl": "employee-avatars/emp-direct-manager-03.png",
         "jobTitle": "ادارة اللوجيستك",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-02-01",
-        "userId": "u-demo-008"
-    },
-    {
-        "id": "emp-demo-009",
-        "employeeCode": "EMP-009",
-        "fullName": "Demo Employee 009",
-        "phone": "01070000009",
-        "email": "demo.user.008@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-executive-director",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -535,28 +355,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-013.png",
         "avatarUrl": "employee-avatars/emp-xlsx-013.png",
         "jobTitle": "مدير الحركة سائق + مطبخ المتععفين 2",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-001",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2021-02-01",
-        "userId": "u-demo-009"
-    },
-    {
-        "id": "emp-demo-010",
-        "employeeCode": "EMP-010",
-        "fullName": "Demo Employee 010",
-        "phone": "01070000010",
-        "email": "demo.user.009@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-direct-manager-03",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -573,47 +376,11 @@ export const seedDatabase = {
         "photoUrl": "",
         "avatarUrl": "",
         "jobTitle": "جرافيك ديزاينر",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-employee",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-006",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-010"
-    },
-    {
-        "id": "emp-demo-011",
-        "employeeCode": "EMP-011",
-        "fullName": "Demo Employee 011",
-        "phone": "01070000011",
-        "email": "demo.user.010@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-006",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-011"
-    },
-    {
-        "id": "emp-demo-012",
-        "employeeCode": "EMP-012",
-        "fullName": "Demo Employee 012",
-        "phone": "01070000012",
-        "email": "demo.user.011@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-hr-manager",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -630,28 +397,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-04.png",
         "avatarUrl": "employee-avatars/emp-direct-manager-04.png",
         "jobTitle": "مدير الشؤون الادارية",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-manager",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-006",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-012"
-    },
-    {
-        "id": "emp-demo-013",
-        "employeeCode": "EMP-013",
-        "fullName": "Demo Employee 013",
-        "phone": "01070000013",
-        "email": "demo.user.012@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-executive-director",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -752,28 +502,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-020.png",
         "avatarUrl": "employee-avatars/emp-xlsx-020.png",
         "jobTitle": "موظف بالمجمع",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-employee",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-012",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-013"
-    },
-    {
-        "id": "emp-demo-014",
-        "employeeCode": "EMP-014",
-        "fullName": "Demo Employee 014",
-        "phone": "01070000014",
-        "email": "demo.user.013@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-direct-manager-05",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -790,28 +523,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-021.png",
         "avatarUrl": "employee-avatars/emp-xlsx-021.png",
         "jobTitle": "موظف لجنة أسرة كريمة",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-employee",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-003",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-014"
-    },
-    {
-        "id": "emp-demo-015",
-        "employeeCode": "EMP-015",
-        "fullName": "Demo Employee 015",
-        "phone": "01070000015",
-        "email": "demo.user.014@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-direct-manager-02",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -828,28 +544,11 @@ export const seedDatabase = {
         "photoUrl": "",
         "avatarUrl": "",
         "jobTitle": "طباخ بمجمع أحلى شباب",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-employee",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-003",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-015"
-    },
-    {
-        "id": "emp-demo-016",
-        "employeeCode": "EMP-016",
-        "fullName": "Demo Employee 016",
-        "phone": "01070000016",
-        "email": "demo.user.015@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-=======
         "managerEmployeeId": "emp-direct-manager-05",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -866,152 +565,11 @@ export const seedDatabase = {
         "photoUrl": "",
         "avatarUrl": "",
         "jobTitle": "موظف بالمجمع",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "roleId": "role-employee",
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
-<<<<<<< HEAD
-        "managerEmployeeId": "emp-demo-009",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-016"
-    },
-    {
-        "id": "emp-demo-017",
-        "employeeCode": "EMP-017",
-        "fullName": "Demo Employee 017",
-        "phone": "01070000017",
-        "email": "demo.user.016@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-009",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-017"
-    },
-    {
-        "id": "emp-demo-018",
-        "employeeCode": "EMP-018",
-        "fullName": "Demo Employee 018",
-        "phone": "01070000018",
-        "email": "demo.user.017@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-009",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-018"
-    },
-    {
-        "id": "emp-demo-019",
-        "employeeCode": "EMP-019",
-        "fullName": "Demo Employee 019",
-        "phone": "01070000019",
-        "email": "demo.user.018@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-004",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-019"
-    },
-    {
-        "id": "emp-demo-020",
-        "employeeCode": "EMP-020",
-        "fullName": "Demo Employee 020",
-        "phone": "01070000020",
-        "email": "demo.user.019@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-008",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-020"
-    },
-    {
-        "id": "emp-demo-021",
-        "employeeCode": "EMP-021",
-        "fullName": "Demo Employee 021",
-        "phone": "01070000021",
-        "email": "demo.user.020@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-008",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-021"
-    },
-    {
-        "id": "emp-demo-022",
-        "employeeCode": "EMP-022",
-        "fullName": "Demo Employee 022",
-        "phone": "01070000022",
-        "email": "demo.user.021@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-008",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-022"
-    },
-    {
-        "id": "emp-demo-023",
-        "employeeCode": "EMP-023",
-        "fullName": "Demo Employee 023",
-        "phone": "01070000023",
-        "email": "demo.user.022@demo.local",
-        "photoUrl": "",
-        "jobTitle": "Demo Job",
-        "roleId": "role-employee",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "managerEmployeeId": "emp-demo-008",
-        "status": "ACTIVE",
-        "isDeleted": false,
-        "hireDate": "2022-01-01",
-        "userId": "u-demo-023"
-=======
         "managerEmployeeId": "emp-direct-manager-05",
         "status": "ACTIVE",
         "isDeleted": false,
@@ -1123,21 +681,10 @@ export const seedDatabase = {
         "hireDate": "2026-05-02",
         "userId": "u-xlsx-028",
         "rosterSource": "بيانات الموظفين.xlsx"
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     }
 ],
   users: [
     {
-<<<<<<< HEAD
-        "id": "u-demo-001",
-        "name": "Demo User 001",
-        "fullName": "Demo Employee 024",
-        "email": "demo.user.001@demo.local",
-        "phone": "01070000001",
-        "password": "",
-        "roleId": "role-executive",
-        "employeeId": "emp-demo-001",
-=======
         "id": "u-executive-director",
         "employeeId": "emp-executive-director",
         "name": "الشيخ محمد يوسف",
@@ -1149,7 +696,6 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-executive-director.png",
         "password": "010040455849",
         "roleId": "role-executive",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-executive",
         "governorateId": "gov-giza",
@@ -1159,19 +705,6 @@ export const seedDatabase = {
         "mustChangePassword": false,
         "passkeyEnabled": false,
         "failedLogins": 0,
-<<<<<<< HEAD
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-002",
-        "name": "Demo User 002",
-        "fullName": "Demo Employee 025",
-        "email": "demo.executive.secretary@demo.local",
-        "phone": "01070000002",
-        "password": "",
-        "roleId": "role-executive-secretary",
-        "employeeId": "emp-demo-002",
-=======
         "lastLoginAt": "",
         "phoneLoginOnly": true,
         "rosterSource": "بيانات الموظفين.xlsx"
@@ -1188,7 +721,6 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-executive-secretary.png",
         "password": "01154869616",
         "roleId": "role-executive-secretary",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-executive",
         "governorateId": "gov-giza",
@@ -1198,19 +730,6 @@ export const seedDatabase = {
         "mustChangePassword": false,
         "passkeyEnabled": false,
         "failedLogins": 0,
-<<<<<<< HEAD
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-003",
-        "name": "Demo User 003",
-        "fullName": "Demo Employee 026",
-        "email": "demo.user.002@demo.local",
-        "phone": "01070000003",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-003",
-=======
         "lastLoginAt": "",
         "phoneLoginOnly": true,
         "rosterSource": "بيانات الموظفين.xlsx"
@@ -1227,29 +746,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-01.png",
         "password": "01226905602",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-004",
-        "name": "Demo User 004",
-        "fullName": "Demo Employee 027",
-        "email": "demo.user.003@demo.local",
-        "phone": "01070000004",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-004",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1270,29 +771,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-004.png",
         "password": "01092701744",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-005",
-        "name": "Demo User 005",
-        "fullName": "Demo Employee 028",
-        "email": "demo.user.004@demo.local",
-        "phone": "01070000005",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-005",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1338,29 +821,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-06.png",
         "password": "01145809595",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-006",
-        "name": "Demo User 006",
-        "fullName": "Demo Employee 029",
-        "email": "demo.user.005@demo.local",
-        "phone": "01070000006",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-006",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1381,29 +846,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-007.png",
         "password": "01009052140",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-007",
-        "name": "Demo User 007",
-        "fullName": "Demo Employee 030",
-        "email": "demo.user.006@demo.local",
-        "phone": "01070000007",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-007",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1424,29 +871,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-02.png",
         "password": "01008214530",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-008",
-        "name": "Demo User 008",
-        "fullName": "Demo Employee 031",
-        "email": "demo.user.007@demo.local",
-        "phone": "01070000008",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-008",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1467,29 +896,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-03.png",
         "password": "01099505229",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-009",
-        "name": "Demo User 009",
-        "fullName": "Demo Employee 032",
-        "email": "demo.user.008@demo.local",
-        "phone": "01070000009",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-009",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1585,29 +996,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-013.png",
         "password": "01008083891",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-010",
-        "name": "Demo User 010",
-        "fullName": "Demo Employee 033",
-        "email": "demo.user.009@demo.local",
-        "phone": "01070000010",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-010",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1628,49 +1021,11 @@ export const seedDatabase = {
         "photoUrl": "",
         "password": "01115714930",
         "roleId": "role-employee",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-011",
-        "name": "Demo User 011",
-        "fullName": "Demo Employee 034",
-        "email": "demo.user.010@demo.local",
-        "phone": "01070000011",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-011",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-012",
-        "name": "Demo User 012",
-        "fullName": "Demo Employee 035",
-        "email": "demo.user.011@demo.local",
-        "phone": "01070000012",
-        "password": "",
-        "roleId": "role-manager",
-        "employeeId": "emp-demo-012",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1691,29 +1046,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-direct-manager-04.png",
         "password": "01033447012",
         "roleId": "role-manager",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-management",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-013",
-        "name": "Demo User 013",
-        "fullName": "Demo Employee 036",
-        "email": "demo.user.012@demo.local",
-        "phone": "01070000013",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-013",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1834,29 +1171,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-020.png",
         "password": "01093976980",
         "roleId": "role-employee",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-014",
-        "name": "Demo User 014",
-        "fullName": "Demo Employee 037",
-        "email": "demo.user.013@demo.local",
-        "phone": "01070000014",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-014",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1877,29 +1196,11 @@ export const seedDatabase = {
         "photoUrl": "employee-avatars/emp-xlsx-021.png",
         "password": "01116164951",
         "roleId": "role-employee",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-015",
-        "name": "Demo User 015",
-        "fullName": "Demo Employee 038",
-        "email": "demo.user.014@demo.local",
-        "phone": "01070000015",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-015",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1920,29 +1221,11 @@ export const seedDatabase = {
         "photoUrl": "",
         "password": "01004466039",
         "roleId": "role-employee",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-016",
-        "name": "Demo User 016",
-        "fullName": "Demo Employee 039",
-        "email": "demo.user.015@demo.local",
-        "phone": "01070000016",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-016",
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -1963,196 +1246,11 @@ export const seedDatabase = {
         "photoUrl": "",
         "password": "010023827201",
         "roleId": "role-employee",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         "branchId": "b-ahla-manil",
         "departmentId": "d-field-operations",
         "governorateId": "gov-giza",
         "complexId": "cx-ahla-manil",
         "status": "ACTIVE",
-<<<<<<< HEAD
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-017",
-        "name": "Demo User 017",
-        "fullName": "Demo Employee 040",
-        "email": "demo.user.016@demo.local",
-        "phone": "01070000017",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-017",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-018",
-        "name": "Demo User 018",
-        "fullName": "Demo Employee 041",
-        "email": "demo.user.017@demo.local",
-        "phone": "01070000018",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-018",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-019",
-        "name": "Demo User 019",
-        "fullName": "Demo Employee 042",
-        "email": "demo.user.018@demo.local",
-        "phone": "01070000019",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-019",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-020",
-        "name": "Demo User 020",
-        "fullName": "Demo Employee 043",
-        "email": "demo.user.019@demo.local",
-        "phone": "01070000020",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-020",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-021",
-        "name": "Demo User 021",
-        "fullName": "Demo Employee 044",
-        "email": "demo.user.020@demo.local",
-        "phone": "01070000021",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-021",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-022",
-        "name": "Demo User 022",
-        "fullName": "Demo Employee 045",
-        "email": "demo.user.021@demo.local",
-        "phone": "01070000022",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-022",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    },
-    {
-        "id": "u-demo-023",
-        "name": "Demo User 023",
-        "fullName": "Demo Employee 046",
-        "email": "demo.user.022@demo.local",
-        "phone": "01070000023",
-        "password": "",
-        "roleId": "role-employee",
-        "employeeId": "emp-demo-023",
-        "branchId": "b-ahla-manil",
-        "departmentId": "d-field-operations",
-        "governorateId": "gov-giza",
-        "complexId": "cx-ahla-manil",
-        "status": "ACTIVE",
-        "temporaryPassword": true,
-        "mustChangePassword": true,
-        "passkeyEnabled": false,
-        "failedLogins": 0,
-        "lastLoginAt": ""
-    }
-],
-  attendanceEvents: [
-    { id: "att-001", employeeId: "emp-demo-003", type: "PRESENT", eventAt: "2026-04-26T08:02:00", source: "جهاز البصمة", verificationStatus: "verified", geofenceStatus: "inside_branch", requiresReview: false, riskFlags: [] },
-    { id: "att-002", employeeId: "emp-demo-006", type: "PRESENT", eventAt: "2026-04-26T08:08:00", source: "تطبيق الويب", verificationStatus: "verified", geofenceStatus: "inside_branch", requiresReview: false, riskFlags: [] },
-    { id: "att-003", employeeId: "emp-demo-010", type: "LATE", eventAt: "2026-04-26T14:17:00", source: "جهاز البصمة", verificationStatus: "verified", geofenceStatus: "inside_branch", requiresReview: true, riskFlags: ["late"] },
-    { id: "att-004", employeeId: "emp-demo-010", type: "PRESENT", eventAt: "2026-04-26T08:00:00", source: "تطبيق الويب", verificationStatus: "verified", geofenceStatus: "inside_branch", requiresReview: false, riskFlags: [] },
-    { id: "att-005", employeeId: "emp-demo-010", type: "MISSION", eventAt: "2026-04-26T08:30:00", source: "مأمورية", verificationStatus: "verified", geofenceStatus: "inside_mission", requiresReview: false, riskFlags: [] },
-    { id: "att-006", employeeId: "emp-demo-010", type: "PRESENT", eventAt: "2026-04-26T09:11:00", source: "جهاز البصمة", verificationStatus: "verified", geofenceStatus: "inside_branch", requiresReview: false, riskFlags: [] },
-    { id: "att-007", employeeId: "emp-demo-010", type: "ABSENT", eventAt: "2026-04-26T09:30:00", source: "النظام", verificationStatus: "not_checked", geofenceStatus: "unknown", requiresReview: false, riskFlags: [] },
-  ],
-  attendanceDaily: [
-    { id: "day-001", employeeId: "emp-demo-003", date: "2026-04-26", status: "PRESENT", lateMinutes: 0, workMinutes: 480, requiresReview: false },
-    { id: "day-002", employeeId: "emp-demo-006", date: "2026-04-26", status: "PRESENT", lateMinutes: 0, workMinutes: 470, requiresReview: false },
-    { id: "day-003", employeeId: "emp-demo-010", date: "2026-04-26", status: "LATE", lateMinutes: 17, workMinutes: 430, requiresReview: true },
-    { id: "day-004", employeeId: "emp-demo-010", date: "2026-04-26", status: "LEAVE", lateMinutes: 0, workMinutes: 0, requiresReview: false },
-    { id: "day-005", employeeId: "emp-demo-010", date: "2026-04-26", status: "MISSION", lateMinutes: 0, workMinutes: 450, requiresReview: false },
-  ],
-  missions: [
-    { id: "mis-001", employeeId: "emp-demo-010", title: "صيانة شبكة فرع الجيزة", destinationName: "فرع الجيزة", plannedStart: "2026-04-26T09:00", plannedEnd: "2026-04-26T14:00", status: "APPROVED", approvalStatus: "approved", workflow: [{ at: "2026-04-25T12:20:00", by: "Demo User", action: "created" }, { at: "2026-04-25T13:00:00", by: "Demo User", action: "approved" }], createdAt: "2026-04-25T12:20:00" },
-    { id: "mis-002", employeeId: "emp-demo-010", title: "زيارة عميل رئيسي", destinationName: "مدينة نصر", plannedStart: "2026-04-27T10:00", plannedEnd: "2026-04-27T13:00", status: "PENDING", approvalStatus: "pending", workflow: [{ at: "2026-04-26T10:10:00", by: "Demo User", action: "created" }], createdAt: "2026-04-26T10:10:00" },
-  ],
-  leaves: [
-    { id: "lv-001", employeeId: "emp-demo-003", leaveType: { name: "اعتيادية" }, startDate: "2026-04-28", endDate: "2026-04-30", reason: "ظروف عائلية", status: "PENDING", workflow: [{ at: "2026-04-24T11:00:00", by: "Demo User", action: "created" }], createdAt: "2026-04-24T11:00:00" },
-    { id: "lv-002", employeeId: "emp-demo-010", leaveType: { name: "مرضية" }, startDate: "2026-04-26", endDate: "2026-04-27", reason: "متابعة طبية", status: "APPROVED", workflow: [{ at: "2026-04-25T09:30:00", by: "Demo User", action: "created" }, { at: "2026-04-25T10:15:00", by: "Demo User", action: "approved" }], createdAt: "2026-04-25T09:30:00" },
-  ],
-  exceptions: [
-    { id: "exc-001", title: "تأخير بعذر", reason: "ازدحام مروري", employeeId: "emp-demo-010", status: "APPROVED", workflow: [{ at: "2026-04-26T09:40:00", by: "Demo User", action: "created" }, { at: "2026-04-26T10:00:00", by: "Demo User", action: "approved" }], createdAt: "2026-04-26T09:40:00" },
-    { id: "exc-002", title: "نسيان بصمة انصراف", reason: "نسيان تسجيل الانصراف", employeeId: "emp-demo-010", status: "PENDING", workflow: [{ at: "2026-04-25T18:10:00", by: "Demo User", action: "created" }], createdAt: "2026-04-25T18:10:00" },
-  ],
-  locations: [
-    { id: "loc-001", name: "فرع القاهرة", employeeId: "emp-demo-003", status: "ACTIVE", date: "2026-04-26T08:00:00" },
-    { id: "loc-002", name: "فرع الجيزة", employeeId: "emp-demo-010", status: "ACTIVE", date: "2026-04-26T08:30:00" },
-    { id: "loc-003", name: "موقع عميل مدينة نصر", employeeId: "emp-demo-010", status: "VISITED", date: "2026-04-26T11:15:00" },
-  ],
-  locationRequests: [
-    { id: "locreq-001", employeeId: "emp-demo-010", purpose: "فتح الموقع وإرسال اللوكيشن المباشر", requestReason: "", status: "PENDING", requestedAt: "2026-04-26T11:00:00", expiresAt: "2026-04-26T11:45:00" }
-=======
         "temporaryPassword": false,
         "mustChangePassword": false,
         "passkeyEnabled": false,
@@ -2322,18 +1420,14 @@ export const seedDatabase = {
   ],
   locationRequests: [
     { id: "locreq-001", employeeId: "emp-worker-001", purpose: "فتح الموقع وإرسال اللوكيشن المباشر", requestReason: "", status: "PENDING", requestedAt: "2026-04-26T11:00:00", expiresAt: "2026-04-26T11:45:00" }
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ],
   kpiPolicy: {
     evaluationStartDay: 20,
     evaluationEndDay: 25,
     submissionDeadlineDay: 25,
-<<<<<<< HEAD
-=======
     lateReviewGraceDays: 3,
     hardCloseAfterDay: 28,
     remindersEnabled: true,
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     meetingRequired: true,
     description: "يبدأ تقييم الأداء من يوم 20 حتى 25 من كل شهر من خلال جلسة بين الموظف ومديره المباشر. آخر موعد لتسليم التقييمات يوم 25.",
   },
@@ -2346,28 +1440,6 @@ export const seedDatabase = {
     { id: "kc-attendance", code: "ATTENDANCE_COMMITMENT", name: "الالتزام بمواعيد العمل حضورًا وانصرافًا", description: "جزء من السلوكيات والانضباط ويُحسب من بيانات الحضور مع إمكانية مراجعة المدير.", maxScore: 20, weight: 20, sortOrder: 3, parentCode: "BEHAVIOR", scoringType: "auto_manual" },
     { id: "kc-conduct", code: "CONDUCT", name: "حسن التعامل والسلوك مع الزملاء والمديرين", description: "التعاون، الاحترام، والالتزام بسلوك مهني داخل بيئة العمل.", maxScore: 5, weight: 5, sortOrder: 4, parentCode: "BEHAVIOR", scoringType: "manual" },
     { id: "kc-prayer", code: "MOSQUE_PRAYER", name: "الالتزام بالصلاة في المسجد", description: "تقييم التزام الموظف بهذا السلوك المؤسسي خلال الشهر.", maxScore: 5, weight: 5, sortOrder: 5, parentCode: "BEHAVIOR", scoringType: "manual" },
-<<<<<<< HEAD
-    { id: "kc-quran", code: "QURAN_CIRCLE", name: "Demo weekly activity", description: "حضور حلقة تدريس القرآن والتجويد الأسبوعية.", maxScore: 5, weight: 5, sortOrder: 6, parentCode: "BEHAVIOR", scoringType: "manual" },
-    { id: "kc-initiatives", code: "INITIATIVES_DONATIONS", name: "المشاركة في التبرعات والمبادرات", description: "مشاركة إيجابية في المبادرات والتبرعات المعتمدة.", maxScore: 5, weight: 5, sortOrder: 7, parentCode: "INITIATIVES", scoringType: "manual" },
-  ],
-  kpiEvaluations: [
-    { id: "kpie-001", cycleId: "kpi-cycle-current", employeeId: "emp-demo-006", managerEmployeeId: "emp-demo-003", evaluationDate: "2026-04-22", targetScore: 34, efficiencyScore: 17, attendanceScore: 19, conductScore: 5, prayerScore: 4, quranCircleScore: 5, initiativesScore: 4, totalScore: 88, grade: "B", status: "SUBMITTED", managerNotes: "أداء قوي ويحتاج تركيز أكبر في إغلاق المتابعات.", employeeNotes: "تمت جلسة التقييم مع المدير المباشر.", createdAt: "2026-04-22T11:00:00", submittedAt: "2026-04-22T11:30:00" },
-  ],
-  kpiSummaries: [],
-  disputeCommittee: {
-    members: ["Demo Committee 1", "Demo Committee 2", "Demo Committee 3"],
-    employeeIds: ["emp-demo-006", "emp-demo-005", "emp-demo-004", "emp-demo-002", "emp-demo-001"],
-    executiveEscalationTo: "Demo Executive",
-    executiveSecretaryEmployeeId: "emp-demo-002",
-    mandate: "Demo escalation committee mandate for local training data only.",
-    escalationRules: ["عدم قدرة اللجنة على الحل", "المشكلة طارئة وذات طابع معقد يستدعي تدخل الإدارة التنفيذية", "طلب أحد أعضاء اللجنة التصعيد للمدير التنفيذي"],
-  },
-  disputeCases: [
-    { id: "disp-001", title: "تداخل مسؤوليات بين التشغيل والمبيعات", employeeId: "emp-demo-006", category: "إداري", priority: "MEDIUM", description: "طلب تنظيم حدود المسؤولية بين فريقين.", status: "IN_REVIEW", assignedCommittee: ["Demo Committee 1", "Demo Committee 2", "Demo Committee 3"], committeeDecision: "تحت المراجعة", escalatedToExecutive: false, createdAt: "2026-04-26T12:20:00" },
-  ],
-  notifications: [
-    { id: "not-001", title: "Demo notification", body: "طلب اعتيادي يحتاج مراجعة.", status: "UNREAD", isRead: false, type: "INFO", createdAt: "2026-04-26T10:00:00" },
-=======
     { id: "kc-quran", code: "QURAN_CIRCLE", name: "حضور حلقة الشيخ وليد يوسف الأسبوعية", description: "حضور حلقة الشيخ وليد يوسف الأسبوعية لتدريس القرآن والتجويد.", maxScore: 5, weight: 5, sortOrder: 6, parentCode: "BEHAVIOR", scoringType: "manual" },
     { id: "kc-initiatives", code: "INITIATIVES_DONATIONS", name: "المشاركة في التبرعات والمبادرات", description: "مشاركة إيجابية في المبادرات والتبرعات المعتمدة.", maxScore: 5, weight: 5, sortOrder: 7, parentCode: "INITIATIVES", scoringType: "manual" },
   ],
@@ -2404,7 +1476,6 @@ export const seedDatabase = {
   ],
   notifications: [
     { id: "not-001", title: "طلب إجازة جديد من موظف إداري", body: "طلب اعتيادي يحتاج مراجعة.", status: "UNREAD", isRead: false, type: "INFO", createdAt: "2026-04-26T10:00:00" },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     { id: "not-002", title: "تقرير الحضور اليومي جاهز", body: "يمكن تحميل التقرير من صفحة التقارير.", status: "READ", isRead: true, type: "SUCCESS", createdAt: "2026-04-26T09:00:00" },
   ],
   integrationSettings: [
@@ -2438,16 +1509,6 @@ export const seedDatabase = {
     { id: "set-010", key: "security.requireDeviceApproval", value: true, scope: "security" },
   ],
   tasks: [
-<<<<<<< HEAD
-    { id: "task-001", title: "مراجعة طلبات الإجازات المعلقة", description: "مراجعة كل الطلبات القديمة أكثر من 48 ساعة وإغلاقها بقرار واضح.", employeeId: "emp-demo-002", assignedByEmployeeId: "emp-demo-001", priority: "HIGH", status: "OPEN", dueDate: "2026-04-30", createdAt: "2026-04-26T10:00:00" },
-    { id: "task-002", title: "تجهيز تقرير الحضور الشهري", description: "إعداد تقرير PDF/Excel وتسليمه للمدير التنفيذي.", employeeId: "emp-demo-002", assignedByEmployeeId: "emp-demo-001", priority: "MEDIUM", status: "IN_PROGRESS", dueDate: "2026-04-30", createdAt: "2026-04-26T10:20:00" },
-  ],
-  employeeDocuments: [
-    { id: "doc-001", employeeId: "emp-demo-002", title: "بطاقة الرقم القومي", documentType: "ID_CARD", status: "ACTIVE", fileName: "", fileUrl: "", expiresOn: "2027-12-31", notes: "مثال Demo لتتبع المستندات.", createdAt: "2026-04-26T09:00:00" },
-  ],
-  leaveBalances: [
-    { id: "lb-demo-002", employeeId: "emp-demo-002", annualTotal: 21, casualTotal: 7, sickTotal: 15, usedDays: 0, remainingDays: 28, updatedAt: "2026-04-26T09:00:00" },
-=======
     { id: "task-001", title: "مراجعة طلبات الإجازات المعلقة", description: "مراجعة كل الطلبات القديمة أكثر من 48 ساعة وإغلاقها بقرار واضح.", employeeId: "emp-executive-secretary", assignedByEmployeeId: "emp-executive-director", priority: "HIGH", status: "OPEN", dueDate: "2026-04-30", createdAt: "2026-04-26T10:00:00" },
     { id: "task-002", title: "تجهيز تقرير الحضور الشهري", description: "إعداد تقرير PDF/Excel وتسليمه للمدير التنفيذي.", employeeId: "emp-executive-secretary", assignedByEmployeeId: "emp-executive-director", priority: "MEDIUM", status: "IN_PROGRESS", dueDate: "2026-04-30", createdAt: "2026-04-26T10:20:00" },
   ],
@@ -2456,18 +1517,13 @@ export const seedDatabase = {
   ],
   leaveBalances: [
     { id: "lb-executive-secretary", employeeId: "emp-executive-secretary", annualTotal: 21, casualTotal: 7, sickTotal: 15, usedDays: 0, remainingDays: 28, updatedAt: "2026-04-26T09:00:00" },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ],
   announcementReads: [],
   policyAcknowledgements: [],
   workflowEscalations: [],
   attendanceAlerts: [],
   dailyReports: [
-<<<<<<< HEAD
-    { id: "dr-001", employeeId: "emp-demo-002", reportDate: "2026-04-29", achievements: "استكمال تطوير نظام الموارد البشرية وتجهيز خطة التشغيل.", blockers: "يحتاج تفعيل Supabase الحقيقي لاختبار Live.", tomorrowPlan: "مراجعة الصلاحيات وتدريب المستخدمين.", supportNeeded: "بيانات الدخول النهائية للموظفين.", mood: "GOOD", status: "SUBMITTED", createdAt: "2026-04-29T09:00:00" }
-=======
     { id: "dr-001", employeeId: "emp-executive-secretary", reportDate: "2026-04-29", achievements: "استكمال تطوير نظام الموارد البشرية وتجهيز خطة التشغيل.", blockers: "يحتاج تفعيل Supabase الحقيقي لاختبار Live.", tomorrowPlan: "مراجعة الصلاحيات وتجربة المستخدمين.", supportNeeded: "بيانات الدخول النهائية للموظفين.", mood: "GOOD", status: "SUBMITTED", createdAt: "2026-04-29T09:00:00" }
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ],
   smartAlerts: [],
   importBatches: [],
@@ -2483,11 +1539,7 @@ const importedRoster = []
 for (const [suffix, fullName, phone, jobTitle, hireDate, preferredEmail, rosterRoleId = "role-employee", rosterDepartmentId = "d-ops"] of importedRoster) {
   const id = `emp-xlsx-${suffix}`;
   const userId = `u-xlsx-${suffix}`;
-<<<<<<< HEAD
-  const email = preferredEmail || `emp.${phone}@demo.local`;
-=======
   const email = preferredEmail || `emp.${phone}@ahla-shabab.org`;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   if (!seedDatabase.employees.some((employee) => employee.id === id || employee.phone === phone)) {
     seedDatabase.employees.push({
       id,
@@ -2515,11 +1567,7 @@ for (const [suffix, fullName, phone, jobTitle, hireDate, preferredEmail, rosterR
       fullName,
       email,
       phone,
-<<<<<<< HEAD
-      password: "",
-=======
       password: "LocalLoginDisabled#RotateInSupabase2026!",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       roleId: rosterRoleId,
       employeeId: id,
       branchId: "b-ahla-manil",
@@ -2536,52 +1584,5 @@ for (const [suffix, fullName, phone, jobTitle, hireDate, preferredEmail, rosterR
   }
 }
 
-<<<<<<< HEAD
-const canonicalRosterUpdates = [
-  ["emp-demo-001", "Demo Employee 001", "01070000024", "المدير لتنفيذي للجمعية", "", "role-executive", "d-executive", "ACTIVE", false],
-  ["emp-demo-002", "Demo Employee 002", "01070000025", "السكرتير التنفيذي + تكنولوجيا المعلومات (IT) والبرمجة", "emp-demo-001", "role-executive-secretary", "d-executive", "ACTIVE", false],
-  ["emp-demo-006", "Demo Employee 003", "01070000026", "مدير تشغيل 1", "emp-demo-001", "role-manager", "d-field-management", "ACTIVE", false],
-  ["emp-demo-010", "Demo Employee 004", "01070000027", "مسؤول اللجنة الطبية", "emp-demo-006", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-004", "Demo Employee 005", "01070000028", "مسؤول الموارد البشرية + الاعلام", "emp-demo-001", "role-manager", "d-hr", "ACTIVE", false],
-  ["emp-demo-005", "Demo Employee 006", "01070000029", "مدير تشغيل 2", "emp-demo-001", "role-manager", "d-field-management", "ACTIVE", false],
-  ["emp-demo-012", "Demo Employee 007", "01070000030", "مسؤول لجنة أسرة كريمة", "emp-demo-006", "role-manager", "d-field-management", "ACTIVE", false],
-  ["emp-demo-008", "Demo Employee 008", "01070000031", "ادارة اللوجيستك", "emp-demo-001", "role-manager", "d-field-management", "ACTIVE", false],
-  ["emp-demo-020", "Demo Employee 009", "01070000032", "موظف مشتريات", "emp-demo-008", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-022", "Demo Employee 010", "01070000033", "سائق العربية عزيزة", "emp-demo-008", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-021", "Demo Employee 011", "01070000034", "سائق العربية مسك", "emp-demo-008", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-023", "Demo Employee 012", "01070000035", "مدير الحركة سائق", "emp-demo-008", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-019", "Demo Employee 013", "01070000036", "مسؤول الاعلام", "emp-demo-004", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-003", "Demo Employee 014", "01070000037", "مدير الشؤون الادارية", "emp-demo-001", "role-manager", "d-field-management", "ACTIVE", false],
-  ["emp-demo-014", "Demo Employee 015", "01070000038", "شؤون ادارية", "emp-demo-003", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-015", "Demo Employee 016", "01070000039", "شؤون إدارية", "emp-demo-003", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-011", "Demo Employee 017", "01070000040", "مسؤول المشروعات و طلاب العلم", "emp-demo-006", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-009", "Demo Employee 018", "01070000041", "المشرف الفني لمجمع منيل شيحة", "emp-demo-001", "role-manager", "d-field-management", "ACTIVE", false],
-  ["emp-demo-016", "Demo Employee 019", "01070000042", "موظف بالمجمع", "emp-demo-009", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-013", "Demo Employee 020", "01070000043", "موظف لجنة أسرة كريمة", "emp-demo-012", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-018", "Demo Employee 021", "01070000044", "طباخ بمجمع أحلى شباب", "emp-demo-009", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-017", "Demo Employee 022", "01070000045", "موظف بالمجمع", "emp-demo-009", "role-employee", "d-field-operations", "ACTIVE", false],
-  ["emp-demo-007", "Demo Employee 023", "01070000007", "مدير مباشر", "emp-demo-001", "role-manager", "d-field-management", "INACTIVE", true],
-];
-
-for (const [employeeId, fullName, phone, jobTitle, managerEmployeeId, roleId, departmentId, status, isDeleted] of canonicalRosterUpdates) {
-  const employee = seedDatabase.employees.find((item) => item.id === employeeId);
-  if (!employee) continue;
-  Object.assign(employee, { fullName, phone, jobTitle, managerEmployeeId, roleId, departmentId, status, isDeleted });
-  const user = seedDatabase.users.find((item) => item.id === employee.userId || item.employeeId === employeeId);
-  if (user) Object.assign(user, { name: fullName, fullName, phone, roleId, departmentId, status });
-}
-
-const demoVaultUser = seedDatabase.users.find((user) => user.id === "u-demo-002");
-const demoVaultEmployee = seedDatabase.employees.find((employee) => employee.id === "emp-demo-002");
-if (demoVaultUser) {
-  demoVaultUser.email = "demo.executive.secretary@demo.local";
-  demoVaultUser.loginAliases = ["demo.executive.secretary@demo.local", "demo.executive.secretary@demo.local"];
-}
-if (demoVaultEmployee) demoVaultEmployee.email = "demo.executive.secretary@demo.local";
-
-seedDatabase.meta.version = 13;
-seedDatabase.meta.updatedAt = "2026-04-30T09:00:00";
-=======
 seedDatabase.meta.version = 12;
 seedDatabase.meta.updatedAt = "2026-04-29T18:30:00";
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

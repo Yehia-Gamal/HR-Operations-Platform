@@ -61,31 +61,6 @@ truncate tmp_ahla_roster_027;
 
 insert into tmp_ahla_roster_027 (employee_code, full_name, phone, email, job_title, role_slug, department_code, manager_code, hire_date)
 values
-<<<<<<< HEAD
-  ('EMP-001', 'الشيخ محمد يوسف', '01070000001', 'demo.user.024@demo.local', 'المدير التنفيذي', 'executive', 'EXEC', null, '2020-01-01'),
-  ('EMP-002', 'يحيى جمال السبع', '01070000002', 'demo.executive.secretary@demo.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
-  ('EMP-003', 'أحمد محجوب', '01070000003', 'demo.user.029@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-004', 'بلال محمد الشاكر', '01070000004', 'demo.user.030@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-005', 'ياسر فتحي نور الدين', '01070000005', 'demo.user.031@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-006', 'محمد عبد الباسط أبو عمار', '01070000006', 'demo.user.032@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-007', 'مصطفي فايد', '01070000007', 'demo.user.033@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-008', 'مصطفى أحمد', '01070000008', 'demo.user.034@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-009', 'يوسف رسمي شعبان', '01070000009', 'demo.user.035@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-010', 'محمد عبد العظيم', '01070000010', 'demo.user.036@demo.local', 'موظف فريق أبو عمار', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-011', 'هاني احمد نصير', '01070000011', 'demo.user.037@demo.local', 'موظف فريق أبو عمار', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-012', 'حامد محمود العمدة', '01070000012', 'demo.user.038@demo.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
-  ('EMP-013', 'عبد الرحمن حسين', '01070000013', 'demo.user.039@demo.local', 'موظف تحت إشراف حامد', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
-  ('EMP-014', 'عبدالله حسين حافظ', '01070000014', 'demo.user.040@demo.local', 'موظف فريق أحمد محجوب', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-015', 'عبد القادر جمال', '01070000015', 'demo.user.041@demo.local', 'موظف فريق أحمد محجوب', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-016', 'إسماعيل عبدالله', '01070000016', 'demo.user.042@demo.local', 'موظف فريق يوسف رسمي', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-017', 'حسام عفيفي', '01070000017', 'demo.user.043@demo.local', 'موظف فريق يوسف رسمي', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-018', 'محمد عبده مزار', '01070000018', 'demo.user.044@demo.local', 'موظف فريق يوسف رسمي', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-019', 'عمار محمد', '01070000019', 'demo.user.045@demo.local', 'موظف فريق بلال', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
-  ('EMP-020', 'محمد سيد', '01070000020', 'demo.user.046@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-021', 'ربيع محمد', '01070000021', 'demo.user.047@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-022', 'حاتم محمد سالم', '01070000022', 'demo.user.048@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-023', 'طارق سيد إبراهيم', '01070000023', 'demo.user.049@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01');
-=======
   ('EMP-001', 'المدير التنفيذي', '01020000001', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', null, '2020-01-01'),
   ('EMP-002', 'السكرتير التنفيذي', '01020000002', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
   ('EMP-003', 'مدير مباشر رابع', '01020000003', 'ahmed.mahgoob@ahla.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
@@ -109,7 +84,6 @@ values
   ('EMP-021', 'موظف تشغيلي 12', '01020000021', 'employee.012@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
   ('EMP-022', 'موظف تشغيلي 03', '01020000022', 'employee.003@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
   ('EMP-023', 'موظف تشغيلي 09', '01020000023', 'tarek.ibrahim@ahla.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01');
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 -- Upsert the canonical roster.
 insert into public.employees (
@@ -179,11 +153,7 @@ where e.full_name = r.full_name
 update public.profiles p
 set employee_id = emp.id,
     role_id = role.id,
-<<<<<<< HEAD
-    full_name = 'يحيى جمال السبع',
-=======
     full_name = 'السكرتير التنفيذي',
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     phone = coalesce(p.phone, emp.phone),
     branch_id = emp.branch_id,
     department_id = emp.department_id,
@@ -194,22 +164,14 @@ set employee_id = emp.id,
 from public.employees emp
 join public.roles role on role.slug = 'executive-secretary'
 where emp.employee_code = 'EMP-002'
-<<<<<<< HEAD
-  and lower(p.email) in ('demo.owner@example.invalid', 'demo.owner@example.invalid', 'demo.executive.secretary@demo.local');
-=======
   and lower(p.email) in ('legacy.secretary.01@removed.local', 'legacy.secretary.02@removed.local', 'executive.secretary@organization.local');
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 update public.employees e
 set user_id = p.id,
     updated_at = now()
 from public.profiles p
 where e.employee_code = 'EMP-002'
-<<<<<<< HEAD
-  and lower(p.email) = 'demo.owner@example.invalid';
-=======
   and lower(p.email) = 'legacy.secretary.01@removed.local';
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 -- Create/repair Auth + Profile accounts for canonical roster rows when absent.
 do $$
@@ -338,11 +300,7 @@ where (d.code = 'EXEC' and e.employee_code = 'EMP-001')
    or (d.code = 'OPS' and e.employee_code = 'EMP-006')
    or (d.code = 'HR' and e.employee_code = 'EMP-002');
 
-<<<<<<< HEAD
--- Close old imported duplicates for Sheikh Mohamed / Yihia aliases, then attach
-=======
 -- Close old imported duplicates for old executive/secretary aliases, then attach
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 -- any remaining active orphan employee directly under the executive root.
 with canonical as (
   select id from public.employees where employee_code in ('EMP-001','EMP-002')
@@ -357,17 +315,10 @@ where e.id not in (select id from canonical)
   and (
     e.employee_code in ('EMP-192404E9','EMP-F9889BBE')
     or
-<<<<<<< HEAD
-    lower(coalesce(e.email, '')) in ('demo.owner@example.invalid','demo.owner@example.invalid')
-    or e.full_name in ('محمد احمد يوسف','يحيي جمال ألسبع')
-    or (e.full_name like '%يحيي جمال%' and e.employee_code <> 'EMP-002')
-    or (e.full_name like '%محمد احمد يوسف%' and e.employee_code <> 'EMP-001')
-=======
     lower(coalesce(e.email, '')) in ('legacy.secretary.01@removed.local','legacy.secretary.02@removed.local')
     or e.full_name in ('اسم تنفيذي قديم','اسم سكرتارية قديم')
     or (e.full_name like '%السكرتير التنفيذي جمال%' and e.employee_code <> 'EMP-002')
     or (e.full_name like '%اسم تنفيذي قديم%' and e.employee_code <> 'EMP-001')
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   );
 
 with root as (

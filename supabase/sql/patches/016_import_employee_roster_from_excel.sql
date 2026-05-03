@@ -35,13 +35,8 @@ insert into public.employees (
 select
   'EMP-DEMO-001',
   'موظف تجربة آمن',
-<<<<<<< HEAD
-  '01070000051',
-  'demo.user.028@demo.local',
-=======
   '01000000000',
   'demo.employee@ahla-shabab.local',
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   'موظف تجربة',
   (select id from public.roles where slug = 'employee' limit 1),
   (select id from public.branches where code = 'MAIN' limit 1),

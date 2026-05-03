@@ -4,11 +4,7 @@
 
 1. تفعيل Supabase الحقيقي وعدم الاعتماد على الوضع المحلي إلا للتجربة.
 2. إضافة Edge Function لإعادة تعيين كلمة المرور مع سجل مراجعة إلزامي.
-<<<<<<< HEAD
-3. تفعيل MFA للإدارة ويحيى والشيخ محمد.
-=======
 3. تفعيل MFA للإدارة والسكرتير التنفيذي والمدير التنفيذي.
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 4. تحديد IP/Device Trust للوحة الإدارة.
 5. تنبيهات عند محاولات دخول فاشلة أو تغيير صلاحيات.
 6. Backup يومي تلقائي من قاعدة البيانات والملفات.
@@ -24,11 +20,7 @@
 
 ## الإدارة
 
-<<<<<<< HEAD
-1. مسار اعتماد متعدد: المدير المباشر → يحيى → الشيخ محمد حسب نوع الطلب.
-=======
 1. مسار اعتماد متعدد: المدير المباشر → السكرتير التنفيذي → المدير التنفيذي حسب نوع الطلب.
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 2. صلاحيات تفصيلية لكل صفحة وزر، وليس لكل صفحة فقط.
 3. تقارير PDF شهرية بشعار الجمعية.
 4. لوحة متابعة مباشرة للحضور والانصراف والموقع.

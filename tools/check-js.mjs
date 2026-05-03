@@ -1,34 +1,18 @@
-<<<<<<< HEAD
-import { execFileSync } from 'node:child_process';
-import { join } from 'node:path';
-=======
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Script } from 'node:vm';
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 const root = process.cwd();
 const files = [
   'shared/js/api.js',
   'shared/js/app-admin.js',
   'shared/js/employee-app.js',
-<<<<<<< HEAD
-=======
   'shared/js/executive-app.js',
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   'shared/js/supabase-api.js',
   'shared/js/register-sw.js',
   'sw.js',
 ];
 
-<<<<<<< HEAD
-const failures = [];
-for (const file of files) {
-  try {
-    execFileSync('node', ['--check', join(root, file)], { stdio: 'pipe' });
-  } catch (error) {
-    failures.push(`${file}: ${error.stderr?.toString() || error.message}`);
-=======
 function moduleToScriptForSyntaxCheck(source) {
   return source
     // Remove static imports; URL query strings in imports are valid in browser modules but not useful for this syntax check.
@@ -51,7 +35,6 @@ for (const file of files) {
     new Script(moduleToScriptForSyntaxCheck(readFileSync(full, 'utf8')), { filename: file });
   } catch (error) {
     failures.push(`${file}: ${error.message}`);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   }
 }
 

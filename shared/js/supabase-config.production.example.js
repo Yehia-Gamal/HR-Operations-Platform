@@ -1,23 +1,3 @@
-<<<<<<< HEAD
-// انسخ هذا الملف إلى shared/js/supabase-config.js عند النشر الحقيقي، ثم ضع بيانات مشروع Supabase بعد تشغيل كل SQL patches حتى 029.
-window.HR_SUPABASE_CONFIG = Object.freeze({
-  enabled: true,
-  strict: true,
-  projectId: "ahla-shabab-hr",
-  projectRef: "YOUR_PROJECT_REF",
-  url: "https://YOUR_PROJECT_REF.supabase.co",
-  anonKey: "YOUR_SUPABASE_ANON_OR_PUBLISHABLE_KEY",
-  storage: { avatarsBucket: "avatars", punchSelfiesBucket: "punch-selfies", attachmentsBucket: "employee-attachments" },
-  realtime: { enabled: true },
-  push: { vapidPublicKey: "YOUR_VAPID_PUBLIC_KEY" },
-  security: { allowLocalDemo: false, requireStrongPasswords: true, attachmentSignedUrlSeconds: 3600 },
-  adminGateway: { enabled: true, accessCode: "CHANGE_THIS_GATE_CODE", sessionMinutes: 480, maxAttempts: 5, lockMinutes: 15 },
-  deployment: { expectedPatch: "034_server_runtime_push_endpoint_completion.sql", packageVersion: "server-runtime-push-20260501-01" },
-  cacheVersion: "server-runtime-push-20260501-01",
-});
-window.__HR_SUPABASE_CONFIG_LOADED__ = true;
-window.__HR_SUPABASE_CONFIG_VERSION__ = "server-runtime-push-20260501-01";
-=======
 // Production-safe Supabase config example. Copy to shared/js/supabase-config.js for deployment.
 // Do not put service_role keys in browser files.
 // Local/production Supabase configuration.
@@ -75,4 +55,3 @@ window.__HR_SUPABASE_CONFIG_VERSION__ = "management-suite-20260502-01";
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render, { once: true });
   else render();
 })();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

@@ -1,20 +1,9 @@
-<<<<<<< HEAD
-import { seedDatabase } from "./database.js?v=server-runtime-push-20260501-01";
-import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=server-runtime-push-20260501-01";
-
-const STORAGE_KEY = "hr-attendance.local-db.v15";
-const LEGACY_KEYS = ["hr-attendance.local-db.v14", "hr-attendance.local-db.v13", "hr-attendance.local-db.v12", "hr-attendance.local-db.v11", "hr-attendance.local-db.v10", "hr-attendance.local-db.v9", "hr-attendance.local-db.v8", "hr-attendance.local-db.v7", "hr-attendance.local-db.v6", "hr-attendance.local-db.v5", "hr-attendance.local-db.v4", "hr-attendance.local-db.v3"];
-const SESSION_KEY = "hr-attendance.session-user";
-const PASSWORD_ACCESS_PACK_VERSION = "phone-login-visible-passwords-20260430-02";
-const PASSWORD_VAULT_ADMIN_PHONE = "01070000025";
-=======
 import { seedDatabase } from "./database.js?v=management-suite-20260502-01";
 import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=management-suite-20260502-01";
 
 const STORAGE_KEY = "hr-attendance.local-db.v19-management-suite";
 const LEGACY_KEYS = ["hr-attendance.local-db.v14", "hr-attendance.local-db.v13", "hr-attendance.local-db.v12", "hr-attendance.local-db.v11", "hr-attendance.local-db.v10", "hr-attendance.local-db.v9", "hr-attendance.local-db.v8", "hr-attendance.local-db.v7", "hr-attendance.local-db.v6", "hr-attendance.local-db.v5", "hr-attendance.local-db.v4", "hr-attendance.local-db.v3"];
 const SESSION_KEY = "hr-attendance.session-user";
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 const clone = (value) => JSON.parse(JSON.stringify(value ?? null));
 const DEFAULT_COMPLEX = {
   name: "مجمع منيل شيحة",
@@ -24,8 +13,6 @@ const DEFAULT_COMPLEX = {
   radiusMeters: 300,
   maxAccuracyMeters: 500,
 };
-<<<<<<< HEAD
-=======
 const KPI_POLICY_DEFAULTS = {
   evaluationStartDay: 20,
   evaluationEndDay: 25,
@@ -33,7 +20,6 @@ const KPI_POLICY_DEFAULTS = {
   meetingRequired: true,
   totalScore: 100,
 };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 function makeId(prefix) {
   const uuid = globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
@@ -67,56 +53,14 @@ function makeStrongPassword() {
   return `Ahla@${random}9`;
 }
 
-<<<<<<< HEAD
-function makePhoneLoginPassword(user = {}) {
-  const phone = normalizePhone(user.phone || "");
-  const digits = phone.replace(/\D/g, "");
-  const suffix = (digits.slice(-4) || String(user.id || user.email || "0000").replace(/\D/g, "").slice(-4) || "0000").padStart(4, "0");
-  return `Ahla@${suffix}#2026A`;
-}
-
-function upsertCredentialVault(db, user, password, status = "PHONE_LOGIN_READY") {
-  db.credentialVault ||= [];
-  db.credentialVault = db.credentialVault.filter((item) => !(item.userId === user.id && item.status === status));
-  db.credentialVault.unshift({
-    id: `cred-${status.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${user.id}`,
-    userId: user.id,
-    employeeId: user.employeeId || "",
-    email: user.email || "",
-    phone: user.phone || "",
-    temporaryPassword: password,
-    status,
-    createdAt: now(),
-    createdBy: "system",
-    note: "كلمة مرور قوية جاهزة للدخول برقم الهاتف أو البريد، وتظهر في خزنة كلمات المرور للإدارة.",
-  });
-}
-
-function needsPasswordAccessPack(db = {}) {
-  if (db.meta?.passwordAccessPack !== PASSWORD_ACCESS_PACK_VERSION) return true;
-  return (db.users || []).some((user) => {
-    const password = String(user.password || "");
-    return !user.phone || password.length < 10 || user.status !== "ACTIVE";
-  });
-}
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function inferEmail(db, body = {}, employee = null) {
   const direct = normalizeEmail(body.email || employee?.email || "");
   if (direct) return direct;
   const phone = normalizePhone(body.phone || employee?.phone || "");
-<<<<<<< HEAD
-  if (phone) return `emp.${phone}@demo.local`;
-  let email = `employee.${Date.now().toString(36)}@demo.local`;
-  let i = 1;
-  while ((db.users || []).some((u) => normalizeEmail(u.email) === email)) email = `employee.${Date.now().toString(36)}.${i++}@demo.local`;
-=======
   if (phone) return `emp.${phone}@ahla-shabab.local`;
   let email = `employee.${Date.now().toString(36)}@ahla-shabab.local`;
   let i = 1;
   while ((db.users || []).some((u) => normalizeEmail(u.email) === email)) email = `employee.${Date.now().toString(36)}.${i++}@ahla-shabab.local`;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   return email;
 }
 
@@ -128,10 +72,6 @@ function normalizeDb(db) {
   const base = clone(seedDatabase);
   if (db?.meta?.orgProfile !== "ahla-shabab-manil-shiha-v2") db = {};
   const merged = { ...base, ...db };
-<<<<<<< HEAD
-  const hasPasswordAccessPack = merged.meta?.passwordAccessPack === PASSWORD_ACCESS_PACK_VERSION;
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   for (const key of Object.keys(base)) {
     if (Array.isArray(base[key])) merged[key] = Array.isArray(merged[key]) ? merged[key] : clone(base[key]);
   }
@@ -144,26 +84,7 @@ function normalizeDb(db) {
   for (const seedUser of base.users || []) {
     const user = (merged.users || []).find((item) => item.id === seedUser.id || (seedUser.phone && item.phone === seedUser.phone) || (seedUser.email && item.email === seedUser.email));
     if (!user) continue;
-<<<<<<< HEAD
-    Object.assign(user, {
-      name: seedUser.name,
-      fullName: seedUser.fullName,
-      phone: seedUser.phone,
-      email: seedUser.email,
-      loginAliases: clone(seedUser.loginAliases || user.loginAliases || []),
-      roleId: seedUser.roleId,
-      departmentId: seedUser.departmentId,
-      status: hasPasswordAccessPack ? "ACTIVE" : seedUser.status,
-    });
-    if (!hasPasswordAccessPack && ["u-demo-002", "u-demo-004"].includes(seedUser.id)) {
-      user.password = seedUser.password || "";
-      user.failedLogins = 0;
-      user.status = "ACTIVE";
-    }
-    if (!hasPasswordAccessPack && String(seedUser.id || "").startsWith("u-xlsx-")) {
-=======
     if (String(seedUser.id || "").startsWith("u-xlsx-")) {
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       user.password = seedUser.password;
       user.status = "ACTIVE";
       user.failedLogins = 0;
@@ -176,19 +97,6 @@ function normalizeDb(db) {
   for (const seedEmployee of base.employees || []) {
     const employee = (merged.employees || []).find((item) => item.id === seedEmployee.id || (seedEmployee.phone && item.phone === seedEmployee.phone) || (seedEmployee.email && item.email === seedEmployee.email));
     if (!employee) continue;
-<<<<<<< HEAD
-    Object.assign(employee, {
-      fullName: seedEmployee.fullName,
-      phone: seedEmployee.phone,
-      jobTitle: seedEmployee.jobTitle,
-      roleId: seedEmployee.roleId,
-      departmentId: seedEmployee.departmentId,
-      managerEmployeeId: seedEmployee.managerEmployeeId,
-      status: seedEmployee.status,
-      isDeleted: seedEmployee.isDeleted,
-    });
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     if (String(seedEmployee.id || "").startsWith("emp-xlsx-")) {
       employee.status = "ACTIVE";
       employee.isDeleted = false;
@@ -197,38 +105,6 @@ function normalizeDb(db) {
       if (seedEmployee.userId) employee.userId = seedEmployee.userId;
     }
   }
-<<<<<<< HEAD
-  for (const user of merged.users || []) {
-    if (user.status === "LOCKED") user.status = "ACTIVE";
-  }
-  if (needsPasswordAccessPack(merged)) {
-    for (const user of merged.users || []) {
-      const employee = findById(merged.employees || [], user.employeeId);
-      if (employee) {
-        user.phone = user.phone || employee.phone || "";
-        user.email = user.email || employee.email || "";
-        user.fullName = user.fullName || employee.fullName || user.name || "";
-        user.name = user.name || employee.fullName || user.fullName || "";
-        if (!employee.userId) employee.userId = user.id;
-      }
-      const password = makePhoneLoginPassword(user);
-      user.password = password;
-      user.status = "ACTIVE";
-      user.failedLogins = 0;
-      user.temporaryPassword = true;
-      user.mustChangePassword = true;
-      user.loginAliases = Array.from(new Set([
-        ...(user.loginAliases || []),
-        user.phone,
-        normalizePhone(user.phone || ""),
-        user.email,
-      ].filter(Boolean)));
-      upsertCredentialVault(merged, user, password);
-    }
-    merged.meta = { ...(merged.meta || {}), passwordAccessPack: PASSWORD_ACCESS_PACK_VERSION, passwordAccessPackAppliedAt: now() };
-  }
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   merged.meta = { ...(base.meta || {}), ...(merged.meta || {}), normalizedAt: now() };
   merged.permissions ||= clone(base.permissions);
   if (!merged.permissions.some((permission) => permission.scope === "attendance:self")) merged.permissions.push({ id: "perm-attendance-self", scope: "attendance:self", name: "تسجيل بصمة الموظف" });
@@ -243,10 +119,6 @@ function normalizeDb(db) {
   ["attendance:review", "مراجعة البصمات المرفوضة"],
   ["devices:manage", "إدارة الأجهزة المعتمدة"],
   ["security:view", "عرض سجل الأمان"],
-<<<<<<< HEAD
-  ["demo:manage", "إدارة وضع التدريب"],
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ["tasks:manage", "إدارة المهام الداخلية"],
   ["documents:manage", "إدارة مستندات الموظفين"],
   ["leave:balance", "إدارة أرصدة الإجازات"],
@@ -269,15 +141,12 @@ function normalizeDb(db) {
   ["sensitive-actions:approve", "اعتماد العمليات الحساسة"],
   ["sensitive-actions:request", "طلب تنفيذ عملية حساسة"],
   ["executive:presence-map", "عرض خريطة الحضور التنفيذية"],
-<<<<<<< HEAD
-=======
   ["attendance:risk", "مركز تقييم خطر البصمة"],
   ["decisions:manage", "إدارة سجل القرارات الإدارية"],
   ["decisions:acknowledge", "تأكيد الاطلاع على القرارات"],
   ["disputes:minutes", "محاضر لجنة حل الخلافات"],
   ["reports:monthly-pdf-auto", "تقارير PDF شهرية تلقائية"],
   ["manager:team-only", "قصر المدير على فريقه فقط"],
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ["approvals:manage", "إدارة الاعتمادات الحساسة"],
   ["alerts:manage", "إدارة التنبيهات الذكية"],
   ["attendance:rules", "إدارة قواعد الحضور الذكية"],
@@ -289,15 +158,12 @@ function normalizeDb(db) {
   ["database:migrations", "متابعة تحديثات قاعدة البيانات"],
   ["backup:auto", "إدارة النسخ الاحتياطي التلقائي"],
   ["action-center:self", "صفحة مطلوب مني الآن للموظف"],
-<<<<<<< HEAD
-=======
   ["hr:operations", "لوحة عمليات الموارد البشرية"],
   ["organization:manage", "إدارة هيكل الإدارة والفرق"],
   ["team:dashboard", "لوحة الفريق للمدير المباشر"],
   ["disputes:escalate", "تصعيد الشكاوى للسكرتير والتنفيذي"],
   ["reports:pdf", "تصدير تقارير PDF/HTML"],
   ["reports:excel", "تصدير تقارير Excel/CSV"],
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ]) {
     if (!merged.permissions.some((permission) => permission.scope === scope)) merged.permissions.push({ id: `perm-${scope.replace(/[^a-z0-9]+/gi, "-")}`, scope, name });
   }
@@ -311,11 +177,6 @@ function normalizeDb(db) {
   if (employeeRole && !employeeRole.permissions.includes("documents:self")) employeeRole.permissions.push("documents:self");
   if (employeeRole && !employeeRole.permissions.includes("requests:self")) employeeRole.permissions.push("requests:self");
   if (employeeRole && !employeeRole.permissions.includes("daily-report:self")) employeeRole.permissions.push("daily-report:self");
-<<<<<<< HEAD
-  for (const role of merged.roles || []) {
-    if (["role-admin", "role-executive", "role-executive-secretary", "role-hr"].includes(role.id) || ["admin", "executive", "executive-secretary", "hr-manager"].includes(role.slug)) role.permissions = ["*"];
-  }
-=======
   const rolePermissionProfiles = {
     admin: ["*"],
     "executive-secretary": ["*"],
@@ -376,7 +237,6 @@ function normalizeDb(db) {
     executiveSecretaryEmployeeId: "emp-executive-secretary",
     mandate: "يتم استقبال الشكاوى داخل لجنة حل المشاكل والخلافات، ثم التنسيق أو التصعيد للمدير التنفيذي عن طريق السكرتير التنفيذي.",
   };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   merged.auditLogs ||= [];
   merged.attendanceDaily ||= [];
   merged.locationRequests ||= [];
@@ -438,11 +298,7 @@ function normalizeDb(db) {
       requireReviewMissingCheckout: true,
     },
     backupPolicy: { enabled: true, keepLast: 30, dailyAt: "20:00", includeAudit: true },
-<<<<<<< HEAD
-    supabaseExpectedPatch: "034_server_runtime_push_endpoint_completion.sql",
-=======
     supabaseExpectedPatch: "032_pre_publish_role_portal_consistency.sql",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   });
   merged.attendanceRuleRuns ||= clone(base.attendanceRuleRuns || []);
   merged.endOfDayReports ||= clone(base.endOfDayReports || []);
@@ -479,11 +335,7 @@ function loadDb() {
 }
 
 function saveDb(db) {
-<<<<<<< HEAD
-  db.meta = { ...(db.meta || {}), updatedAt: now(), version: 15, orgProfile: "ahla-shabab-manil-shiha-v2" };
-=======
   db.meta = { ...(db.meta || {}), updatedAt: now(), version: 14, orgProfile: "ahla-shabab-manil-shiha-v2" };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
   } catch (error) {
@@ -539,11 +391,7 @@ function notify(db, title, body = "", type = "INFO") {
   });
 }
 
-<<<<<<< HEAD
-function notifyEmployee(db, employeeId, title, body = "", type = "INFO", extra = {}) {
-=======
 function notifyEmployee(db, employeeId, title, body = "", type = "INFO") {
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   if (!employeeId) return;
   const employee = findById(db.employees, employeeId);
   const user = (db.users || []).find((item) => item.employeeId === employeeId) || findById(db.users, employee?.userId);
@@ -556,21 +404,10 @@ function notifyEmployee(db, employeeId, title, body = "", type = "INFO") {
     status: "UNREAD",
     isRead: false,
     type,
-<<<<<<< HEAD
-    ...extra,
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     createdAt: now(),
   });
 }
 
-<<<<<<< HEAD
-function notifySystemManagers(db, title, body = "", type = "ACTION_REQUIRED") {
-  for (const employeeId of ["emp-demo-002", "emp-demo-004"]) notifyEmployee(db, employeeId, title, body, type);
-}
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function notifyManyEmployees(db, employeeIds = [], title, body = "", type = "INFO") {
   [...new Set(employeeIds.filter(Boolean))].forEach((employeeId) => notifyEmployee(db, employeeId, title, body, type));
 }
@@ -578,23 +415,6 @@ function notifyManyEmployees(db, employeeIds = [], title, body = "", type = "INF
 function disputeCommitteeEmployeeIds(db) {
   const configured = db.disputeCommittee?.employeeIds;
   if (Array.isArray(configured) && configured.length) return configured.filter(Boolean);
-<<<<<<< HEAD
-  return ["emp-demo-006", "emp-demo-005", "emp-demo-004", "emp-demo-002", "emp-demo-001"].filter((id) => findById(db.employees, id));
-}
-
-function isTechnicalAdmin(user) {
-  const name = String(user?.name || user?.fullName || user?.employee?.fullName || "");
-  const email = normalizeEmail(user?.email || user?.employee?.email || "");
-  return user?.employeeId === "emp-demo-002" || email.includes("yahia") || name.includes("يحيى") || name.includes("يحيي");
-}
-
-function hasPasswordVaultAccess(user) {
-  const allowed = normalizePhone(PASSWORD_VAULT_ADMIN_PHONE).replace(/\D/g, "");
-  const phones = [user?.phone, user?.mobile, user?.employee?.phone, user?.employee?.mobile]
-    .map((phone) => normalizePhone(phone).replace(/\D/g, ""))
-    .filter(Boolean);
-  return phones.some((phone) => phone === allowed || phone.endsWith(allowed.slice(1)));
-=======
   return ["emp-executive-secretary", "emp-direct-manager-01", "emp-direct-manager-02", "emp-hr-manager"].filter((id) => findById(db.employees, id));
 }
 
@@ -604,7 +424,6 @@ function isTechnicalAdmin(user) {
   return ["role-admin", "admin", "super-admin", "super_admin", "role-executive-secretary", "executive-secretary"].includes(role)
     || permissions.has("*")
     || (permissions.has("settings:manage") && permissions.has("users:manage"));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 function enrichEmployee(db, employee) {
@@ -659,13 +478,6 @@ function permissionsOf(user) {
   return new Set(user?.permissions || []);
 }
 
-<<<<<<< HEAD
-function hasLocalScope(db, scope) {
-  const user = currentUser(db);
-  const permissions = permissionsOf(user);
-  const role = String(user?.role?.slug || user?.role?.key || user?.roleId || "").toLowerCase();
-  return permissions.has("*") || permissions.has(scope) || ["role-admin", "role-executive", "role-executive-secretary", "role-hr", "admin", "executive", "executive-secretary", "hr-manager"].includes(role);
-=======
 function roleSlugOf(user) {
   return String(user?.role?.slug || user?.role?.key || user?.roleId || "").toLowerCase();
 }
@@ -681,7 +493,6 @@ function hasLocalScope(db, scope) {
   const fullAccessRole = ["role-admin", "admin", "role-executive-secretary", "executive-secretary"].includes(role);
   if (scope === "*" && isLegacyExecutiveRole(user)) return false;
   return (permissions.has("*") && !isLegacyExecutiveRole(user)) || permissions.has(scope) || fullAccessRole;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 function isFullAccessUser(db) {
@@ -689,11 +500,7 @@ function isFullAccessUser(db) {
 }
 
 function scopedEmployeeIds(db, { includeTeam = true } = {}) {
-<<<<<<< HEAD
-  if (isFullAccessUser(db)) return new Set((db.employees || []).filter((e) => !e.isDeleted).map((e) => e.id));
-=======
   if (isFullAccessUser(db) || hasLocalScope(db, "kpi:hr") || hasLocalScope(db, "hr:attendance") || hasLocalScope(db, "executive:mobile") || hasLocalScope(db, "executive:presence-map")) return new Set((db.employees || []).filter((e) => !e.isDeleted).map((e) => e.id));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const user = currentUser(db);
   const ids = new Set();
   if (user?.employeeId) ids.add(user.employeeId);
@@ -945,11 +752,7 @@ function createUserRecord(db, body = {}) {
   const email = inferEmail(db, body, employee);
   if (!email) throw new Error("يجب إدخال بريد إلكتروني أو رقم هاتف صالح لإنشاء حساب دخول.");
   if ((db.users || []).some((user) => normalizeEmail(user.email) === email)) throw new Error("البريد الإلكتروني مستخدم بالفعل.");
-<<<<<<< HEAD
-  const generatedPassword = body.password ? String(body.password) : makeStrongPassword();
-=======
   const generatedPassword = body.password ? String(body.password) : (normalizePhone(body.phone || employee?.phone || "") || makeStrongPassword());
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const user = {
     id: makeId("u"),
     employeeId: body.employeeId || "",
@@ -966,30 +769,18 @@ function createUserRecord(db, body = {}) {
     governorateId: body.governorateId || employee?.governorateId || "",
     complexId: body.complexId || employee?.complexId || "",
     status: body.status || "ACTIVE",
-<<<<<<< HEAD
-    temporaryPassword: body.temporaryPassword !== false,
-    mustChangePassword: body.temporaryPassword !== false,
-=======
     temporaryPassword: false,
     mustChangePassword: false,
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     passkeyEnabled: body.passkeyEnabled === "on" || body.passkeyEnabled === true,
     failedLogins: 0,
     lastLoginAt: "",
   };
   db.users.unshift(user);
   db.credentialVault ||= [];
-<<<<<<< HEAD
-  db.credentialVault.unshift({ id: makeId("cred"), userId: user.id, employeeId: user.employeeId, email: user.email, temporaryPassword: generatedPassword, status: "ISSUED", createdAt: now(), createdBy: currentUser(db)?.id || "system", note: "كلمة مرور مؤقتة تظهر للتقني فقط ويجب تغييرها من الموظف بعد أول دخول." });
-  db.credentialVault = db.credentialVault.slice(0, 500);
-  audit(db, "create", "user", user.id, null, { ...user, password: "***" });
-  notify(db, `تم إنشاء مستخدم ${user.name}`, "تم إنشاء حساب بكلمة مرور مؤقتة.", "SUCCESS");
-=======
   db.credentialVault.unshift({ id: makeId("cred"), userId: user.id, employeeId: user.employeeId, email: user.email, temporaryPassword: generatedPassword, status: "ISSUED", createdAt: now(), createdBy: currentUser(db)?.id || "system", note: "كلمة الدخول الافتراضية حسب سياسة الجمعية هي رقم الهاتف/الرقم الشخصي المسجل في قائمة الموظفين المعتمدة." });
   db.credentialVault = db.credentialVault.slice(0, 500);
   audit(db, "create", "user", user.id, null, { ...user, password: "***" });
   notify(db, `تم إنشاء مستخدم ${user.name}`, "تم إنشاء حساب دخول برقم الهاتف وكلمة مرور مطابقة للرقم المسجل.", "SUCCESS");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   return user;
 }
 
@@ -1043,13 +834,7 @@ function dashboard(db) {
 function isExecutiveAuthority(db) {
   const user = currentUser(db);
   if (!user) return false;
-<<<<<<< HEAD
-  const role = findById(db.roles || [], user.roleId) || user.role || {};
-  const text = [user.id, user.employeeId, user.email, user.name, user.fullName, role.id, role.key, role.slug, role.name].filter(Boolean).join(' ').toLowerCase();
-  return isFullAccessUser(db) && (text.includes('mohamed-youssef') || text.includes('mohamed.youssef') || text.includes('الشيخ محمد') || text.includes('emp-demo-002') || text.includes('yahia') || text.includes('يحيى') || text.includes('executive') || text.includes('admin'));
-=======
   return isFullAccessUser(db) || hasLocalScope(db, "sensitive-actions:approve") || hasLocalScope(db, "approvals:manage");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 function sensitiveApprovalSummary(db) {
@@ -1081,11 +866,7 @@ function createSensitiveApprovalRecord(db, body = {}) {
     workflow: [{ at: now(), by: actor?.fullName || actor?.name || 'النظام', action: 'created', note: body.summary || body.reason || '' }],
   };
   db.sensitiveApprovals.unshift(item);
-<<<<<<< HEAD
-  notifyManyEmployees(db, ['emp-demo-001', 'emp-demo-002'], 'طلب اعتماد عملية حساسة', item.title, 'ACTION_REQUIRED');
-=======
   notifyManyEmployees(db, ['emp-executive-director', 'emp-executive-secretary'], 'طلب اعتماد عملية حساسة', item.title, 'ACTION_REQUIRED');
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   audit(db, 'sensitive_approval.request', item.targetType, item.targetId || item.id, null, item);
   return item;
 }
@@ -1154,13 +935,10 @@ const API_BASE = (() => {
   return "/api";
 })();
 
-<<<<<<< HEAD
-=======
 function localFallbackAllowed() {
   return globalThis.HR_SUPABASE_CONFIG?.security?.allowLocalFallback === true;
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function shouldUseApi() {
   return Boolean(API_BASE);
 }
@@ -1273,10 +1051,7 @@ const remoteEndpoints = {
     throw error;
   }),
   login: (identifier, password) => apiRequest("/auth/login", { method: "POST", body: { identifier, password } }),
-<<<<<<< HEAD
-=======
   employeeRegister: (body) => apiRequest("/auth/register-employee", { method: "POST", body }),
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   logout: () => apiRequest("/auth/logout", { method: "POST" }),
   changePassword: (body) => apiRequest("/auth/change-password", { method: "POST", body }),
   dashboard: () => apiRequest("/dashboard"),
@@ -1900,11 +1675,7 @@ function loginMatches(user, identifier) {
   const raw = String(identifier || "").trim();
   const lowered = raw.toLowerCase();
   const phone = normalizeLoginPhone(raw);
-<<<<<<< HEAD
-  return [user.email, user.name, user.fullName, user.username, ...(user.loginAliases || [])].filter(Boolean).some((item) => String(item).toLowerCase() === lowered) || (phone && normalizeLoginPhone(user.phone) === phone);
-=======
   return [user.email, user.name, user.username].filter(Boolean).some((item) => String(item).toLowerCase() === lowered) || (phone && normalizeLoginPhone(user.phone) === phone);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 function addDays(date, days) {
@@ -1974,13 +1745,8 @@ function requestAgeHours(item) {
 function runWorkflowAutomation(db, options = {}) {
   const actor = currentUser(db);
   const thresholdHours = Number(options.thresholdHours || 48);
-<<<<<<< HEAD
-  const executiveId = "emp-demo-001";
-  const secretaryId = "emp-demo-002";
-=======
   const executiveId = "emp-executive-director";
   const secretaryId = "emp-executive-secretary";
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   db.workflowEscalations ||= [];
   let escalated = 0;
   const rows = workflowItems(db).filter((item) => item.status === "PENDING" && requestAgeHours(item) >= thresholdHours);
@@ -2021,11 +1787,7 @@ function runDataRepair(db, options = {}) {
     if (employee.managerEmployeeId === employee.id) { employee.managerEmployeeId = ""; fixes.push(`تم حذف مدير ذاتي خاطئ من ${employee.fullName}`); }
     if (employee.email) {
       const key = normalizeEmail(employee.email);
-<<<<<<< HEAD
-      if (emails.has(key)) { employee.email = `emp.${employee.id}@demo.local`; fixes.push(`تم إصلاح بريد مكرر لـ ${employee.fullName}`); }
-=======
       if (emails.has(key)) { employee.email = `emp.${employee.id}@ahla-shabab.local`; fixes.push(`تم إصلاح بريد مكرر لـ ${employee.fullName}`); }
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       emails.add(normalizeEmail(employee.email));
     }
     if (employee.phone) {
@@ -2072,10 +1834,6 @@ function runDataRepair(db, options = {}) {
     }
   }
 
-<<<<<<< HEAD
-  for (const role of db.roles || []) {
-    if (["role-admin", "role-executive", "role-executive-secretary", "role-hr"].includes(role.id)) role.permissions = ["*"];
-=======
   const repairRoleProfiles = {
     "role-admin": ["*"],
     "role-hr": ["dashboard:view", "employees:view", "employees:write", "users:manage", "attendance:manage", "attendance:review", "attendance:rules", "attendance:smart", "requests:approve", "leave:balance", "documents:manage", "reports:export", "reports:pdf", "reports:excel", "kpi:hr", "kpi:monthly", "kpi:manage", "daily-report:review", "disputes:committee", "disputes:manage", "disputes:escalate", "disputes:minutes", "notifications:manage", "decisions:manage", "attendance:risk", "policies:self", "hr:operations", "team:dashboard", "reports:monthly-pdf-auto"],
@@ -2084,7 +1842,6 @@ function runDataRepair(db, options = {}) {
   };
   for (const role of db.roles || []) {
     if (repairRoleProfiles[role.id]) role.permissions = repairRoleProfiles[role.id];
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   }
 
   audit(db, "maintenance.repair", "system", "local-db", null, { fixes: fixes.length, actor: actor?.id || "system" });
@@ -2175,11 +1932,7 @@ function smartAlertRows(db) {
   for (const issue of readiness.issues || []) push(`issue:${issue.area}:${issue.title}:${issue.detail}`, issue.severity || "MEDIUM", issue.title, issue.detail || "", issue.area === "documents" ? "documents" : issue.area === "users" ? "employees" : "quality-center");
   for (const item of workflowItems(db).filter((row) => row.status === "PENDING" && requestAgeHours(row) >= 48)) {
     const emp = findById(db.employees, item.employeeId);
-<<<<<<< HEAD
-    push(`sla:${item.kind}:${item.id}`, "HIGH", "طلب متأخر عن SLA", `${emp?.fullName || "موظف"} - ${item.kindLabel || item.kind}`, "requests", [emp?.managerEmployeeId, "emp-demo-002", "emp-demo-001"].filter(Boolean));
-=======
     push(`sla:${item.kind}:${item.id}`, "HIGH", "طلب متأخر عن SLA", `${emp?.fullName || "موظف"} - ${item.kindLabel || item.kind}`, "requests", [emp?.managerEmployeeId, "emp-executive-secretary", "emp-executive-director"].filter(Boolean));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   }
   for (const doc of (db.employeeDocuments || []).filter((item) => item.expiresOn && new Date(item.expiresOn) <= new Date(Date.now() + 14 * 864e5))) {
     const emp = findById(db.employees, doc.employeeId);
@@ -2286,8 +2039,6 @@ function executiveEmployeeCard(db, employee) {
   return { ...enrichEmployee(db, employee), today: executiveTodayForEmployee(db, employee.id) };
 }
 
-<<<<<<< HEAD
-=======
 function attendanceRiskForEmployee(db, employee, { days = 7 } = {}) {
   const since = new Date(Date.now() - Math.max(1, Number(days || 7)) * 86400000);
   const events = (db.attendanceEvents || [])
@@ -2356,13 +2107,10 @@ function buildMonthlyAutoPdfReports(db, { month = now().slice(0, 7), scope = "al
   return { month, scope, generatedAt: now(), status: "READY", attendance, evaluations, disputes, requests, managers: managerRows, title: `التقارير الشهرية PDF — ${month}` };
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function liveRequestVisibleToEmployee(request, employeeId) {
   return request.employeeId === employeeId || request.requestedByEmployeeId === employeeId;
 }
 
-<<<<<<< HEAD
-=======
 function nextEmployeeCode(db) {
   const max = (db.employees || [])
     .map((employee) => String(employee.employeeCode || '').match(/(\d+)/)?.[1])
@@ -2492,7 +2240,6 @@ function todayStatusForEmployee(db, employeeId) {
   return { status: event?.status || event?.type || "ABSENT", at: event?.eventAt || event?.createdAt || "" };
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 const localEndpoints = {
 
   adminAccessLog: async (body = {}) => {
@@ -2543,8 +2290,6 @@ const localEndpoints = {
     saveDb(db);
     return ok(snapshot);
   },
-<<<<<<< HEAD
-=======
   executivePresenceDashboard: async () => {
     const db = loadDb();
     const snapshot = executivePresenceSnapshot(db);
@@ -2640,7 +2385,6 @@ const localEndpoints = {
     saveDb(db);
     return ok({ ...report, runs: db.monthlyPdfReportRuns });
   },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   executiveMobile: async () => {
     const db = loadDb();
     const employees = visibleEmployees(db).map((employee) => executiveEmployeeCard(db, employee));
@@ -2687,35 +2431,12 @@ const localEndpoints = {
     if (!employee) throw new Error("الموظف غير موجود.");
     const actor = currentUser(db);
     db.liveLocationRequests ||= [];
-<<<<<<< HEAD
-    const pendingLiveRequest = db.liveLocationRequests.find((row) => row.employeeId === employeeId && row.status === "PENDING");
-    const item = { id: makeId("liveLoc"), employeeId, requestedByUserId: actor?.id || "", requestedByEmployeeId: actor?.employeeId || "", requestedByName: actor?.fullName || actor?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expiresAt: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), createdAt: now() };
-    if (pendingLiveRequest) {
-      Object.assign(pendingLiveRequest, {
-        requestedByUserId: item.requestedByUserId,
-        requestedByEmployeeId: item.requestedByEmployeeId,
-        requestedByName: item.requestedByName,
-        reason: item.reason,
-        precision: item.precision,
-        expiresAt: item.expiresAt,
-        updatedAt: now(),
-      });
-    } else {
-      db.liveLocationRequests.unshift(item);
-    }
-    const liveLocationRequest = pendingLiveRequest || item;
-    notifyEmployee(db, employeeId, "طلب مشاركة موقعك الحالي", item.requestedByName + " يطلب إرسال موقعك المباشر الآن. السبب: " + item.reason, "ACTION_REQUIRED", { route: "location", liveLocationRequestId: liveLocationRequest.id, requiresPush: true });
-    audit(db, "live_location.request", "employee", employeeId, null, liveLocationRequest);
-    saveDb(db);
-    return ok(enrichByEmployee(db, liveLocationRequest));
-=======
     const item = { id: makeId("liveLoc"), employeeId, requestedByUserId: actor?.id || "", requestedByEmployeeId: actor?.employeeId || "", requestedByName: actor?.fullName || actor?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expiresAt: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), createdAt: now() };
     db.liveLocationRequests.unshift(item);
     notifyEmployee(db, employeeId, "طلب مشاركة موقعك الحالي", item.requestedByName + " يطلب إرسال موقعك المباشر الآن. السبب: " + item.reason, "ACTION_REQUIRED");
     audit(db, "live_location.request", "employee", employeeId, null, item);
     saveDb(db);
     return ok(enrichByEmployee(db, item));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   },
   myLiveLocationRequests: async () => {
     const db = loadDb();
@@ -2838,11 +2559,7 @@ const localEndpoints = {
       updatedAt: now(),
     });
     const employee = findById(db.employees, employeeId);
-<<<<<<< HEAD
-    notifyManyEmployees(db, [employee?.managerEmployeeId, "emp-demo-002"].filter(Boolean), "تقرير يومي جديد", `${employee?.fullName || "موظف"} أرسل تقريره اليومي`, "INFO");
-=======
     notifyManyEmployees(db, [employee?.managerEmployeeId, "emp-executive-secretary"].filter(Boolean), "تقرير يومي جديد", `${employee?.fullName || "موظف"} أرسل تقريره اليومي`, "INFO");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     audit(db, before ? "daily_report.update" : "daily_report.create", "daily_report", report.id, before, report);
     saveDb(db);
     return ok(enrichByEmployee(db, report));
@@ -2868,20 +2585,6 @@ const localEndpoints = {
     return ok(user ? enrichUser(db, user) : null);
   },
   login: async (identifier, password) => {
-<<<<<<< HEAD
-    const db = loadDb();
-    const user = db.users.find((item) => ["ACTIVE", "INVITED", "LOCKED"].includes(item.status) && loginMatches(item, identifier));
-    if (!user || user.password !== password) {
-      if (user) {
-        user.failedLogins = Number(user.failedLogins || 0) + 1;
-        audit(db, "auth.failed", "user", user.id, null, { failedLogins: user.failedLogins });
-        saveDb(db);
-      }
-      throw new Error("بيانات الدخول غير صحيحة. تأكد من البريد/رقم الهاتف وكلمة المرور أو استخدم نسيت كلمة السر.");
-    }
-    user.failedLogins = 0;
-    user.status = "ACTIVE";
-=======
     if (!localFallbackAllowed() && !shouldUseApi() && !shouldUseSupabase()) throw new Error("تسجيل الدخول المحلي معطّل في حزمة الإنتاج. فعّل Supabase لاستخدام النظام.");
     const db = loadDb();
     const user = db.users.find((item) => ["ACTIVE", "INVITED"].includes(item.status) && loginMatches(item, identifier));
@@ -2895,29 +2598,12 @@ const localEndpoints = {
       throw new Error(user?.status === "LOCKED" ? "تم قفل الحساب بعد محاولات خاطئة." : "بيانات الدخول غير صحيحة أو الحساب غير مفعل.");
     }
     user.failedLogins = 0;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     user.lastLoginAt = now();
     audit(db, "auth.login", "user", user.id, null, { at: user.lastLoginAt });
     saveDb(db);
     sessionStorage.setItem(SESSION_KEY, user.id);
     return ok(enrichUser(db, user));
   },
-<<<<<<< HEAD
-  forgotPassword: async (identifier) => {
-    const db = loadDb();
-    const user = db.users.find((item) => loginMatches(item, identifier));
-    const target = user ? `${user.name || user.fullName || user.email} (${user.email || user.phone || identifier})` : String(identifier || "").trim();
-    notifySystemManagers(db, "طلب نسيت كلمة السر", `تم طلب إعادة تعيين كلمة المرور للحساب: ${target}. راجع المستخدم وأصدر كلمة مؤقتة من خزنة كلمات المرور إذا لزم.`, "ACTION_REQUIRED");
-    if (user) {
-      user.status = "ACTIVE";
-      user.failedLogins = 0;
-      notify(db, "طلب إعادة تعيين كلمة المرور", `تم طلب إعادة تعيين كلمة المرور للحساب ${user.email || user.name}.`, "INFO");
-      audit(db, "auth.password_reset_requested", "user", user.id, null, { email: user.email || identifier });
-    } else {
-      audit(db, "auth.password_reset_requested", "user", "", null, { identifier: String(identifier || "").trim(), userFound: false });
-    }
-    saveDb(db);
-=======
   employeeRegister: async () => {
     throw new Error("تم إيقاف التسجيل الذاتي. إضافة الموظفين وإنشاء الحسابات تتم من لوحة HR فقط.");
   },
@@ -2929,7 +2615,6 @@ const localEndpoints = {
       audit(db, "auth.password_reset_requested", "user", user.id, null, { email: user.email || identifier });
       saveDb(db);
     }
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     return ok({ sent: true, localOnly: true });
   },
   logout: async () => {
@@ -3159,25 +2844,6 @@ const localEndpoints = {
       return ok({ ok: true, pendingApproval: true, approval });
     }
     const before = clone(employee);
-<<<<<<< HEAD
-    const linkedUserIds = (db.users || []).filter((item) => item.employeeId === employeeId || item.id === employee.userId).map((item) => item.id);
-    db.employees = (db.employees || []).filter((item) => item.id !== employeeId);
-    db.users = (db.users || []).filter((item) => item.employeeId !== employeeId && item.id !== employee.userId);
-    db.attendanceEvents = (db.attendanceEvents || []).filter((item) => item.employeeId !== employeeId);
-    db.leaves = (db.leaves || []).filter((item) => item.employeeId !== employeeId);
-    db.missions = (db.missions || []).filter((item) => item.employeeId !== employeeId);
-    db.tasks = (db.tasks || []).filter((item) => item.employeeId !== employeeId && item.assignedByEmployeeId !== employeeId);
-    db.employeeDocuments = (db.employeeDocuments || []).filter((item) => item.employeeId !== employeeId);
-    db.locationRequests = (db.locationRequests || []).filter((item) => item.employeeId !== employeeId);
-    db.liveLocationRequests = (db.liveLocationRequests || []).filter((item) => item.employeeId !== employeeId);
-    db.liveLocationResponses = (db.liveLocationResponses || []).filter((item) => item.employeeId !== employeeId);
-    db.notifications = (db.notifications || []).filter((item) => item.employeeId !== employeeId && !linkedUserIds.includes(item.userId));
-    db.employees.forEach((item) => { if (item.managerEmployeeId === employeeId) item.managerEmployeeId = ""; });
-    audit(db, "hard_delete", "employee", employeeId, before, { deleted: true, removedUserIds: linkedUserIds });
-    notify(db, "تم حذف موظف نهائيًا", (before.fullName || employeeId) + " تم حذفه من قاعدة البيانات المحلية مع حسابه وبياناته التشغيلية.", "WARNING");
-    saveDb(db);
-    return ok({ ok: true, hardDeleted: true });
-=======
     employee.isDeleted = true;
     employee.status = "INACTIVE";
     const user = db.users.find((item) => item.employeeId === employeeId);
@@ -3185,7 +2851,6 @@ const localEndpoints = {
     audit(db, "soft_delete", "employee", employeeId, before, employee);
     saveDb(db);
     return ok({ ok: true });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   },
   users: async () => {
     const db = loadDb();
@@ -3220,18 +2885,7 @@ const localEndpoints = {
       mustChangePassword: body.temporaryPassword === "on" || body.temporaryPassword === true,
       passkeyEnabled: body.passkeyEnabled === "on" || body.passkeyEnabled === true,
     });
-<<<<<<< HEAD
-    if (body.password) {
-      user.password = body.password;
-      user.temporaryPassword = true;
-      user.mustChangePassword = true;
-      db.credentialVault ||= [];
-      db.credentialVault.unshift({ id: makeId("cred"), userId: user.id, employeeId: user.employeeId || "", email: user.email, temporaryPassword: body.password, status: "UPDATED", createdAt: now(), createdBy: currentUser(db)?.id || "system", note: "كلمة مرور مؤقتة تم حفظها من شاشة المستخدمين." });
-      notifyEmployee(db, user.employeeId, "تم تغيير كلمة المرور المؤقتة", "راجع الإدارة لاستلام كلمة المرور الجديدة ثم غيّرها بعد الدخول.", "ACTION_REQUIRED");
-    }
-=======
     if (body.password) user.password = body.password;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     db.employees.forEach((employee) => {
       if (employee.userId === user.id && employee.id !== user.employeeId) employee.userId = "";
     });
@@ -3662,46 +3316,29 @@ const localEndpoints = {
   kpi: async () => {
     const db = loadDb();
     const cycle = currentKpiCycle(db);
-<<<<<<< HEAD
-=======
     const windowInfo = kpiWindowInfo(db, cycle);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     const allEvaluations = kpiSummaryRows(db, cycle);
     const ids = scopedEmployeeIds(db);
     const evaluations = allEvaluations.filter((item) => ids.has(item.employeeId));
     const evaluatedEmployeeIds = new Set(evaluations.map((item) => item.employeeId));
     const pendingEmployees = visibleEmployees(db).filter((employee) => employee.status !== "TERMINATED" && !evaluatedEmployeeIds.has(employee.id));
     const average = evaluations.length ? Math.round(evaluations.reduce((sum, item) => sum + Number(item.totalScore || 0), 0) / evaluations.length) : 0;
-<<<<<<< HEAD
-    saveDb(db);
-    return ok({
-      policy: db.kpiPolicy,
-      cycle,
-=======
     const progressMetrics = kpiProgressMetrics(evaluations, pendingEmployees);
     saveDb(db);
     return ok({
       policy: db.kpiPolicy,
       cycle: { ...cycle, window: windowInfo },
       windowInfo,
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       criteria: [...(db.kpiCriteria || [])].sort((a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0)),
       evaluations,
       summaries: evaluations,
       pendingEmployees,
-<<<<<<< HEAD
-      committee: db.disputeCommittee,
-      accessMode: isFullAccessUser(db) ? "all" : hasLocalScope(db, "kpi:team") ? "team" : "self",
-      currentEmployeeId: currentUser(db)?.employeeId || "",
-      metrics: [
-=======
       progressMetrics,
       committee: db.disputeCommittee,
       accessMode: isFullAccessUser(db) ? "all" : hasLocalScope(db, "kpi:hr") ? "hr" : hasLocalScope(db, "kpi:team") ? "team" : hasLocalScope(db, "kpi:executive") || hasLocalScope(db, "kpi:final-approve") ? "executive" : "self",
       currentEmployeeId: currentUser(db)?.employeeId || "",
       metrics: [
         { label: "حالة نافذة KPI", value: windowInfo.label, helper: windowInfo.message },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         { label: "إجمالي الدرجة", value: "100", helper: "وفق النموذج المعتمد" },
         { label: "متوسط التقييم", value: average ? `${average}` : "-", helper: "للتقييمات المسجلة" },
         { label: "تم تقييمهم", value: evaluations.length, helper: "داخل الدورة الحالية" },
@@ -3713,12 +3350,6 @@ const localEndpoints = {
     const db = loadDb();
     if (!body.employeeId) throw new Error("اختر الموظف أولًا.");
     if (!canSeeEmployee(db, body.employeeId)) throw new Error("لا يمكنك تقييم هذا الموظف.");
-<<<<<<< HEAD
-    const selfOnly = !isFullAccessUser(db) && !hasLocalScope(db, "kpi:team");
-    const normalized = normalizeKpiEvaluation(db, { ...body, status: selfOnly ? "SUBMITTED" : (body.status || "APPROVED") });
-    if (selfOnly) { normalized.managerNotes = ""; normalized.managerEmployeeId = findById(db.employees, normalized.employeeId)?.managerEmployeeId || ""; }
-    let evaluation = (db.kpiEvaluations || []).find((item) => item.employeeId === normalized.employeeId && item.cycleId === normalized.cycleId);
-=======
     const user = currentUser(db);
     const selfOnly = !isFullAccessUser(db) && !hasLocalScope(db, "kpi:team") && !hasLocalScope(db, "kpi:hr");
     const managerReview = hasLocalScope(db, "kpi:team") && !hasLocalScope(db, "kpi:hr") && !isFullAccessUser(db);
@@ -3748,7 +3379,6 @@ const localEndpoints = {
     normalized.workflow ||= [];
     normalized.workflow.push({ at: now(), by: user?.name || "النظام", action: normalized.status, note: kpiStageLabel(normalized.status) });
     if (selfOnly) { normalized.managerNotes = ""; normalized.managerEmployeeId = findById(db.employees, normalized.employeeId)?.managerEmployeeId || ""; }
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     if (evaluation) {
       const before = clone(evaluation);
       Object.assign(evaluation, normalized, { updatedAt: now() });
@@ -3758,14 +3388,10 @@ const localEndpoints = {
       db.kpiEvaluations.unshift(evaluation);
       audit(db, "create", "kpi_evaluation", evaluation.id, null, evaluation);
     }
-<<<<<<< HEAD
-    notify(db, "تم حفظ تقييم أداء", `${findById(db.employees, normalized.employeeId)?.fullName || "موظف"} - ${normalized.totalScore}/100`, "SUCCESS");
-=======
     const targetEmployee = findById(db.employees, normalized.employeeId);
     const nextIds = normalized.status === "SELF_SUBMITTED" ? [targetEmployee?.managerEmployeeId] : normalized.status === "MANAGER_APPROVED" ? ["emp-hr-manager"] : normalized.status === "HR_REVIEWED" ? ["emp-executive-secretary"] : normalized.status === "SECRETARY_REVIEWED" ? ["emp-executive-director"] : [];
     notifyManyEmployees(db, nextIds.filter(Boolean), "تقييم KPI يحتاج متابعة", `${targetEmployee?.fullName || "موظف"} — ${kpiStageLabel(normalized.status)}`, "ACTION_REQUIRED");
     notify(db, "تم حفظ تقييم أداء", `${targetEmployee?.fullName || "موظف"} - ${normalized.totalScore}/100`, "SUCCESS");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     saveDb(db);
     return ok({ ...evaluation, employee: enrichEmployee(db, findById(db.employees, evaluation.employeeId)), manager: enrichEmployee(db, findById(db.employees, evaluation.managerEmployeeId)) });
   },
@@ -3774,12 +3400,6 @@ const localEndpoints = {
     const evaluation = findById(db.kpiEvaluations, id);
     if (!evaluation) throw new Error("التقييم غير موجود.");
     const before = clone(evaluation);
-<<<<<<< HEAD
-    if (!canSeeEmployee(db, evaluation.employeeId) || (!isFullAccessUser(db) && !hasLocalScope(db, "kpi:team"))) throw new Error("الاعتماد متاح للمدير المباشر أو HR أو الإدارة التنفيذية فقط.");
-    Object.assign(evaluation, body, { updatedAt: now(), managerEmployeeId: evaluation.managerEmployeeId || currentUser(db)?.employeeId || "" });
-    if (body.status === "APPROVED") evaluation.approvedAt = now();
-    if (body.status === "SUBMITTED") evaluation.submittedAt = now();
-=======
     if (!canSeeEmployee(db, evaluation.employeeId) || (!isFullAccessUser(db) && !hasLocalScope(db, "kpi:team") && !hasLocalScope(db, "kpi:hr") && !hasLocalScope(db, "kpi:manage") && !hasLocalScope(db, "kpi:executive") && !hasLocalScope(db, "kpi:final-approve"))) throw new Error("الاعتماد متاح للمدير المباشر أو HR أو الإدارة التنفيذية فقط.");
     const user = currentUser(db);
     Object.assign(evaluation, body, { updatedAt: now(), managerEmployeeId: evaluation.managerEmployeeId || user?.employeeId || "" });
@@ -3790,7 +3410,6 @@ const localEndpoints = {
     const targetEmployee = findById(db.employees, evaluation.employeeId);
     const nextIds = body.status === "MANAGER_APPROVED" ? ["emp-hr-manager"] : body.status === "HR_REVIEWED" ? ["emp-executive-secretary"] : body.status === "SECRETARY_REVIEWED" ? ["emp-executive-director"] : [];
     notifyManyEmployees(db, nextIds.filter(Boolean), "تقييم KPI تم رفعه", `${targetEmployee?.fullName || "موظف"} — ${kpiStageLabel(body.status)}`, "ACTION_REQUIRED");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     audit(db, "workflow", "kpi_evaluation", id, before, evaluation);
     saveDb(db);
     return ok(evaluation);
@@ -3810,8 +3429,6 @@ const localEndpoints = {
     saveDb(db);
     return ok({ recomputed, cycleId: cycle.id });
   },
-<<<<<<< HEAD
-=======
   sendKpiReminders: async () => {
     const db = loadDb();
     const cycle = currentKpiCycle(db);
@@ -3845,7 +3462,6 @@ const localEndpoints = {
     saveDb(db);
     return ok({ cycle, windowInfo: kpiWindowInfo(db, cycle) });
   },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   disputes: async () => {
     const db = loadDb();
     return ok({ committee: db.disputeCommittee, cases: (db.disputeCases || []).map((item) => enrichByEmployee(db, item)) });
@@ -3856,11 +3472,7 @@ const localEndpoints = {
     const employeeId = body.employeeId || user?.employeeId || "";
     const employee = findById(db.employees, employeeId);
     const committeeIds = disputeCommitteeEmployeeIds(db);
-<<<<<<< HEAD
-    const item = { id: makeId("disp"), title: body.title || "شكوى / خلاف", employeeId, category: "شكوى", priority: body.priority || "MEDIUM", severity: body.severity || "MEDIUM", description: body.description || "", status: "IN_REVIEW", assignedCommittee: db.disputeCommittee?.members || [], assignedCommitteeEmployeeIds: committeeIds, committeeDecision: "", escalatedToExecutive: false, escalationPath: "اللجنة ← السكرتير التنفيذي يحيى جمال السبع ← المدير التنفيذي الشيخ محمد يوسف", workflow: [{ at: now(), by: user?.name || "النظام", action: "created", note: "تم إخطار لجنة حل المشاكل والخلافات" }], createdAt: now() };
-=======
     const item = { id: makeId("disp"), title: body.title || "شكوى / خلاف", employeeId, category: "شكوى", priority: body.priority || "MEDIUM", severity: body.severity || "MEDIUM", description: body.description || "", status: "IN_REVIEW", assignedCommittee: db.disputeCommittee?.members || [], assignedCommitteeEmployeeIds: committeeIds, committeeDecision: "", escalatedToExecutive: false, escalationPath: "اللجنة ← السكرتير التنفيذي ← المدير التنفيذي", workflow: [{ at: now(), by: user?.name || "النظام", action: "created", note: "تم إخطار لجنة حل المشاكل والخلافات" }], createdAt: now() };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     db.disputeCases.unshift(item);
     audit(db, "create", "dispute_case", item.id, null, item);
     notifyManyEmployees(db, committeeIds, `مشكلة جديدة من ${employee?.fullName || "موظف"}`, item.title, "ACTION_REQUIRED");
@@ -3885,11 +3497,7 @@ const localEndpoints = {
     item.workflow.push({ at: now(), by: currentUser(db)?.name || "النظام", action: item.status });
     if (["RESOLVED", "CLOSED"].includes(item.status)) item.resolvedAt = now();
     if (item.escalatedToExecutive) {
-<<<<<<< HEAD
-      notifyManyEmployees(db, ["emp-demo-002", "emp-demo-001"], `تم رفع مشكلة للمدير التنفيذي`, item.title || item.description || "شكوى", "ACTION_REQUIRED");
-=======
       notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], `تم رفع مشكلة للمدير التنفيذي`, item.title || item.description || "شكوى", "ACTION_REQUIRED");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     }
     audit(db, "workflow", "dispute_case", id, before, item);
     saveDb(db);
@@ -4048,11 +3656,7 @@ const localEndpoints = {
   },
   subscribePush: async (body = {}) => {
     const db = loadDb();
-<<<<<<< HEAD
-    const item = { id: makeId("push"), userId: currentUser(db)?.id || "local", endpoint: body.endpoint || "local-notification", permission: globalThis.Notification?.permission || "default", createdAt: now() };
-=======
     const item = { id: makeId("push"), userId: currentUser(db)?.id || "local", employeeId: currentUser(db)?.employeeId || currentUser(db)?.employee?.id || "", endpoint: body.endpoint || "local-notification", keys: body.keys || {}, permission: body.permission || globalThis.Notification?.permission || "default", userAgent: body.userAgent || "", platform: body.platform || "browser", isActive: true, createdAt: now() };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     db.pushSubscriptions.unshift(item);
     notify(db, "تم تفعيل إشعارات المتصفح", "ستظهر تنبيهات الحضور والانصراف والطلبات عند السماح من المتصفح.", "SUCCESS");
     saveDb(db);
@@ -4080,8 +3684,6 @@ const localEndpoints = {
     saveDb(db);
     return ok({ synced, remaining: (db.offlineQueue || []).filter((item) => item.status === "PENDING").length });
   },
-<<<<<<< HEAD
-=======
   managementStructure: async () => {
     const db = loadDb();
     const employees = visibleEmployees(db);
@@ -4243,7 +3845,6 @@ const localEndpoints = {
     else { headers = ["الموظف", "النوع", "التاريخ", "المصدر", "الموقع", "ملاحظات"]; rows = scopedRowsByEmployee(db, db.attendanceEvents || []).map((event) => [enrichByEmployee(db, event).employee?.fullName || event.employeeId, event.type || event.status || "-", event.eventAt || event.createdAt || "", event.source || "-", event.geofenceStatus || "-", event.notes || ""]); }
     return ok({ title: titleMap[key] || "تقرير", fileName: key + "-report", headers, rows, summaryHtml: `<div class="summary"><div><span>عدد السجلات</span><strong>${rows.length}</strong></div><div><span>تاريخ الإصدار</span><strong>${now().slice(0,10)}</strong></div></div>` });
   },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   managerDashboard: async () => {
     const db = loadDb();
     const user = currentUser(db);
@@ -4372,11 +3973,7 @@ const localEndpoints = {
   passwordVault: async () => {
     const db = loadDb();
     const actor = currentUser(db);
-<<<<<<< HEAD
-    if (!hasPasswordVaultAccess(actor)) throw new Error("خزنة كلمات المرور متاحة فقط لحساب يحيى المرتبط بالرقم 01070000025.");
-=======
     if (!isTechnicalAdmin(actor) && !isFullAccessUser(db)) throw new Error("خزنة كلمات المرور المؤقتة متاحة فقط للتقني أو الإدارة العليا.");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     const rows = (db.users || []).map((user) => {
       const employee = findById(db.employees, user.employeeId);
       const issued = (db.credentialVault || []).find((item) => item.userId === user.id);
@@ -4387,11 +3984,7 @@ const localEndpoints = {
   resetUserPassword: async (userId, password = "") => {
     const db = loadDb();
     const actor = currentUser(db);
-<<<<<<< HEAD
-    if (!hasPasswordVaultAccess(actor)) throw new Error("إعادة تعيين كلمات المرور متاحة فقط لحساب يحيى المرتبط بالرقم 01070000025.");
-=======
     if (!isTechnicalAdmin(actor) && !isFullAccessUser(db)) throw new Error("إعادة تعيين كلمات المرور متاحة فقط للتقني أو الإدارة العليا.");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     const user = findById(db.users, userId);
     if (!user) throw new Error("المستخدم غير موجود.");
     const before = clone(user);
@@ -4599,11 +4192,7 @@ const localEndpoints = {
       item.status = "ESCALATED";
       item.escalatedToExecutive = true;
       item.escalatedAt = now();
-<<<<<<< HEAD
-      notifyManyEmployees(db, ["emp-demo-002", "emp-demo-001"], "تصعيد مشكلة للمدير التنفيذي", item.title || "مشكلة", "ACTION_REQUIRED");
-=======
       notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], "تصعيد مشكلة للمدير التنفيذي", item.title || "مشكلة", "ACTION_REQUIRED");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     }
     audit(db, "dispute.committee_action", "dispute_case", caseId, null, action);
     saveDb(db);
@@ -4691,25 +4280,12 @@ const localEndpoints = {
   },
   supabaseSetupCheck: async () => {
     const cfg = globalThis.HR_SUPABASE_CONFIG || {}; const enabled = Boolean(cfg.enabled && cfg.url && cfg.anonKey);
-<<<<<<< HEAD
-    return ok({ mode: enabled ? "supabase-configured" : "local-demo", checks: [
-=======
     return ok({ mode: enabled ? "supabase-configured" : "local-fallback", checks: [
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       { label: "Supabase مفعل", ok: Boolean(cfg.enabled), detail: cfg.enabled ? "enabled=true" : "enabled=false" },
       { label: "Project URL", ok: Boolean(cfg.url), detail: cfg.url ? "موجود" : "غير مضبوط" },
       { label: "Anon Key", ok: Boolean(cfg.anonKey), detail: cfg.anonKey ? "موجود" : "غير مضبوط" },
       { label: "Strict Mode", ok: cfg.strict !== false, detail: cfg.strict !== false ? "strict" : "fallback" },
       { label: "Storage Buckets", ok: Boolean(cfg.storage), detail: cfg.storage ? Object.values(cfg.storage || {}).join(" / ") : "اضبط buckets" },
-<<<<<<< HEAD
-      { label: "آخر Patch مطلوب", ok: true, detail: "034_server_runtime_push_endpoint_completion.sql" },
-    ], recommended: enabled ? "اختبر تسجيل دخول ورفع صورة وطلب موقع من موبايل حقيقي." : "فعّل Supabase من shared/js/supabase-config.js ثم شغّل SQL patches حتى 034." });
-  },
-  databaseMigrationsStatus: async () => {
-    const db = loadDb(); const expected = ["001_schema_rls_seed.sql","002_repair_profile_roles.sql","003_user_avatar_and_mobile_ui.sql","004_emergency_admin_access.sql","005_simplify_employee_punch_fields.sql","006_single_branch_locations_disputes_cleanup.sql","007_login_punch_gps_layout_fix.sql","008_supabase_cli_advisor_hardening.sql","009_passkey_attendance_activation.sql","010_simplify_employee_users_remove_payroll_gps_production.sql","011_advanced_uiux_diagnostics_autolink.sql","012_strong_features_review_devices_reports_demo.sql","013_phone_login_identifier.sql","014_location_schema_contact_and_precise_coordinates.sql","015_critical_security_hardening.sql","016_import_employee_roster_from_excel.sql","017_completion_pack_tables.sql","018_ahla_shabab_org_hierarchy.sql","019_stability_passwords_disputes_requests.sql","020_full_operations_pack.sql","021_quality_workflow_policy_center.sql","022_control_room_data_center_daily_reports.sql","023_executive_mobile_gateway_live_location.sql","024_sensitive_approvals_gateway_hardening.sql","025_smart_attendance_executive_archive_backup.sql","026_missing_functions_fix.sql","027_fix_executive_hierarchy_accounts.sql","028_primary_admin_and_runtime_fixes.sql","029_employee_photos.sql","030_update_employee_roster_from_excel.sql","031_supabase_password_vault.sql","032_fix_phone_login_resolver_priority.sql","033_limit_password_vault_to_yahia.sql","034_server_runtime_push_endpoint_completion.sql"];
-    db.migrationStatus ||= []; const applied = new Set(db.migrationStatus.map((item) => item.name));
-    return ok({ expectedPatch: "034_server_runtime_push_endpoint_completion.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: applied.has(name) ? "APPLIED" : (index === expected.length - 1 ? "NEW" : "CHECK_MANUALLY") })), notes: "في Supabase الحقيقي شغّل ملفات SQL بالترتيب من SQL Editor، ثم علّمها هنا كتذكير محلي." });
-=======
       { label: "آخر Patch مطلوب", ok: true, detail: "041_audit_v7_security_mobile_alignment.sql" },
     ], recommended: enabled ? "اختبر التسجيل الذاتي للموظف ومسار KPI الكامل من موظف إلى مدير تنفيذي." : "فعّل Supabase من shared/js/supabase-config.js ثم شغّل SQL patches حتى 041." });
   },
@@ -4763,7 +4339,6 @@ const localEndpoints = {
     db.migrationStatus ||= [];
     const applied = new Set(db.migrationStatus.map((item) => item.name));
     return ok({ expectedPatch: "043_executive_presence_risk_decisions_reports.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: applied.has(name) ? "APPLIED" : (index === expected.length - 1 ? "NEW" : "CHECK_MANUALLY") })), notes: "في Supabase الحقيقي شغّل ملفات SQL بالترتيب من SQL Editor، ثم علّمها هنا كتذكير محلي." });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   },
   markMigrationApplied: async (name) => { const db = loadDb(); db.migrationStatus ||= []; if (!db.migrationStatus.some((item) => item.name === name)) db.migrationStatus.unshift({ id: makeId("mig"), name, status: "APPLIED", appliedAt: now(), appliedByUserId: currentUser(db)?.id || "system" }); saveDb(db); return ok({ applied: name }); },
   autoBackupStatus: async () => { const db = loadDb(); return ok({ policy: { keepLast: 30, ...(db.systemSettings?.backupPolicy || {}) }, backups: (db.systemBackups || []).map((item) => ({ ...item, data: undefined })).slice(0, 30), runs: db.autoBackupRuns || [] }); },
@@ -4775,31 +4350,16 @@ const localEndpoints = {
     const tasks = (db.tasks || []).filter((task) => task.employeeId === employeeId && !["DONE", "CLOSED", "CANCELLED"].includes(task.status));
     const docs = documentRows(db, { employeeId }).filter((doc) => ["EXPIRING_SOON", "EXPIRED", "MISSING", "REQUIRED"].includes(doc.status));
     const notes = (db.notifications || []).filter((note) => (!note.employeeId || note.employeeId === employeeId || note.userId === user?.id) && !note.isRead).slice(0, 20);
-<<<<<<< HEAD
-=======
     const unsignedDecisions = decisionRowsForCurrentUser(db).filter((decision) => decision.requiresAcknowledgement !== false && !decision.acknowledged);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     const actions = [];
     if (attendance && ["ABSENT_TEMP", "MISSING_CHECKOUT", "REVIEW"].includes(attendance.status)) actions.push({ id: "att-" + today, type: "ATTENDANCE", title: attendance.title, body: attendance.recommendation, route: "punch", severity: attendance.severity });
     liveRequests.forEach((item) => actions.push({ id: item.id, type: "LIVE_LOCATION", title: "طلب موقع مباشر", body: item.reason || "الإدارة تطلب موقعك الحالي", route: "location", severity: "HIGH" }));
     tasks.slice(0, 10).forEach((task) => actions.push({ id: task.id, type: "TASK", title: task.title, body: task.description || "مهمة مفتوحة", route: "tasks", severity: task.priority || "MEDIUM" }));
     unsignedPolicies.forEach((policy) => actions.push({ id: policy.id, type: "POLICY", title: "توقيع سياسة: " + policy.title, body: policy.category || "سياسة", route: "policies", severity: "MEDIUM" }));
-<<<<<<< HEAD
-    docs.forEach((doc) => actions.push({ id: doc.id, type: "DOCUMENT", title: "مستند يحتاج متابعة: " + doc.title, body: doc.notes || doc.status, route: "documents", severity: "MEDIUM" }));
-    notes.slice(0, 10).forEach((note) => actions.push({ id: note.id, type: "NOTIFICATION", title: note.title, body: note.body || "إشعار جديد", route: "notifications", severity: note.type || "LOW" }));
-    return ok({ actions, attendance, liveRequests, tasks, unsignedPolicies, documents: docs, notifications: notes, generatedAt: now() });
-  },
-  demoStatus: async () => ok({ enabled: localStorage.getItem("hr.demoMode") === "true" }),
-  setDemoMode: async (enabled) => {
-    if (enabled) localStorage.setItem("hr.demoMode", "true");
-    else localStorage.removeItem("hr.demoMode");
-    return ok({ enabled: Boolean(enabled) });
-=======
     unsignedDecisions.forEach((decision) => actions.push({ id: decision.id, type: "ADMIN_DECISION", title: "قرار إداري يحتاج اطلاع: " + decision.title, body: decision.body || "قرار رسمي", route: "decisions", severity: decision.priority || "HIGH" }));
     docs.forEach((doc) => actions.push({ id: doc.id, type: "DOCUMENT", title: "مستند يحتاج متابعة: " + doc.title, body: doc.notes || doc.status, route: "documents", severity: "MEDIUM" }));
     notes.slice(0, 10).forEach((note) => actions.push({ id: note.id, type: "NOTIFICATION", title: note.title, body: note.body || "إشعار جديد", route: "notifications", severity: note.type || "LOW" }));
     return ok({ actions, attendance, liveRequests, tasks, unsignedPolicies, unsignedDecisions, documents: docs, notifications: notes, generatedAt: now() });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   },
   reset: async () => {
     const db = normalizeDb(seedDatabase);

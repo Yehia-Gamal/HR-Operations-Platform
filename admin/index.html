@@ -9,26 +9,6 @@
     <meta name="theme-color" content="#070f1e" />
     <link rel="manifest" href="../shared/pwa/manifest-admin.json" />
     <link rel="icon" href="../shared/images/favicon-64.png" />
-<<<<<<< HEAD
-    <link rel="stylesheet" href="../shared/css/styles.css?v=roles-layout-fix-20260501-01" />
-    <title>لوحة إدارة نظام الحضور — أحلى شباب</title>
-    <meta name="description" content="لوحة الإدارة الخاصة بالأدمن والمديرين لإدارة الحضور والموظفين والصلاحيات والتقارير" />
-    <meta name="robots" content="noindex,nofollow" />
-    <script>
-      (function(){
-        try {
-          const expires = Number(sessionStorage.getItem("HR_ADMIN_GATE_PASSED") || 0);
-          if (!expires || expires < Date.now()) location.replace("../operations-gate/?next=admin");
-        } catch { location.replace("../operations-gate/?next=admin"); }
-      })();
-    </script>
-  </head>
-  <body>
-    <div id="app" class="app admin-app"></div>
-    <script src="../shared/js/supabase-config.js?v=server-runtime-push-20260501-01"></script>
-    <script type="module" src="../shared/js/app-admin.js?v=server-runtime-push-20260501-01"></script>
-    <script src="../shared/js/register-sw.js?v=server-runtime-push-20260501-01"></script>
-=======
     <link rel="stylesheet" href="../shared/css/styles.css?v=management-suite-20260502-01" />
     <title>لوحة إدارة نظام الحضور — أحلى شباب</title>
     <meta name="description" content="لوحة الإدارة الخاصة بالأدمن والمديرين لإدارة الحضور والموظفين والصلاحيات والتقارير" />
@@ -55,6 +35,5 @@
     <script src="../shared/js/supabase-config.js?v=management-suite-20260502-01"></script>
     <script type="module" src="../shared/js/app-admin.js?v=management-suite-20260502-01"></script>
     <script src="../shared/js/register-sw.js?v=management-suite-20260502-01"></script>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   </body>
 </html>

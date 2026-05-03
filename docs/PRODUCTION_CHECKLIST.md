@@ -1,50 +1,3 @@
-<<<<<<< HEAD
-# قائمة تشغيل Production النهائية
-
-## قبل الرفع
-
-- احذف أي ملفات حقيقية للموظفين من المستودع.
-- لا تضع `service_role` داخل أي ملف Frontend.
-- فعّل Supabase من `shared/js/supabase-config.js` بعد تدوير المفاتيح.
-- شغّل `supabase/sql/001_schema_rls_seed.sql` ثم جميع ملفات `supabase/sql/patches` بالترتيب.
-- انشر Edge Functions:
-
-```bash
-supabase functions deploy admin-create-user
-supabase functions deploy admin-update-user
-supabase functions deploy resolve-login-identifier
-supabase functions deploy passkey-register
-```
-
-## Secrets المطلوبة
-
-```bash
-supabase secrets set SUPABASE_URL="https://PROJECT.supabase.co"
-supabase secrets set SUPABASE_ANON_KEY="..."
-supabase secrets set SUPABASE_SERVICE_ROLE_KEY="..."
-supabase secrets set ALLOWED_ORIGINS="https://your-domain.com,http://localhost:5173,http://127.0.0.1:5500"
-supabase secrets set LOGIN_RATE_LIMIT_SALT="random-long-secret"
-supabase secrets set LOGIN_RESOLVE_MAX_ATTEMPTS="8"
-supabase secrets set LOGIN_RESOLVE_BLOCK_MINUTES="15"
-```
-
-## بعد الرفع
-
-- جرّب تسجيل دخول Admin بالبريد وكلمة مرور قوية.
-- أنشئ مستخدم موظف من لوحة الإدارة، وليس SQL مباشر.
-- جرّب تسجيل دخول الموظف برقم الهاتف.
-- جرّب رفع مرفق والتأكد أن الرابط مؤقت وليس Public.
-- جرّب بصمة داخل النطاق وخارج النطاق.
-- افتح لوحة `حالة النظام` وراجع الأخطاء.
-
-
-## Production hardening notes
-
-- Keep `WEBAUTHN_ENABLED=false` until server-side WebAuthn challenge generation and verification are fully deployed.
-- Browser/PWA notifications are local only in this package. Cross-device push requires HTTPS plus Web Push/VAPID or a Supabase-backed push delivery service.
-- Change `adminGateway.accessCode` before production. The operations gate is only a routing layer; real access control must come from Supabase Auth, RLS, and role permissions.
-- Do not ship real employee phone numbers, personal emails, or fixed Demo passwords in `shared/js/database.js` or SQL seed/patch files.
-=======
 # Production Checklist — Ahla Shabab HR Web
 
 ## 1) قبل رفع الملفات
@@ -169,4 +122,3 @@ supabase functions deploy employee-register --project-ref YOUR_PROJECT_REF
 
 ## Patch 041 — Audit V7 hardening
 شغّل أيضًا `supabase/sql/patches/041_audit_v7_security_mobile_alignment.sql` بعد Patch 040 لتطبيق حماية خزنة كلمات المرور، Service Worker المنفصل، وتحسينات الموبايل.
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

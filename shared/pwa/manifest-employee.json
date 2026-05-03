@@ -1,11 +1,7 @@
 {
   "name": "تطبيق موظفين أحلى شباب",
   "short_name": "موظفين أحلى شباب",
-<<<<<<< HEAD
-  "start_url": "../../employee/index.html",
-=======
   "start_url": "/employee/index.html",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   "display": "standalone",
   "background_color": "#050b16",
   "theme_color": "#070f1e",
@@ -21,10 +17,6 @@
       "type": "image/png"
     }
   ],
-<<<<<<< HEAD
-  "scope": "../../"
-=======
   "scope": "/employee/",
   "id": "/employee/"
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }

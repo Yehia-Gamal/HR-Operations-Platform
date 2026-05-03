@@ -4,20 +4,12 @@
 -- =========================================================
 
 -- لجنة حل المشاكل والخلافات حسب الهيكل الإداري:
-<<<<<<< HEAD
--- أبو عمار + ياسر فتحي + بلال الشاكر + يحيى السبع + الشيخ محمد يوسف.
-=======
 -- مدير مباشر ثالث + مدير مباشر ثانٍ + مدير مباشر أول + السكرتير التنفيذي + المدير التنفيذي.
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 -- يتم إرسال الإشعارات من التطبيق عند إنشاء dispute_cases، وهذا الـ patch يضيف حقولًا مساعدة إن لم تكن موجودة.
 
 alter table if exists public.dispute_cases
   add column if not exists assigned_committee_employee_ids uuid[] default '{}',
-<<<<<<< HEAD
-  add column if not exists escalation_path text default 'اللجنة ← السكرتير التنفيذي يحيى جمال السبع ← المدير التنفيذي الشيخ محمد يوسف',
-=======
   add column if not exists escalation_path text default 'اللجنة ← السكرتير التنفيذي ← المدير التنفيذي المدير التنفيذي',
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   add column if not exists resolved_at timestamptz;
 
 alter table if exists public.leave_requests

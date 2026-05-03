@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-// Copy this file to shared/js/supabase-config.js for local or production deployment.
-// Never commit service_role keys to the browser.
-window.HR_SUPABASE_CONFIG = Object.freeze({
-  enabled: false,
-  strict: true,
-  projectId: "ahla-shabab-hr",
-=======
 // Production-safe Supabase config example. Copy to shared/js/supabase-config.js for deployment.
 // Do not put service_role keys in browser files.
 // Local/production Supabase configuration.
@@ -17,7 +9,6 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
   enabled: true,
   strict: true,
   projectId: "your-production-project",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   projectRef: "your-project-ref",
   url: "https://your-project-ref.supabase.co",
   anonKey: "your-rotated-publishable-or-anon-key",
@@ -30,17 +21,6 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     enabled: true,
   },
   security: {
-<<<<<<< HEAD
-    allowLocalDemo: true,
-    requireStrongPasswords: true,
-    attachmentSignedUrlSeconds: 3600,
-  },
-  cacheVersion: "mobile-ui-push-fix-20260430-02",
-});
-
-window.__HR_SUPABASE_CONFIG_LOADED__ = true;
-window.__HR_SUPABASE_CONFIG_VERSION__ = "mobile-ui-push-fix-20260430-02";
-=======
     allowLocalFallback: false,
     requireStrongPasswords: true,
     attachmentSignedUrlSeconds: 3600,
@@ -75,4 +55,3 @@ window.__HR_SUPABASE_CONFIG_VERSION__ = "management-suite-20260502-01";
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", render, { once: true });
   else render();
 })();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

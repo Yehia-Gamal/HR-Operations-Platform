@@ -1,11 +1,7 @@
 -- =========================================================
 -- 028 Primary Admin + Runtime Schema Fixes
 -- Creates/repairs the requested primary admin account:
-<<<<<<< HEAD
---   email: admin@admin
-=======
 --   email: admin.production@ahla-shabab.local
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 --   password: set v_password locally before applying; do not commit real passwords.
 -- Also adds runtime columns required by policy acknowledgement and
 -- live-location response flows.
@@ -32,11 +28,7 @@ on conflict (slug) do update set
 
 do $$
 declare
-<<<<<<< HEAD
-  v_email text := 'admin@admin';
-=======
   v_email text := 'admin.production@ahla-shabab.local';
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   v_password text := 'CHANGE_THIS_PASSWORD_BEFORE_APPLYING';
   v_full_name text := 'Primary Admin';
   v_user_id uuid;
@@ -44,13 +36,6 @@ declare
   v_role_id uuid;
   v_branch_id uuid;
 begin
-<<<<<<< HEAD
-  if v_password = 'CHANGE_THIS_PASSWORD_BEFORE_APPLYING' then
-    raise exception 'Refusing to run patch 028 with the default placeholder password. Set v_password to a strong temporary password, or create the admin through a secure Edge Function.';
-  end if;
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   select id into v_role_id from public.roles where slug = 'admin' limit 1;
   select id into v_branch_id from public.branches order by created_at nulls last limit 1;
   select id into v_user_id from auth.users where lower(email) = lower(v_email) limit 1;

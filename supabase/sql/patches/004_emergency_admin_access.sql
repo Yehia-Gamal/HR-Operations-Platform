@@ -162,11 +162,7 @@ begin
     ) values (
       'ADMIN-001',
       v_full_name,
-<<<<<<< HEAD
-      '01070000051',
-=======
       '01000000000',
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       v_email,
       'أدمن رئيسي',
       v_role_id,

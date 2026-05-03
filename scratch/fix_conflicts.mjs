@@ -6,9 +6,31 @@ function fixFile(filePath) {
         const content = fs.readFileSync(filePath, 'utf8');
         if (!content.includes('<<<<<<<')) return;
 
-        // More robust regex to match the conflict markers accurately
-        const fixedContent = content.replace(/([\s\S]*?)
-        fs.writeFileSync(filePath, fixedContent);
+        const lines = content.split('\n');
+        const result = [];
+        let inHead = false;
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.startsWith('<<<<<<< HEAD')) {
+                inHead = true;
+                continue;
+            }
+            if (line.startsWith('=======')) {
+                inHead = false;
+                continue;
+            }
+            if (line.startsWith('>>>>>>>')) {
+                // Skip the marker itself
+                continue;
+            }
+            
+            if (!inHead) {
+                result.push(line);
+            }
+        }
+
+        fs.writeFileSync(filePath, result.join('\n'));
         console.log(`Fixed: ${filePath}`);
     } catch (e) {
         console.error(`Error fixing ${filePath}:`, e);
@@ -30,6 +52,6 @@ function walk(dir) {
     }
 }
 
-console.log('Starting conflict resolution (Keeping modern version)...');
+console.log('Starting Aggressive Conflict Resolution (Keeping modernized block)...');
 walk('.');
 console.log('Done.');

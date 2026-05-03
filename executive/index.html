@@ -7,26 +7,6 @@
   <meta name="theme-color" content="#070f1e" />
   <link rel="manifest" href="../shared/pwa/manifest-executive.json" />
   <link rel="icon" href="../shared/images/favicon-64.png" />
-<<<<<<< HEAD
-  <link rel="stylesheet" href="../shared/css/styles.css?v=roles-layout-fix-20260501-01" />
-  <title>المتابعة التنفيذية — أحلى شباب</title>
-  <meta name="description" content="صفحة موبايل للمدير التنفيذي لمتابعة حضور الموظفين وطلبات الموقع والتقارير التنفيذية" />
-  <script>
-    (function(){
-      try {
-        const expires = Number(sessionStorage.getItem("HR_ADMIN_GATE_PASSED") || 0);
-        if (!expires || expires < Date.now()) location.replace("../operations-gate/?next=executive");
-      } catch { location.replace("../operations-gate/?next=executive"); }
-    })();
-  </script>
-</head>
-<body>
-  <div id="app" class="app admin-app executive-mobile-app"></div>
-  <script>if (!location.hash) location.hash = "executive-mobile";</script>
-  <script src="../shared/js/supabase-config.js?v=server-runtime-push-20260501-01"></script>
-  <script type="module" src="../shared/js/app-admin.js?v=server-runtime-push-20260501-01"></script>
-  <script src="../shared/js/register-sw.js?v=server-runtime-push-20260501-01"></script>
-=======
   <link rel="stylesheet" href="../shared/css/styles.css?v=management-suite-20260502-01" />
   <title>المتابعة التنفيذية — أحلى شباب</title>
     <script>
@@ -51,6 +31,5 @@
   <script src="../shared/js/supabase-config.js?v=management-suite-20260502-01"></script>
   <script type="module" src="../shared/js/executive-app.js?v=management-suite-20260502-01"></script>
   <script src="../shared/js/register-sw.js?v=management-suite-20260502-01"></script>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 </body>
 </html>

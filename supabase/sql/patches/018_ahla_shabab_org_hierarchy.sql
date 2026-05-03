@@ -26,31 +26,6 @@ on conflict (code) do update set name = excluded.name, branch_id = excluded.bran
 
 with roster(employee_code, full_name, phone, email, job_title, role_slug, department_code, manager_code, hire_date) as (
   values
-<<<<<<< HEAD
-  ('EMP-001', 'الشيخ محمد يوسف', '01070000001', 'demo.user.001@demo.local', 'المدير التنفيذي', 'executive', 'EXEC', '', '2020-01-01'),
-  ('EMP-002', 'يحيى جمال السبع', '01070000002', 'demo.executive.secretary@demo.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
-  ('EMP-003', 'أحمد محجوب', '01070000003', 'demo.user.002@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-004', 'بلال محمد الشاكر', '01070000004', 'demo.user.003@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-005', 'ياسر فتحي نور الدين', '01070000005', 'demo.user.004@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-006', 'محمد عبد الباسط أبو عمار', '01070000006', 'demo.user.005@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-007', 'مصطفي فايد', '01070000007', 'demo.user.006@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-008', 'مصطفى أحمد', '01070000008', 'demo.user.007@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-009', 'يوسف رسمي شعبان', '01070000009', 'demo.user.008@demo.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-010', 'محمد عبد العظيم', '01070000010', 'demo.user.009@demo.local', 'موظف فريق أبو عمار', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-011', 'هاني احمد نصير', '01070000011', 'demo.user.010@demo.local', 'موظف فريق أبو عمار', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-012', 'حامد محمود العمدة', '01070000012', 'demo.user.011@demo.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
-  ('EMP-013', 'عبد الرحمن حسين', '01070000013', 'demo.user.012@demo.local', 'موظف تحت إشراف حامد', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
-  ('EMP-014', 'عبدالله حسين حافظ', '01070000014', 'demo.user.013@demo.local', 'موظف فريق أحمد محجوب', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-015', 'عبد القادر جمال', '01070000015', 'demo.user.014@demo.local', 'موظف فريق أحمد محجوب', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-016', 'إسماعيل عبدالله', '01070000016', 'demo.user.015@demo.local', 'موظف فريق يوسف رسمي', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-017', 'حسام عفيفي', '01070000017', 'demo.user.016@demo.local', 'موظف فريق يوسف رسمي', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-018', 'محمد عبده مزار', '01070000018', 'demo.user.017@demo.local', 'موظف فريق يوسف رسمي', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-019', 'عمار محمد', '01070000019', 'demo.user.018@demo.local', 'موظف فريق بلال', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
-  ('EMP-020', 'محمد سيد', '01070000020', 'demo.user.019@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-021', 'ربيع محمد', '01070000021', 'demo.user.020@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-022', 'حاتم محمد سالم', '01070000022', 'demo.user.021@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-023', 'طارق سيد إبراهيم', '01070000023', 'demo.user.022@demo.local', 'موظف فريق مصطفى أحمد', 'employee', 'OPS', 'EMP-008', '2022-01-01')
-=======
   ('EMP-001', 'المدير التنفيذي', '01020000001', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', '', '2020-01-01'),
   ('EMP-002', 'السكرتير التنفيذي', '01020000002', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
   ('EMP-003', 'مدير مباشر رابع', '01020000003', 'direct.manager.04@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
@@ -74,7 +49,6 @@ with roster(employee_code, full_name, phone, email, job_title, role_slug, depart
   ('EMP-021', 'موظف تشغيلي 12', '01020000021', 'employee.011@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
   ('EMP-022', 'موظف تشغيلي 03', '01020000022', 'employee.002@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
   ('EMP-023', 'موظف تشغيلي 09', '01020000023', 'tarek.ibrahim@ahla-shabab.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01')
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 ), upserted as (
   insert into public.employees (
     employee_code, full_name, phone, email, job_title, role_id, branch_id, department_id,

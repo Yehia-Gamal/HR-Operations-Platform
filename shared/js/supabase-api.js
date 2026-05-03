@@ -5,10 +5,6 @@ const now = () => new Date().toISOString();
 const makeId = (prefix = "id") => `${prefix}-${globalThis.crypto?.randomUUID?.() || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`}`;
 const toInt = (v, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-<<<<<<< HEAD
-const PASSWORD_VAULT_ADMIN_PHONE = "01070000025";
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 const DEFAULT_COMPLEX = {
   name: "مجمع منيل شيحة",
   address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912",
@@ -24,13 +20,8 @@ let realtimeChannels = [];
 export function shouldUseSupabase() {
   const cfg = CONFIG();
   const params = new URLSearchParams(location.search);
-<<<<<<< HEAD
-  const localAllowed = cfg.security?.allowLocalDemo !== false;
-  const localForced = localAllowed && (params.get("backend") === "local" || params.get("api") === "local" || localStorage.getItem("hr.demoMode") === "true");
-=======
   const fallbackAllowed = cfg?.security?.allowLocalFallback === true;
   const localForced = fallbackAllowed && (params.get("backend") === "local" || params.get("api") === "local" || localStorage.getItem("hr.localFallbackMode") === "true");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const forced = params.get("backend") === "supabase" || params.get("api") === "supabase";
   if (localForced && !forced) return false;
   return Boolean((cfg.enabled || forced) && cfg.url && cfg.anonKey);
@@ -579,16 +570,6 @@ async function createOrUpdate(table, body, id = body?.id) {
   return toCamel(data);
 }
 
-<<<<<<< HEAD
-async function sendPushNotification(body = {}) {
-  const client = await sb();
-  const { data, error } = await client.functions.invoke("send-push-notifications", { body });
-  if (error || data?.error) throw new Error(data?.error || error?.message || "تعذر إرسال إشعار Push.");
-  return data;
-}
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function csvEscape(value) {
   return `"${String(value ?? "").replaceAll('"', '""')}"`;
 }
@@ -610,17 +591,6 @@ function looksLikeEmail(value) {
   return /^[^\s@]+@[^\s@]+$/.test(String(value || "").trim());
 }
 
-<<<<<<< HEAD
-function hasPasswordVaultAccess(user) {
-  const allowed = normalizeLoginPhone(PASSWORD_VAULT_ADMIN_PHONE);
-  const phones = [user?.phone, user?.mobile, user?.employee?.phone, user?.employee?.mobile]
-    .map(normalizeLoginPhone)
-    .filter(Boolean);
-  return phones.some((phone) => phone === allowed || phone.endsWith(allowed.slice(1)));
-}
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 async function resolveLoginEmail(identifier) {
   const client = await sb();
   const raw = String(identifier || "").trim();
@@ -652,9 +622,6 @@ async function supabaseDailyReportRows(filters = {}) {
   return (data || []).map(({ employee, ...row }) => ({ ...toCamel(row), employee: employee ? enrichEmployee(employee) : null }));
 }
 
-<<<<<<< HEAD
-export const supabaseEndpoints = {
-=======
 function supabaseUserHas(user, scopes = []) {
   const wanted = Array.isArray(scopes) ? scopes : [scopes];
   const permissions = new Set([...(user?.permissions || []), ...(rolePermissions(user?.role) || [])]);
@@ -822,7 +789,6 @@ export const supabaseEndpoints = {
     const runs = await maybeTableRows('monthly_pdf_report_runs', 'generated_at', false).then(toCamel);
     return { month, title: `التقارير الشهرية PDF — ${month}`, generatedAt: now(), status: 'READY', attendance, evaluations: evaluations.evaluations || [], disputes: disputes.cases || [], requests: requests.rows || [], managers, runs };
   },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   controlRoom: async () => {
     const [quality, requests, tasks, dailyReports, alerts] = await Promise.all([
       supabaseEndpoints.qualityCenter().catch(() => ({ readiness: { score: 0, issues: [] } })),
@@ -898,8 +864,6 @@ export const supabaseEndpoints = {
     await audit("auth.login", "profile", user?.id, { identifier: String(identifier || "").trim(), resolvedEmail: email }).catch(() => null);
     return user;
   },
-<<<<<<< HEAD
-=======
   employeeRegister: async (body = {}) => {
     const client = await sb();
     const fullName = String(body.fullName || body.name || "").trim();
@@ -916,7 +880,6 @@ export const supabaseEndpoints = {
     await audit("employee.self_register", "employee", data?.employeeId, { employeeId: data?.employeeId, userId: data?.userId }).catch(() => null);
     return user;
   },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   forgotPassword: async (identifier) => {
     const client = await sb();
     const email = await resolveLoginEmail(identifier);
@@ -971,13 +934,7 @@ export const supabaseEndpoints = {
       else if (body.action === "notify") {
         const client = await sb();
         const { data: employee } = await client.from("employees").select("id,user_id").eq("id", id).maybeSingle();
-<<<<<<< HEAD
-        const { data: notification, error } = await client.from("notifications").insert({ user_id: employee?.user_id || null, employee_id: id, title: body.title || "تنبيه من الإدارة", body: body.message || "يرجى مراجعة الإدارة.", type: body.type || "ACTION_REQUIRED", status: "UNREAD", is_read: false, route: "notifications" }).select("id,title,body").single();
-        fail(error, "تعذر إنشاء التنبيه.");
-        await sendPushNotification({ notificationId: notification.id, title: notification.title, body: notification.body, route: "notifications" }).catch((error) => console.warn("push send failed", error));
-=======
         await client.from("notifications").insert({ user_id: employee?.user_id || null, employee_id: id, title: body.title || "تنبيه من الإدارة", body: body.message || "يرجى مراجعة الإدارة.", type: body.type || "ACTION_REQUIRED", status: "UNREAD", is_read: false });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       }
       updated += 1;
     }
@@ -996,31 +953,11 @@ export const supabaseEndpoints = {
     const client = await sb();
     const { data, error } = await client.from("employees").update(toEmployeePayload(body)).eq("id", id).select("*").single();
     fail(error, "تعذر تعديل الموظف.");
-<<<<<<< HEAD
-    if (body.photoUrl || body.avatarUrl) {
-      await client.from("profiles").update({ avatar_url: body.photoUrl || body.avatarUrl }).eq("employee_id", id).catch(() => null);
-    }
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     await audit("update", "employee", id, data);
     return enrichEmployee(data, await core());
   },
   setEmployeeStatus: async (id, status) => supabaseEndpoints.updateEmployee(id, { status, isActive: !["INACTIVE", "SUSPENDED", "TERMINATED", "DISABLED"].includes(status) }),
-<<<<<<< HEAD
-  deleteEmployee: async (id) => {
-    const client = await sb();
-    await client.from("profiles").update({ employee_id: null, status: "DISABLED" }).eq("employee_id", id).catch(() => null);
-    const { error } = await client.from("employees").delete().eq("id", id);
-    if (error) {
-      const soft = await client.from("employees").update({ is_deleted: true, status: "INACTIVE", updated_at: now() }).eq("id", id).select("id").maybeSingle();
-      fail(soft.error, "تعذر حذف الموظف أو تعطيله. راجع RLS والعلاقات المرتبطة.");
-      return { ok: true, softDeleted: true };
-    }
-    return { ok: true, hardDeleted: true };
-  },
-=======
   deleteEmployee: async (id) => supabaseEndpoints.updateEmployee(id, { isDeleted: true, status: "INACTIVE" }),
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   users: async () => {
     const c = await core();
     const data = (await selectAll("profiles", "*", { limit: 1000 }))
@@ -1029,13 +966,9 @@ export const supabaseEndpoints = {
   },
   createUser: async (body = {}) => {
     const client = await sb();
-<<<<<<< HEAD
-    const { data, error } = await client.functions.invoke("admin-create-user", { body });
-=======
     const payload = { ...body };
     if (!payload.password && payload.phone) payload.password = String(payload.phone || "").replace(/\D/g, "");
     const { data, error } = await client.functions.invoke("admin-create-user", { body: payload });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     fail(error || (data?.error ? new Error(data.error) : null), "تعذر إنشاء مستخدم Supabase. تأكد من نشر Edge Function admin-create-user.");
     const created = data?.user || data;
     if (body.avatarUrl && created?.id) {
@@ -1049,21 +982,13 @@ export const supabaseEndpoints = {
     if (body.email || body.phone || body.password) {
       const { data, error } = await client.functions.invoke("admin-update-user", { body: { ...body, id, userId: id } });
       fail(error || (data?.error ? new Error(data.error) : null), "تعذر تعديل بيانات المستخدم في Supabase Auth. تأكد من نشر Edge Function admin-update-user.");
-<<<<<<< HEAD
-=======
       if (data?.user) return enrichProfile(data.user, await core({ force: true }));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     }
     const payload = compact({ full_name: body.name || body.fullName, avatar_url: body.avatarUrl || body.photoUrl, employee_id: body.employeeId, role_id: body.roleId, branch_id: body.branchId, department_id: body.departmentId, governorate_id: body.governorateId, complex_id: body.complexId, status: body.status, ...contactPayload(body) });
     const { data, error } = await client.from("profiles").update(payload).eq("id", id).select("*").single();
     fail(error, "تعذر تعديل المستخدم.");
-<<<<<<< HEAD
-    if (data?.employee_id && (body.email || body.phone || body.avatarUrl || body.photoUrl)) {
-      await client.from("employees").update(compact({ ...contactPayload(body), photo_url: body.avatarUrl || body.photoUrl || undefined })).eq("id", data.employee_id).catch(() => null);
-=======
     if (data?.employee_id && (body.email || body.phone)) {
       await client.from("employees").update(contactPayload(body)).eq("id", data.employee_id).catch(() => null);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     }
     await audit("update", "profile", id, data);
     return enrichProfile(data, await core());
@@ -1073,11 +998,7 @@ export const supabaseEndpoints = {
     const user = await currentUser();
     if (!user?.id) throw new Error("لا توجد جلسة نشطة.");
     const payload = contactPayload(body);
-<<<<<<< HEAD
-    if (!payload.email && !payload.phone && !payload.avatar_url) throw new Error("اكتب بريدًا إلكترونيًا أو رقم هاتف أو اختر صورة للتعديل.");
-=======
     if (!payload.email && !payload.phone) throw new Error("اكتب بريدًا إلكترونيًا أو رقم هاتف للتعديل.");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     if (payload.email && payload.email !== String(user.email || "").toLowerCase()) {
       const { error: authError } = await client.auth.updateUser({ email: payload.email });
       fail(authError, "تعذر طلب تعديل بريد تسجيل الدخول. قد يحتاج البريد الجديد إلى تأكيد.");
@@ -1085,11 +1006,7 @@ export const supabaseEndpoints = {
     const { data, error } = await client.from("profiles").update(payload).eq("id", user.id).select("*").single();
     fail(error, "تعذر حفظ بيانات الاتصال.");
     if (user.employeeId || user.employee?.id) {
-<<<<<<< HEAD
-      await client.from("employees").update(compact({ ...payload, photo_url: payload.avatar_url })).eq("id", user.employeeId || user.employee.id).catch(() => null);
-=======
       await client.from("employees").update(payload).eq("id", user.employeeId || user.employee.id).catch(() => null);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     }
     await audit("profile.contact_update", "profile", user.id, payload);
     return enrichProfile(data, await core());
@@ -1333,28 +1250,14 @@ export const supabaseEndpoints = {
     const client = await sb();
     const employees = await supabaseEndpoints.employees();
     const audience = body.audience || "all";
-<<<<<<< HEAD
-    const target = employees.filter((employee) => audience === "all" || employee.departmentId === audience || employee.branchId === audience);
-    if (!target.length) return { created: 0 };
-    const rows = target.map((employee) => ({ user_id: employee.userId || null, employee_id: employee.id, title: body.title || "إعلان إداري", body: body.body || body.message || "", type: body.type || "ANNOUNCEMENT", status: "UNREAD", is_read: false, route: "notifications" }));
-    const { data: inserted, error } = await client.from("notifications").insert(rows).select("id,title,body,employee_id,user_id");
-=======
     const target = employees.filter((employee) => audience === "all" || audience === "managers" ? (audience === "all" || ["manager", "direct-manager", "hr-manager", "executive", "executive-secretary", "admin"].includes(employee.role?.slug)) : (employee.departmentId === audience || employee.branchId === audience));
     if (!target.length) return { created: 0, pushed: 0 };
     const rows = target.map((employee) => ({ user_id: employee.userId || null, employee_id: employee.id, title: body.title || "إعلان إداري", body: body.body || body.message || "", type: body.type || "ANNOUNCEMENT", status: "UNREAD", is_read: false, created_at: now() }));
     const { error } = await client.from("notifications").insert(rows);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     fail(error, "تعذر إرسال الإعلان.");
     await createOrUpdate("employee_announcements", {
       title: body.title || "إعلان إداري",
       body: body.body || body.message || "",
-<<<<<<< HEAD
-      targetScope: audience === "all" ? "ALL" : "FILTER",
-      targetValue: audience === "all" ? "" : audience,
-    }).catch(() => null);
-    await Promise.all((inserted || []).slice(0, 100).map((note) => sendPushNotification({ notificationId: note.id, title: note.title, body: note.body, route: "notifications" }).catch((error) => console.warn("push send failed", error))));
-    return { created: rows.length, pushAttempted: inserted?.length || 0 };
-=======
       targetScope: audience === "all" ? "ALL" : audience === "managers" ? "MANAGERS" : "FILTER",
       targetValue: audience === "all" ? "" : audience,
     }).catch(() => null);
@@ -1363,7 +1266,6 @@ export const supabaseEndpoints = {
       .then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); })
       .catch(() => null);
     return { created: rows.length, pushed };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   },
   markNotificationRead: async (id) => createOrUpdate("notifications", { status: "READ", is_read: true, read_at: now() }, id),
   reports: async () => {
@@ -1405,12 +1307,6 @@ export const supabaseEndpoints = {
     const [employees, evaluations] = await Promise.all([supabaseEndpoints.employees(), tableRows("kpi_evaluations", "created_at", false).then(toCamel)]);
     const user = await currentUser();
     const rolePerms = new Set(user?.permissions || []);
-<<<<<<< HEAD
-    const accessMode = rolePerms.has("*") || rolePerms.has("kpi:manage") ? "all" : rolePerms.has("kpi:team") ? "team" : "self";
-    const currentEmployeeId = user?.employeeId || "";
-    const visible = accessMode === "self" ? evaluations.filter((e) => e.employeeId === currentEmployeeId) : accessMode === "team" ? evaluations.filter((e) => employees.find((emp) => emp.id === e.employeeId)?.managerEmployeeId === currentEmployeeId) : evaluations;
-    return { accessMode, currentEmployeeId, policy: { evaluationStartDay: 20, evaluationEndDay: 25, submissionDeadlineDay: 25, description: "تقييم شهري من 20 إلى 25" }, criteria: [], cycle: { id: new Date().toISOString().slice(0, 7), name: "تقييم الشهر الحالي" }, evaluations: visible, pendingEmployees: employees.filter((emp) => !visible.some((e) => e.employeeId === emp.id)), metrics: [{ label: "التقييمات", value: visible.length }, { label: "بانتظار التقييم", value: employees.length - visible.length }] };
-=======
     const accessMode = rolePerms.has("*") || rolePerms.has("kpi:manage") ? "all" : rolePerms.has("kpi:hr") ? "hr" : rolePerms.has("kpi:team") ? "team" : (rolePerms.has("kpi:executive") || rolePerms.has("kpi:final-approve")) ? "executive" : "self";
     const currentEmployeeId = user?.employeeId || "";
     const visible = accessMode === "self" ? evaluations.filter((e) => e.employeeId === currentEmployeeId) : accessMode === "team" ? evaluations.filter((e) => employees.find((emp) => emp.id === e.employeeId)?.managerEmployeeId === currentEmployeeId) : evaluations;
@@ -1439,7 +1335,6 @@ export const supabaseEndpoints = {
       { label: "بانتظار التنفيذي", value: byStatus("SECRETARY_REVIEWED"), helper: "مراجعة السكرتير تمت" },
     ];
     return { accessMode, currentEmployeeId, policy, windowInfo, criteria, cycle: { id: new Date().toISOString().slice(0, 7), name: "تقييم الشهر الحالي", window: windowInfo }, evaluations: visible, pendingEmployees, progressMetrics, metrics: [{ label: "حالة نافذة KPI", value: windowInfo.label, helper: windowInfo.message }, { label: "التقييمات", value: visible.length }, { label: "بانتظار التقييم", value: pendingEmployees.length }] };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   },
   saveKpiEvaluation: async (body = {}) => createOrUpdate("kpi_evaluations", body),
   updateKpiEvaluation: async (id, body = {}) => createOrUpdate("kpi_evaluations", body, id),
@@ -1447,11 +1342,7 @@ export const supabaseEndpoints = {
   createDispute: async (body = {}) => {
     const employeeId = body.employeeId || await selfEmployeeId();
     const row = await createOrUpdate("dispute_cases", disputePayload(body, employeeId));
-<<<<<<< HEAD
-    const committeeEmails = ["demo.user.005@demo.local", "demo.user.004@demo.local", "demo.user.003@demo.local", "demo.executive.secretary@demo.local", "demo.user.001@demo.local"];
-=======
     const committeeEmails = ["direct.manager.03@organization.local", "direct.manager.02@organization.local", "direct.manager.01@organization.local", "executive.secretary@organization.local", "executive.director@organization.local"];
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     const client = await sb();
     const { data: profiles } = await client.from("profiles").select("id,employee_id,email").in("email", committeeEmails);
     const notes = (profiles || []).map((profile) => ({ user_id: profile.id, employee_id: profile.employee_id, title: "مشكلة جديدة للجنة حل المشاكل", body: body.title || "شكوى / خلاف", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false }));
@@ -1589,15 +1480,11 @@ export const supabaseEndpoints = {
     await audit("import", "employees", "bulk", { count: data?.length || 0 });
     return { created: data?.length || 0 };
   },
-<<<<<<< HEAD
-  uploadAvatar: async (file) => uploadFile(CONFIG().storage?.avatarsBucket || "avatars", "avatars", file),
-=======
   uploadAvatar: async (file) => {
     if (!file || !String(file.type || "").startsWith("image/")) throw new Error("اختر ملف صورة صالح.");
     if (Number(file.size || 0) > 2 * 1024 * 1024) throw new Error("حجم الصورة أكبر من 2MB.");
     return uploadFile(CONFIG().storage?.avatarsBucket || "avatars", "avatars", file);
   },
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   attachments: async (scope, entityId) => {
     const rows = toCamel(await tableRows("attachments", "created_at", false));
     const filtered = rows.filter((a) => (!scope || a.scope === scope) && (!entityId || a.entityId === entityId || a.employeeId === entityId));
@@ -1622,30 +1509,6 @@ export const supabaseEndpoints = {
   createAccessEvent: async (body = {}) => createOrUpdate("access_control_events", body),
   subscribePush: async (body = {}) => {
     const client = await sb();
-<<<<<<< HEAD
-    const user = await currentUser();
-    const subscription = body.subscription || body.payload || {};
-    const endpoint = body.endpoint || subscription.endpoint || "";
-    if (!endpoint) throw new Error("تعذر تسجيل الإشعارات: endpoint غير موجود.");
-    const payload = subscription && subscription.endpoint ? subscription : (body.payload || {});
-    const row = {
-      user_id: user?.id || null,
-      employee_id: user?.employeeId || user?.employee?.id || null,
-      endpoint,
-      endpoint_hash: "",
-      p256dh: subscription?.keys?.p256dh || body.p256dh || "",
-      auth: subscription?.keys?.auth || body.auth || "",
-      payload,
-      permission: body.permission || globalThis.Notification?.permission || "",
-      platform: body.platform || navigator.userAgent || "",
-      user_agent: navigator.userAgent || "",
-      status: "ACTIVE",
-      last_seen_at: now(),
-      updated_at: now(),
-    };
-    const { data, error } = await client.from("push_subscriptions").upsert(row, { onConflict: "endpoint" }).select("*").single();
-    fail(error, "تعذر حفظ اشتراك إشعارات المتصفح.");
-=======
     const user = await currentUser().catch(() => null);
     const payload = {
       user_id: user?.id || null,
@@ -1661,7 +1524,6 @@ export const supabaseEndpoints = {
     };
     const { data, error } = await client.from("push_subscriptions").upsert(payload, { onConflict: "endpoint" }).select("*").single();
     fail(error, "تعذر حفظ اشتراك Web Push. تأكد من تطبيق Patch 040.");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     return toCamel(data);
   },
   passkeyStatus: async () => tableRows("passkey_credentials", "created_at", false).then(toCamel),
@@ -1805,44 +1667,6 @@ export const supabaseEndpoints = {
     return rows.filter((log) => String(log.action || "").startsWith("auth.") || ["device.trust", "review.rejected_punch"].includes(log.action));
   },
   passwordVault: async () => {
-<<<<<<< HEAD
-    const viewer = await currentUser();
-    if (!hasPasswordVaultAccess(viewer)) throw new Error("خزنة كلمات المرور متاحة فقط لحساب يحيى المرتبط بالرقم 01070000025.");
-    const [users, credentials] = await Promise.all([
-      supabaseEndpoints.users(),
-      selectAll("credential_vault", "*", { order: "created_at", ascending: false, limit: 5000 }).catch(() => []),
-    ]);
-    return users.map((user) => {
-      const issued = credentials.find((item) => item.userId === user.id || item.user_id === user.id);
-      return {
-        ...user,
-        phone: user.phone || issued?.phone || "",
-        password: issued?.temporaryPassword || issued?.temporary_password || "غير متاحة - استخدم إصدار كلمة جديدة",
-        mustChangePassword: user.mustChangePassword,
-        temporaryPasswordRecord: issued || null,
-      };
-    });
-  },
-  resetUserPassword: async (userId, password = "") => {
-    const viewer = await currentUser();
-    if (!hasPasswordVaultAccess(viewer)) throw new Error("إعادة تعيين كلمات المرور متاحة فقط لحساب يحيى المرتبط بالرقم 01070000025.");
-    const tempPassword = password || `Ahla@${Date.now().toString(36)}!9A`;
-    const client = await sb();
-    const { data, error } = await client.functions.invoke("admin-update-user", { body: { id: userId, password: tempPassword, temporaryPassword: true, mustChangePassword: true } });
-    fail(error || (data?.error ? new Error(data.error) : null), "تعذر إعادة تعيين كلمة المرور. تأكد من نشر admin-update-user.");
-    const user = data?.user || data || {};
-    await client.from("credential_vault").upsert({
-      id: `cred-phone-login-ready-${userId}`,
-      user_id: userId,
-      employee_id: user.employee_id || user.employeeId || null,
-      email: user.email || "",
-      phone: user.phone || "",
-      temporary_password: tempPassword,
-      status: "PHONE_LOGIN_READY",
-      note: "كلمة مرور مؤقتة جديدة صادرة من لوحة الإدارة.",
-      created_at: now(),
-    }, { onConflict: "id" }).catch(() => null);
-=======
     const users = await supabaseEndpoints.users();
     return users.map((user) => ({ ...user, password: "غير متاحة بعد التفعيل الحقيقي — استخدم إصدار كلمة مؤقتة جديدة", mustChangePassword: user.mustChangePassword }));
   },
@@ -1851,7 +1675,6 @@ export const supabaseEndpoints = {
     const client = await sb();
     const { data, error } = await client.functions.invoke("admin-update-user", { body: { id: userId, password: tempPassword, temporaryPassword: true, mustChangePassword: true } });
     fail(error || (data?.error ? new Error(data.error) : null), "تعذر إعادة تعيين كلمة المرور. تأكد من نشر admin-update-user.");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     return { user: data?.user || data, temporaryPassword: tempPassword };
   },
   executiveReport: async () => {
@@ -2178,13 +2001,6 @@ export const supabaseEndpoints = {
     const mobile = await supabaseEndpoints.executiveMobile();
     return { day: now().slice(0, 10), counts: mobile.counts || {}, rows: mobile.employees || [], generatedAt: now() };
   },
-<<<<<<< HEAD
-  demoStatus: async () => ({ enabled: localStorage.getItem("hr.demoMode") === "true" }),
-  setDemoMode: async (enabled) => {
-    if (enabled) localStorage.setItem("hr.demoMode", "true");
-    else localStorage.removeItem("hr.demoMode");
-    return { enabled: Boolean(enabled) };
-=======
   managementStructure: async () => {
     const employees = await supabaseEndpoints.employees().catch(() => []);
     const managerSlugs = new Set(["admin", "executive", "executive-secretary", "hr-manager", "manager", "direct-manager", "operations-manager-1", "operations-manager-2"]);
@@ -2489,7 +2305,6 @@ export const supabaseEndpoints = {
       ...notes.map((note) => ({ id: note.id, type: "NOTIFICATION", title: note.title, body: note.body || "إشعار جديد", route: "notifications", severity: note.type || "LOW" })),
     ];
     return { actions, tasks, documents: docs, notifications: notes, liveRequests, generatedAt: now() };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   },
   reset: async () => ({ ok: true, message: "إعادة الضبط في Supabase تتم من SQL Editor أو عبر حذف بيانات الجداول." }),
 };

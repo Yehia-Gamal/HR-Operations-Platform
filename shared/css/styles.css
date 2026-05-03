@@ -23,13 +23,8 @@
   --warning: #f7c76b;
   --success: #49d39a;
   --info: #57daf5;
-<<<<<<< HEAD
-  --shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-  --shadow-soft: 0 12px 34px rgba(0, 0, 0, 0.18);
-=======
   --shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
   --shadow-soft: 0 16px 36px rgba(0, 0, 0, 0.22);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   --radius-xl: 28px;
   --radius-lg: 22px;
   --radius-md: 16px;
@@ -37,8 +32,6 @@
   --sidebar: 304px;
   --sidebar-collapsed: 90px;
   --content-max: 1480px;
-<<<<<<< HEAD
-=======
   --z-topbar: 20;
   --z-nav: 30;
   --z-fab: 40;
@@ -47,7 +40,6 @@
   --z-camera: 70;
   --z-toast: 80;
   --z-banner: 9000;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 * { box-sizing: border-box; }
@@ -68,13 +60,8 @@ body {
     radial-gradient(circle at 86% 16%, rgba(87, 218, 245, .055), transparent 26%),
     linear-gradient(180deg, var(--bg-deep) 0%, var(--bg) 48%, #06101e 100%);
   color: var(--text);
-<<<<<<< HEAD
-  font-family: Tahoma, Arial, "Segoe UI", sans-serif;
-  line-height: 1.65;
-=======
   font-family: "Cairo", Tahoma, Arial, system-ui, sans-serif;
   line-height: 1.8;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   overflow-x: hidden;
 }
 
@@ -313,15 +300,9 @@ body.sidebar-collapsed .nav button::before {
   padding: 18px 20px;
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-<<<<<<< HEAD
-  background: linear-gradient(180deg, rgba(17, 29, 51, .96), rgba(11, 21, 39, .96));
-  backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-soft);
-=======
   background: linear-gradient(180deg, rgba(17, 29, 51, .98), rgba(11, 21, 39, .98));
   backdrop-filter: blur(24px);
   box-shadow: var(--shadow);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 .page-title { min-width: 0; }
@@ -408,20 +389,12 @@ body.sidebar-collapsed .nav button::before {
 .grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-<<<<<<< HEAD
-  gap: 18px;
-=======
   gap: 24px;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 .stack {
   display: grid;
-<<<<<<< HEAD
-  gap: 18px;
-=======
   gap: 20px;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 .span-2 { grid-column: span 2; }
@@ -463,25 +436,15 @@ body.sidebar-collapsed .nav button::before {
 
 .panel {
   min-width: 0;
-<<<<<<< HEAD
-  padding: 18px;
-=======
   padding: 24px;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 .panel > h2,
 .profile-card h2 {
-<<<<<<< HEAD
-  margin: 0 0 14px;
-  color: var(--text-strong);
-  font-size: 20px;
-=======
   margin: 0 0 18px;
   color: var(--text-strong);
   font-size: 22px;
   font-weight: 800;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 .panel-head {
@@ -537,11 +500,7 @@ body.sidebar-collapsed .nav button::before {
 
 .metric strong {
   display: block;
-<<<<<<< HEAD
-  margin: 7px 0;
-=======
   margin: 10px 0;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   color: #f7fbff;
   font-size: clamp(28px, 4vw, 42px);
   line-height: 1;
@@ -552,11 +511,7 @@ body.sidebar-collapsed .nav button::before {
   min-height: 40px;
   border: 1px solid var(--border-strong);
   border-radius: 13px;
-<<<<<<< HEAD
-  padding: 9px 14px;
-=======
   padding: 11px 18px;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   color: var(--text);
   background: #0c1729;
   cursor: pointer;
@@ -605,11 +560,7 @@ input[type="file"] {
   min-height: 44px;
   border: 1px solid var(--border-strong);
   border-radius: 13px;
-<<<<<<< HEAD
-  padding: 10px 12px;
-=======
   padding: 12px 16px;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   background: var(--surface-soft);
   color: var(--text);
   box-shadow: none;
@@ -648,11 +599,7 @@ label {
 .filters {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-<<<<<<< HEAD
-  gap: 12px;
-=======
   gap: 18px;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   align-items: end;
 }
 
@@ -718,11 +665,7 @@ table {
 
 th,
 td {
-<<<<<<< HEAD
-  padding: 13px 14px;
-=======
   padding: 16px 18px;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   border-bottom: 1px solid var(--border);
   text-align: right;
   vertical-align: middle;
@@ -743,11 +686,7 @@ td { font-size: 13px; }
 
 td small { color: var(--muted); }
 
-<<<<<<< HEAD
-tbody tr:hover { background: rgba(17, 29, 51, .72); }
-=======
 tbody tr:hover { background: rgba(56, 199, 244, .04); }
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 .empty {
   padding: 26px !important;
@@ -2758,63 +2697,7 @@ th {
 .avatar-wrap .avatar { width:100%; height:100%; }
 .employee-card-grid { align-items:stretch; }
 .executive-mobile-app .sidebar { display:block; }
-<<<<<<< HEAD
-.executive-mobile-view .employee-card-grid { grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px; }
-.executive-mobile-view .executive-employee-card {
-  grid-template-columns:minmax(0,1fr) 78px;
-  grid-template-rows:auto auto;
-  align-items:center;
-  gap:12px;
-  overflow:hidden;
-  position:relative;
-}
-.executive-mobile-view .executive-employee-card .avatar-button {
-  grid-column:2;
-  grid-row:1 / span 2;
-  width:76px;
-  height:76px;
-  border-radius:24px;
-  align-self:start;
-}
-.executive-mobile-view .executive-employee-card > div:not(.mini-card-actions) {
-  grid-column:1;
-  min-width:0;
-  display:grid;
-  gap:4px;
-}
-.executive-mobile-view .executive-employee-card strong,
-.executive-mobile-view .executive-employee-card small {
-  min-width:0;
-  white-space:normal;
-  overflow-wrap:anywhere;
-  word-break:normal;
-}
-.executive-mobile-view .executive-employee-card .mini-card-actions {
-  grid-column:1;
-  grid-row:2;
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  gap:8px;
-  flex-wrap:wrap;
-}
-.executive-mobile-view .executive-employee-card .status { position:static; max-width:100%; }
-@media(max-width:760px){
-  .executive-mobile-view .employee-card-grid{grid-template-columns:1fr;}
-  .executive-mobile-view .executive-employee-card{grid-template-columns:minmax(0,1fr) 72px;padding:14px 12px;}
-  .executive-mobile-view .executive-employee-card .avatar-button{width:70px;height:70px;border-radius:22px;}
-  .executive-mobile-view .executive-employee-card .button{min-height:42px;padding:9px 12px;}
-  .executive-mobile-view .executive-employee-card .mini-card-actions{grid-column:1 / -1;grid-row:auto;display:grid;grid-template-columns:1fr 1fr;}
-  .executive-mobile-view .executive-employee-card .mini-card-actions .status{grid-column:1 / -1;justify-self:start;}
-}
-@media(max-width:420px){
-  .executive-mobile-view .executive-employee-card{grid-template-columns:minmax(0,1fr) 64px;}
-  .executive-mobile-view .executive-employee-card .avatar-button{width:62px;height:62px;border-radius:20px;}
-  .executive-mobile-view .executive-employee-card .mini-card-actions{grid-template-columns:1fr;}
-}
-=======
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 /* Final system polish: stable headers and collision-free Arabic text. */
 .topbar {
@@ -3337,8 +3220,6 @@ th {
     max-width: calc(100% - 54px);
   }
 }
-<<<<<<< HEAD
-=======
 
 /* v1.3.4 — executive live presence, risk scoring, decisions and monthly PDF */
 .live-map-board{
@@ -4474,4 +4355,3 @@ th {
   padding: 10px;
   border-radius: 12px;
 }
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)

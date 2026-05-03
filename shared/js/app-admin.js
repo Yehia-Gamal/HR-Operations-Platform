@@ -1,18 +1,7 @@
-<<<<<<< HEAD
-import { endpoints, unwrap } from "./api.js?v=server-runtime-push-20260501-01";
-
-const app = document.querySelector("#app");
-const REMEMBER_LOGIN_KEY = "hr.login.rememberAdmin";
-const REMEMBER_IDENTIFIER_KEY = "hr.login.rememberedIdentifier";
-const REMEMBER_PASSWORD_KEY = "hr.login.rememberedPassword";
-const PASSWORD_VAULT_ADMIN_PHONE = "01070000025";
-const loginRemembered = localStorage.getItem(REMEMBER_LOGIN_KEY) === "true";
-=======
 import { endpoints, unwrap } from "./api.js?v=management-suite-20260502-production";
 import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
 
 const app = document.querySelector("#app");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
 const state = {
   route: location.hash.replace("#", "") || "dashboard",
@@ -21,44 +10,6 @@ const state = {
   error: "",
   sidebarCollapsed: localStorage.getItem("hr.sidebarCollapsed") === "true",
   sidebarScrollTop: Number(sessionStorage.getItem("hr.sidebarScrollTop") || 0),
-<<<<<<< HEAD
-  loginIdentifier: (loginRemembered ? localStorage.getItem(REMEMBER_IDENTIFIER_KEY) : "") || localStorage.getItem("hr.login.lastIdentifier") || "",
-  loginPassword: loginRemembered ? localStorage.getItem(REMEMBER_PASSWORD_KEY) || "" : "",
-  rememberLogin: loginRemembered,
-  lastLoginFailed: false,
-};
-
-app.addEventListener("click", async (event) => {
-  const button = event.target.closest?.("[data-request-live]");
-  if (!button || !app.contains(button)) return;
-  event.preventDefault();
-  event.stopImmediatePropagation();
-  const employeeId = button.dataset.requestLive;
-  if (!employeeId || button.dataset.busy === "true") return;
-  button.dataset.busy = "true";
-  const previousText = button.textContent;
-  button.textContent = "جار إرسال الطلب";
-  try {
-    await endpoints.requestLiveLocation(employeeId, { reason: "متابعة تنفيذية مباشرة" });
-    setMessage("تم إرسال/تحديث طلب الموقع للموظف.", "");
-  } catch (error) {
-    setMessage("", error.message || "تعذر طلب الموقع.");
-  } finally {
-    delete button.dataset.busy;
-    button.textContent = previousText;
-    if (routeKey() === "executive-mobile") renderExecutiveMobile();
-    else render();
-  }
-}, true);
-
-const navGroups = [
-  ["الرئيسية", [["dashboard", "لوحة المتابعة"], ["executive-report", "تقرير الشيخ محمد"], ["executive-mobile", "المتابعة التنفيذية"], ["manager-dashboard", "لوحة المدير"], ["manager-suite", "لوحة المدير المباشر"], ["realtime", "لوحة Live"], ["employee-punch", "بصمة الموظف"], ["attendance", "الحضور"], ["attendance-review", "مراجعة البصمات"], ["smart-attendance", "قواعد الحضور الذكية"], ["attendance-calendar", "تقويم الحضور"], ["employee-qr", "QR البصمة"]]],
-  ["الأفراد", [["employees", "الأشخاص والموظفون"], ["employee-archive", "أرشيف موظف"], ["users", "المستخدمون"], ["leave-balances", "أرصدة الإجازات"], ["documents", "مستندات الموظفين"], ["trusted-devices", "الأجهزة المعتمدة"], ["org-chart", "الهيكل الوظيفي"]]],
-  ["الصلاحيات", [["roles", "الأدوار والصلاحيات"], ["permission-matrix", "مصفوفة الصلاحيات"], ["password-vault", "خزنة كلمات المرور"], ["sensitive-approvals", "اعتمادات حساسة"]]],
-  ["الطلبات", [["requests", "مركز الطلبات"], ["tasks", "المهام"], ["missions", "المأموريات"], ["leaves", "الإجازات"], ["locations", "طلبات وسجل المواقع"], ["disputes", "الشكاوى وفض الخلافات"]]],
-  ["المتابعة", [["kpi", "مؤشرات الأداء"], ["monthly-evaluations", "التقييم الشهري"], ["control-room", "غرفة التحكم"], ["daily-reports", "التقارير اليومية"], ["ai-analytics", "تحليلات AI"], ["reports", "التقارير"], ["executive-pdf", "تقارير الشيخ PDF"], ["smart-alerts", "التنبيهات الذكية"], ["monthly-report", "تقرير شهري"], ["advanced-reports", "منشئ التقارير"], ["audit", "سجل التدقيق"], ["security-log", "سجل الأمان"], ["notifications", "الإشعارات"]]],
-  ["النظام", [["settings", "الإعدادات"], ["supabase-setup", "إعداد Supabase"], ["db-updates", "تحديثات Database"], ["auto-backup", "Backup تلقائي"], ["data-center", "مركز البيانات"], ["complex-settings", "إعدادات المجمع"], ["system-diagnostics", "اختبار النظام"], ["quality-center", "مركز الجودة والإصلاح"], ["policies", "السياسات والتوقيعات"], ["route-access", "صلاحيات الواجهة"], ["demo-mode", "وضع التدريب"], ["integrations", "التكاملات"], ["access-control", "الأجهزة والبوابات"], ["offline-sync", "Offline Sync"], ["health", "حالة النظام"], ["backup", "نسخ واستيراد"]]],
-=======
   loginIdentifier: localStorage.getItem("hr.login.lastIdentifier") || "",
   loginPassword: "",
   lastLoginFailed: false,
@@ -71,18 +22,12 @@ const navGroups = [
   ["الطلبات", [["requests", "مركز الطلبات"], ["tasks", "المهام"], ["missions", "المأموريات"], ["leaves", "الإجازات"], ["locations", "طلبات وسجل المواقع"], ["disputes", "الشكاوى وفض الخلافات"], ["admin-decisions", "سجل القرارات الإدارية"], ["dispute-workflow", "مسار الشكاوى والتصعيد"]]],
   ["المتابعة", [["kpi", "مؤشرات الأداء"], ["monthly-evaluations", "التقييم الشهري"], ["control-room", "غرفة التحكم"], ["daily-reports", "التقارير اليومية"], ["ai-analytics", "تحليلات AI"], ["reports", "التقارير"], ["report-center", "مركز التقارير والتصدير"], ["executive-pdf", "تقارير المدير التنفيذي PDF"], ["monthly-auto-pdf", "PDF شهري تلقائي"], ["smart-alerts", "التنبيهات الذكية"], ["monthly-report", "تقرير شهري"], ["advanced-reports", "منشئ التقارير"], ["audit", "سجل التدقيق"], ["security-log", "سجل الأمان"], ["notifications", "الإشعارات"]]],
   ["النظام", [["settings", "الإعدادات"], ["supabase-setup", "إعداد Supabase"], ["db-updates", "تحديثات Database"], ["auto-backup", "Backup تلقائي"], ["data-center", "مركز البيانات"], ["complex-settings", "إعدادات المجمع"], ["system-diagnostics", "اختبار النظام"], ["quality-center", "مركز الجودة والإصلاح"], ["policies", "السياسات والتوقيعات"], ["route-access", "صلاحيات الواجهة"], ["integrations", "التكاملات"], ["access-control", "الأجهزة والبوابات"], ["offline-sync", "Offline Sync"], ["health", "حالة النظام"], ["backup", "نسخ واستيراد"]]],
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 ];
 
 const routePermissions = {
   dashboard: ["dashboard:view"],
   "executive-report": ["executive:report", "dashboard:view", "reports:export"],
   "executive-mobile": ["executive:mobile", "dashboard:view", "live-location:request"],
-<<<<<<< HEAD
-  realtime: ["realtime:view", "dashboard:view", "reports:export"],
-  "manager-dashboard": ["dashboard:view", "kpi:team", "attendance:manage", "requests:approve"],
-  employees: ["employees:view", "employees:write", "users:manage"],
-=======
   "presence-map": ["executive:presence-map", "executive:mobile", "dashboard:view"],
   "attendance-risk": ["attendance:risk", "attendance:review", "attendance:manage", "executive:mobile"],
   realtime: ["realtime:view", "dashboard:view", "reports:export"],
@@ -91,7 +36,6 @@ const routePermissions = {
   "management-structure": ["organization:manage", "employees:view", "manager:team"],
   "team-dashboard": ["team:dashboard", "manager:team", "manager:suite", "kpi:team"],
   "hr-operations": ["hr:operations", "attendance:manage", "kpi:hr", "employees:write"],
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   "employee-profile": ["employees:view", "employees:write", "users:manage"],
   users: ["users:manage"],
   "leave-balances": ["leave:balance", "employees:view", "requests:approve"],
@@ -105,20 +49,12 @@ const routePermissions = {
   "employee-punch": ["dashboard:view", "attendance:self", "attendance:manage"],
   "employee-qr": ["attendance:self", "attendance:manage", "employees:view"],
   "smart-attendance": ["attendance:smart", "attendance:rules", "attendance:manage"],
-<<<<<<< HEAD
-  "manager-suite": ["manager:suite", "kpi:team", "attendance:manage", "requests:approve"],
-  "executive-pdf": ["executive:report", "reports:export"],
-  "employee-archive": ["employee:archive", "employees:view", "audit:view"],
-  "smart-alerts": ["alerts:manage", "control-room:view", "dashboard:view"],
-  "monthly-evaluations": ["kpi:monthly", "kpi:team", "kpi:manage"],
-=======
   "manager-suite": ["manager:suite", "manager:team", "kpi:team", "attendance:manage", "requests:approve"],
   "executive-pdf": ["executive:report", "reports:export"],
   "monthly-auto-pdf": ["reports:pdf", "reports:export", "executive:report"],
   "employee-archive": ["employee:archive", "employees:view", "audit:view"],
   "smart-alerts": ["alerts:manage", "control-room:view", "dashboard:view"],
   "monthly-evaluations": ["kpi:monthly", "kpi:team", "kpi:manage", "kpi:hr", "kpi:executive"],
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   "supabase-setup": ["supabase:diagnostics", "settings:manage"],
   "db-updates": ["database:migrations", "settings:manage"],
   "auto-backup": ["backup:auto", "settings:manage", "reports:export"],
@@ -130,18 +66,12 @@ const routePermissions = {
   missions: ["dashboard:view"],
   leaves: ["dashboard:view"],
   locations: ["dashboard:view", "attendance:self", "attendance:manage", "requests:approve"],
-<<<<<<< HEAD
-  disputes: ["dashboard:view", "disputes:manage", "requests:approve", "users:manage"],
-  kpi: ["kpi:manage", "kpi:team", "kpi:self", "reports:export"],
-  reports: ["reports:export"],
-=======
   disputes: ["dashboard:view", "disputes:manage", "disputes:committee", "requests:approve", "users:manage"],
   "dispute-workflow": ["disputes:committee", "disputes:manage", "disputes:escalate", "requests:approve"],
   "admin-decisions": ["decisions:manage", "notifications:manage", "executive:report"],
   kpi: ["kpi:manage", "kpi:team", "kpi:self", "kpi:hr", "kpi:executive", "kpi:final-approve", "reports:export"],
   reports: ["reports:export"],
   "report-center": ["reports:export", "reports:pdf", "reports:excel"],
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   "advanced-reports": ["reports:export"],
   "monthly-report": ["reports:export", "attendance:manage"],
   "ai-analytics": ["ai:view", "reports:export"],
@@ -157,10 +87,6 @@ const routePermissions = {
   "quality-center": ["maintenance:run", "workflow:manage", "settings:manage", "audit:view"],
   policies: ["policies:manage", "policies:self", "settings:manage"],
   "route-access": ["settings:manage", "users:manage"],
-<<<<<<< HEAD
-  "demo-mode": ["settings:manage", "users:manage"],
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   health: ["settings:manage", "audit:view"],
   backup: ["settings:manage", "reports:export"],
   integrations: ["integrations:manage", "settings:manage"],
@@ -173,23 +99,10 @@ const FULL_ACCESS_ROLE_KEYS = new Set([
   "super-admin",
   "super_admin",
   "role-admin",
-<<<<<<< HEAD
-  "executive",
-  "role-executive",
-  "executive-secretary",
-  "role-executive-secretary",
-  "hr-manager",
-  "role-hr",
-  "مدير النظام",
-  "المدير التنفيذي",
-  "السكرتير التنفيذي",
-  "مدير موارد بشرية",
-=======
   "executive-secretary",
   "role-executive-secretary",
   "مدير النظام",
   "السكرتير التنفيذي",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 ]);
 
 function safeList(value) {
@@ -272,9 +185,6 @@ function currentPermissions(user = state.user) {
   ]);
 }
 
-<<<<<<< HEAD
-function hasFullAccess(user = state.user) {
-=======
 function isExecutiveOnlyRole(user = state.user) {
   const role = roleMeta(user);
   const keys = [role.id, role.key, role.slug, role.name].filter(Boolean).map((item) => String(item).toLowerCase());
@@ -283,7 +193,6 @@ function isExecutiveOnlyRole(user = state.user) {
 
 function hasFullAccess(user = state.user) {
   if (isExecutiveOnlyRole(user)) return false;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const role = roleMeta(user);
   const rawKeys = [role.id, role.key, role.slug, role.name].filter(Boolean).map(String);
   const lowerKeys = rawKeys.map((item) => item.toLowerCase());
@@ -292,28 +201,11 @@ function hasFullAccess(user = state.user) {
 }
 
 function isTechnicalAdmin(user = state.user) {
-<<<<<<< HEAD
-  const text = `${user?.employeeId || ""} ${user?.email || ""} ${user?.name || ""} ${user?.fullName || ""} ${user?.employee?.fullName || ""}`.toLowerCase();
-  return text.includes("emp-demo-002") || text.includes("demo.executive.secretary@demo.local");
-}
-
-function normalizeDigits(value = "") {
-  return String(value || "").replace(/\D/g, "");
-}
-
-function hasPasswordVaultAccess(user = state.user) {
-  const allowed = normalizeDigits(PASSWORD_VAULT_ADMIN_PHONE);
-  const phones = [user?.phone, user?.mobile, user?.employee?.phone, user?.employee?.mobile]
-    .map(normalizeDigits)
-    .filter(Boolean);
-  return phones.some((phone) => phone === allowed || phone.endsWith(allowed.slice(1)));
-=======
   const role = roleMeta(user);
   const keys = [role.id, role.key, role.slug, user?.roleId, user?.roleKey, user?.roleSlug]
     .filter(Boolean)
     .map((item) => String(item).toLowerCase());
   return hasFullAccess(user) || keys.some((key) => ["role-admin", "admin", "super-admin", "super_admin"].includes(key));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 function hasAnyPermission(scopes = []) {
@@ -333,20 +225,13 @@ function activeNavKey(key = routeKey()) {
 }
 
 function canRoute(key) {
-<<<<<<< HEAD
-  if (key === "password-vault") return hasPasswordVaultAccess();
-=======
   if (key === "password-vault") return isTechnicalAdmin() || hasFullAccess();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   return hasAnyPermission(routePermissions[key] || []);
 }
 
 function isAdminPortalUser(user = state.user) {
   if (!user) return false;
-<<<<<<< HEAD
-=======
   if (isExecutiveOnlyRole(user)) return false;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   if (hasFullAccess(user)) return true;
   const previousUser = state.user;
   state.user = user;
@@ -359,27 +244,20 @@ function isAdminPortalUser(user = state.user) {
     "settings:manage",
     "audit:view",
     "kpi:team",
-<<<<<<< HEAD
-=======
     "team:dashboard",
     "hr:operations",
     "organization:manage",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   ]);
   state.user = previousUser;
   return allowed;
 }
 
 function goEmployeePortal(route = "home") {
-<<<<<<< HEAD
-  window.location.href = `../employee/index.html#${route}`;
-=======
   window.location.href = "../employee/index.html#" + encodeURIComponent(route);
 }
 
 function goExecutivePortal(route = "home") {
   window.location.href = "../operations-gate/?next=" + encodeURIComponent("../executive/#" + route);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 window.addEventListener("hashchange", () => {
@@ -455,14 +333,11 @@ function routeDisplayName(key) {
   return key;
 }
 
-<<<<<<< HEAD
-=======
 function debounce(fn, wait = 250) {
   let timer = null;
   return (...args) => { window.clearTimeout(timer); timer = window.setTimeout(() => fn(...args), wait); };
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function setMessage(message = "", error = "") {
   state.message = message;
   state.error = error;
@@ -476,43 +351,6 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;");
 }
 
-<<<<<<< HEAD
-function passwordToggleButton() {
-  return `<button type="button" class="password-eye" data-toggle-password aria-label="إظهار كلمة المرور" title="إظهار كلمة المرور" aria-pressed="false"><span class="password-eye-icon" aria-hidden="true"></span></button>`;
-}
-
-function passwordField({ name = "password", value = "", autocomplete = "", placeholder = "", required = false, minlength = "" } = {}) {
-  const attrs = [
-    `name="${escapeHtml(name)}"`,
-    `type="password"`,
-    value ? `value="${escapeHtml(value)}"` : "",
-    autocomplete ? `autocomplete="${escapeHtml(autocomplete)}"` : "",
-    placeholder ? `placeholder="${escapeHtml(placeholder)}"` : "",
-    required ? "required" : "",
-    minlength ? `minlength="${escapeHtml(minlength)}"` : "",
-  ].filter(Boolean).join(" ");
-  return `<span class="password-field"><input ${attrs} />${passwordToggleButton()}</span>`;
-}
-
-function attachPasswordToggles(root = app) {
-  root.querySelectorAll("[data-toggle-password]").forEach((button) => {
-    if (button.dataset.passwordToggleBound === "true") return;
-    button.dataset.passwordToggleBound = "true";
-    button.addEventListener("click", () => {
-      const input = button.closest(".password-field")?.querySelector("input");
-      if (!input) return;
-      const willShow = input.type !== "text";
-      input.type = willShow ? "text" : "password";
-      const label = willShow ? "إخفاء كلمة المرور" : "إظهار كلمة المرور";
-      button.setAttribute("aria-label", label);
-      button.setAttribute("title", label);
-      button.setAttribute("aria-pressed", String(willShow));
-    });
-  });
-}
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function date(value) {
   if (!value) return "-";
   const parsed = new Date(value);
@@ -525,13 +363,10 @@ function dateOnly(value) {
   return Number.isNaN(parsed.getTime()) ? String(value).slice(0, 10) : parsed.toLocaleDateString("ar-EG");
 }
 
-<<<<<<< HEAD
-=======
 function metric(label, value, helper = "") {
   return `<article class="metric-card"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value ?? 0)}</strong><small>${escapeHtml(helper)}</small></article>`;
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function statusLabel(value) {
   return {
     ACTIVE: "نشط",
@@ -555,14 +390,11 @@ function statusLabel(value) {
     ON_MISSION: "مأمورية",
     LIVE_SHARED: "موقع مباشر مُرسل",
     ACTION_REQUIRED: "إجراء مطلوب",
-<<<<<<< HEAD
-=======
     SELF_SUBMITTED: "مرسل من الموظف",
     MANAGER_APPROVED: "اعتماد المدير",
     HR_REVIEWED: "مراجعة HR",
     SECRETARY_REVIEWED: "مراجعة السكرتير",
     EXECUTIVE_APPROVED: "اعتماد المدير التنفيذي",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     CHECKOUT_REVIEW: "انصراف للمراجعة",
     APPROVED: "معتمد",
     REJECTED: "مرفوض",
@@ -609,11 +441,6 @@ function statusLabel(value) {
     MANUAL_APPROVED: "اعتماد يدوي",
     DEVICE_TRUSTED: "جهاز معتمد",
     DEVICE_DISABLED: "جهاز معطل",
-<<<<<<< HEAD
-    DEMO_ENABLED: "وضع التدريب مفعل",
-    DEMO_DISABLED: "وضع التدريب مغلق",
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     unknown: "غير معروف",
   }[value] || value || "-";
 }
@@ -634,65 +461,6 @@ function initials(name) {
   return String(name || "?").trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part) => part[0]).join("") || "?";
 }
 
-<<<<<<< HEAD
-const STATIC_EMPLOYEE_PHOTOS = {
-  "emp-demo-001": "demo-employee-001.png",
-  "emp-demo-002": "demo-employee-002.png",
-  "emp-demo-003": "demo-employee-003.png",
-  "emp-demo-004": "demo-employee-004.png",
-  "emp-demo-005": "demo-employee-005.png",
-  "emp-demo-006": "demo-employee-006.png",
-  "emp-demo-007": "demo-employee-007.png",
-  "emp-demo-008": "demo-employee-008.png",
-  "emp-demo-010": "demo-employee-009.png",
-  "emp-demo-011": "demo-employee-010.png",
-  "emp-demo-012": "demo-employee-011.png",
-  "emp-demo-013": "demo-employee-012.png",
-  "emp-demo-014": "demo-employee-013.png",
-  "emp-demo-015": "demo-employee-014.png",
-  "emp-demo-016": "demo-employee-015.png",
-  "emp-demo-020": "demo-employee-016.png",
-  "emp-demo-022": "demo-employee-017.png",
-  "emp-demo-023": "demo-employee-018.png",
-};
-const STATIC_EMPLOYEE_PHOTO_ALIASES = {
-  "demo.alias": "demo-employee-001.png",
-  "demo.alias": "demo-employee-002.png",
-  "demo.alias": "demo-employee-002.png",
-  "demo.alias": "demo-employee-003.png",
-  "hr": "demo-employee-003.png",
-  "demo.alias": "demo-employee-004.png",
-  "demo.alias": "demo-employee-005.png",
-  "demo.alias": "demo-employee-006.png",
-  "demo.alias": "demo-employee-007.png",
-  "demo.alias": "demo-employee-008.png",
-  "employee": "demo-employee-009.png",
-  "demo.alias": "demo-employee-009.png",
-  "demo.alias": "demo-employee-010.png",
-  "demo.alias": "demo-employee-011.png",
-  "demo.alias": "demo-employee-012.png",
-  "demo.alias": "demo-employee-013.png",
-  "demo.alias": "demo-employee-014.png",
-  "demo.alias": "demo-employee-015.png",
-  "demo.alias": "demo-employee-016.png",
-  "demo.alias": "demo-employee-017.png",
-  "demo.alias": "demo-employee-018.png",
-};
-function assetPrefix() { return location.pathname.includes("/admin/") || location.pathname.includes("/employee/") || location.pathname.includes("/executive/") || location.pathname.includes("/operations-gate/") ? "../" : "./"; }
-function staticPhotoFor(person = {}) {
-  const direct = STATIC_EMPLOYEE_PHOTOS[person.employeeId] || STATIC_EMPLOYEE_PHOTOS[person.employee?.id] || STATIC_EMPLOYEE_PHOTOS[person.id] || "";
-  const emailKey = String(person.email || person.employee?.email || "").split("@")[0].toLowerCase();
-  const alias = STATIC_EMPLOYEE_PHOTO_ALIASES[emailKey] || "";
-  const file = direct || alias;
-  return file ? assetPrefix() + "shared/images/employees/" + file : "";
-}
-function avatar(person, size = "") {
-  const name = person?.fullName || person?.name || "";
-  const text = escapeHtml(initials(name));
-  const src = person?.photoUrl || person?.avatarUrl || staticPhotoFor(person);
-  if (src) return "<span class=\"avatar-wrap " + escapeHtml(size) + "\"><img class=\"avatar " + escapeHtml(size) + "\" src=\"" + escapeHtml(src) + "\" alt=\"" + escapeHtml(name) + "\" loading=\"lazy\" onerror=\"this.hidden=true\" /></span>";
-  return "<span class=\"avatar fallback " + escapeHtml(size) + "\">" + text + "</span>";
-=======
 
 const bundledEmployeePhotos = Object.freeze({});
 
@@ -718,7 +486,6 @@ function avatar(person, size = "") {
   const label = initials(person?.fullName || person?.name || person?.employee?.fullName || person?.employee?.name);
   if (src) return `<img class="avatar ${size}" src="${escapeHtml(src)}" alt="${escapeHtml(person.fullName || person.name || person?.employee?.fullName || "")}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling&&this.nextElementSibling.classList.remove('hidden')" /><span class="avatar fallback ${size} hidden">${escapeHtml(label)}</span>`;
   return `<span class="avatar fallback ${size}">${escapeHtml(label)}</span>`;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 function userAvatarSubject(user = state.user) {
@@ -739,11 +506,7 @@ function readForm(form, options = {}) {
   const values = Object.fromEntries(new FormData(form));
   const errors = [];
   const emailPattern = new RegExp("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
-<<<<<<< HEAD
-  const phonePattern = new RegExp("^01[0-9]{9}$");
-=======
   const phonePattern = new RegExp("^01[0-9]{8,10}$");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const passwordPolicy = options.passwordPolicy || form.dataset.passwordPolicy || "none";
   for (const [name, value] of Object.entries(values)) {
     const text = String(value || "").trim();
@@ -815,8 +578,6 @@ function confirmAction({ title = "تأكيد العملية", message = "هل ت
   });
 }
 
-<<<<<<< HEAD
-=======
 function askText({ title = "طلب بيانات", message = "اكتب التفاصيل", defaultValue = "", confirmLabel = "حفظ", cancelLabel = "إلغاء", required = false } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
@@ -852,7 +613,6 @@ function askText({ title = "طلب بيانات", message = "اكتب التفا
   });
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 function downloadFile(name, content, type = "text/plain;charset=utf-8") {
   const link = document.createElement("a");
   link.href = URL.createObjectURL(new Blob([content], { type }));
@@ -920,13 +680,9 @@ async function getBrowserLocation() {
   });
 }
 
-<<<<<<< HEAD
-async function referenceData() {
-=======
 const referenceDataCache = { ts: 0, data: null };
 async function referenceData({ force = false } = {}) {
   if (!force && referenceDataCache.data && Date.now() - referenceDataCache.ts < 120000) return referenceDataCache.data;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const safe = async (reader, fallback = []) => {
     try {
       return unwrap(await reader());
@@ -949,13 +705,9 @@ async function referenceData({ force = false } = {}) {
     safe(() => endpoints.employees(), fallbackEmployee),
     safe(() => endpoints.permissions(), []),
   ]);
-<<<<<<< HEAD
-  return { roles, branches, departments, governorates, complexes, employees, permissions };
-=======
   referenceDataCache.ts = Date.now();
   referenceDataCache.data = { roles, branches, departments, governorates, complexes, employees, permissions };
   return referenceDataCache.data;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 function shell(content, title, description = "") {
@@ -976,8 +728,6 @@ function shell(content, title, description = "") {
           <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
           <div><strong>نظام الحضور</strong><span>HR Operations SaaS</span></div>
         </div>
-<<<<<<< HEAD
-=======
         <div class="sidebar-account-section">
           <div class="user-info" data-route="settings">
             ${avatar(userAvatarSubject(), "small")}
@@ -987,7 +737,6 @@ function shell(content, title, description = "") {
             </div>
           </div>
         </div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         <nav class="nav" aria-label="القائمة الرئيسية">
           ${navGroups.map(([group, routes]) => `
             <section class="nav-group">
@@ -995,33 +744,17 @@ function shell(content, title, description = "") {
               ${routes.filter(([key]) => canRoute(key)).map(([key, label]) => `<button class="${current === key ? "is-active" : ""}" data-route="${key}" aria-current="${current === key ? "page" : "false"}"><span>${escapeHtml(label)}</span></button>`).join("")}
             </section>
           `).join("")}
-<<<<<<< HEAD
-=======
           <section class="nav-group portal-links">
             <p>الانتقال للأنظمة</p>
             <button data-action="employee-portal"><span>تطبيق الموظف</span></button>
             <button data-action="executive-portal"><span>بوابة المدير التنفيذي</span></button>
           </section>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         </nav>
         <button class="collapse-button" type="button" data-action="collapse-sidebar">${state.sidebarCollapsed ? "توسيع القائمة" : "طي القائمة"}</button>
       </aside>
       <button class="nav-fab" type="button" data-action="sidebar-expand" aria-label="فتح القائمة" title="فتح القائمة">☰</button>
       <main class="main">
         <header class="topbar">
-<<<<<<< HEAD
-          <button class="button ghost mobile-menu" type="button" data-action="nav-open" aria-expanded="false">القائمة</button>
-          <div class="page-title"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p></div>
-          <div class="toolbar">
-            <span class="user-chip" title="${escapeHtml(roleLabel())}">${avatar(userAvatarSubject(), "tiny")}<span>${escapeHtml(state.user?.name || state.user?.fullName || "مستخدم")}</span></span>
-            <span class="role-chip ${hasFullAccess() ? "is-admin" : ""}" title="حسب الدور الحالي">${hasFullAccess() ? "صلاحيات كاملة" : "حسب دورك"}: ${escapeHtml(roleLabel())}</span>
-            <button class="button ghost" data-action="employee-portal">تطبيق الموظف</button>
-            <button class="button ghost" data-action="refresh">تحديث</button>
-            <button class="button danger" data-action="logout">خروج</button>
-          </div>
-        </header>
-        ${localStorage.getItem("hr.demoMode") === "true" ? `<div class="message warning">وضع التدريب مفعل: يتم استخدام بيانات تجريبية محلية ولن تتأثر بيانات Supabase.</div>` : ""}
-=======
           <div class="topbar-left">
             <button class="button ghost mobile-menu" type="button" data-action="nav-open" aria-expanded="false">القائمة</button>
             <div class="compact-user-info desktop-hidden">
@@ -1035,7 +768,6 @@ function shell(content, title, description = "") {
             <button class="button ghost" data-action="refresh">تحديث</button>
           </div>
         </header>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         ${state.user?.mustChangePassword ? `<div class="message warning">كلمة المرور الحالية مؤقتة. افتح الإعدادات وغير كلمة المرور قبل الاعتماد على الحساب.</div>` : ""}
         ${state.message ? `<div class="message">${escapeHtml(state.message)}</div>` : ""}
         ${state.error ? `<div class="message error">${escapeHtml(state.error)}</div>` : ""}
@@ -1047,14 +779,10 @@ function shell(content, title, description = "") {
   enhanceResponsiveTables(app);
   const sidebar = app.querySelector(".sidebar");
   if (sidebar) {
-<<<<<<< HEAD
-    requestAnimationFrame(() => { sidebar.scrollTop = Number(state.sidebarScrollTop || 0); });
-=======
     requestAnimationFrame(() => {
       sidebar.scrollTop = Number(state.sidebarScrollTop || 0);
       sidebar.querySelector('.nav button.is-active')?.scrollIntoView?.({ block: 'nearest' });
     });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     sidebar.addEventListener("scroll", () => {
       state.sidebarScrollTop = sidebar.scrollTop;
       sessionStorage.setItem("hr.sidebarScrollTop", String(state.sidebarScrollTop));
@@ -1094,16 +822,6 @@ function shell(content, title, description = "") {
     localStorage.setItem("hr.sidebarCollapsed", String(state.sidebarCollapsed));
     render();
   });
-<<<<<<< HEAD
-  app.querySelector('[data-action="employee-portal"]')?.addEventListener("click", () => goEmployeePortal("home"));
-  app.querySelector('[data-action="refresh"]')?.addEventListener("click", render);
-  app.querySelector('[data-action="logout"]')?.addEventListener("click", async () => {
-    await endpoints.logout();
-    state.user = null;
-    renderLogin();
-  });
-  attachPasswordToggles(app);
-=======
   app.querySelectorAll('[data-action="employee-portal"]').forEach(btn => btn.addEventListener("click", () => goEmployeePortal("home")));
   app.querySelectorAll('[data-action="executive-portal"]').forEach(btn => btn.addEventListener("click", () => goExecutivePortal("home")));
   app.querySelectorAll('[data-action="refresh"]').forEach(btn => btn.addEventListener("click", render));
@@ -1112,7 +830,6 @@ function shell(content, title, description = "") {
     state.user = null;
     renderLogin();
   }));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 window.addEventListener("keydown", (event) => {
@@ -1122,10 +839,6 @@ window.addEventListener("keydown", (event) => {
 async function renderLogin() {
   const identifierValue = state.loginIdentifier || "";
   const passwordValue = state.loginPassword || "";
-<<<<<<< HEAD
-  const rememberChecked = state.rememberLogin ? "checked" : "";
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   app.innerHTML = `
     <div class="login-screen">
       <form class="login-panel" id="login-form" data-password-policy="none" novalidate>
@@ -1135,12 +848,7 @@ async function renderLogin() {
         ${state.error ? `<div class="message error">${escapeHtml(state.error)}</div>` : ""}
         ${state.lastLoginFailed ? `<div class="message warning compact">لو نسيت كلمة المرور اضغط على "نسيت كلمة السر" وسيتم إرسال رابط إعادة تعيين إلى بريدك.</div>` : ""}
         <label>البريد أو الاسم<input name="identifier" value="${escapeHtml(identifierValue)}" autocomplete="username" required /></label>
-<<<<<<< HEAD
-        <label>كلمة المرور${passwordField({ value: passwordValue, autocomplete: "current-password", required: true })}</label>
-        <label class="check-row login-remember-row"><input type="checkbox" name="rememberLogin" ${rememberChecked} /> تذكرني على هذا الجهاز</label>
-=======
         <label>كلمة المرور<input name="password" type="password" value="${escapeHtml(passwordValue)}" autocomplete="current-password" required /></label>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         <button class="button primary full" type="submit">دخول</button>
         <button class="button ghost full forgot-password-btn" type="button" data-forgot-password>نسيت كلمة السر؟ أرسل رابط إعادة التعيين</button>
         <div class="login-help-note">لن يتم مسح رقم الهاتف/البريد أو كلمة المرور المكتوبة عند فشل الدخول.</div>
@@ -1148,50 +856,23 @@ async function renderLogin() {
     </div>
   `;
   const form = app.querySelector("#login-form");
-<<<<<<< HEAD
-  attachPasswordToggles(form);
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   form.addEventListener("input", () => {
     const values = readForm(form);
     state.loginIdentifier = values.identifier || "";
     state.loginPassword = values.password || "";
-<<<<<<< HEAD
-    state.rememberLogin = values.rememberLogin === "on" || values.rememberLogin === true;
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
     state.loginIdentifier = values.identifier || "";
     state.loginPassword = values.password || "";
-<<<<<<< HEAD
-    state.rememberLogin = values.rememberLogin === "on" || values.rememberLogin === true;
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     if (state.loginIdentifier) localStorage.setItem("hr.login.lastIdentifier", state.loginIdentifier);
     try {
       state.user = unwrap(await endpoints.login(values.identifier, values.password));
       await endpoints.adminAccessLog?.({ action: "admin.login.success", result: "SUCCESS", route: location.hash || "login" }).catch(() => null);
-<<<<<<< HEAD
-      if (state.rememberLogin) {
-        localStorage.setItem(REMEMBER_LOGIN_KEY, "true");
-        localStorage.setItem(REMEMBER_IDENTIFIER_KEY, state.loginIdentifier);
-        localStorage.setItem(REMEMBER_PASSWORD_KEY, state.loginPassword);
-      } else {
-        localStorage.removeItem(REMEMBER_LOGIN_KEY);
-        localStorage.removeItem(REMEMBER_IDENTIFIER_KEY);
-        localStorage.removeItem(REMEMBER_PASSWORD_KEY);
-        state.loginPassword = "";
-      }
-      state.lastLoginFailed = false;
-      if (!isAdminPortalUser(state.user)) return goEmployeePortal("home");
-=======
       state.loginPassword = "";
       state.lastLoginFailed = false;
       if (!isAdminPortalUser(state.user)) return isExecutiveOnlyRole(state.user) ? goExecutivePortal("home") : goEmployeePortal("home");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       setMessage("تم تسجيل الدخول.", "");
       render();
     } catch (error) {
@@ -1310,11 +991,7 @@ async function renderEmployees() {
           <select id="bulk-manager"><option value="">تغيير المدير...</option>${optionList(ref.employees.map((item) => ({ id: item.id, name: item.fullName })))}</select>
           <button class="button ghost" data-bulk-employee-assign disabled>تطبيق النقل</button>
           <button class="button ghost" data-bulk-employee-notify disabled>إرسال تنبيه</button>
-<<<<<<< HEAD
-          <button class="button danger ghost" data-bulk-employee-delete disabled>حذف نهائي</button>
-=======
           <button class="button danger ghost" data-bulk-employee-delete disabled>حذف منطقي</button>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         </div>
         <div id="employees-list" class="people-grid"></div>
       </article>
@@ -1343,21 +1020,6 @@ async function renderEmployees() {
     const visibleIds = new Set(filtered.map((employee) => employee.id));
     [...selectedEmployees].forEach((id) => { if (!visibleIds.has(id)) selectedEmployees.delete(id); });
     app.querySelector("#employees-list").innerHTML = filtered.map((employee) => `
-<<<<<<< HEAD
-      <article class="person-card ${selectedEmployees.has(employee.id) ? "is-selected" : ""}">
-        <label class="select-card" title="تحديد الموظف"><input type="checkbox" data-select-employee="${employee.id}" ${selectedEmployees.has(employee.id) ? "checked" : ""} /><span>تحديد</span></label>
-        <button class="avatar-button" data-view="${employee.id}" title="عرض ملف وموقع الموظف">${avatar(employee)}</button>
-        <div class="person-main">
-          <h3>${escapeHtml(employee.fullName)}</h3>
-          <p>${escapeHtml(employee.jobTitle || "-")} ${badge(employee.status || "ACTIVE")}</p>
-          <div class="meta-row"><span>${escapeHtml(employee.phone || "-")}</span><span>${escapeHtml(employee.email || "-")}</span></div>
-          <div class="meta-row"><span>${escapeHtml(employee.department?.name || "-")}</span><span>المدير: ${escapeHtml(employee.manager?.fullName || "بدون")}</span></div>
-        </div>
-        <div class="person-actions">
-          <button class="button ghost" data-view="${employee.id}">عرض</button>
-          <button class="button ghost" data-edit="${employee.id}">تعديل</button>
-          <button class="button danger ghost" data-delete="${employee.id}">حذف نهائي</button>
-=======
       <article class="person-card executive-person-card ${selectedEmployees.has(employee.id) ? "is-selected" : ""}">
         <div class="card-selection"><input type="checkbox" data-select-employee="${employee.id}" ${selectedEmployees.has(employee.id) ? "checked" : ""} /></div>
         <div class="card-header">
@@ -1380,7 +1042,6 @@ async function renderEmployees() {
           <button class="button primary" data-view="${employee.id}">عرض</button>
           <button class="button ghost" data-edit="${employee.id}">تعديل</button>
           <button class="button danger ghost" data-delete="${employee.id}">حذف</button>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         </div>
       </article>
     `).join("") || `<div class="empty-box">لا توجد نتائج مطابقة.</div>`;
@@ -1396,22 +1057,14 @@ async function renderEmployees() {
     updateBulkBar();
   };
 
-<<<<<<< HEAD
-  app.querySelector("#employee-filters").addEventListener("input", draw);
-=======
   app.querySelector("#employee-filters").addEventListener("input", debounce(draw, 250));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   app.querySelector("#employee-select-all").addEventListener("change", (event) => {
     const filtered = filterEmployees(employees);
     filtered.forEach((employee) => event.target.checked ? selectedEmployees.add(employee.id) : selectedEmployees.delete(employee.id));
     draw();
   });
   app.querySelector("[data-bulk-employee-delete]").addEventListener("click", async () => {
-<<<<<<< HEAD
-    if (!await confirmAction({ title: "حذف نهائي جماعي", message: `سيتم حذف ${selectedEmployees.size} موظف منطقيًا وتعطيل حساباتهم المرتبطة.`, confirmLabel: "حذف المحدد", danger: true })) return;
-=======
     if (!await confirmAction({ title: "حذف منطقي جماعي", message: `سيتم حذف ${selectedEmployees.size} موظف منطقيًا وتعطيل حساباتهم المرتبطة.`, confirmLabel: "حذف المحدد", danger: true })) return;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     await runBulk({ action: "delete" }, "تم الحذف المنطقي الجماعي");
   });
   app.querySelector("[data-bulk-employee-status]").addEventListener("click", async () => {
@@ -1425,11 +1078,7 @@ async function renderEmployees() {
     await runBulk({ action: "assign", departmentId, managerEmployeeId }, "تم تطبيق النقل الجماعي");
   });
   app.querySelector("[data-bulk-employee-notify]").addEventListener("click", async () => {
-<<<<<<< HEAD
-    const message = prompt("اكتب نص التنبيه الذي سيصل للموظفين المحددين:", "يرجى مراجعة الإدارة عند التفرغ.");
-=======
     const message = await askText({ title: "تنبيه جماعي", message: "اكتب نص التنبيه الذي سيصل للموظفين المحددين.", defaultValue: "يرجى مراجعة الإدارة عند التفرغ.", confirmLabel: "إرسال التنبيه", required: true });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     if (!message) return;
     await runBulk({ action: "notify", title: "تنبيه من إدارة الجمعية", message }, "تم إرسال التنبيه الجماعي");
   });
@@ -1447,15 +1096,9 @@ function bindEmployeeActions(ref) {
   app.querySelectorAll("[data-view]").forEach((button) => button.addEventListener("click", () => (location.hash = `employee-profile?id=${button.dataset.view}`)));
   app.querySelectorAll("[data-edit]").forEach((button) => button.addEventListener("click", async () => showEmployeeEditor(ref, await endpoints.employee(button.dataset.edit))));
   app.querySelectorAll("[data-delete]").forEach((button) => button.addEventListener("click", async () => {
-<<<<<<< HEAD
-    if (!await confirmAction({ title: "حذف موظف", message: "سيتم حذف الموظف نهائيًا من النسخة المحلية مع تعطيل/حذف حسابه المرتبط. في Supabase قد يتم الحذف النهائي أو التحويل لحذف نهائي إذا منعت قاعدة البيانات ذلك.", confirmLabel: "حذف نهائي", danger: true })) return;
-    await endpoints.deleteEmployee(button.dataset.delete);
-    setMessage("تم حذف الموظف/تنفيذ طلب الحذف بنجاح.", "");
-=======
     if (!await confirmAction({ title: "حذف موظف", message: "سيتم حذف الموظف منطقيًا وتعطيل حسابه المرتبط دون حذف السجل التاريخي.", confirmLabel: "حذف منطقي", danger: true })) return;
     await endpoints.deleteEmployee(button.dataset.delete);
     setMessage("تم حذف الموظف منطقيًا.", "");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     render();
   }));
 }
@@ -1481,19 +1124,11 @@ function showEmployeeEditor(ref, employee = null) {
   editor.classList.remove("hidden");
   editor.innerHTML = `
     <div class="panel-head"><div><h2>${employee ? "تعديل موظف" : "إضافة موظف جديد"}</h2><p>كل تعديل يتم حفظه فورًا. في الوضع المحلي يُحفظ داخل المتصفح، وفي Supabase يُحفظ في قاعدة البيانات.</p></div><button class="button ghost" data-close-editor>إغلاق</button></div>
-<<<<<<< HEAD
-    <form id="employee-form" class="editor-grid" data-password-policy="strong">
-      <div class="photo-box"><div id="photo-preview">${avatar(employee || { fullName: "موظف جديد" })}</div><label>الصورة الشخصية<input name="photo" type="file" accept="image/*" /></label></div>
-      <label>الاسم الكامل<input name="fullName" required value="${escapeHtml(employee?.fullName || "")}" /></label>
-      <label>رقم الموبايل<input name="phone" value="${escapeHtml(employee?.phone || "")}" /></label>
-      <label>البريد الإلكتروني<input name="email" type="email" required value="${escapeHtml(employee?.email || "")}" placeholder="demo.user.023@demo.local" /></label>
-=======
     <form id="employee-form" class="editor-grid" data-password-policy="none">
       <div class="photo-box"><div id="photo-preview">${avatar(employee || { fullName: "موظف جديد" })}</div><label>الصورة الشخصية<input name="photo" type="file" accept="image/*" /></label></div>
       <label>الاسم الكامل<input name="fullName" required value="${escapeHtml(employee?.fullName || "")}" /></label>
       <label>رقم الموبايل<input name="phone" value="${escapeHtml(employee?.phone || "")}" /></label>
       <label>البريد الإلكتروني<input name="email" type="email" required value="${escapeHtml(employee?.email || "")}" placeholder="name@ahla-shabab.org" /></label>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       <label>المسمى الوظيفي<input name="jobTitle" value="${escapeHtml(employee?.jobTitle || "")}" /></label>
       <label>المدير المباشر<select name="managerEmployeeId">${optionList(managerOptions, employee?.managerEmployeeId, "بدون مدير")}</select></label>
       <input type="hidden" name="roleId" value="${escapeHtml(defaults.roleId)}" />
@@ -1501,21 +1136,12 @@ function showEmployeeEditor(ref, employee = null) {
       <input type="hidden" name="governorateId" value="${escapeHtml(defaults.governorateId)}" />
       <input type="hidden" name="complexId" value="${escapeHtml(defaults.complexId)}" />
       <input type="hidden" name="status" value="ACTIVE" />
-<<<<<<< HEAD
-      ${employee ? `<label class="check-row"><input type="checkbox" name="createUser" /> إنشاء حساب مستخدم إذا لم يكن مرتبطًا</label><label>كلمة مرور مؤقتة جديدة${passwordField({ placeholder: "اتركه فارغًا إن لم تنشئ حسابًا", autocomplete: "new-password" })}</label>` : `<label class="check-row"><input type="checkbox" name="createUser" checked /> إنشاء حساب مستخدم مرتبط</label><label>كلمة مرور مؤقتة${passwordField({ placeholder: "اتركه فارغًا لإنشاء كلمة قوية تلقائيًا", autocomplete: "new-password" })}</label>`}
-      <div class="message compact span-2">البريد الإلكتروني مطلوب لإنشاء حساب. كلمة المرور المؤقتة تظهر في خزنة كلمات المرور ليحيى/الإدارة العليا، ويجب تغييرها بعد أول دخول.</div>
-=======
       ${employee ? `<label class="check-row"><input type="checkbox" name="createUser" /> إنشاء حساب مستخدم إذا لم يكن مرتبطًا</label><label>كلمة مرور مؤقتة جديدة<input name="password" value="" placeholder="اتركه فارغًا إن لم تنشئ حسابًا" /></label>` : `<label class="check-row"><input type="checkbox" name="createUser" checked /> إنشاء حساب مستخدم مرتبط</label><label>كلمة مرور مؤقتة<input name="password" value="" placeholder="اتركه فارغًا لاستخدام رقم الهاتف ككلمة مرور" /></label>`}
       <div class="message compact span-2">البريد الإلكتروني مطلوب لإنشاء حساب. يتم إنشاء الحساب من لوحة HR فقط. عند ترك كلمة المرور فارغة تصبح كلمة المرور الافتراضية هي رقم الهاتف/الرقم الشخصي المسجل.</div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       <div class="form-actions wide"><button class="button primary" type="submit">حفظ الملف</button></div>
     </form>
   `;
   editor.scrollIntoView({ behavior: "smooth", block: "start" });
-<<<<<<< HEAD
-  attachPasswordToggles(editor);
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const photoInput = editor.querySelector('[name="photo"]');
   photoInput.addEventListener("change", async () => {
     const file = photoInput.files?.[0];
@@ -1535,11 +1161,7 @@ function showEmployeeEditor(ref, employee = null) {
       delete values.photo;
       if (employee) await endpoints.updateEmployee(employee.id, values);
       else await endpoints.createEmployee(values);
-<<<<<<< HEAD
-      setMessage(employee ? "تم تعديل ملف الموظف وحفظه." : "تم إنشاء ملف الموظف وحساب الدخول. افتح خزنة كلمات المرور لمعرفة كلمة المرور المؤقتة.", "");
-=======
       setMessage(employee ? "تم تعديل ملف الموظف وحفظه." : "تم إنشاء ملف الموظف وحساب الدخول. كلمة المرور الافتراضية هي رقم الهاتف/الرقم الشخصي المسجل.", "");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       render();
     } catch (error) {
       setMessage("", error.message);
@@ -1623,15 +1245,9 @@ async function renderUsers() {
         <td>${badge(user.status || "ACTIVE")} ${user.temporaryPassword ? badge("INVITED") : ""}</td>
         <td><button class="button ghost" data-edit-user="${user.id}">تعديل</button><button class="button ghost" data-toggle-user="${user.id}">${user.status === "ACTIVE" ? "تعطيل" : "تنشيط"}</button></td>
       </tr>`));
-<<<<<<< HEAD
-    bindUserActions(ref);
-  };
-  app.querySelector("#user-filters").addEventListener("input", draw);
-=======
     bindUserActions(ref, users);
   };
   app.querySelector("#user-filters").addEventListener("input", debounce(draw, 250));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   app.querySelector("[data-new-user]").addEventListener("click", () => showUserEditor(ref));
   app.querySelector("[data-autolink-users]").addEventListener("click", async () => {
     try {
@@ -1646,16 +1262,6 @@ async function renderUsers() {
   draw();
 }
 
-<<<<<<< HEAD
-function bindUserActions(ref) {
-  app.querySelectorAll("[data-edit-user]").forEach((button) => button.addEventListener("click", async () => {
-    const users = unwrap(await endpoints.users());
-    showUserEditor(ref, users.find((user) => user.id === button.dataset.editUser));
-  }));
-  app.querySelectorAll("[data-toggle-user]").forEach((button) => button.addEventListener("click", async () => {
-    const users = unwrap(await endpoints.users());
-    const user = users.find((item) => item.id === button.dataset.toggleUser);
-=======
 function bindUserActions(ref, users = []) {
   app.querySelectorAll("[data-edit-user]").forEach((button) => button.addEventListener("click", () => {
     showUserEditor(ref, users.find((user) => user.id === button.dataset.editUser));
@@ -1663,7 +1269,6 @@ function bindUserActions(ref, users = []) {
   app.querySelectorAll("[data-toggle-user]").forEach((button) => button.addEventListener("click", async () => {
     const user = users.find((item) => item.id === button.dataset.toggleUser);
     if (!user) return setMessage("", "تعذر العثور على المستخدم المطلوب.");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     await endpoints.setUserStatus(user.id, user.status === "ACTIVE" ? "DISABLED" : "ACTIVE");
     setMessage("تم تحديث حالة المستخدم.", "");
     render();
@@ -1689,11 +1294,7 @@ function showUserEditor(ref, user = null) {
   editor.classList.remove("hidden");
   editor.innerHTML = `
     <div class="panel-head"><div><h2>${user ? "تعديل مستخدم" : "إضافة مستخدم"}</h2><p>لا تحتاج لاختيار فرع أو قسم أو دور يدويًا. اربط الحساب بالموظف وسيتم ضبط البيانات الأساسية تلقائيًا.</p></div><button class="button ghost" data-close-user>إغلاق</button></div>
-<<<<<<< HEAD
-    <form id="user-form" class="editor-grid simplified-user-form" data-password-policy="strong">
-=======
     <form id="user-form" class="editor-grid simplified-user-form" data-password-policy="none">
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       <div class="photo-box user-avatar-editor">
         <div id="user-avatar-preview">${avatar(userAvatarSubject(user || { name: "مستخدم جديد" }), "large")}</div>
         <label>صورة المستخدم<input name="avatar" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
@@ -1702,11 +1303,7 @@ function showUserEditor(ref, user = null) {
       <label>الاسم<input name="name" required value="${escapeHtml(user?.name || user?.fullName || "")}" /></label>
       <label>البريد<input name="email" type="email" required value="${escapeHtml(user?.email || "")}" /></label>
       <label>الموظف المرتبط<select name="employeeId">${optionList(ref.employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), user?.employeeId, "بدون")}</select></label>
-<<<<<<< HEAD
-      <label>كلمة المرور المؤقتة${passwordField({ placeholder: user ? "اتركه فارغًا للإبقاء عليها" : "اكتب كلمة مرور قوية أو اتركه لإنشاء عشوائية", autocomplete: "new-password" })}</label>
-=======
       <label>كلمة المرور المؤقتة<input name="password" value="" placeholder="${user ? "اتركه فارغًا للإبقاء عليها" : "اتركه فارغًا لاستخدام رقم هاتف الموظف"}" /></label>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       <input type="hidden" name="roleId" value="${escapeHtml(defaults.roleId)}" />
       <input type="hidden" name="branchId" value="${escapeHtml(defaults.branchId)}" />
       <input type="hidden" name="departmentId" value="${escapeHtml(defaults.departmentId)}" />
@@ -1720,10 +1317,6 @@ function showUserEditor(ref, user = null) {
     </form>
   `;
   editor.scrollIntoView({ behavior: "smooth", block: "start" });
-<<<<<<< HEAD
-  attachPasswordToggles(editor);
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const avatarInput = editor.querySelector('[name="avatar"]');
   const employeeSelect = editor.querySelector('[name="employeeId"]');
   const refreshHiddenDefaults = () => {
@@ -1769,16 +1362,8 @@ function showUserEditor(ref, user = null) {
 }
 
 async function enableBrowserNotifications() {
-<<<<<<< HEAD
-  if (!("Notification" in window)) throw new Error("الإشعارات غير مدعومة في هذا المتصفح.");
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") throw new Error("لم يتم السماح بالإشعارات.");
-  await endpoints.subscribePush({ endpoint: "browser-local", permission });
-  new Notification("تم تفعيل إشعارات الحضور", { body: "ستصلك تنبيهات الحضور والانصراف والطلبات المهمة." });
-=======
   await enableWebPushSubscription(endpoints);
   new Notification("تم تفعيل إشعارات النظام", { body: "سيتم إرسال التنبيهات الحقيقية عند ضبط VAPID و Edge Function." });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 async function registerBrowserPasskey() {
@@ -1962,11 +1547,7 @@ async function renderEmployeePunch() {
       const response = button.dataset.selfPunch === "checkIn" ? await endpoints.selfCheckIn(body) : await endpoints.selfCheckOut(body);
       showResult(button.dataset.selfPunch === "checkIn" ? "تم تسجيل بصمة الحضور" : "تم تسجيل بصمة الانصراف", response.evaluation || evaluation, false);
       setMessage(button.dataset.selfPunch === "checkIn" ? "تم حفظ بصمة الحضور داخل نطاق المجمع." : "تم حفظ بصمة الانصراف داخل نطاق المجمع.", "");
-<<<<<<< HEAD
-      window.setTimeout(render, 900);
-=======
       await render();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     } catch (error) {
       await logRejectedPunch(button.dataset.selfPunch, {}, { message: error.message, geofenceStatus: "REJECTED" }, error.message);
       showResult("تم رفض البصمة", { message: error.message, geofenceStatus: "REJECTED" }, true);
@@ -1978,13 +1559,9 @@ async function renderEmployeePunch() {
 
 async function renderAttendance() {
   const filters = attendanceFiltersFromRoute();
-<<<<<<< HEAD
-  const queryFilters = { ...filters, limit: Math.min(filters.limit + 1, 20000) };
-=======
   const maxSafeLimit = 2000;
   if (filters.limit > maxSafeLimit) setMessage("السجلات كثيرة جدًا؛ استخدم فترة أضيق أو حدًا أقل من 2000.", "");
   const queryFilters = { ...filters, limit: Math.min(filters.limit + 1, maxSafeLimit) };
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const [employees, eventsPayload] = await Promise.all([endpoints.employees().then(unwrap), endpoints.attendanceEvents(queryFilters).then(unwrap)]);
   const events = filterAttendanceEvents(eventsPayload || [], filters);
   const visibleEvents = events.slice(0, filters.limit);
@@ -2055,11 +1632,7 @@ async function renderAttendance() {
       const evaluation = response.evaluation || response.event?.evaluation || {};
       resultBox.innerHTML = `<strong>${evaluation.requiresReview ? "الحركة تحتاج مراجعة" : "الحركة مقبولة داخل نطاق المجمع"}</strong><div class="toolbar spaced">${badge(evaluation.type || response.type)}${badge(evaluation.geofenceStatus || response.geofenceStatus)}${badge(evaluation.verificationStatus || response.verificationStatus)}</div><p>${evaluation.distanceFromBranchMeters != null || response.distanceFromBranchMeters != null ? `المسافة عن الفرع: ${escapeHtml(evaluation.distanceFromBranchMeters ?? response.distanceFromBranchMeters)} متر.` : "تم التحقق من نطاق المجمع."}</p>`;
       setMessage(action === "checkIn" ? "تم تسجيل الحضور داخل نطاق المجمع." : "تم تسجيل الانصراف داخل نطاق المجمع.", "");
-<<<<<<< HEAD
-      window.setTimeout(render, 900);
-=======
       await render();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     } catch (error) {
       resultBox.classList.remove("hidden");
       resultBox.classList.add("danger-box");
@@ -2186,18 +1759,6 @@ async function renderRequests() {
           <select name="status"><option value="">كل الحالات</option>${optionList([{ value: "PENDING", name: "قيد المراجعة" }, { value: "APPROVED", name: "معتمد" }, { value: "REJECTED", name: "مرفوض" }], filters.status)}</select>
           <select name="kind"><option value="">كل الأنواع</option>${optionList([{ value: "leave", name: "إجازة" }, { value: "mission", name: "مأمورية" }, { value: "exception", name: "استثناء حضور" }, { value: "location", name: "طلب موقع" }], filters.kind)}</select>
         </form>
-<<<<<<< HEAD
-        <div class="bulk-bar advanced-bulk"><label class="check-row"><input type="checkbox" id="request-select-all" /> تحديد الطلبات المعلقة الظاهرة</label><span id="request-selected-count">لم يتم تحديد طلبات</span><button class="button primary" data-bulk-request="approve" disabled>اعتماد المحدد</button><button class="button danger ghost" data-bulk-request="reject" disabled>رفض المحدد</button></div>
-        ${table(["تحديد", "النوع", "العنوان", "الموظف", "الحالة", "Timeline", "إجراءات"], rows.map((item) => `<tr>
-          <td>${item.status === "PENDING" ? `<input type="checkbox" data-select-request="${escapeHtml(item.kind + ':' + item.id)}" />` : "-"}</td>
-          <td>${escapeHtml(item.kindLabel || item.kind)}</td>
-          <td><strong>${escapeHtml(item.label)}</strong><br><small>${date(item.createdSort || item.createdAt || item.requestedAt)}</small></td>
-          <td>${escapeHtml(item.employee?.fullName || "-")}</td>
-          <td>${badge(item.status)}</td>
-          <td>${(item.workflow || []).slice(-4).map((step) => `<small>${escapeHtml(step.action)} - ${date(step.at)}</small>`).join("<br>") || "-"}</td>
-          <td>${item.status === "PENDING" ? `<button class="button ghost" data-request="${escapeHtml(item.kind + ':' + item.id)}" data-action-name="approve">اعتماد</button><button class="button danger ghost" data-request="${escapeHtml(item.kind + ':' + item.id)}" data-action-name="reject">رفض</button>` : ""}</td>
-        </tr>`))}
-=======
         <div class="request-card-grid">
           ${rows.map((item) => `
             <article class="request-card ${item.status === 'PENDING' ? 'is-pending' : ''}">
@@ -2230,7 +1791,6 @@ async function renderRequests() {
             </article>
           `).join("") || `<div class="empty-state">لا توجد طلبات حالياً.</div>`}
         </div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       </article>
     </section>`,
     "مركز الطلبات",
@@ -2285,11 +1845,7 @@ async function renderOrganization() {
   shell(
     `<section class="grid">${config.map(([kind, title, items, fields]) => `
       <article class="panel span-6">
-<<<<<<< HEAD
-        <div class="panel-head"><div><h2>${escapeHtml(title)}</h2><p>CRUD فعلي مع حذف نهائي</p></div></div>
-=======
         <div class="panel-head"><div><h2>${escapeHtml(title)}</h2><p>CRUD فعلي مع حذف منطقي</p></div></div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         ${simpleOrgForm(kind, fields)}
         ${table(["الاسم", "الكود", "الحالة", "إجراءات"], items.map((item) => `<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.code || "-")}</td><td>${badge(item.active === false ? "INACTIVE" : "ACTIVE")}</td><td><button class="button ghost" data-edit-org="${kind}:${item.id}">تعديل</button><button class="button danger ghost" data-delete-org="${kind}:${item.id}">تعطيل</button></td></tr>`))}
       </article>`).join("")}</section>`,
@@ -2385,95 +1941,6 @@ async function renderRoles() {
   }));
 }
 
-<<<<<<< HEAD
-async function renderRolesV2() {
-  const [roles, rawPermissions] = await Promise.all([endpoints.roles().then(unwrap), endpoints.permissions().then(unwrap)]);
-  const permissions = rawPermissions || [];
-  const permissionsByGroup = permissions.reduce((groups, permission) => {
-    const group = String(permission.scope || "").split(":")[0] || "system";
-    (groups[group] ||= []).push(permission);
-    return groups;
-  }, {});
-  const permissionGroups = Object.entries(permissionsByGroup).sort(([a], [b]) => a.localeCompare(b));
-  shell(
-    `<section class="grid roles-page">
-      <article class="panel span-12 accent-panel">
-        <div class="panel-head">
-          <div><h2>إدارة الأدوار والصلاحيات</h2><p>حدد صلاحيات كل دور بوضوح، ثم راجع العدد قبل الحفظ.</p></div>
-          <div class="mini-stats compact"><div><span>الأدوار</span><strong>${escapeHtml(roles.length)}</strong></div><div><span>الصلاحيات</span><strong>${escapeHtml(permissions.length)}</strong></div></div>
-        </div>
-      </article>
-      <article class="panel span-5">
-        <div class="panel-head"><div><h2>الأدوار الحالية</h2><p>اضغط تعديل لتحميل بيانات الدور في النموذج.</p></div></div>
-        ${table(["الدور", "الكود", "الصلاحيات", "إجراء"], roles.map((role) => `<tr><td><strong>${escapeHtml(role.name)}</strong><small>${escapeHtml(role.description || "")}</small></td><td><code>${escapeHtml(role.key || role.slug)}</code></td><td><strong>${escapeHtml(role.permissions?.length || 0)}</strong></td><td><button class="button ghost" data-edit-role-v2="${escapeHtml(role.id)}">تعديل</button></td></tr>`))}
-      </article>
-      <article class="panel span-7">
-        <div class="panel-head"><div><h2>دور جديد / تعديل</h2><p>الصلاحيات مقسمة حسب المجال لتقليل الأخطاء.</p></div><button class="button ghost" type="button" id="clear-role-form">دور جديد</button></div>
-        <form id="role-form" class="form-grid role-editor-form">
-          <input type="hidden" name="id" />
-          <label>اسم الدور<input name="name" required /></label>
-          <label>الكود<input name="key" required /></label>
-          <label class="span-2">الوصف<input name="description" /></label>
-          <div class="span-2 toolbar role-editor-tools">
-            <button class="button ghost" type="button" data-check-all-perms>تحديد الكل</button>
-            <button class="button ghost" type="button" data-clear-perms>إلغاء الكل</button>
-            <span class="role-perm-counter" id="role-perm-counter">0 صلاحية محددة</span>
-          </div>
-          <div class="span-2 permission-group-list">
-            ${permissionGroups.map(([group, items]) => `<section class="permission-group"><h3>${escapeHtml(group)}</h3><div class="permission-grid">${items.map((p) => `<label class="permission-check"><input type="checkbox" name="perm" value="${escapeHtml(p.scope)}" /><span><strong>${escapeHtml(p.name)}</strong><small>${escapeHtml(p.scope)}</small></span></label>`).join("")}</div></section>`).join("")}
-          </div>
-          <div class="form-actions span-2"><button class="button primary" type="submit">حفظ الدور</button></div>
-        </form>
-      </article>
-    </section>`,
-    "الأدوار والصلاحيات",
-    "RBAC عملي لتنظيم الوصول للنظام.",
-  );
-  const form = app.querySelector("#role-form");
-  const updatePermissionCounter = () => {
-    const selected = form.querySelectorAll('[name="perm"]:checked').length;
-    const total = form.querySelectorAll('[name="perm"]').length;
-    const counter = app.querySelector("#role-perm-counter");
-    if (counter) counter.textContent = `${selected} / ${total} صلاحية محددة`;
-  };
-  form.querySelectorAll('[name="perm"]').forEach((input) => input.addEventListener("change", updatePermissionCounter));
-  app.querySelector("[data-check-all-perms]")?.addEventListener("click", () => {
-    form.querySelectorAll('[name="perm"]').forEach((input) => { input.checked = true; });
-    updatePermissionCounter();
-  });
-  app.querySelector("[data-clear-perms]")?.addEventListener("click", () => {
-    form.querySelectorAll('[name="perm"]').forEach((input) => { input.checked = false; });
-    updatePermissionCounter();
-  });
-  app.querySelector("#clear-role-form")?.addEventListener("click", () => {
-    form.reset();
-    form.elements.id.value = "";
-    updatePermissionCounter();
-  });
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const values = readForm(form);
-    values.permissions = [...form.querySelectorAll('[name="perm"]:checked')].map((input) => input.value);
-    await endpoints.saveRole(values);
-    setMessage("تم حفظ الدور والصلاحيات.", "");
-    render();
-  });
-  app.querySelectorAll("[data-edit-role-v2]").forEach((button) => button.addEventListener("click", () => {
-    const role = roles.find((item) => item.id === button.dataset.editRoleV2);
-    if (!role) return;
-    form.elements.id.value = role.id;
-    form.elements.name.value = role.name || "";
-    form.elements.key.value = role.key || role.slug || "";
-    form.elements.description.value = role.description || "";
-    form.querySelectorAll('[name="perm"]').forEach((input) => { input.checked = (role.permissions || []).includes(input.value); });
-    updatePermissionCounter();
-    form.scrollIntoView({ behavior: "smooth", block: "center" });
-  }));
-  updatePermissionCounter();
-}
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 async function renderOrgChart() {
   const employees = await endpoints.employees().then(unwrap);
   const active = employees.filter((employee) => employee.status !== "TERMINATED" && !employee.isDeleted);
@@ -2496,11 +1963,7 @@ async function renderOrgChart() {
     }
     return depth;
   };
-<<<<<<< HEAD
-  const directToExecutive = active.filter((employee) => byId.get(employee.managerEmployeeId)?.roleId === "role-executive" || employee.managerEmployeeId === "emp-demo-001").length;
-=======
   const directToExecutive = active.filter((employee) => byId.get(employee.managerEmployeeId)?.roleId === "role-executive" || employee.managerEmployeeId === "emp-executive-director").length;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const managers = active.filter((employee) => childrenOf(employee.id).length);
   const leaves = active.filter((employee) => !childrenOf(employee.id).length);
   const maxDepth = active.reduce((max, employee) => Math.max(max, levelOf(employee)), 0);
@@ -2642,14 +2105,6 @@ async function renderKpi() {
   const cycle = payload.cycle || {};
   const criteria = payload.criteria || [];
   const evaluations = payload.evaluations || payload.summaries || [];
-<<<<<<< HEAD
-  const pendingEmployees = payload.pendingEmployees || [];
-  const isSelf = payload.accessMode === "self";
-  const isTeam = payload.accessMode === "team";
-  const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), isSelf ? payload.currentEmployeeId : "", isSelf ? "" : "اختر الموظف");
-  const managerOptions = optionList(ref.employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), state.user?.employeeId || "", "المدير المباشر من ملف الموظف");
-  const metricCards = (payload.metrics || []).map((metric) => `<article class="metric span-3"><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.helper || "")}</small></article>`).join("");
-=======
   const progressMetrics = payload.progressMetrics || [];
   const windowInfo = payload.windowInfo || cycle.window || {};
   const pendingEmployees = payload.pendingEmployees || [];
@@ -2662,41 +2117,26 @@ async function renderKpi() {
   const managerOptions = optionList(ref.employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), state.user?.employeeId || "", "المدير المباشر من ملف الموظف");
   const metricCards = (payload.metrics || []).map((metric) => `<article class="metric span-3"><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.helper || "")}</small></article>`).join("");
   const progressCards = progressMetrics.map((metric) => `<article class="metric span-2"><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.helper || "")}</small></article>`).join("");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   shell(
     `<section class="grid kpi-page">
       <article class="panel span-12 accent-panel">
         <div class="panel-head">
           <div>
-<<<<<<< HEAD
-            <h2>${isSelf ? "تقييمي الذاتي الشهري" : isTeam ? "تقييمات الفريق المباشر" : "نموذج تقييم الأداء الشهري المعتمد"}</h2>
-            <p>${escapeHtml(policy.description || "يبدأ التقييم من يوم 20 وينتهي يوم 25 من نفس الشهر.")}</p>
-          </div>
-          ${payload.accessMode === "all" ? `<button class="button primary" id="recompute-kpi">تجهيز تقييمات ناقصة</button>` : ""}
-=======
             <h2>${isSelf ? "تقييمي الذاتي الشهري" : isHr ? "مراجعة HR لتقييمات KPI" : isTeam ? "تقييمات الفريق المباشر" : isExecutive ? "الاعتماد النهائي لتقييمات KPI" : "نموذج تقييم الأداء الشهري المعتمد"}</h2>
             <p>${escapeHtml(policy.description || "يبدأ التقييم من يوم 20 وينتهي يوم 25 من نفس الشهر.")}</p>
           </div>
           ${payload.accessMode === "all" ? `<div class="toolbar"><button class="button primary" id="recompute-kpi">تجهيز تقييمات ناقصة</button><button class="button ghost" id="send-kpi-reminders">إرسال تذكيرات KPI</button><button class="button danger" id="close-kpi-cycle">إغلاق الدورة</button></div>` : isExecutive ? `<button class="button primary" id="close-kpi-cycle">إغلاق/اعتماد إغلاق الدورة</button>` : ""}
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         </div>
         <div class="kpi-policy-strip">
           <span>بداية التقييم: يوم ${escapeHtml(policy.evaluationStartDay || 20)}</span>
           <span>نهاية التقييم: يوم ${escapeHtml(policy.evaluationEndDay || 25)}</span>
           <span>آخر موعد للتسليم: يوم ${escapeHtml(policy.submissionDeadlineDay || 25)}</span>
-<<<<<<< HEAD
-          <span>الموظف يرفع تقييمه للمدير المباشر ثم يعتمد المدير أو يعدل قبل التسليم</span>
-        </div>
-      </article>
-      ${metricCards}
-=======
           <span>الحالة الحالية: ${escapeHtml(windowInfo.label || "-")}</span>
           <span>${escapeHtml(windowInfo.message || "الموظف يرفع تقييمه للمدير المباشر ثم يعتمد المدير أو يعدل قبل التسليم")}</span>
         </div>
       </article>
       ${metricCards}
       ${progressCards ? `<article class="panel span-12"><div class="panel-head"><div><h2>متابعة مراحل الاعتماد</h2><p>من الموظف حتى المدير التنفيذي</p></div></div><div class="grid nested-metrics">${progressCards}</div></article>` : ""}
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       <article class="panel span-5">
         <h2>${isSelf ? "إرسال تقييمي لمديري المباشر" : "إدخال / تعديل تقييم"}</h2>
         <form id="kpi-form" class="form-grid compact-form">
@@ -2705,19 +2145,6 @@ async function renderKpi() {
           <label>المدير المباشر<select name="managerEmployeeId" ${isSelf ? "disabled" : ""}>${managerOptions}</select></label>
           ${isSelf ? `<input type="hidden" name="managerEmployeeId" value="${escapeHtml(state.user?.employee?.managerEmployeeId || "")}" />` : ""}
           <label>تاريخ الجلسة<input name="evaluationDate" type="date" value="${escapeHtml(cycle.startsOn || new Date().toISOString().slice(0, 10))}" required /></label>
-<<<<<<< HEAD
-          <label>حالة التقييم<select name="status">${optionList(isSelf ? [{ value: "SUBMITTED", name: "رفع للمدير المباشر" }] : [{ value: "DRAFT", name: "مسودة" }, { value: "SUBMITTED", name: "تم الاستلام من الموظف" }, { value: "APPROVED", name: "اعتماد وتسليم" }], isSelf ? "SUBMITTED" : "APPROVED")}</select></label>
-          <label>تحقيق الأهداف / 40<input name="targetScore" type="number" min="0" max="40" step="0.5" value="0" /></label>
-          <label>الكفاءة في أداء المهام / 20<input name="efficiencyScore" type="number" min="0" max="20" step="0.5" value="0" /></label>
-          <label>الالتزام بمواعيد العمل / 20<input name="attendanceScore" type="number" min="0" max="20" step="0.5" placeholder="يحسب تلقائيًا إن تُرك فارغًا" /></label>
-          <label>حسن التعامل / 5<input name="conductScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
-          <label>الصلاة في المسجد / 5<input name="prayerScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
-          <label>حلقة الشيخ وليد يوسف / 5<input name="quranCircleScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
-          <label>التبرعات والمبادرات / 5<input name="initiativesScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
-          <label class="span-2">${isSelf ? "ملاحظات الموظف" : "ملاحظات المدير"}<textarea name="${isSelf ? "employeeNotes" : "managerNotes"}" placeholder="${isSelf ? "اكتب ملخص تقييمك الذاتي وما تم الاتفاق عليه مع المدير" : "ملخص جلسة التقييم ونقاط التحسين"}"></textarea></label>
-          <label class="checkbox-row"><input name="meetingHeld" type="checkbox" checked /> تمت جلسة التقييم بين الموظف ومديره المباشر</label>
-          <div class="form-actions"><button class="button primary" type="submit">${isSelf ? "رفع التقييم للمدير" : "حفظ / اعتماد التقييم"}</button></div>
-=======
           <label>حالة التقييم<select name="status">${optionList(isSelf ? [{ value: "SELF_SUBMITTED", name: "رفع للمدير المباشر" }] : isHr ? [{ value: "HR_REVIEWED", name: "مراجعة HR مكتملة" }] : isTeam ? [{ value: "MANAGER_APPROVED", name: "اعتماد المدير المباشر" }] : isExecutive ? [{ value: "EXECUTIVE_APPROVED", name: "اعتماد المدير التنفيذي" }] : [{ value: "DRAFT", name: "مسودة" }, { value: "SELF_SUBMITTED", name: "استلام من الموظف" }, { value: "MANAGER_APPROVED", name: "اعتماد المدير" }, { value: "HR_REVIEWED", name: "مراجعة HR" }, { value: "SECRETARY_REVIEWED", name: "مراجعة السكرتير التنفيذي" }, { value: "EXECUTIVE_APPROVED", name: "اعتماد المدير التنفيذي" }], isSelf ? "SELF_SUBMITTED" : isHr ? "HR_REVIEWED" : isTeam ? "MANAGER_APPROVED" : "SECRETARY_REVIEWED")}</select></label>
           ${!isHr ? `<label>تحقيق الأهداف / 40<input name="targetScore" type="number" min="0" max="40" step="0.5" value="0" /></label>
           <label>الكفاءة في أداء المهام / 20<input name="efficiencyScore" type="number" min="0" max="20" step="0.5" value="0" /></label>
@@ -2729,7 +2156,6 @@ async function renderKpi() {
           <label class="span-2">${isSelf ? "ملاحظات الموظف" : "ملاحظات المدير"}<textarea name="${isSelf ? "employeeNotes" : "managerNotes"}" placeholder="${isSelf ? "اكتب ملخص تقييمك الذاتي وما تم الاتفاق عليه مع المدير" : "ملخص جلسة التقييم ونقاط التحسين"}"></textarea></label>
           <label class="checkbox-row"><input name="meetingHeld" type="checkbox" checked /> تمت جلسة التقييم بين الموظف ومديره المباشر</label>
           <div class="form-actions"><button class="button primary" type="submit" ${isSelf && windowInfo.isOpen === false ? "disabled" : ""}>${isSelf ? "رفع التقييم للمدير" : "حفظ / اعتماد التقييم"}</button></div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         </form>
       </article>
       <article class="panel span-7">
@@ -2737,11 +2163,7 @@ async function renderKpi() {
         ${table(["المعيار", "الدرجة", "النوع", "الوصف"], criteria.map((item) => `<tr><td><strong>${escapeHtml(item.name)}</strong></td><td>${escapeHtml(item.maxScore || item.weight || item.weightPercentage)} درجة</td><td>${escapeHtml(item.parentCode || item.scoringType || "-")}</td><td>${escapeHtml(item.description || "-")}</td></tr>`))}
       </article>
       <article class="panel span-12">
-<<<<<<< HEAD
-        <div class="panel-head"><div><h2>${isSelf ? "تقييمي الحالي" : "تقييمات الدورة الحالية"}</h2><p>آخر موعد لتسليم التقييمات يوم 25 من الشهر</p></div>${payload.accessMode !== "self" ? `<button class="button ghost" id="export-kpi-csv">تصدير CSV</button>` : ""}</div>
-=======
         <div class="panel-head"><div><h2>${isSelf ? "تقييمي الحالي" : "تقييمات الدورة الحالية"}</h2><p>آخر موعد لتسليم التقييمات يوم 25 من الشهر — الفترة الرسمية من يوم 20 إلى 25</p></div>${payload.accessMode !== "self" ? `<button class="button ghost" id="export-kpi-csv">تصدير CSV</button>` : ""}</div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         ${table(["الترتيب", "الموظف", "المدير", "الأهداف", "الكفاءة", "الحضور", "السلوكيات", "المبادرات", "الإجمالي", "التقدير", "الحالة", "إجراءات"], evaluations.map((item) => `<tr>
           <td>${escapeHtml(item.rank || "-")}</td>
           <td>${escapeHtml(item.employee?.fullName || item.employeeId)}</td>
@@ -2754,11 +2176,7 @@ async function renderKpi() {
           <td><strong>${escapeHtml(item.totalScore ?? "-")}/100</strong></td>
           <td>${escapeHtml(item.rating || item.grade || "-")}</td>
           <td>${badge(item.status || "DRAFT")}</td>
-<<<<<<< HEAD
-          <td>${payload.accessMode === "self" ? "-" : `<button class="button ghost" data-kpi-action="approve" data-id="${escapeHtml(item.id)}">اعتماد وتسليم</button>`}</td>
-=======
           <td>${payload.accessMode === "self" ? "-" : `<button class="button ghost" data-kpi-action="approve" data-next-status="${escapeHtml(nextKpiStatus)}" data-id="${escapeHtml(item.id)}">${isExecutive ? "اعتماد نهائي" : "اعتماد وتسليم"}</button>`}</td>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         </tr>`))}
       </article>
       <article class="panel span-12">
@@ -2767,11 +2185,7 @@ async function renderKpi() {
       </article>
     </section>`,
     "مؤشرات وتقييم الأداء",
-<<<<<<< HEAD
-    isSelf ? "الموظف يرى تقييمه فقط ويرفعه لمديره المباشر." : "نموذج KPI شهري يبدأ من 20 إلى 25 ويتطلب جلسة بين الموظف ومديره المباشر.",
-=======
     isSelf ? "الموظف يرى تقييمه فقط ويرفعه لمديره المباشر." : "نموذج KPI شهري يبدأ من يوم 20 إلى 25، مع فصل بنود HR عن بنود الموظف والمدير.",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   );
   app.querySelector("#kpi-form").addEventListener("submit", submitForm(endpoints.saveKpiEvaluation, isSelf ? "تم رفع تقييمك للمدير المباشر." : "تم حفظ تقييم الأداء."));
   app.querySelector("#recompute-kpi")?.addEventListener("click", async () => {
@@ -2779,10 +2193,6 @@ async function renderKpi() {
     setMessage(`تم تجهيز ${result.recomputed || 0} تقييم ناقص.`, "");
     render();
   });
-<<<<<<< HEAD
-  app.querySelectorAll("[data-kpi-action]").forEach((button) => button.addEventListener("click", async () => {
-    await endpoints.updateKpiEvaluation(button.dataset.id, { status: "APPROVED" });
-=======
   app.querySelector("#send-kpi-reminders")?.addEventListener("click", async () => {
     const result = await endpoints.sendKpiReminders();
     setMessage(`تم إرسال ${result.sent || 0} تذكير KPI حسب المرحلة.`, "");
@@ -2795,7 +2205,6 @@ async function renderKpi() {
   });
   app.querySelectorAll("[data-kpi-action]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.updateKpiEvaluation(button.dataset.id, { status: button.dataset.nextStatus || nextKpiStatus });
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     setMessage("تم اعتماد التقييم وتسليمه.", "");
     render();
   }));
@@ -2878,14 +2287,6 @@ async function renderNotifications() {
   shell(
     `<section class="grid notifications-hub-page">
       <article class="panel span-5">
-<<<<<<< HEAD
-        <div class="panel-head"><div><h2>إرسال إعلان للموظفين</h2><p>إشعار داخلي يظهر في تطبيق الموظف.</p></div>${healthBadge(Boolean("Notification" in window), "Browser Push")}</div>
-        <form id="announcement-form" class="form-grid compact-form">
-          <label>العنوان<input name="title" value="إعلان إداري مهم" /></label>
-          <label>الجمهور<select name="audience"><option value="all">كل الموظفين</option>${optionList(ref.departments.map((d) => ({ value: d.id, name: `قسم: ${d.name}` })))}${optionList(ref.branches.map((b) => ({ value: b.id, name: `فرع: ${b.name}` })))}</select></label>
-          <label class="span-2">المحتوى<textarea name="body" placeholder="اكتب نص الإعلان أو التنبيه"></textarea></label>
-          <div class="form-actions"><button class="button primary">إرسال الإعلان</button><button class="button ghost" type="button" id="enable-browser-notifications">تفعيل إشعارات المتصفح</button></div>
-=======
         <div class="panel-head"><div><h2>قناة التواصل الداخلي</h2><p>إعلانات، تذكيرات، وتعليمات تصل للموظفين كتنبيه داخلي وWeb Push مع تنبيه صوتي داخل التطبيق عند فتحه.</p></div>${healthBadge(Boolean("Notification" in window), "Browser Push")}</div>
         <form id="announcement-form" class="form-grid compact-form">
           <label>نوع الرسالة<select name="type"><option value="ANNOUNCEMENT">إعلان إداري</option><option value="REMINDER">تذكير</option><option value="ACTION_REQUIRED">مطلوب إجراء</option><option value="DECISION">قرار إداري</option></select></label>
@@ -2894,7 +2295,6 @@ async function renderNotifications() {
           <label class="check-row"><input type="checkbox" name="playSound" checked /> تشغيل تنبيه صوتي داخل تطبيق الموظف عند وصول الرسالة</label>
           <label class="span-2">المحتوى<textarea name="body" placeholder="اكتب نص الإعلان أو التذكير أو التعليمات"></textarea></label>
           <div class="form-actions"><button class="button primary">إرسال عبر القناة الداخلية</button><button class="button ghost" type="button" id="enable-browser-notifications">تفعيل إشعارات المتصفح</button></div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         </form>
       </article>
       <article class="panel span-7">
@@ -2903,26 +2303,15 @@ async function renderNotifications() {
       </article>
     </section>`,
     "الإشعارات",
-<<<<<<< HEAD
-    "تنبيهات النظام والإعلانات الداخلية.",
-=======
     "قناة التواصل الداخلي والإعلانات والتنبيهات الصوتية.",
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   );
   app.querySelector("#announcement-form")?.addEventListener("submit", submitForm(endpoints.createAnnouncement, "تم إرسال الإعلان للموظفين."));
   app.querySelector("#enable-browser-notifications")?.addEventListener("click", async () => {
     if (!("Notification" in window)) return setMessage("", "المتصفح لا يدعم إشعارات سطح المكتب.");
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
-<<<<<<< HEAD
-      const subscription = window.HR_CREATE_PUSH_SUBSCRIPTION ? await window.HR_CREATE_PUSH_SUBSCRIPTION() : null;
-      await endpoints.subscribePush({ subscription, endpoint: subscription?.endpoint || "browser-local", permission, platform: navigator.userAgent });
-      new Notification("تم تفعيل الإشعارات", { body: "ستظهر تنبيهات النظام المهمة على هذا المتصفح." });
-      setMessage("تم تفعيل إشعارات المتصفح.", "");
-=======
       await enableBrowserNotifications();
       setMessage("تم تفعيل اشتراك Web Push الحقيقي لهذا المتصفح.", "");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     } else setMessage("", "لم يتم السماح بإشعارات المتصفح.");
     render();
   });
@@ -2976,15 +2365,9 @@ async function renderSettings() {
       <article class="panel span-6"><h2>حالة التشغيل السريعة</h2>${table(["البند", "القيمة"], [`<tr><td>التطبيق</td><td>${escapeHtml(health.app || health.mode || "HR")}</td></tr>`, `<tr><td>قاعدة البيانات</td><td>${escapeHtml(health.database?.mode || health.database || "-")} / متصلة</td></tr>`, `<tr><td>الجلسات</td><td>${health.authEnforced ? "مفعلة" : "اختيارية"}</td></tr>`, `<tr><td>الإصدار</td><td>${escapeHtml(health.version || "-")}</td></tr>`])}</article>
       <article class="panel span-6 account-avatar-panel"><div class="panel-head"><div><h2>صورة حسابي</h2><p>تعديل Avatar المستخدم الحالي ويظهر في أعلى النظام وقائمة المستخدمين.</p></div>${avatar(userAvatarSubject(), "large")}</div><div class="toolbar spaced"><input type="file" id="current-user-avatar" accept="image/png,image/jpeg,image/webp,image/gif" /><button class="button primary" id="save-current-avatar" type="button">حفظ صورة الحساب</button></div></article>
       <article class="panel span-6"><h2>تعديل الإعدادات</h2><form id="settings-form" class="form-grid">${settingsRows.map((item) => `<label>${escapeHtml(item.key)}<input name="${escapeHtml(item.key)}" value="${escapeHtml(item.value)}" /></label>`).join("")}<div class="form-actions"><button class="button primary">حفظ الإعدادات</button></div></form></article>
-<<<<<<< HEAD
-      <article class="panel span-6"><h2>تغيير كلمة المرور</h2><form id="password-form" class="form-grid"><label>كلمة المرور الحالية${passwordField({ name: "currentPassword", autocomplete: "current-password", required: true })}</label><label>كلمة المرور الجديدة${passwordField({ name: "newPassword", autocomplete: "new-password", minlength: "8", required: true })}</label><div class="form-actions"><button class="button primary">تغيير كلمة المرور</button></div></form></article>
-      <article class="panel span-6"><h2>اختبار GPS سريع</h2><p>اختبار مباشر من الإعدادات لمعرفة دقة الموقع والمسافة من المجمع.</p><button class="button ghost" type="button" data-settings-gps-test>اختبار GPS الآن</button><div id="settings-gps-result" class="risk-box hidden"></div></article>
-      <article class="panel span-12"><h2>سياسات الأمان المقترحة</h2>${table(["السياسة", "الحالة"], [["قفل الحساب بعد محاولات فاشلة", "متوقف"], ["تغيير كلمة المرور المؤقتة", "مدعوم عبر mustChangePassword"], ["سجل آخر IP وجهاز", "مدعوم في قاعدة البيانات"], ["Passkeys", "جاهز كنموذج بيانات وينتظر HTTPS/Domain"]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td>${escapeHtml(b)}</td></tr>`))}</article>
-=======
       <article class="panel span-6"><h2>تغيير كلمة المرور</h2><form id="password-form" class="form-grid"><label>كلمة المرور الحالية<input type="password" name="currentPassword" required /></label><label>كلمة المرور الجديدة<input type="password" name="newPassword" minlength="8" required /></label><div class="form-actions"><button class="button primary">تغيير كلمة المرور</button></div></form></article>
       <article class="panel span-6"><h2>اختبار GPS سريع</h2><p>اختبار مباشر من الإعدادات لمعرفة دقة الموقع والمسافة من المجمع.</p><button class="button ghost" type="button" data-settings-gps-test>اختبار GPS الآن</button><div id="settings-gps-result" class="risk-box hidden"></div></article>
       <article class="panel span-12"><h2>سياسات الأمان المقترحة</h2>${table(["السياسة", "الحالة"], [["قفل الحساب بعد محاولات فاشلة", "مفعل عند تشغيل Backend"], ["تغيير كلمة المرور المؤقتة", "مدعوم عبر mustChangePassword"], ["سجل آخر IP وجهاز", "مدعوم في قاعدة البيانات"], ["Passkeys", "جاهز كنموذج بيانات وينتظر HTTPS/Domain"]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td>${escapeHtml(b)}</td></tr>`))}</article>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     </section>`,
     "الإعدادات",
     "إعدادات عامة قابلة للتعديل.",
@@ -3157,11 +2540,7 @@ async function renderBackup() {
   shell(
     `<section class="grid backup-page">
       <article class="panel span-3"><h2>نسخة احتياطية</h2><p>تصدير كل بيانات النظام بصيغة JSON.</p><button class="button primary" id="download-backup">تحميل Backup</button></article>
-<<<<<<< HEAD
-      <article class="panel span-3"><h2>Snapshot داخلي</h2><p>حفظ آخر 10 نسخ داخل التخزين المحلي للتدريب أو الاختبار.</p><button class="button" id="save-snapshot">حفظ Snapshot</button></article>
-=======
       <article class="panel span-3"><h2>Snapshot داخلي</h2><p>حفظ آخر 10 نسخ داخل التخزين المحلي للاختبار الداخلي فقط.</p><button class="button" id="save-snapshot">حفظ Snapshot</button></article>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       <article class="panel span-3"><h2>استرجاع Backup</h2><input type="file" id="backup-file" accept="application/json" /><button class="button" id="restore-backup">استرجاع</button></article>
       <article class="panel span-3"><h2>استيراد موظفين</h2><p>ارفع JSON Array للموظفين أو CSV بسيط.</p><input type="file" id="employees-import" accept=".json,.csv,text/csv,application/json" /><button class="button" id="import-employees">استيراد</button></article>
       <article class="panel span-8"><h2>آخر Snapshots</h2>${table(["العنوان", "الموظفون", "المستخدمون", "الحضور", "التاريخ"], snapshots.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.counts?.employees || 0)}</td><td>${escapeHtml(item.counts?.users || 0)}</td><td>${escapeHtml(item.counts?.attendance || 0)}</td><td>${date(item.createdAt)}</td></tr>`))}</article>
@@ -3211,16 +2590,6 @@ async function renderPasswordVault() {
   shell(
     `<section class="grid">
       <article class="panel span-12 accent-panel">
-<<<<<<< HEAD
-        <div class="panel-head"><div><h2>خزنة كلمات المرور</h2><p>متاحة ليحيى والإدارة العليا لعرض كلمات مرور المستخدمين الحالية وإصدار كلمة مؤقتة جديدة عند الحاجة.</p></div></div>
-        <div class="message warning">لا تشارك هذه البيانات إلا مع صاحب الحساب. الأفضل دائمًا استخدام إعادة تعيين كلمة مرور مؤقتة بدل الاحتفاظ بكلمات مرور دائمة.</div>
-      </article>
-      <article class="panel span-12">
-        ${table(["المستخدم", "البريد", "رقم الهاتف", "كلمة المرور الحالية", "الحالة", "إجراءات"], rows.map((user) => `<tr>
-          <td class="person-cell">${avatar(user.employee || user, "tiny")}<span>${escapeHtml(user.name || user.fullName || "-")}<small>${escapeHtml(user.employee?.jobTitle || "")}</small></span></td>
-          <td>${escapeHtml(user.email || "-")}</td>
-          <td><code class="password-chip">${escapeHtml(user.phone || "-")}</code></td>
-=======
         <div class="panel-head"><div><h2>خزنة كلمات المرور المؤقتة</h2><p>مخصصة للتقني/الإدارة العليا. في Supabase الحقيقي لا يمكن قراءة كلمة المرور الأصلية بعد إنشائها؛ المتاح أمنيًا هو إصدار كلمة مؤقتة جديدة وإجبار الموظف على تغييرها.</p></div></div>
         <div class="message warning">لا تشارك هذه البيانات إلا مع صاحب الحساب. الأفضل دائمًا استخدام إعادة تعيين كلمة مرور مؤقتة بدل الاحتفاظ بكلمات مرور دائمة.</div>
       </article>
@@ -3228,7 +2597,6 @@ async function renderPasswordVault() {
         ${table(["المستخدم", "البريد", "كلمة المرور المؤقتة", "الحالة", "إجراءات"], rows.map((user) => `<tr>
           <td class="person-cell">${avatar(user.employee || user, "tiny")}<span>${escapeHtml(user.name || user.fullName || "-")}<small>${escapeHtml(user.employee?.jobTitle || "")}</small></span></td>
           <td>${escapeHtml(user.email || "-")}</td>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
           <td><code class="password-chip">${escapeHtml(user.password || "غير متاحة")}</code></td>
           <td>${badge(user.mustChangePassword ? "INVITED" : user.status || "ACTIVE")}</td>
           <td><button class="button ghost" data-copy-password="${escapeHtml(user.password || "")}">نسخ</button><button class="button danger ghost" data-reset-password="${escapeHtml(user.id)}">إصدار كلمة جديدة</button></td>
@@ -3236,11 +2604,7 @@ async function renderPasswordVault() {
       </article>
     </section>`,
     "خزنة كلمات المرور",
-<<<<<<< HEAD
-    "عرض كلمات المرور الحالية وإعادة تعيينها بشكل آمن."
-=======
     "عرض كلمات المرور المؤقتة وإعادة تعيينها بشكل آمن."
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   );
   app.querySelectorAll("[data-copy-password]").forEach((button) => button.addEventListener("click", async () => {
     await navigator.clipboard?.writeText(button.dataset.copyPassword || "");
@@ -3261,21 +2625,13 @@ async function renderDisputes() {
   const ref = await referenceData();
   const employees = ref.employees || [];
   const cases = Array.isArray(payload) ? payload : (payload.cases || []);
-<<<<<<< HEAD
-  const committee = Array.isArray(payload) ? { members: ["محمد عبد الباسط أبو عمار", "ياسر فتحي نور الدين", "بلال محمد الشاكر", "يحيى جمال السبع", "الشيخ محمد يوسف"], mandate: "أي مشكلة تُرفع تلقائيًا إلى أبو عمار وياسر فتحي وبلال الشاكر ويحيى جمال والشيخ محمد، ثم يتم التنسيق والحل أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي يحيى السبع." } : (payload.committee || {});
-=======
   const committee = Array.isArray(payload) ? { members: ["مدير مباشر ثالث", "مدير مباشر ثانٍ", "مدير مباشر أول", "السكرتير التنفيذي", "المدير التنفيذي"], mandate: "أي مشكلة تُرفع تلقائيًا إلى مدير مباشر ثالث ومدير مباشر ثانٍ ومدير مباشر أول والسكرتير التنفيذي والمدير التنفيذي، ثم يتم التنسيق والحل أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي." } : (payload.committee || {});
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   const currentEmployeeId = state.user?.employeeId || state.user?.employee?.id || "";
   const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), currentEmployeeId, "اختر الموظف");
   shell(
     `<section class="grid disputes-page">
       <article class="panel span-12 accent-panel">
-<<<<<<< HEAD
-        <div class="panel-head"><div><h2>لجنة حل المشاكل والخلافات</h2><p>${escapeHtml(committee.mandate || "أي مشكلة تُرفع تلقائيًا إلى أبو عمار وياسر فتحي وبلال الشاكر ويحيى جمال والشيخ محمد، ثم يتم التنسيق والحل أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي يحيى السبع.")}</p></div></div>
-=======
         <div class="panel-head"><div><h2>لجنة حل المشاكل والخلافات</h2><p>${escapeHtml(committee.mandate || "أي مشكلة تُرفع تلقائيًا إلى مدير مباشر ثالث ومدير مباشر ثانٍ ومدير مباشر أول والسكرتير التنفيذي والمدير التنفيذي، ثم يتم التنسيق والحل أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي.")}</p></div></div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         <div class="chips">${(committee.members || ["لجنة حل المشاكل والخلافات"]).map((member) => `<span class="chip">${escapeHtml(member)}</span>`).join("")}</div>
       </article>
       <article class="panel span-4">
@@ -3376,8 +2732,6 @@ async function renderOfflineSync() {
   app.querySelector("#register-bg-sync")?.addEventListener("click", async () => { try { const reg = await navigator.serviceWorker.ready; await reg.sync?.register?.("hr-offline-sync"); setMessage("تم تفعيل Background Sync إن كان المتصفح يدعمه.", ""); } catch (error) { setMessage("", "المتصفح لا يدعم Background Sync أو لم يتم تسجيل Service Worker."); } });
 }
 
-<<<<<<< HEAD
-=======
 async function renderManagementStructure() {
   const data = await endpoints.managementStructure().then(unwrap);
   const employees = data.employees || [];
@@ -3443,7 +2797,6 @@ async function renderReportCenter() {
   app.querySelectorAll('[data-export-report]').forEach((button) => button.addEventListener('click', async () => { const result = await endpoints.exportManagementReport({ key: button.dataset.exportReport, format: button.dataset.format }).then(unwrap); if (button.dataset.format === 'pdf') printBrandedReport(result.title, result.summaryHtml || '', result.headers || [], result.rows || []); else if (button.dataset.format === 'xls') exportHtmlTable(`${result.fileName || button.dataset.exportReport}.xls`, result.headers || [], result.rows || []); else downloadFile(`${result.fileName || button.dataset.exportReport}.csv`, `\ufeff${toCsv([result.headers || [], ...(result.rows || [])])}`, 'text/csv;charset=utf-8'); }));
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 async function renderManagerDashboard() {
   const data = await endpoints.managerDashboard().then(unwrap);
   const team = data.team || [];
@@ -3565,11 +2918,7 @@ async function renderExecutiveReport() {
   shell(
     `<section class="grid executive-report-page">
       <article class="panel span-12 accent-panel">
-<<<<<<< HEAD
-        <div class="panel-head"><div><h2>التقرير التنفيذي المختصر للشيخ محمد</h2><p>ملخص واحد يجمع الحضور والطلبات والمشاكل والمهام والمستندات التي تحتاج قرارًا.</p></div><div class="score-ring"><strong>${escapeHtml(data.readiness?.score || 0)}%</strong><span>${escapeHtml(data.readiness?.grade || "-")}</span></div></div>
-=======
         <div class="panel-head"><div><h2>التقرير التنفيذي المختصر للمدير التنفيذي</h2><p>ملخص واحد يجمع الحضور والطلبات والمشاكل والمهام والمستندات التي تحتاج قرارًا.</p></div><div class="score-ring"><strong>${escapeHtml(data.readiness?.score || 0)}%</strong><span>${escapeHtml(data.readiness?.grade || "-")}</span></div></div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       </article>
       ${[
         ["الموظفون", cards.employees],
@@ -3829,11 +3178,7 @@ async function renderDailyReports() {
     "إدارة تقارير إنجاز الموظفين اليومية.",
   );
   app.querySelector("#export-daily-reports")?.addEventListener("click", () => downloadFile("daily-reports.csv", `\ufeff${toCsv([["الموظف","اليوم","الإنجاز","العوائق","خطة الغد","الحالة"], ...reports.map((r) => [r.employee?.fullName || "", r.reportDate || "", r.achievements || "", r.blockers || "", r.tomorrowPlan || "", r.status || ""])])}`, "text/csv;charset=utf-8"));
-<<<<<<< HEAD
-  app.querySelectorAll("[data-review-report]").forEach((button) => button.addEventListener("click", async () => { const comment = prompt("تعليق المراجعة", "تمت المراجعة"); if (comment === null) return; await endpoints.reviewDailyReport(button.dataset.reviewReport, { managerComment: comment }); setMessage("تمت مراجعة التقرير.", ""); renderDailyReports(); }));
-=======
   app.querySelectorAll("[data-review-report]").forEach((button) => button.addEventListener("click", async () => { const comment = await askText({ title: "تعليق المراجعة", message: "اكتب تعليق المراجعة للتقرير اليومي.", defaultValue: "تمت المراجعة", confirmLabel: "حفظ المراجعة" }); if (comment === null) return; await endpoints.reviewDailyReport(button.dataset.reviewReport, { managerComment: comment }); setMessage("تمت مراجعة التقرير.", ""); renderDailyReports(); }));
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 }
 
 async function renderExecutiveMobile() {
@@ -3848,12 +3193,6 @@ async function renderExecutiveMobile() {
       <section class="grid executive-mobile-view">
         <article class="panel span-12">
           <div class="panel-head">
-<<<<<<< HEAD
-            <div><h2>متابعة تنفيذية — ${escapeHtml(employee.fullName || "موظف")}</h2><p>صفحة موبايل مختصرة للشيخ محمد: حالة اليوم، الحضور، الانصراف، الإجازة، والموقع الأخير.</p></div>
-            <div class="toolbar"><button class="button ghost" data-route="executive-mobile">كل الموظفين</button><button class="button primary" data-request-live="${escapeHtml(employee.id || employeeId)}">طلب الموقع المباشر الآن</button></div>
-          </div>
-          <div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(employee.fullName || "-")}</strong><small>${escapeHtml(employee.jobTitle || "")} — ${escapeHtml(employee.manager?.fullName || "بدون مدير")}</small></span></div>
-=======
             <div><h2>متابعة تنفيذية — ${escapeHtml(employee.fullName || "موظف")}</h2><p>صفحة موبايل مختصرة للمدير التنفيذي: حالة اليوم، الحضور، الانصراف، الإجازة، والموقع الأخير.</p></div>
             <div class="toolbar"><button class="button ghost" data-route="executive-mobile">كل الموظفين</button><button class="button primary" data-request-live="${escapeHtml(employee.id || employeeId)}">طلب الموقع المباشر الآن</button></div>
           </div>
@@ -3871,7 +3210,6 @@ async function renderExecutiveMobile() {
               </div>
             </div>
           </div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
           <div class="metric-grid">
             <article class="metric"><span>حالة اليوم</span><strong>${escapeHtml(statusLabel(today.status))}</strong><small>${escapeHtml(today.day || "")}</small></article>
             <article class="metric"><span>وقت الحضور</span><strong>${escapeHtml(date(today.checkInAt))}</strong><small>أول بصمة حضور</small></article>
@@ -3886,12 +3224,8 @@ async function renderExecutiveMobile() {
       </section>
     `, "المتابعة التنفيذية", "تفاصيل موظف من شاشة المدير التنفيذي.");
     app.querySelector("[data-request-live]")?.addEventListener("click", async (event) => {
-<<<<<<< HEAD
-      const reason = prompt("سبب طلب الموقع المباشر", "متابعة تنفيذية مباشرة") || "متابعة تنفيذية مباشرة";
-=======
       const reason = await askText({ title: "طلب الموقع المباشر", message: "اكتب سبب طلب الموقع حتى يظهر للموظف بوضوح.", defaultValue: "متابعة تنفيذية مباشرة", confirmLabel: "إرسال الطلب", required: true });
       if (!reason) return;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       try { await endpoints.requestLiveLocation(event.currentTarget.dataset.requestLive, { reason }); setMessage("تم إرسال إشعار طلب الموقع للموظف.", ""); location.hash = `executive-mobile?employeeId=${encodeURIComponent(event.currentTarget.dataset.requestLive)}`; render(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); render(); }
     });
     return;
@@ -3902,20 +3236,13 @@ async function renderExecutiveMobile() {
   shell(`
     <section class="grid executive-mobile-view">
       <article class="panel span-12">
-<<<<<<< HEAD
-        <div class="panel-head"><div><h2>المتابعة التنفيذية للموبايل</h2><p>صفحة خاصة للشيخ محمد تعرض كل الموظفين وحالة اليوم وطلب الموقع المباشر عند الحاجة.</p></div><div class="toolbar"><button class="button ghost" data-action="refresh">تحديث</button></div></div>
-=======
         <div class="panel-head"><div><h2>المتابعة التنفيذية للموبايل</h2><p>صفحة خاصة للمدير التنفيذي تعرض كل الموظفين وحالة اليوم وطلب الموقع المباشر عند الحاجة.</p></div><div class="toolbar"><button class="button ghost" data-action="refresh">تحديث</button></div></div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         <div class="metric-grid">
           ${[["إجمالي", data.counts?.total], ["حاضر", data.counts?.present], ["متأخر", data.counts?.late], ["غائب", data.counts?.absent], ["إجازة", data.counts?.onLeave], ["مواقع معلقة", data.counts?.pendingLiveLocations]].map(([label, value]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value ?? 0)}</strong><small>اليوم</small></article>`).join("")}
         </div>
         <form class="toolbar" id="exec-search"><input name="q" placeholder="بحث باسم الموظف أو الهاتف" value="${escapeHtml(q)}" /><button class="button ghost" type="submit">بحث</button></form>
       </article>
       <article class="panel span-12"><div class="employee-card-grid">
-<<<<<<< HEAD
-        ${employees.map((employee) => `<article class="mini-card executive-employee-card"><button class="avatar-button" data-view-exec="${escapeHtml(employee.id)}">${avatar(employee, "large")}</button><div><strong>${escapeHtml(employee.fullName || "-")}</strong><small>${escapeHtml(employee.jobTitle || "")} — ${escapeHtml(employee.manager?.fullName || "")}</small></div><div class="mini-card-actions">${badge(employee.today?.status || "ABSENT")}<button class="button ghost" data-view-exec="${escapeHtml(employee.id)}">تفاصيل</button><button class="button primary" data-request-live="${escapeHtml(employee.id)}">طلب الموقع</button></div></article>`).join("") || `<div class="empty">لا توجد نتائج.</div>`}
-=======
         ${employees.map((employee) => `
           <article class="mini-card executive-employee-card">
             <div class="card-status-corner">${badge(employee.today?.status || "ABSENT")}</div>
@@ -3932,19 +3259,14 @@ async function renderExecutiveMobile() {
             </div>
           </article>
         `).join("") || `<div class="empty">لا توجد نتائج.</div>`}
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
       </div></article>
     </section>
   `, "المتابعة التنفيذية", "كل الموظفين في شاشة موبايل تنفيذية.");
   app.querySelector("#exec-search")?.addEventListener("submit", (event) => { event.preventDefault(); const values = readForm(event.currentTarget, { passwordPolicy: "none" }); location.hash = `executive-mobile?q=${encodeURIComponent(values.q || "")}`; });
   app.querySelectorAll("[data-view-exec]").forEach((button) => button.addEventListener("click", () => { location.hash = `executive-mobile?employeeId=${encodeURIComponent(button.dataset.viewExec)}`; }));
   app.querySelectorAll("[data-request-live]").forEach((button) => button.addEventListener("click", async () => {
-<<<<<<< HEAD
-    const reason = prompt("سبب طلب الموقع المباشر", "متابعة تنفيذية مباشرة") || "متابعة تنفيذية مباشرة";
-=======
     const reason = await askText({ title: "طلب الموقع المباشر", message: "اكتب سبب طلب الموقع حتى يظهر للموظف بوضوح.", defaultValue: "متابعة تنفيذية مباشرة", confirmLabel: "إرسال الطلب", required: true });
       if (!reason) return;
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     try { await endpoints.requestLiveLocation(button.dataset.requestLive, { reason }); setMessage("تم إرسال طلب الموقع للموظف.", ""); renderExecutiveMobile(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); renderExecutiveMobile(); }
   }));
 }
@@ -3977,40 +3299,15 @@ async function renderSensitiveApprovals() {
     "اعتماد العمليات التي قد تؤثر على بيانات الموظفين أو الحسابات.",
   );
   app.querySelectorAll("[data-approve-sensitive]").forEach((button) => button.addEventListener("click", async () => {
-<<<<<<< HEAD
-    const note = prompt("ملاحظة الاعتماد", "معتمد من الإدارة التنفيذية") || "معتمد";
-    try { await endpoints.decideSensitiveApproval(button.dataset.approveSensitive, { decision: "approve", note, execute: true }); setMessage("تم اعتماد وتنفيذ الطلب.", ""); renderSensitiveApprovals(); } catch (error) { setMessage("", error.message || "تعذر تنفيذ الاعتماد."); renderSensitiveApprovals(); }
-  }));
-  app.querySelectorAll("[data-reject-sensitive]").forEach((button) => button.addEventListener("click", async () => {
-    const note = prompt("سبب الرفض", "غير مناسب للتنفيذ") || "مرفوض";
-=======
     const note = await askText({ title: "ملاحظة الاعتماد", message: "اكتب ملاحظة الاعتماد والتنفيذ.", defaultValue: "معتمد من الإدارة التنفيذية", confirmLabel: "اعتماد وتنفيذ" }) || "معتمد";
     try { await endpoints.decideSensitiveApproval(button.dataset.approveSensitive, { decision: "approve", note, execute: true }); setMessage("تم اعتماد وتنفيذ الطلب.", ""); renderSensitiveApprovals(); } catch (error) { setMessage("", error.message || "تعذر تنفيذ الاعتماد."); renderSensitiveApprovals(); }
   }));
   app.querySelectorAll("[data-reject-sensitive]").forEach((button) => button.addEventListener("click", async () => {
     const note = await askText({ title: "سبب الرفض", message: "اكتب سبب رفض الطلب الحساس.", defaultValue: "غير مناسب للتنفيذ", confirmLabel: "رفض الطلب" }) || "مرفوض";
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     try { await endpoints.decideSensitiveApproval(button.dataset.rejectSensitive, { decision: "reject", note, execute: false }); setMessage("تم رفض الطلب.", ""); renderSensitiveApprovals(); } catch (error) { setMessage("", error.message || "تعذر رفض الطلب."); renderSensitiveApprovals(); }
   }));
 }
 
-<<<<<<< HEAD
-async function renderDemoMode() {
-  const status = await endpoints.demoStatus().then(unwrap);
-  shell(
-    `<section class="grid demo-page">
-      <article class="panel span-6"><h2>وضع التدريب / Demo Mode</h2><p>يشغّل النظام على بيانات محلية تجريبية لا تؤثر على Supabase الحقيقي. مناسب للتدريب والتجارب أمام الفريق.</p><div class="big-status">${badge(status.enabled ? "DEMO_ENABLED" : "DEMO_DISABLED")}</div><div class="toolbar spaced"><button class="button primary" id="enable-demo">تفعيل وضع التدريب</button><button class="button danger" id="disable-demo">إغلاق وضع التدريب</button></div><div class="message warning">بعد التغيير سيتم إعادة تحميل الصفحة تلقائيًا لتطبيق مصدر البيانات.</div></article>
-      <article class="panel span-6"><h2>متى أستخدمه؟</h2><div class="steps"><span>تدريب المستخدمين بدون لمس بيانات حقيقية.</span><span>تجربة البصمة وطلبات المواقع والشكاوى.</span><span>عرض النظام أمام الإدارة بسرعة.</span><span>إغلاقه يرجعك إلى Supabase حسب الإعدادات.</span></div></article>
-    </section>`,
-    "وضع التدريب",
-    "تشغيل بيانات تجريبية آمنة للتجربة.",
-  );
-  app.querySelector("#enable-demo")?.addEventListener("click", async () => { await endpoints.setDemoMode(true); location.reload(); });
-  app.querySelector("#disable-demo")?.addEventListener("click", async () => { await endpoints.setDemoMode(false); location.reload(); });
-}
-
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 async function renderGeneric(title, description, loader) {
   const rows = unwrap(await loader());
   shell(`<section class="grid"><article class="panel"><h2>${escapeHtml(title)}</h2>${table(["المعرف", "العنوان/الاسم", "الموظف", "الحالة", "التاريخ"], rows.map((item) => `<tr><td>${escapeHtml(item.id || "-")}</td><td>${escapeHtml(item.title || item.name || item.fullName || item.key || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.status || item.type || "-")}</td><td>${date(item.createdAt || item.updatedAt || item.date)}</td></tr>`))}</article></section>`, title, description);
@@ -4031,11 +3328,7 @@ function submitForm(handler, successMessage) {
 }
 
 async function attendanceExportRows() {
-<<<<<<< HEAD
-  const events = await endpoints.attendanceEvents();
-=======
   const events = await endpoints.attendanceEvents().then(unwrap);
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   return events.map((event) => [event.employee?.fullName || event.employeeId, statusLabel(event.type), date(event.eventAt), event.source || "-", statusLabel(event.geofenceStatus), event.notes || ""]);
 }
 
@@ -4111,20 +3404,12 @@ async function renderSmartAttendance() {
 async function renderExecutivePdfReports() {
   shell(`
     <section class="grid">
-<<<<<<< HEAD
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>تقارير تنفيذية PDF للشيخ محمد</h2><p>تصدير تقرير اليوم أو الأسبوع أو الشهر بصيغة قابلة للطباعة PDF من المتصفح.</p></div></div>
-=======
       <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>تقارير تنفيذية PDF للمدير التنفيذي</h2><p>تصدير تقرير اليوم أو الأسبوع أو الشهر بصيغة قابلة للطباعة PDF من المتصفح.</p></div></div>
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
         <div class="quick-action-grid"><button class="button primary" data-exec-report="daily">تقرير اليوم</button><button class="button ghost" data-exec-report="weekly">تقرير الأسبوع</button><button class="button ghost" data-exec-report="monthly">تقرير الشهر</button></div>
       </article>
       <article class="panel span-12"><h2>محتوى التقرير</h2><p>يشمل الحضور، الغياب، التأخير، الإجازات، المأموريات، المشاكل المفتوحة، والتنبيهات الذكية.</p></article>
     </section>
-<<<<<<< HEAD
-  `, "تقارير الشيخ PDF", "طباعة وحفظ تقارير تنفيذية للمدير التنفيذي.");
-=======
   `, "تقارير المدير التنفيذي PDF", "طباعة وحفظ تقارير تنفيذية للمدير التنفيذي.");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
   app.querySelectorAll('[data-exec-report]').forEach((button) => button.addEventListener('click', async () => {
     const period = button.dataset.execReport;
     const data = unwrap(await endpoints.executivePdfReportData({ period }));
@@ -4177,8 +3462,6 @@ async function renderMonthlyEvaluations() {
   app.querySelector('[data-export-evaluations]')?.addEventListener('click', ()=>downloadFile('monthly-evaluations.csv', `\ufeff${toCsv([['الموظف','الحضور','الأداء','السلوك','الإجمالي'], ...rows.map((r)=>[r.employee?.fullName||r.employeeId,r.attendanceScore,r.efficiencyScore,r.conductScore,r.totalScore])])}`, 'text/csv;charset=utf-8'));
 }
 
-<<<<<<< HEAD
-=======
 async function renderPresenceMap() {
   const data = await endpoints.executivePresenceDashboard().then(unwrap);
   const rows = data.rows || [];
@@ -4235,7 +3518,6 @@ async function renderMonthlyAutoPdfReports() {
   app.querySelector('[data-regenerate-monthly]')?.addEventListener('click', () => renderMonthlyAutoPdfReports());
 }
 
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 async function renderSupabaseSetup() {
   const data = await endpoints.supabaseSetupCheck().then(unwrap);
   shell(`<section class="panel"><div class="panel-head"><div><h2>لوحة إعداد Supabase</h2><p>فحص سريع لمعرفة هل النظام جاهز للحفظ الحقيقي بين كل الأجهزة.</p></div></div>${table(['الفحص','النتيجة','التفاصيل'], (data.checks||[]).map((c)=>`<tr><td>${escapeHtml(c.label)}</td><td>${c.ok ? badge('APPROVED') : badge('PENDING')}</td><td>${escapeHtml(c.detail||'')}</td></tr>`))}<div class="message warning">${escapeHtml(data.recommended || '')}</div></section>`, "إعداد Supabase", "فحص الاتصال والتجهيز.");
@@ -4259,11 +3541,7 @@ async function render() {
     state.error = "";
     if (!state.user) state.user = await endpoints.me().then(unwrap).catch(() => null);
     if (!state.user && routeKey() !== "login") return renderLogin();
-<<<<<<< HEAD
-    if (state.user && !isAdminPortalUser(state.user)) return goEmployeePortal("home");
-=======
     if (state.user && !isAdminPortalUser(state.user)) return isExecutiveOnlyRole(state.user) ? goExecutivePortal("home") : goEmployeePortal("home");
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
 
     const key = routeKey();
     if (!canRoute(key)) {
@@ -4272,16 +3550,12 @@ async function render() {
     if (key === "dashboard") await renderDashboard();
     else if (key === "executive-report") await renderExecutiveReport();
     else if (key === "executive-mobile") await renderExecutiveMobile();
-<<<<<<< HEAD
-    else if (key === "manager-dashboard") await renderManagerDashboard();
-=======
     else if (key === "presence-map") await renderPresenceMap();
     else if (key === "attendance-risk") await renderAttendanceRisk();
     else if (key === "manager-dashboard") await renderManagerDashboard();
     else if (key === "management-structure") await renderManagementStructure();
     else if (key === "team-dashboard") await renderTeamDashboard();
     else if (key === "hr-operations") await renderHrOperations();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     else if (key === "manager-suite") await renderManagerSuite();
     else if (key === "realtime") await renderRealtime();
     else if (key === "employees") await renderEmployees();
@@ -4303,25 +3577,17 @@ async function render() {
     else if (key === "tasks") await renderTasks();
     else if (key === "locations") await renderLocations();
     else if (key === "disputes") await renderDisputes();
-<<<<<<< HEAD
-    else if (key === "roles") await renderRolesV2();
-=======
     else if (key === "dispute-workflow") await renderDisputeWorkflow();
     else if (key === "admin-decisions") await renderAdminDecisions();
     else if (key === "roles") await renderRoles();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     else if (key === "permission-matrix") await renderPermissionMatrix();
     else if (key === "password-vault") await renderPasswordVault();
     else if (key === "sensitive-approvals") await renderSensitiveApprovals();
     else if (key === "org-chart") await renderOrgChart();
     else if (key === "reports") await renderReports();
-<<<<<<< HEAD
-    else if (key === "executive-pdf") await renderExecutivePdfReports();
-=======
     else if (key === "report-center") await renderReportCenter();
     else if (key === "executive-pdf") await renderExecutivePdfReports();
     else if (key === "monthly-auto-pdf") await renderMonthlyAutoPdfReports();
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     else if (key === "monthly-report") await renderMonthlyReport();
     else if (key === "advanced-reports") await renderAdvancedReports();
     else if (key === "control-room") await renderControlRoom();
@@ -4337,10 +3603,6 @@ async function render() {
     else if (key === "system-diagnostics") await renderSystemDiagnostics();
     else if (key === "quality-center") await renderQualityCenter();
     else if (key === "policies") await renderPolicies();
-<<<<<<< HEAD
-    else if (key === "demo-mode") await renderDemoMode();
-=======
->>>>>>> 94cd004 (UI Modernization: Refactored Admin, Executive, and Employee portals for a premium mobile-first experience. Optimized GPS accuracy and updated layout consistency.)
     else if (key === "route-access") await renderRouteAccess();
     else if (key === "integrations") await renderIntegrations();
     else if (key === "access-control") await renderAccessControl();
