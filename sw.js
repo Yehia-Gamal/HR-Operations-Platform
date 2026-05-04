@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 const CACHE_NAME = "hr-attendance-full-workflow-live-20260504";
+=======
+const CACHE_NAME = "hr-attendance-management-suite-20260502-01";
+>>>>>>> a0f4b201274ec937c2f9eb66379060c47f74f8db
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./health.html",

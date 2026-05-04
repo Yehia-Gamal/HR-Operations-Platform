@@ -1,5 +1,9 @@
 // Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
+<<<<<<< HEAD
 const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-admin";
+=======
+const CACHE_NAME = "hr-attendance-admin-v8-security-20260503";
+>>>>>>> a0f4b201274ec937c2f9eb66379060c47f74f8db
 const DEFAULT_OPEN_URL = "./admin/index.html";
 const ASSETS = [
   "./health.html",

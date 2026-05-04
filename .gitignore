@@ -9,6 +9,8 @@ scratch/
 PRIVATE_SECRETS/
 docs/OPS_GATE_TEMP_CODE.txt
 !shared/js/supabase-config.example.js
+# supabase-config.js contains only publishable keys, safe for frontend deployment
+# !shared/js/supabase-config.js
 server.*.log
 supabase/VAPID_SECRETS_TO_SET.env
 .DS_Store
@@ -17,8 +19,6 @@ public/generated-reports/*
 public/uploads/avatars/*
 !public/uploads/avatars/.gitkeep
 supabase/.temp/
-shared/js/supabase-config.js
-
 shared/data/authorized-employees.json
 docs/templates/authorized-employees-import.json
-# Real Supabase config — values loaded from environment in production
+

@@ -9,9 +9,13 @@ const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN || '';
 const PROJECT_REF = process.env.SUPABASE_PROJECT_REF || 'yemradvxmwadlldnxtpz';
 const API_URL = `https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query`;
 
+<<<<<<< HEAD
 const sqlFileArg = process.argv[2];
 const defaultSqlFile = join(process.cwd(), 'supabase', 'sql', 'PRODUCTION_SQL_EDITOR_ALL_PATCHES_001_TO_043.sql');
 const sqlFile = sqlFileArg ? join(process.cwd(), 'supabase', 'sql', sqlFileArg) : defaultSqlFile;
+=======
+const sqlFile = join(process.cwd(), 'supabase', 'sql', 'PRODUCTION_SQL_EDITOR_ALL_PATCHES_001_TO_043.sql');
+>>>>>>> a0f4b201274ec937c2f9eb66379060c47f74f8db
 const fullSql = readFileSync(sqlFile, 'utf8');
 
 // Split by patch markers
