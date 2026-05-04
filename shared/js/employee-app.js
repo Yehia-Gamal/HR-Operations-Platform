@@ -1,5 +1,8 @@
 import { endpoints, unwrap } from "./api.js?v=management-suite-20260502-production";
 import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
+import { getDeviceFingerprintHash, requestEmployeePasskey, capturePunchSelfie, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=identity-v1";
+import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=identity-v3";
+import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=identity-v4-notes";
 
 document.documentElement.classList.add("employee-portal-root");
 document.body.classList.add("employee-portal");
@@ -62,6 +65,7 @@ const moreEmployeeRoutes = [
   ["disputes", "شكوى", "⚠️"],
   ["location", "الموقع", "📍"],
   ["profile", "حسابي", "👤"],
+  ["team", "فريقي", "👥"],
 ];
 
 const routeSubtitles = {
@@ -81,6 +85,7 @@ const routeSubtitles = {
   disputes: "ارفع شكوى أو طلب فض خلاف للجنة المختصة.",
   notifications: "كل التنبيهات والطلبات المهمة في مكان واحد.",
   profile: "بيانات حسابك ووسائل الاتصال وكلمة المرور.",
+  team: "إدارة فريقك وطلبات الإجازات والمأموريات بخصوصية ووضوح.",
 };
 
 function greeting() {
@@ -186,7 +191,7 @@ function showToast(message = "", type = "info") {
   window.setTimeout(() => {
     toast.classList.remove("is-visible");
     window.setTimeout(() => toast.remove(), 240);
-  }, 3600);
+  }, 5000);
 }
 
 function consumeFlashMessage() {
@@ -270,27 +275,13 @@ async function registerBrowserPasskey() {
   const attestationObject = credential.response?.attestationObject ? toBase64Url(credential.response.attestationObject) : "";
   const clientDataJSON = credential.response?.clientDataJSON ? toBase64Url(credential.response.clientDataJSON) : "";
   const transports = typeof credential.response?.getTransports === "function" ? credential.response.getTransports() : [];
-  await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "بصمة جهاز الموظف", platform: navigator.platform || "browser" });
+  const deviceFingerprintHash = await getDeviceFingerprintHash();
+  await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "بصمة جهاز الموظف", platform: navigator.platform || "browser", deviceFingerprintHash, trusted: true });
   return rawId;
 }
 
-async function requestBrowserPasskeyForAction(label = "تأكيد العملية") {
-  if (!window.PublicKeyCredential || !navigator.credentials?.get) {
-    throw new Error(`${label}: بصمة الجهاز/Passkey غير مدعومة هنا. افتح التطبيق من موبايل يدعم البصمة أو من HTTPS.`);
-  }
-  try {
-    const credential = await navigator.credentials.get({
-      publicKey: {
-        challenge: crypto.getRandomValues(new Uint8Array(32)),
-        timeout: 60000,
-        userVerification: "required",
-      },
-    });
-    if (!credential?.rawId) throw new Error("لم يتم استلام تأكيد البصمة.");
-    return toBase64Url(credential.rawId);
-  } catch {
-    throw new Error(`${label}: تم إلغاء أو رفض بصمة الجهاز.`);
-  }
+async function requestBrowserPasskeyForAction(label = "تأكيد العملية", employee = {}) {
+  return await requestEmployeePasskey({ endpoints, user: state.user, employee, label });
 }
 
 function playInternalAlertSound() {
@@ -556,6 +547,82 @@ function employeeSubject() {
   return state.user?.employee || state.user || {};
 }
 
+
+const BRANCH_DISPLAY_NAME = "مجمع أحلى شباب";
+const BRANCH_DISPLAY_AREA = "منيل شيحة - الجيزة";
+const ATTENDANCE_REMINDER_HOUR = 9;
+const ATTENDANCE_REMINDER_MINUTE = 30;
+
+function renderRequestList(requests = []) {
+  if (!requests || !requests.length) return `<div class="empty-state">لا توجد طلبات مسجلة.</div>`;
+  return `<div class="employee-list">${requests.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title || item.leaveType?.name || item.leaveType || item.type || "طلب")}</strong><span>${escapeHtml(date(item.createdAt || item.startDate || item.plannedStart || "-"))}</span><small>${escapeHtml(item.reason || item.notes || item.destinationName || "-")}</small></div><div class="list-item-side">${badge(item.finalStatus || item.workflowStatus || item.status)}</div></div>`).join("")}</div>`;
+}
+
+function currentEmployeeLabel(subject = employeeSubject()) {
+  return subject?.fullName || state.user?.fullName || state.user?.name || "الموظف";
+}
+
+function currentJobLabel(subject = employeeSubject()) {
+  return subject?.jobTitle || subject?.position || state.user?.role?.name || "موظف";
+}
+
+function employeeHeaderCell(subject = employeeSubject()) {
+  return `<div class="employee-header-card person-cell large">${avatar(subject, "large")}<span><strong>${escapeHtml(currentEmployeeLabel(subject))}</strong><small>${escapeHtml(currentJobLabel(subject))}</small></span></div>`;
+}
+
+function locationLabelFromRecord(record = {}) {
+  const branchish = ["inside_branch", "INSIDE_BRANCH", "inside", "IN_RANGE", "ACTIVE"].includes(String(record.status || record.locationStatus || record.geofenceStatus || ""));
+  if (branchish) return `${BRANCH_DISPLAY_NAME} — ${BRANCH_DISPLAY_AREA}`;
+  return record.addressLabel || record.locationLabel || record.placeLabel || record.address || record.destinationName || "لم يتم تحديد عنوان نصي بعد";
+}
+
+function locationStatusBadge(record = {}) {
+  const status = String(record.status || record.locationStatus || record.geofenceStatus || "").toLowerCase();
+  const inside = status.includes("inside") || status.includes("in_range") || status === "active" || status === "approved";
+  const outside = status.includes("outside") || status.includes("out_of_range") || status.includes("branch");
+  if (inside) return `<span class="pill success">داخل المجمع</span>`;
+  if (outside) return `<span class="pill danger">خارج المجمع</span>`;
+  return `<span class="pill warning">بحاجة للتحقق</span>`;
+}
+
+function readableLocationBlock(record = {}, { compact = false } = {}) {
+  const label = locationLabelFromRecord(record);
+  const accuracy = Number(record.accuracy || record.gpsAccuracy || 0);
+  const distance = Number(record.distanceFromBranch || record.distanceMeters || 0);
+  const hasDistance = Number.isFinite(distance) && distance > 0;
+  return `<div class="readable-location ${compact ? "compact" : ""}">
+    <div>${locationStatusBadge(record)}<strong>${escapeHtml(label)}</strong><small>${escapeHtml(label.includes(BRANCH_DISPLAY_NAME) ? BRANCH_DISPLAY_AREA : "الموقع الفعلي المسجل")}</small></div>
+    <div class="location-meta-row">${accuracy ? `<span>الدقة ±${Math.round(accuracy)} م</span>` : ""}${hasDistance ? `<span>يبعد تقريبًا ${Math.round(distance)} م</span>` : ""}</div>
+  </div>`;
+}
+
+function attendanceNoteField(value = "") {
+  return `<label class="span-2 punch-note-field">ملاحظة مع البصمة<textarea id="punch-notes" name="notes" rows="2" placeholder="اكتب ملاحظة إن وجدت: مأمورية، ظرف طارئ، تأخير مواصلات...">${escapeHtml(value)}</textarea></label>`;
+}
+
+function isMorningPunchTime() {
+  const h = new Date().getHours();
+  return h < 15;
+}
+
+function todayReminderDue(events = []) {
+  const now = new Date();
+  if (now.getHours() < ATTENDANCE_REMINDER_HOUR || (now.getHours() === ATTENDANCE_REMINDER_HOUR && now.getMinutes() < ATTENDANCE_REMINDER_MINUTE)) return false;
+  return !(events || []).some((e) => String(e.type || e.eventType || "").toLowerCase().includes("in") || String(e.type || "").includes("حضور"));
+}
+
+function kpiSlider({ name, label, weight, value = 0, readonly = false }) {
+  const pct = Math.max(0, Math.min(100, Number(value || 0)));
+  const calculated = (pct * weight / 100).toFixed(1);
+  return `<label class="kpi-slider-field ${readonly ? "is-readonly" : ""}"><span>${escapeHtml(label)}</span><input type="range" name="${escapeHtml(name)}" min="0" max="100" step="1" value="${pct}" ${readonly ? "disabled" : ""} data-weight="${weight}" /><div class="kpi-slider-meta"><b>${pct}%</b><small>الوزن ${weight} — المحتسب ${calculated}/${weight}</small></div><div class="kpi-progress"><i style="width:${pct}%"></i></div></label>`;
+}
+
+function getManagerLikeRole() {
+  const role = roleKey();
+  const perms = permissionsOf();
+  return role.includes("manager") || role.includes("مدير") || perms.has("team:manage") || perms.has("employees:team");
+}
+
 function isMoreRoute(key = routeKey()) {
   return moreEmployeeRoutes.some(([route]) => route === key);
 }
@@ -567,7 +634,7 @@ function shell(content, title = "تطبيق الموظف", subtitle = "") {
   app.innerHTML = `
     <div class="employee-shell">
       <header class="employee-topbar">
-        <div class="employee-brand">
+        <div class="employee-brand is-larger-logo">
           <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
           <div><strong>أحلى شباب</strong><span>تطبيق الموظفين</span></div>
         </div>
@@ -580,8 +647,6 @@ function shell(content, title = "تطبيق الموظف", subtitle = "") {
         <section class="employee-page-head">
           <div><h1>${escapeHtml(title)}</h1><p>${escapeHtml(subtitle || routeSubtitles[current] || "")}</p></div>
         </section>
-        ${state.message ? `<div class="message">${escapeHtml(state.message)}</div>` : ""}
-        ${state.error ? `<div class="message error">${escapeHtml(state.error)}</div>` : ""}
         ${content}
       </main>
       <nav class="employee-bottom-nav" aria-label="تنقل تطبيق الموظف">
@@ -643,17 +708,17 @@ async function handleFormSubmit(event) {
         renderLeaves();
         return;
       }
-      await endpoints.createLeave(values);
-      setMessage("تم إرسال طلب الإجازة للمراجعة.", "");
+      await endpoints.createLeave({ ...values, workflowStatus: "pending_manager_review", status: "PENDING_MANAGER_REVIEW" });
+      setMessage("تم إرسال طلب الإجازة للمدير المباشر.", "");
       location.hash = "leaves";
     }
     if (action === "mission") {
-      await endpoints.createMission(values);
-      setMessage("تم إرسال طلب المأمورية للمراجعة.", "");
+      await endpoints.createMission({ ...values, workflowStatus: "pending_manager_review", status: "PENDING_MANAGER_REVIEW" });
+      setMessage("تم إرسال طلب المأمورية للمدير المباشر.", "");
       location.hash = "missions";
     }
     if (action === "dispute") {
-      await endpoints.createDispute({ title: values.title, description: values.description, employeeId: state.user?.employeeId || state.user?.employee?.id || "" });
+      await endpoints.createDispute({ ...values, employeeId: state.user?.employeeId || state.user?.employee?.id || "", status: "committee_review", privacyLevel: "committee_only" });
       setMessage("تم رفع الشكوى إلى لجنة حل المشاكل والخلافات.", "");
       location.hash = "disputes";
     }
@@ -834,71 +899,71 @@ async function renderRecoveryPassword() {
 }
 
 async function renderHome() {
-  const [events, leaves, notifications, missions, tasks, documents, liveRequests, actionCenter] = await Promise.all([
+  const [events, leaves, notifications, missions, tasks, liveRequests] = await Promise.all([
     endpoints.myAttendanceEvents().then(unwrap).catch(() => []),
     endpoints.leaves().then(unwrap).catch(() => []),
     endpoints.notifications().then(unwrap).catch(() => []),
     endpoints.missions().then(unwrap).catch(() => []),
     endpoints.myTasks().then(unwrap).catch(() => []),
-    endpoints.myDocuments().then(unwrap).catch(() => []),
     endpoints.myLiveLocationRequests().then(unwrap).catch(() => []),
-    endpoints.myActionCenter().then(unwrap).catch(() => ({ actions: [] })),
   ]);
   const employeeId = state.user?.employeeId || state.user?.employee?.id;
+  const employee = employeeSubject();
   const myEvents = events.filter((event) => !employeeId || event.employeeId === employeeId);
   const todayEvents = myEvents.filter((event) => String(event.eventAt || event.createdAt || "").startsWith(todayIso()));
-  const pendingLeaves = leaves.filter((item) => item.employeeId === employeeId && item.status === "PENDING").length;
-  const pendingMissions = missions.filter((item) => item.employeeId === employeeId && item.status === "PENDING").length;
+  const lastEvent = myEvents[0] || {};
+  const pendingLeaves = leaves.filter((item) => item.employeeId === employeeId && String(item.status || "").includes("PENDING")).length;
+  const pendingMissions = missions.filter((item) => item.employeeId === employeeId && String(item.status || "").includes("PENDING")).length;
   const unread = notifications.filter((item) => !item.isRead && (!item.employeeId || item.employeeId === employeeId || item.userId === state.user?.id)).length;
   const pendingLive = (liveRequests || []).filter((item) => item.status === "PENDING" && (!employeeId || item.employeeId === employeeId)).length;
-  const employee = employeeSubject();
-  const lastEvent = myEvents[0];
+  const reminder = todayReminderDue(todayEvents);
+  const lastStatus = lastEvent.status || lastEvent.locationStatus || lastEvent.geofenceStatus || "";
+  const inside = String(lastStatus).toLowerCase().includes("inside") || String(lastStatus).toLowerCase().includes("active") || String(lastStatus).toLowerCase().includes("in_range");
   shell(`
-    <section class="employee-grid">
-      <article class="employee-hero-card">
-        <div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(greeting())}، ${escapeHtml(employee.fullName || state.user?.fullName || "أهلًا")}</strong><small>${escapeHtml(employee.jobTitle || "جاهز لبدء يومك")}</small></span></div>
-        <p>كل ما تحتاجه يوميًا في شاشة واحدة: بصمة، موقع، إجازة، شكوى، وإشعارات.</p>
-        <div class="hero-meta"><span class="hero-chip">${escapeHtml(fullDateText())}</span><span class="hero-chip">الساعة ${escapeHtml(timeNowText())}</span><span class="hero-chip">جاهز للتسجيل</span></div>
-        <div class="employee-actions-row"><button class="button primary" data-route="punch">تسجيل بصمة الآن</button><button class="button ghost" data-route="location">إرسال موقعي</button></div>
+    <section class="employee-home-flow">
+      <article class="employee-hero-card home-welcome">
+        ${employeeHeaderCell(employee)}
+        <p>كل ما تحتاجه يوميًا في شاشة واحدة: بصمة، موقع، إجازة، مأمورية، شكوى، وإشعارات.</p>
+        <div class="hero-meta"><span class="hero-chip">${escapeHtml(fullDateText())}</span><span class="hero-chip">الساعة ${escapeHtml(timeNowText())}</span>${todayEvents.length ? `<span class="hero-chip success">تم تسجيل ${todayEvents.length} حركة اليوم</span>` : `<span class="hero-chip warning">لم تسجل حضور اليوم</span>`}</div>
       </article>
-      <div class="compact-metrics-grid">
+
+      ${reminder ? `<article class="employee-card full attendance-reminder-card"><h2>تذكير بصمة 9:30 صباحًا</h2><p>لم يتم تسجيل بصمة الحضور حتى الآن. يرجى تسجيل البصمة وإرسال الموقع عند الوصول إلى مجمع أحلى شباب.</p><button class="button primary full" data-route="punch">تسجيل بصمة الآن</button></article>` : ""}
+
+      <article class="employee-card full punch-primary-card">
+        <div class="panel-kicker">البصمة اليومية</div>
+        <h2>${todayEvents.length ? "متابعة حركة اليوم" : "جاهز لتسجيل الحضور"}</h2>
+        <p>${todayEvents.length ? `آخر حركة مسجلة: ${escapeHtml(date(lastEvent.eventAt || lastEvent.createdAt))}` : "سجّل حضورك عند الوصول، أو أرسل موقعك لو طلبته الإدارة."}</p>
+        <div class="employee-actions-row"><button class="button primary" data-route="punch">فتح البصمة</button><button class="button ghost" data-route="location">إرسال موقعي</button></div>
+      </article>
+
+      <article class="employee-card full location-status-card">
+        <h2>حالة الموقع</h2>
+        ${lastEvent?.id ? readableLocationBlock(lastEvent) : `<div class="readable-location"><div><span class="pill warning">لم يتم التحقق بعد</span><strong>${BRANCH_DISPLAY_NAME}</strong><small>${BRANCH_DISPLAY_AREA}</small></div></div>`}
+        <div class="employee-actions-row"><button class="button ghost small" data-route="punch">عرض الخريطة واختبار الموقع</button></div>
+      </article>
+
+      <section class="quick-actions-grid unified-actions">
         ${compactMetric("بصمات اليوم", todayEvents.length, "👁", "punch")}
-        ${compactMetric("طلبات معلقة", pendingLeaves + pendingMissions, "🏖", "requests")}
-        ${compactMetric("مهام مفتوحة", tasks.filter((task) => task.status !== "DONE").length, "✅", "tasks")}
         ${compactMetric("إشعارات", unread, "🔔", "notifications")}
-        ${compactMetric("طلب موقع", pendingLive, "📍", "location")}
-        ${compactMetric("مطلوب مني", (actionCenter.actions || []).length, "⚡", "action-center")}
-      </div>
-      ${pendingLive ? `<article class="status-strip urgent"><span class="status-dot danger"></span><div><strong>الإدارة طلبت موقعك المباشر الآن</strong><span>افتح صفحة الموقع للقبول أو الرفض مع السبب.</span></div><button class="button primary" data-route="location">الرد على الطلب</button></article>` : ""}
-      <article class="status-strip">
-        <span class="status-dot ${lastEvent?.status === "REJECTED" ? "danger" : todayEvents.length ? "" : "warning"}"></span>
-        <div><strong>${todayEvents.length ? "لديك حركة مسجلة اليوم" : "لم تسجل بصمة اليوم بعد"}</strong><span>${lastEvent ? `آخر حركة: ${statusLabel(lastEvent.type)} — ${date(lastEvent.eventAt || lastEvent.createdAt)}` : "ابدأ يومك من زر البصمة."}</span></div>
-        <button class="button ghost" data-route="punch">فتح البصمة</button>
+        ${compactMetric("طلبات موقع", pendingLive, "📍", "location")}
+        ${compactMetric("إجازات معلقة", pendingLeaves, "🏖", "leaves")}
+        ${compactMetric("مأموريات معلقة", pendingMissions, "🚗", "missions")}
+        ${compactMetric("مهامي", tasks.filter((t) => t.status !== "COMPLETED").length, "✅", "tasks")}
+        ${compactMetric("تقييمي KPI", "فتح", "📊", "kpi")}
+        ${compactMetric("شكوى/خلاف", "رفع", "⚖️", "disputes")}
+        ${getManagerLikeRole() ? compactMetric("فريقي", "إدارة", "👥", "team") : ""}
+      </section>
+
+      <article class="employee-card full context-state-card">
+        <h2>حالة اليوم</h2>
+        ${inside ? `<p class="success-text">أنت داخل نطاق مجمع أحلى شباب، ويمكن اعتماد البصمة تلقائيًا إذا اكتملت خطوات التحقق.</p>` : `<p class="warning-text">إذا كنت خارج المجمع، سيتم ذكر المكان الفعلي مع ملاحظتك، وقد تُحوّل البصمة للمراجعة أو المأمورية.</p>`}
+        <div class="employee-actions-row"><button class="button ghost" data-route="missions">طلب مأمورية</button><button class="button ghost" data-route="leaves">طلب إجازة</button></div>
       </article>
-      <div class="quick-action-grid">
-        ${actionCard("punch", "🔘", "البصمة", "حضور/انصراف")}
-        ${actionCard("location", "📍", "الموقع", "إرسال لوكيشن")}
-        ${actionCard("leaves", "🏖", "الإجازات", "طلب ومتابعة")}
-        ${actionCard("missions", "🚀", "المأمورية", "مهام خارجية")}
-        ${actionCard("tasks", "📋", "مهامي", "قائمة العمل")}
-        ${actionCard("kpi", "📊", "الأداء", "تقييمي KPI")}
-        ${actionCard("daily-report", "📝", "التقرير", "إنجاز يومي")}
-        ${actionCard("documents", "📁", "ملفاتي", "مستندات")}
-        ${actionCard("action-center", "⚡", "المطلوب", "إجراءات عاجلة")}
-        ${actionCard("notifications", "🔔", "تنبيهات", "إشعارات")}
-        ${actionCard("disputes", "⚖", "شكوى", "تظلم")}
-        ${actionCard("requests", "☰", "الطلبات", "سجل كامل")}
-      </div>
-      <article class="employee-card full"><h2>آخر بصماتي</h2>${renderEventList(myEvents.slice(0, 5))}</article>
-      <article class="employee-card full"><h2>آخر طلباتي</h2>${renderRequestList([...leaves, ...missions].filter((item) => item.employeeId === employeeId).slice(0, 6))}</article>
-      <article class="employee-card full"><h2>آخر مهامي</h2>${tasks.length ? `<div class="employee-list">${tasks.slice(0, 4).map((task) => `<div class="employee-list-item"><div><strong>${escapeHtml(task.title)}</strong><span>${escapeHtml(task.description || "")}</span></div><div class="list-item-side">${badge(task.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد مهام حالية.</div>`}</article>
+
+      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 3).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.type || item.eventType || "حركة")}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small></div><div class="list-item-side">${locationStatusBadge(item)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة بعد.</div>`}</article>
+      <article class="employee-card full"><h2>آخر طلباتي</h2>${renderRequestList([...leaves.filter((x)=>x.employeeId===employeeId), ...missions.filter((x)=>x.employeeId===employeeId)].slice(0,3))}</article>
     </section>
   `, "الرئيسية", "ملخص سريع ومختصر لحسابك اليوم.");
-}
-
-function renderEventList(events = []) {
-  if (!events.length) return `<div class="empty-state">لا توجد بصمات مسجلة بعد.</div>`;
-  return `<div class="employee-list">${events.map((event) => `<div class="employee-list-item"><div><strong>${statusLabel(event.type)}</strong><span>${date(event.eventAt || event.createdAt)}</span><small>${escapeHtml(event.notes || event.source || "")}</small></div><div class="list-item-side">${badge(event.geofenceStatus || event.status || "")}</div></div>`).join("")}</div>`;
 }
 
 async function renderActionCenter() {
@@ -936,109 +1001,87 @@ async function renderPunch() {
     shell(`<section class="employee-card"><h2>لا يمكن فتح البصمة</h2><p>${escapeHtml(error.message || "الحساب غير مرتبط بموظف.")}</p></section>`, "البصمة", "يلزم ربط الحساب بموظف.");
     return;
   }
-  const employee = address.employee || state.user?.employee || {};
-  const branchName = address.branch?.name || address.branchName || address.locationName || "الفرع";
+  const employee = address.employee || state.user?.employee || employeeSubject();
+  const employeeId = state.user?.employeeId || state.user?.employee?.id || employee.id;
+  const myEvents = events.filter((event) => !employeeId || event.employeeId === employeeId);
+  const todayEvents = myEvents.filter((event) => String(event.eventAt || event.createdAt || "").startsWith(todayIso()));
+  const suggestedType = todayEvents.length && isMorningPunchTime() === false ? "out" : (todayEvents.some((e)=>String(e.type||e.eventType||"").toLowerCase().includes("in")) ? "out" : "in");
+  const primaryLabel = suggestedType === "in" ? "بصمة حضور الآن" : "بصمة انصراف الآن";
+  const secondaryLabel = suggestedType === "in" ? "بصمة انصراف" : "بصمة حضور";
   shell(`
-    <section class="employee-grid punch-mobile">
+    <section class="employee-grid punch-mobile punch-redesigned">
       <article class="employee-card full">
-        <div class="punch-focus">
-          <div>
-            <div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(employee.fullName || state.user?.fullName || "الموظف")}</strong><small>${escapeHtml(employee.jobTitle || "جاهز للتسجيل")}</small></span></div>
-            <div class="step-list"><span class="step-item"><b>1</b>بصمة الجهاز</span><span class="step-item"><b>2</b>قراءة GPS</span><span class="step-item"><b>3</b>حفظ الحركة</span></div>
-          </div>
-          <div class="punch-orb">◉</div>
+        <div class="punch-focus">${employeeHeaderCell(employee)}<div class="punch-orb">👁</div></div>
+        <div class="branch-readable-card">
+          <div class="branch-circle">📍</div>
+          <div><strong>${BRANCH_DISPLAY_NAME}</strong><small>${BRANCH_DISPLAY_AREA}</small></div>
         </div>
-        <div class="gps-panel"><span class="feature-icon">⌖</span><div><strong>${escapeHtml(branchName)}</strong><span>النطاق: ${escapeHtml(address.radiusMeters || 300)} متر — أقصى دقة GPS: ${escapeHtml(address.maxAccuracyMeters || 500)} متر</span></div></div>
-        <label>ملاحظات اختيارية<input id="punch-notes" placeholder="مثال: من البوابة الرئيسية" /></label>
-        <div class="biometric-box"><strong>التحقق الإجباري: بصمة الإصبع / Passkey</strong><p>عند تسجيل الحضور أو الانصراف سيطلب التطبيق بصمة الجهاز أولًا، ثم يقرأ GPS، ثم يحفظ الحركة والموقع.</p><button class="button ghost" type="button" data-register-passkey>تسجيل/تحديث بصمة الجهاز</button></div>
-        <div class="employee-actions-stack punch-buttons">
-          <button class="button primary" data-punch="checkIn">بصمة حضور</button>
-          <button class="button" data-punch="checkOut">بصمة انصراف</button>
-          <button class="button ghost" data-test-location>اختبار GPS</button>
+        <div id="gps-map-preview" class="gps-map-preview"><div class="geo-circle"><span>نطاق المجمع</span><i></i></div><small>اضغط اختبار الموقع لعرض حالتك داخل/خارج المجمع.</small></div>
+        ${attendanceNoteField()}
+        <div class="employee-actions-stack punch-actions-clear">
+          <button class="button primary full" data-punch-type="${suggestedType}">${primaryLabel}</button>
+          <button class="button ghost full" data-punch-type="${suggestedType === "in" ? "out" : "in"}">${secondaryLabel}</button>
+          <button class="button ghost small" data-test-gps type="button">اختبار الموقع / عرض الخريطة</button>
         </div>
-        <div id="punch-result" class="risk-box hidden"></div>
+        <div id="punch-result" class="message compact hidden"></div>
+        <p class="form-hint">تسجيل/تحديث بصمة الجهاز انتقل إلى: حسابي ← أمان الجهاز، حتى لا يختلط بزر البصمة.</p>
       </article>
-      <article class="employee-card full"><h2>آخر بصماتي</h2>${renderEventList(events.slice(0, 8))}</article>
+      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 5).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.type || item.eventType || "حركة")}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small>${item.notes ? `<small>ملاحظة: ${escapeHtml(item.notes)}</small>` : ""}</div><div class="list-item-side">${locationStatusBadge(item)}${badge(item.riskLevel || item.status || "")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة.</div>`}</article>
     </section>
-  `, "البصمة", "تسجيل حضور وانصراف ببصمة الجهاز + GPS.");
+  `, "البصمة", "تسجيل حضور أو انصراف ببصمة الجهاز + GPS.");
 
   const resultBox = app.querySelector("#punch-result");
-  app.querySelector("[data-register-passkey]")?.addEventListener("click", async () => {
+  app.querySelector("[data-test-gps]")?.addEventListener("click", async () => {
     try {
-      await registerBrowserPasskey();
-      setMessage("تم تسجيل بصمة الجهاز/Passkey بنجاح.", "");
+      resultBox?.classList.remove("hidden", "danger-box");
+      if (resultBox) resultBox.textContent = "جاري اختبار الموقع بدقة عالية...";
+      const current = await getBrowserLocation();
+      const normalized = { ...current, status: current.insideBranch ? "inside_branch" : "outside_branch", addressLabel: current.insideBranch ? `${BRANCH_DISPLAY_NAME} — ${BRANCH_DISPLAY_AREA}` : (current.addressLabel || "موقع خارج المجمع") };
+      sessionStorage.setItem("hr.employee.lastGpsTest", JSON.stringify({ ...normalized, testedAt: new Date().toISOString() }));
+      const preview = app.querySelector("#gps-map-preview");
+      if (preview) preview.innerHTML = `${readableLocationBlock(normalized)}<a class="button ghost small" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}">فتح الخريطة</a>`;
+      if (resultBox) resultBox.textContent = current.insideBranch ? "أنت داخل نطاق مجمع أحلى شباب." : "أنت خارج المجمع، سيتم تسجيل المكان الفعلي والملاحظة عند البصمة.";
     } catch (error) {
-      setMessage("", error.message);
+      resultBox?.classList.remove("hidden");
+      resultBox?.classList.add("danger-box");
+      if (resultBox) resultBox.textContent = friendlyError(error, "تعذر اختبار الموقع.");
     }
   });
-  const showResult = (title, evaluation = {}, error = false) => {
-    const status = String(evaluation.geofenceStatus || "");
-    const outside = ["outside_branch", "location_low_accuracy", "permission_denied", "location_unavailable"].includes(status);
-    const inside = status === "inside_branch" || status === "inside_branch_low_accuracy";
-    const distance = evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters;
-    const mapUrl = evaluation.latitude != null && evaluation.longitude != null ? `https://www.google.com/maps?q=${encodeURIComponent(evaluation.latitude)},${encodeURIComponent(evaluation.longitude)}` : "";
-    const statusTitle = inside ? "داخل المجمع" : outside ? "خارج المجمع" : "حالة الموقع";
-    resultBox.classList.remove("hidden");
-    resultBox.classList.toggle("danger-box", Boolean(error || outside));
-    resultBox.classList.toggle("inside-box", Boolean(inside && !error));
-    resultBox.innerHTML = `
-      <strong>${escapeHtml(title)} - ${statusTitle}</strong>
-      <p>${escapeHtml(evaluation.message || evaluation.blockReason || "")}</p>
-      ${evaluation.placeName ? `<p>المكان الحالي: ${escapeHtml(evaluation.placeName)}</p>` : ""}
-      ${distance != null ? `<p>يبعد عن المجمع: ${escapeHtml(Math.round(Number(distance)))} متر</p>` : ""}
-      ${evaluation.accuracyMeters != null ? `<p>دقة GPS: ${escapeHtml(evaluation.accuracyMeters)} متر</p>` : ""}
-      ${mapUrl ? `<a class="button ghost map-link" target="_blank" rel="noopener" href="${mapUrl}">فتح المكان على الخريطة</a>` : ""}
-    `;
-  };
-  const logRejected = async (action, current = {}, evaluation = {}, reason = "") => {
+
+  app.querySelectorAll("[data-punch-type]").forEach((button) => button.addEventListener("click", async () => {
+    const type = button.dataset.punchType || "in";
+    const actionText = type === "out" ? "انصراف" : "حضور";
     try {
-      await endpoints.recordPunchRejection({ employeeId: employee.id, action, ...current, geofenceStatus: evaluation.geofenceStatus || "REJECTED", distanceFromBranchMeters: evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters ?? null, blockReason: reason || evaluation.blockReason || evaluation.message || "تم رفض البصمة", notes: app.querySelector("#punch-notes")?.value || "" });
-    } catch (logError) { console.warn("تعذر تسجيل محاولة الرفض", logError); }
-  };
-  const readAndEvaluate = async () => {
-    resultBox.classList.remove("hidden");
-    resultBox.classList.remove("danger-box");
-    resultBox.textContent = "الخطوة 2 من 3: جاري تحديد الموقع بدقة عالية (انتظر للحصول على أفضل قراءة)...";
-    const current = await getBrowserLocation();
-    if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع. فعّل GPS واسمح للتطبيق بالوصول للموقع.");
-    if (current.locationError) throw new Error(current.locationError);
-    resultBox.textContent = "جاري التحقق من النطاق الجغرافي...";
-    const evaluation = await endpoints.evaluateGeofence({ employeeId: employee.id, ...current }).then(unwrap);
-    evaluation.latitude = current.latitude;
-    evaluation.longitude = current.longitude;
-    resultBox.textContent = "جاري جلب اسم المكان...";
-    evaluation.placeName = await reverseGeocode(current.latitude, current.longitude);
-    return { current, evaluation };
-  };
-  app.querySelector("[data-test-location]")?.addEventListener("click", async () => {
-    try { const { evaluation } = await readAndEvaluate(); showResult("نتيجة اختبار GPS", evaluation, !evaluation.allowed); } catch (error) { showResult("تعذر اختبار GPS", { message: friendlyError(error) }, true); }
-  });
-  app.querySelectorAll("[data-punch]").forEach((button) => button.addEventListener("click", async () => {
-    if (button.disabled) return;
-    const originalHtml = button.innerHTML;
-    try {
-      app.querySelectorAll("[data-punch]").forEach((item) => { item.disabled = true; });
-      button.innerHTML = "جاري التسجيل...";
-      resultBox.classList.remove("hidden");
-      resultBox.classList.remove("danger-box");
-      resultBox.textContent = "الخطوة 1 من 3: جاري تأكيد بصمة الجهاز...";
-      const passkeyCredentialId = await requestBrowserPasskeyForAction("تسجيل البصمة");
-      const { current, evaluation } = await readAndEvaluate();
-      resultBox.textContent = "الخطوة 3 من 3: جاري حفظ حركة الحضور أو الانصراف...";
-      const body = { ...current, notes: app.querySelector("#punch-notes")?.value || "", verificationStatus: "verified", biometricMethod: "passkey", passkeyCredentialId };
-      const response = button.dataset.punch === "checkIn" ? await endpoints.selfCheckIn(body) : await endpoints.selfCheckOut(body);
-      const savedEvaluation = { ...evaluation, ...(response.evaluation || {}), placeName: evaluation.placeName, latitude: current.latitude, longitude: current.longitude };
-      showResult(button.dataset.punch === "checkIn" ? "تم تسجيل الحضور" : "تم تسجيل الانصراف", savedEvaluation, false);
-      setMessage(button.dataset.punch === "checkIn" ? "تم حفظ بصمة الحضور." : "تم حفظ بصمة الانصراف.", "");
-      haptic([30, 50, 80]);
-      window.setTimeout(render, 800);
+      resultBox?.classList.remove("hidden", "danger-box");
+      if (resultBox) resultBox.textContent = `جاري تسجيل بصمة ${actionText}...`;
+      const preFingerprint = await getDeviceFingerprintHash().catch(() => "");
+      const policyAck = await ensureAttendancePolicyAcknowledged({ endpoints, employee, deviceFingerprintHash: preFingerprint });
+      let device = {};
+      try { device = await requestEmployeePasskey({ employeeId: employee.id || employeeId, username: employee.fullName || state.user?.fullName || "employee" }); }
+      catch (err) { device = { ok: false, status: "PASSKEY_FAILED", error: err?.message || "Passkey failed", deviceFingerprintHash: preFingerprint }; }
+      let current = {};
+      try { current = await getBrowserLocation(); }
+      catch (err) { current = { locationPermission: "denied", error: err?.message || "GPS failed" }; }
+      // uploadPunchSelfie is performed inside capturePunchSelfie via endpoints.uploadPunchSelfie when available.
+      const selfie = await capturePunchSelfie({ employeeId: employee.id || employeeId, endpoints }).catch((err) => ({ ok: false, reason: err?.message || "SELFIE_FAILED" }));
+      const qr = await requestBranchQrChallenge({ endpoints, branchId: address.branch?.id || address.branchId || "main" }).catch(() => ({ status: "NOT_PROVIDED" }));
+      const trustedDevice = await ensureTrustedDeviceApproval({ endpoints, employeeId: employee.id || employeeId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, passkeyCredentialId: device.passkeyCredentialId || "" }).catch(() => ({ status: "PENDING_REVIEW" }));
+      const locationTrust = analyzeLocationTrust(current, { branch: address.branch || address });
+      const v4 = evaluateAttendanceV4Controls({ location: current, identity: { trustedDevice }, qr, selfie }).catch ? {} : evaluateAttendanceV4Controls({ location: current, identity: { trustedDevice }, qr, selfie });
+      const risk = mergeRiskSignals(calculateAttendanceRisk({ currentLocation: current, device, selfie, trustedDevice }), locationTrust);
+      const merged = mergeV4RiskSignals ? mergeV4RiskSignals(risk, v4) : risk;
+      const status = current.insideBranch ? "inside_branch" : "outside_branch";
+      const notes = app.querySelector("#punch-notes")?.value || "";
+      const body = { ...current, type: actionText, eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${BRANCH_DISPLAY_NAME} — ${BRANCH_DISPLAY_AREA}` : (current.addressLabel || current.locationLabel || "خارج نطاق المجمع"), verificationStatus: "verified", biometricMethod: "passkey+gps+selfie+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: merged.riskScore || risk.riskScore, riskLevel: merged.riskLevel || risk.riskLevel, riskFlags: merged.riskFlags || risk.riskFlags, requiresReview: merged.requiresReview || risk.requiresReview || status === "outside_branch" };
+      if (!device.ok || !selfie.ok || current.locationPermission === "denied") await createFormalFallbackRequest?.({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => submitFallbackAttendanceRequest({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => null));
+      await endpoints.recordAttendance(body);
+      rememberDevicePunch({ employeeId, deviceFingerprintHash: body.deviceFingerprintHash, eventType: type });
+      setMessage(status === "inside_branch" ? `تم تسجيل بصمة ${actionText} داخل مجمع أحلى شباب.` : `تم تسجيل بصمة ${actionText} خارج المجمع وستظهر للمراجعة مع المكان والملاحظة.`, "");
+      renderPunch();
     } catch (error) {
-      await logRejected(button.dataset.punch, {}, { message: error.message }, error.message);
-      showResult("تعذر تسجيل البصمة", { message: friendlyError(error) }, true);
-      haptic([200, 100, 200]);
-    } finally {
-      app.querySelectorAll("[data-punch]").forEach((item) => { item.disabled = false; });
-      button.innerHTML = originalHtml;
+      resultBox?.classList.remove("hidden");
+      resultBox?.classList.add("danger-box");
+      if (resultBox) resultBox.textContent = friendlyError(error, "تعذر تسجيل البصمة.");
     }
   }));
 }
@@ -1070,7 +1113,8 @@ async function renderLocation() {
   const sendLive = async (id) => {
     result?.classList.remove("hidden", "danger-box");
     if (result) result.textContent = "جاري تأكيد بصمة الجهاز قبل إرسال الموقع...";
-    const passkeyCredentialId = await requestBrowserPasskeyForAction("إرسال الموقع");
+    const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {});
+    const passkeyCredentialId = device.passkeyCredentialId;
     if (result) result.textContent = "جاري قراءة الموقع بدقة عالية...";
     const current = await getBrowserLocation();
     if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع. فعّل GPS واسمح للتطبيق بالوصول للموقع.");
@@ -1088,7 +1132,8 @@ async function renderLocation() {
     try {
       result?.classList.remove("hidden", "danger-box");
       if (result) result.textContent = "جاري تأكيد بصمة الجهاز قبل إرسال الموقع...";
-      const passkeyCredentialId = await requestBrowserPasskeyForAction("إرسال الموقع");
+      const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {});
+      const passkeyCredentialId = device.passkeyCredentialId;
       if (result) result.textContent = "جاري قراءة الموقع...";
       const current = await getBrowserLocation();
       if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع.");
@@ -1111,24 +1156,21 @@ async function renderLeaves() {
   shell(`
     <section class="employee-grid">
       <form class="employee-card full" data-ajax="leave">
-        <div class="panel-kicker">طلب جديد</div>
+        <div class="panel-kicker">مسار اعتماد: المدير المباشر ثم HR</div>
         <h2>طلب إجازة</h2>
+        <p>يتم إرسال الطلب أولًا إلى المدير المباشر، وبعد موافقته ينتقل إلى HR للاعتماد النهائي.</p>
         <div class="employee-form-grid">
           <label>نوع الإجازة<select name="leaveType"><option>اعتيادية</option><option>مرضية</option><option>طارئة</option></select></label>
           <label>من تاريخ<input type="date" name="startDate" required /></label>
           <label>إلى تاريخ<input type="date" name="endDate" required /></label>
           <label class="span-2">السبب<textarea name="reason" rows="3" required></textarea></label>
         </div>
-        <button class="button primary full" type="submit">إرسال الطلب</button>
+        <input type="hidden" name="workflowStatus" value="pending_manager_review" />
+        <button class="button primary full" type="submit">إرسال للمدير المباشر</button>
       </form>
-      <article class="employee-card full"><h2>طلباتي</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.leaveType?.name || item.leaveType || "إجازة")}</strong><span>${escapeHtml(item.startDate || "-")} إلى ${escapeHtml(item.endDate || "-")}</span></div><div class="list-item-side">${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد طلبات إجازة.</div>`}</article>
+      <article class="employee-card full"><h2>طلباتي</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.leaveType?.name || item.leaveType || "إجازة")}</strong><span>${escapeHtml(item.startDate || "-")} إلى ${escapeHtml(item.endDate || "-")}</span><small>${escapeHtml(item.managerDecision ? `قرار المدير: ${item.managerDecision}` : "بانتظار مسار الاعتماد")}</small></div><div class="list-item-side">${badge(item.finalStatus || item.workflowStatus || item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد طلبات إجازة.</div>`}</article>
     </section>
-  `, "الإجازات", "تقديم طلب إجازة ومتابعة حالته.");
-}
-
-function renderRequestList(items = []) {
-  if (!items.length) return `<div class="empty-state">لا توجد طلبات مسجلة بعد.</div>`;
-  return `<div class="employee-list">${items.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.leaveType?.name || item.title || item.destinationName || "طلب")}</strong><span>${escapeHtml(item.startDate || item.plannedStart || item.createdAt || "-")} ${item.endDate || item.plannedEnd ? "إلى " + escapeHtml(item.endDate || item.plannedEnd) : ""}</span><small>${escapeHtml(item.reason || item.destinationName || item.purpose || "")}</small></div><div class="list-item-side">${badge(item.status)}</div></div>`).join("")}</div>`;
+  `, "الإجازات", "تقديم طلب إجازة ومتابعة الاعتماد.");
 }
 
 async function renderMissions() {
@@ -1138,13 +1180,16 @@ async function renderMissions() {
   shell(`
     <section class="employee-grid">
       <form class="employee-card full" data-ajax="mission">
+        <div class="panel-kicker">مسار اعتماد: المدير المباشر ثم HR</div>
         <h2>طلب مأمورية</h2>
-        <p>اكتب تفاصيل المأمورية والوجهة وموعد البداية والنهاية ليتم اعتمادها من الإدارة.</p>
+        <p>اكتب تفاصيل المأمورية والوجهة وموعد البداية والنهاية. ينتقل الطلب للمدير المباشر ثم HR.</p>
         <label>عنوان المأمورية<input name="title" required placeholder="مثال: زيارة حالة / توصيل مستندات" /></label>
         <label>الوجهة<input name="destinationName" required placeholder="اسم المكان أو العنوان" /></label>
         <label>بداية المأمورية<input name="plannedStart" type="datetime-local" required /></label>
         <label>نهاية المأمورية<input name="plannedEnd" type="datetime-local" required /></label>
-        <div class="employee-actions-stack"><button class="button primary">إرسال الطلب</button></div>
+        <label>ملاحظات إضافية<textarea name="notes" rows="2" placeholder="اكتب تفاصيل مختصرة إن وجدت"></textarea></label>
+        <input type="hidden" name="workflowStatus" value="pending_manager_review" />
+        <div class="employee-actions-stack"><button class="button primary">إرسال للمدير المباشر</button></div>
       </form>
       <article class="employee-card full"><h2>مأمورياتي</h2>${renderRequestList(mine)}</article>
     </section>
@@ -1152,27 +1197,36 @@ async function renderMissions() {
 }
 
 async function renderDisputes() {
-  const payload = await endpoints.disputes().then(unwrap).catch(() => ({ cases: [] }));
+  const [payload, employees] = await Promise.all([
+    endpoints.disputes().then(unwrap).catch(() => ({ cases: [] })),
+    endpoints.employees().then(unwrap).catch(() => []),
+  ]);
   const cases = Array.isArray(payload) ? payload : (payload.cases || []);
   const employeeId = state.user?.employeeId || state.user?.employee?.id;
   const mine = cases.filter((item) => !item.employeeId || item.employeeId === employeeId).slice(0, 20);
   shell(`
     <section class="employee-grid">
       <form class="employee-card full" data-ajax="dispute">
-        <div class="panel-kicker">لجنة حل المشاكل</div>
+        <div class="panel-kicker">لجنة حل المشاكل والخلافات</div>
         <h2>تقديم شكوى / فض خلاف</h2>
-        <p>يتم إخطار مدير مباشر ثالث ومدير مباشر ثانٍ ومدير مباشر أول والسكرتير التنفيذي والمدير التنفيذي فورًا، ثم يتم التنسيق أو التصعيد عبر السكرتير التنفيذي.</p>
+        <p>الشكوى تذهب مباشرة للجنة المختصة ولا تحتاج موافقة المدير المباشر حفاظًا على الخصوصية.</p>
         <div class="employee-form-grid">
-          <label class="span-2">عنوان مختصر<input name="title" required placeholder="مثال: شكوى بخصوص موقف معين" /></label>
-          <label class="span-2">السبب والتفاصيل<textarea name="description" rows="5" required></textarea></label>
+          <label class="span-2 checkbox-line"><input type="checkbox" name="hasRelatedEmployee" value="yes" data-toggle-related-employee /> الشكوى ضد موظف معين</label>
+          <label class="span-2 related-employee-field hidden">اختيار الموظف<select name="relatedEmployeeId"><option value="">اختر الموظف</option>${employees.map((e)=>`<option value="${escapeHtml(e.id)}">${escapeHtml(e.fullName || e.name || e.email || e.id)}</option>`).join("")}</select></label>
+          <label class="span-2">عنوان المشكلة<input name="title" required placeholder="مثال: خلاف أو موقف معين" /></label>
+          <label class="span-2 checkbox-line"><input type="checkbox" name="repeatedBefore" value="yes" /> سبق أن تكررت هذه المشكلة</label>
+          <label class="span-2 checkbox-line"><input type="checkbox" name="repeatedWithSamePerson" value="yes" /> سبق أن تكررت نفس المشكلة مع نفس الشخص</label>
+          <label class="span-2">التفاصيل كاملة<textarea name="description" rows="6" required placeholder="اكتب ماذا حدث، متى، أين، ومن الأطراف إن وجدوا."></textarea></label>
         </div>
-        <button class="button primary full" type="submit">رفع إلى اللجنة</button>
+        <button class="button primary full" type="submit">رفع إلى لجنة الخلافات</button>
       </form>
-      <article class="employee-card full"><h2>طلباتي السابقة</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${date(item.createdAt)}</span></div><div class="list-item-side">${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد شكاوى مسجلة.</div>`}</article>
+      <article class="employee-card full"><h2>طلباتي السابقة</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${date(item.createdAt)}</span><small>${escapeHtml(item.publicUpdate || "قيد مراجعة اللجنة")}</small></div><div class="list-item-side">${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد شكاوى مسجلة.</div>`}</article>
     </section>
   `, "الشكاوى", "طلب شكوى أو فض خلاف.");
+  const toggle = app.querySelector("[data-toggle-related-employee]");
+  const field = app.querySelector(".related-employee-field");
+  toggle?.addEventListener("change", () => field?.classList.toggle("hidden", !toggle.checked));
 }
-
 
 async function renderKpi() {
   const payload = await endpoints.kpi().then(unwrap).catch(() => ({ metrics: [], evaluations: [], pendingEmployees: [], currentEmployeeId: state.user?.employeeId || state.user?.employee?.id || "" }));
@@ -1180,33 +1234,55 @@ async function renderKpi() {
   const mine = (payload.evaluations || []).find((item) => item.employeeId === employeeId) || {};
   const cycle = payload.cycle || {};
   const windowInfo = payload.windowInfo || cycle.window || {};
+  const monthName = cycle.name || `تقييم شهر ${new Date().toLocaleDateString("ar-EG", { month: "long", year: "numeric" })}`;
+  const total = [
+    [mine.targetPercent ?? mine.targetScore, 40],
+    [mine.efficiencyPercent ?? mine.efficiencyScore, 20],
+    [mine.attendancePercent ?? mine.attendanceScore, 20],
+    [mine.quranPercent ?? mine.quranCircleScore, 5],
+    [mine.prayerPercent ?? mine.prayerScore, 5],
+    [mine.conductPercent ?? mine.conductScore, 5],
+    [mine.initiativesPercent ?? mine.initiativesScore, 5],
+  ].reduce((sum, [pct, weight]) => sum + (Number(pct || 0) * weight / 100), 0).toFixed(1);
   shell(`
-    <section class="employee-grid">
+    <section class="employee-grid kpi-advanced">
       <article class="employee-card full accent-card">
-        <div class="panel-kicker">KPI شهري</div>
+        <div class="panel-kicker">KPI شهري — ${escapeHtml(monthName)}</div>
         <h2>نموذج التقييم الذاتي</h2>
-        <p>املأ البنود الخاصة بك فقط بعد جلسة التقييم مع مديرك المباشر. بنود الحضور والانصراف، الصلاة في المسجد، وحضور حلقة الشيخ وليد يوسف الأسبوعية لتدريس القرآن والتجويد يضيفها HR فقط.</p>
-        <div class="employee-actions-row"><span class="login-feature">الدورة: ${escapeHtml(cycle.name || cycle.id || "الشهر الحالي")}</span><span class="login-feature">نافذة التقييم: ${escapeHtml(windowInfo.label || "-")}</span><span class="login-feature">الحالة: ${badge(mine.status || "DRAFT")}</span><span class="login-feature">الإجمالي: ${escapeHtml(mine.totalScore || 0)}/100</span></div>
+        <p>السكرتير التنفيذي يفتح الدورة. الموظف يقيّم نفسه من يوم 20 إلى 22، ثم HR يضيف بنوده، ثم المدير المباشر يعتمد خلال 3 أيام، ثم يرفع للسكرتير التنفيذي.</p>
+        <div class="employee-actions-row"><span class="login-feature">الحالة: ${badge(mine.status || "closed")}</span><span class="login-feature">الإجمالي التقديري: ${escapeHtml(total)}%</span><span class="login-feature">النموذج: ${escapeHtml(windowInfo.isOpen === false ? "مغلق" : "مفتوح")}</span></div>
       </article>
       <form class="employee-card full" id="kpi-self-form">
-        <div class="employee-form-grid">
-          <label>تحقيق الأهداف / 40<input name="targetScore" type="number" min="0" max="40" step="0.5" value="${escapeHtml(mine.targetScore || 0)}" /></label>
-          <label>الكفاءة في أداء المهام / 20<input name="efficiencyScore" type="number" min="0" max="20" step="0.5" value="${escapeHtml(mine.efficiencyScore || 0)}" /></label>
-          <label>حسن التعامل والسلوك / 5<input name="conductScore" type="number" min="0" max="5" step="0.5" value="${escapeHtml(mine.conductScore || 0)}" /></label>
-          <label>التبرعات والمبادرات / 5<input name="initiativesScore" type="number" min="0" max="5" step="0.5" value="${escapeHtml(mine.initiativesScore || 0)}" /></label>
-          <div class="employee-card-subtle span-2"><strong>بنود HR فقط — 30 درجة</strong><p>الحضور والانصراف /20، الصلاة في المسجد /5، حضور حلقة الشيخ وليد يوسف الأسبوعية لتدريس القرآن والتجويد /5. تظهر لك بعد مراجعة HR ولا يمكنك تعديلها من تطبيق الموظف.</p></div>
-          <label class="span-2">ملاحظاتي للمدير<textarea name="employeeNotes" rows="4">${escapeHtml(mine.employeeNotes || "")}</textarea></label>
+        <div class="kpi-slider-stack">
+          ${kpiSlider({ name: "targetPercent", label: "تحقيق الأهداف", weight: 40, value: mine.targetPercent ?? mine.targetScore })}
+          ${kpiSlider({ name: "efficiencyPercent", label: "الكفاءة في أداء المهام", weight: 20, value: mine.efficiencyPercent ?? mine.efficiencyScore })}
+          ${kpiSlider({ name: "conductPercent", label: "حسن التعامل والسلوك", weight: 5, value: mine.conductPercent ?? mine.conductScore })}
+          ${kpiSlider({ name: "initiativesPercent", label: "التبرعات والمبادرات", weight: 5, value: mine.initiativesPercent ?? mine.initiativesScore })}
+          <div class="employee-card-subtle"><strong>بنود HR فقط — 30 درجة</strong><p>الحضور والانصراف 20%، الصلاة في المسجد 5%، وحضور حلقة الشيخ وليد 5%. تظهر للموظف للعلم فقط ولا يمكن تعديلها هنا.</p></div>
+          ${kpiSlider({ name: "attendancePercent", label: "الحضور والانصراف — HR", weight: 20, value: mine.attendancePercent ?? mine.attendanceScore, readonly: true })}
+          ${kpiSlider({ name: "quranPercent", label: "حلقة الشيخ وليد — HR", weight: 5, value: mine.quranPercent ?? mine.quranCircleScore, readonly: true })}
+          ${kpiSlider({ name: "prayerPercent", label: "الصلاة في المسجد — HR", weight: 5, value: mine.prayerPercent ?? mine.prayerScore, readonly: true })}
+          <label>ملاحظاتي للمدير<textarea name="employeeNotes" rows="4">${escapeHtml(mine.employeeNotes || "")}</textarea></label>
         </div>
         <input type="hidden" name="employeeId" value="${escapeHtml(employeeId)}" />
-        <input type="hidden" name="status" value="SELF_SUBMITTED" />
+        <input type="hidden" name="cycleName" value="${escapeHtml(monthName)}" />
+        <input type="hidden" name="status" value="employee_submitted" />
         <button class="button primary full" type="submit" ${windowInfo.isOpen === false ? "disabled" : ""}>رفع التقييم للمدير المباشر</button>
-        ${windowInfo.isOpen === false ? `<p class="form-hint danger-text">${escapeHtml(windowInfo.message || "التقييم متاح فقط من يوم 20 إلى 25.")}</p>` : ""}
+        ${windowInfo.isOpen === false ? `<p class="form-hint danger-text">النموذج غير مفتوح حاليًا. يفتحه السكرتير التنفيذي حسب دورة التقييم.</p>` : ""}
       </form>
       <article class="employee-card full"><h2>مسار الاعتماد</h2><div class="employee-list">
-        ${["الموظف يرسل التقييم", "المدير المباشر يعتمد/يعدّل", "HR يضيف الحضور والانصراف والصلاة وحلقة القرآن والتجويد", "السكرتير التنفيذي يراجع ويرفع", "المدير التنفيذي يعتمد النتيجة النهائية"].map((step, index) => `<div class="employee-list-item"><div><strong>${index + 1}. ${escapeHtml(step)}</strong></div><div class="list-item-side">${index === 0 && mine.status ? badge(mine.status) : ""}</div></div>`).join("")}
+        ${["الموظف يرسل تقييمه خلال 48 ساعة", "HR يضيف الحضور والانصراف والصلاة وحلقة القرآن", "المدير المباشر يراجع ويعتمد خلال 3 أيام", "السكرتير التنفيذي يراجع ويجهز PDF", "الاعتماد النهائي والأرشفة"].map((step, index) => `<div class="employee-list-item"><div><strong>${index + 1}. ${escapeHtml(step)}</strong></div><div class="list-item-side">${index === 0 && mine.status ? badge(mine.status) : ""}</div></div>`).join("")}
       </div></article>
     </section>
   `, "تقييمي", "نموذج KPI الشهري الخاص بالموظف.");
+  app.querySelectorAll('.kpi-slider-field input[type="range"]').forEach((input) => input.addEventListener("input", () => {
+    const weight = Number(input.dataset.weight || 0);
+    const pct = Number(input.value || 0);
+    const meta = input.closest('.kpi-slider-field')?.querySelector('.kpi-slider-meta');
+    const bar = input.closest('.kpi-slider-field')?.querySelector('.kpi-progress i');
+    if (meta) meta.innerHTML = `<b>${pct}%</b><small>الوزن ${weight} — المحتسب ${(pct * weight / 100).toFixed(1)}/${weight}</small>`;
+    if (bar) bar.style.width = `${pct}%`;
+  }));
   app.querySelector("#kpi-self-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     try {
@@ -1377,6 +1453,43 @@ async function renderNotifications() {
   });
 }
 
+
+async function renderTeam() {
+  const [employees, leaves, missions, attendance] = await Promise.all([
+    endpoints.employees().then(unwrap).catch(() => []),
+    endpoints.leaves().then(unwrap).catch(() => []),
+    endpoints.missions().then(unwrap).catch(() => []),
+    endpoints.myAttendanceEvents().then(unwrap).catch(() => []),
+  ]);
+  const myId = state.user?.employeeId || state.user?.employee?.id;
+  const team = employees.filter((e) => e.managerId === myId || e.directManagerId === myId || e.managerEmployeeId === myId);
+  const teamIds = new Set(team.map((e) => e.id));
+  const pendingLeaves = leaves.filter((x) => teamIds.has(x.employeeId) && /pending/i.test(String(x.workflowStatus || x.status || "")));
+  const pendingMissions = missions.filter((x) => teamIds.has(x.employeeId) && /pending/i.test(String(x.workflowStatus || x.status || "")));
+  shell(`
+    <section class="employee-grid team-manager-page">
+      <article class="employee-card full"><div class="panel-kicker">إدارة الفريق</div><h2>فريقي</h2><p>هذه الصفحة تظهر للمدير المباشر لمراجعة طلبات الفريق قبل انتقالها إلى HR.</p></article>
+      <article class="employee-card full"><h2>موظفو فريقي</h2>${team.length ? `<div class="employee-list">${team.map((e)=>`<div class="employee-list-item"><div>${employeeHeaderCell(e)}</div><div class="list-item-side">${badge(e.status || "ACTIVE")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بيانات فريق مرتبطة بحسابك حتى الآن.</div>`}</article>
+      <article class="employee-card full"><h2>طلبات إجازة تنتظر مراجعتي</h2>${pendingLeaves.length ? renderManagerReviewList(pendingLeaves, "leave") : `<div class="empty-state">لا توجد إجازات معلقة للمدير.</div>`}</article>
+      <article class="employee-card full"><h2>طلبات مأمورية تنتظر مراجعتي</h2>${pendingMissions.length ? renderManagerReviewList(pendingMissions, "mission") : `<div class="empty-state">لا توجد مأموريات معلقة للمدير.</div>`}</article>
+    </section>
+  `, "فريقي", "اعتماد طلبات الفريق ومتابعة الحضور.");
+  app.querySelectorAll("[data-manager-review]").forEach((button)=>button.addEventListener("click", async()=>{
+    const [kind, id, action] = button.dataset.managerReview.split(":");
+    const note = "";
+    try {
+      if (kind === "leave") await endpoints.updateLeave(id, action === "approve" ? "manager_approve" : "reject", { managerNote: note });
+      if (kind === "mission") await endpoints.updateMission(id, action === "approve" ? "manager_approve" : "reject", { managerNote: note });
+      setMessage(action === "approve" ? "تم اعتماد الطلب وتحويله إلى HR." : "تم رفض الطلب.", "");
+      renderTeam();
+    } catch (error) { setMessage("", error.message || "تعذر حفظ قرار المدير."); renderTeam(); }
+  }));
+}
+
+function renderManagerReviewList(items = [], kind = "leave") {
+  return `<div class="employee-list">${items.map((item)=>`<div class="employee-list-item"><div><strong>${escapeHtml(item.title || item.leaveType || item.destinationName || "طلب")}</strong><span>${escapeHtml(item.startDate || item.plannedStart || item.createdAt || "-")}</span><small>${escapeHtml(item.reason || item.notes || item.destinationName || "")}</small></div><div class="list-item-side"><button class="button primary small" data-manager-review="${kind}:${escapeHtml(item.id)}:approve">اعتماد</button><button class="button danger small" data-manager-review="${kind}:${escapeHtml(item.id)}:reject">رفض</button></div></div>`).join("")}</div>`;
+}
+
 async function renderProfile() {
   const user = state.user || {};
   const employee = user.employee || {};
@@ -1472,6 +1585,7 @@ async function render() {
     if (key === "decisions") return renderAdminDecisions();
     if (key === "disputes") return renderDisputes();
     if (key === "notifications") return renderNotifications();
+    if (key === "team") return renderTeam();
     if (key === "profile") return renderProfile();
     return renderHome();
   } catch (error) {

@@ -35,7 +35,7 @@ insert into public.employees (
 select
   'EMP-DEMO-001',
   'موظف تجربة آمن',
-  '01000000000',
+  'PHONE_PLACEHOLDER_001',
   'demo.employee@ahla-shabab.local',
   'موظف تجربة',
   (select id from public.roles where slug = 'employee' limit 1),

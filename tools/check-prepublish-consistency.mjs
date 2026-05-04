@@ -6,9 +6,9 @@ const failures = [];
 const read = (file) => readFileSync(join(root, file), 'utf8');
 const assert = (condition, message) => { if (!condition) failures.push(message); };
 
-const patch032 = 'supabase/sql/patches/032_pre_publish_role_portal_consistency.sql';
-const patch033 = 'supabase/sql/patches/033_final_web_production_hardening.sql';
-const patch034 = 'supabase/sql/patches/034_final_lockdown_cleanup.sql';
+const patch032 = 'supabase/sql/patches/032b_pre_publish_role_portal_consistency.sql';
+const patch033 = 'supabase/sql/patches/033a_final_web_production_hardening.sql';
+const patch034 = 'supabase/sql/patches/034a_final_lockdown_cleanup.sql';
 const patch035 = 'supabase/sql/patches/035_final_sanitization_live_readiness.sql';
 assert(existsSync(join(root, patch032)), 'Missing Patch 032 pre-publish role/portal consistency SQL.');
 assert(existsSync(join(root, patch033)), 'Missing Patch 033 final production hardening SQL.');
@@ -21,12 +21,12 @@ assert(!/\('executive-secretary','EXECUTIVE_SECRETARY','السكرتير الت�
 assert(seed.includes("('executive:mobile','المتابعة التنفيذية المختصرة')"), 'Base SQL seed must include executive portal permissions.');
 
 const api = read('shared/js/api.js');
-assert(api.includes('031_web_guard_mobile_polish.sql'), 'Database updates list must keep Patch 031.');
-assert(api.includes('032_pre_publish_role_portal_consistency.sql'), 'Database updates list must include Patch 032.');
-assert(api.includes('033_final_web_production_hardening.sql'), 'Database updates list must include Patch 033.');
-assert(api.includes('034_final_lockdown_cleanup.sql'), 'Database updates list must include Patch 034.');
+assert(api.includes('031b_web_guard_mobile_polish.sql'), 'Database updates list must keep Patch 031.');
+assert(api.includes('032b_pre_publish_role_portal_consistency.sql'), 'Database updates list must include Patch 032.');
+assert(api.includes('033a_final_web_production_hardening.sql'), 'Database updates list must include Patch 033.');
+assert(api.includes('034a_final_lockdown_cleanup.sql'), 'Database updates list must include Patch 034.');
 assert(api.includes('035_final_sanitization_live_readiness.sql'), 'Database updates list must include Patch 035.');
-assert(api.includes('expectedPatch: "043_executive_presence_risk_decisions_reports.sql"'), 'Expected patch must be 043.');
+assert(api.includes('expectedPatch: "064_attendance_fallback_workflow.sql"'), 'Expected patch must be 043.');
 
 const admin = read('shared/js/app-admin.js');
 const technicalAdmin = admin.match(/function isTechnicalAdmin[\s\S]*?\n}\r?\n/)?.[0] || '';
@@ -41,8 +41,8 @@ assert(employee.includes('if (executiveOnlyRoles.has(role)) return false;'), 'Em
 
 const sw = read('sw.js');
 const reg = read('shared/js/register-sw.js');
-assert(sw.includes('hr-attendance-management-suite-20260502-01'), 'Service Worker cache version must be updated.');
-assert(reg.includes('hr-attendance-management-suite-20260502-01'), 'Register SW cache name must match service worker.');
+assert(sw.includes('hr-attendance-full-workflow-live-20260504'), 'Service Worker cache version must be updated.');
+assert(reg.includes('hr-attendance-full-workflow-live-20260504'), 'Register SW cache name must match service worker.');
 assert(read('package.json').includes('check:prepublish'), 'package.json must expose check:prepublish.');
 
 if (failures.length) {

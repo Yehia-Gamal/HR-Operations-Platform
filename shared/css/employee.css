@@ -1370,3 +1370,77 @@ body.employee-portal .skeleton.short { width: 44%; }
   color: var(--text-soft);
   line-height: 1.2;
 }
+
+/* Attendance identity verification overlay */
+.identity-selfie-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+  background: rgba(2, 6, 23, 0.78);
+  backdrop-filter: blur(14px);
+}
+.identity-selfie-panel {
+  width: min(420px, 100%);
+  border: 1px solid rgba(56,199,244,.32);
+  border-radius: 24px;
+  background: #0d1729;
+  color: #eef5ff;
+  padding: 18px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.45);
+  text-align: center;
+}
+.identity-selfie-panel h2 { margin: 0 0 8px; font-size: 20px; }
+.identity-selfie-panel p { margin: 0 0 14px; color: #9fb4d1; line-height: 1.7; }
+.identity-selfie-panel video {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 20px;
+  background: #030712;
+  border: 1px solid rgba(148,163,184,.24);
+}
+.identity-selfie-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+@media (max-width: 460px) { .identity-selfie-actions { grid-template-columns: 1fr; } }
+.identity-risk-flags { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.identity-risk-flags span { border:1px solid rgba(251,191,36,.35); color:#fde68a; background:rgba(251,191,36,.10); border-radius:999px; padding:4px 8px; font-size:12px; }
+
+/* Attendance Identity Guard V3 */
+.identity-policy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(3, 7, 18, .72);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+}
+.identity-policy-panel {
+  width: min(520px, 100%);
+  background: var(--emp-surface, #0f172a);
+  color: var(--emp-text, #e5eefb);
+  border: 1px solid var(--emp-line, rgba(148,163,184,.22));
+  border-radius: 28px 28px max(28px, env(safe-area-inset-bottom)) max(28px, env(safe-area-inset-bottom));
+  padding: 26px 22px max(26px, env(safe-area-inset-bottom));
+  box-shadow: 0 28px 90px rgba(0,0,0,.45);
+}
+.identity-policy-panel h2 { margin: 0 0 12px; font-size: 20px; }
+.identity-policy-panel p,
+.identity-policy-panel li { color: var(--emp-muted, #94a3b8); line-height: 1.8; font-size: 14px; }
+.identity-policy-panel ul { margin: 14px 0 18px; padding-inline-start: 22px; }
+.identity-policy-panel .input {
+  width: 100%;
+  border: 1px solid var(--emp-line, rgba(148,163,184,.22));
+  background: rgba(15, 23, 42, .78);
+  color: var(--emp-text, #e5eefb);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin: 10px 0 16px;
+  text-align: center;
+  letter-spacing: .12em;
+}
+.identity-risk-flags span { margin: 3px; }

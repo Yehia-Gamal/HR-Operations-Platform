@@ -18,7 +18,7 @@
   - `reports:pdf`
   - `reports:excel`
 - إضافة Endpoints محلية مكافئة للواجهات الجديدة حتى يمكن اختبارها قبل ربط Supabase الحقيقي.
-- تحديث الكاش و Service Worker إلى `management-suite-20260502-01`.
+- تحديث الكاش و Service Worker إلى `full-workflow-live-20260504`.
 - إضافة فحص جديد: `tools/check-management-suite.mjs`.
 - تحديث `tools/run-checks.sh` ليشغّل فحصًا سريعًا شاملًا ومناسبًا للتسليم.
 

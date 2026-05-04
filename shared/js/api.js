@@ -1,5 +1,5 @@
-import { seedDatabase } from "./database.js?v=management-suite-20260502-01";
-import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=management-suite-20260502-01";
+import { seedDatabase } from "./database.js?v=full-workflow-live-20260504";
+import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=full-workflow-live-20260504";
 
 const STORAGE_KEY = "hr-attendance.local-db.v19-management-suite";
 const LEGACY_KEYS = ["hr-attendance.local-db.v14", "hr-attendance.local-db.v13", "hr-attendance.local-db.v12", "hr-attendance.local-db.v11", "hr-attendance.local-db.v10", "hr-attendance.local-db.v9", "hr-attendance.local-db.v8", "hr-attendance.local-db.v7", "hr-attendance.local-db.v6", "hr-attendance.local-db.v5", "hr-attendance.local-db.v4", "hr-attendance.local-db.v3"];
@@ -215,7 +215,7 @@ function normalizeDb(db) {
   }
   if (!findById(merged.employees || [], "emp-hr-manager")) {
     merged.employees.push({
-      id: "emp-hr-manager", employeeCode: "EMP-HR", fullName: "مدير الموارد البشرية", phone: "01020000030",
+      id: "emp-hr-manager", employeeCode: "EMP-HR", fullName: "مدير الموارد البشرية", phone: "PHONE_PLACEHOLDER_044",
       email: "hr.manager@organization.local", photoUrl: "", jobTitle: "مدير الموارد البشرية", roleId: "role-hr",
       branchId: "b-ahla-manil", departmentId: "d-hr", governorateId: "gov-giza", complexId: "cx-ahla-manil",
       managerEmployeeId: "emp-executive-secretary", status: "ACTIVE", isDeleted: false, hireDate: "2021-01-01", userId: "u-hr-manager"
@@ -224,7 +224,7 @@ function normalizeDb(db) {
   if (!findById(merged.users || [], "u-hr-manager")) {
     merged.users.push({
       id: "u-hr-manager", name: "مدير الموارد البشرية", fullName: "مدير الموارد البشرية", email: "hr.manager@organization.local",
-      phone: "01020000030", password: "LocalLoginDisabled#RotateInSupabase2026!", roleId: "role-hr", employeeId: "emp-hr-manager",
+      phone: "PHONE_PLACEHOLDER_044", password: "LocalLoginDisabled#RotateInSupabase2026!", roleId: "role-hr", employeeId: "emp-hr-manager",
       branchId: "b-ahla-manil", departmentId: "d-hr", governorateId: "gov-giza", complexId: "cx-ahla-manil",
       status: "ACTIVE", temporaryPassword: true, mustChangePassword: true, passkeyEnabled: false, failedLogins: 0, lastLoginAt: ""
     });
@@ -298,7 +298,7 @@ function normalizeDb(db) {
       requireReviewMissingCheckout: true,
     },
     backupPolicy: { enabled: true, keepLast: 30, dailyAt: "20:00", includeAudit: true },
-    supabaseExpectedPatch: "032_pre_publish_role_portal_consistency.sql",
+    supabaseExpectedPatch: "032b_pre_publish_role_portal_consistency.sql",
   });
   merged.attendanceRuleRuns ||= clone(base.attendanceRuleRuns || []);
   merged.endOfDayReports ||= clone(base.endOfDayReports || []);
@@ -1082,10 +1082,10 @@ const remoteEndpoints = {
   adjustAttendance: (body) => apiRequest("/exceptions", { method: "POST", body }),
   missions: () => apiRequest("/missions"),
   createMission: (body) => apiRequest("/missions", { method: "POST", body }),
-  updateMission: (missionId, action) => apiRequest(`/missions/${encodeURIComponent(missionId)}/${action === "complete" ? "complete" : action === "reject" ? "reject" : "approve"}`, { method: "POST" }),
+  updateMission: (missionId, action, extra = {}) => apiRequest(`/missions/${encodeURIComponent(missionId)}/${action === "complete" ? "complete" : action === "reject" ? "reject" : "approve"}`, { method: "POST", body: extra }),
   leaves: () => apiRequest("/leave"),
   createLeave: (body) => apiRequest("/leave", { method: "POST", body }),
-  updateLeave: (leaveId, action) => apiRequest(`/leaves/requests/${encodeURIComponent(leaveId)}/${action === "reject" ? "reject" : "approve"}`, { method: "POST" }),
+  updateLeave: (leaveId, action, extra = {}) => apiRequest(`/leaves/requests/${encodeURIComponent(leaveId)}/${action === "reject" ? "reject" : "approve"}`, { method: "POST", body: extra }),
   exceptions: () => apiRequest("/exceptions"),
   updateException: (id, action) => apiRequest(`/exceptions/${encodeURIComponent(id)}/${action === "reject" ? "reject" : "approve"}`, { method: "POST" }),
   notifications: () => apiRequest("/notifications"),
@@ -3019,7 +3019,7 @@ const localEndpoints = {
   checkIn: async (body) => {
     const db = loadDb();
     const evaluation = evaluateAttendance(db, body, "CHECK_IN");
-    const event = { id: makeId("att"), employeeId: body.employeeId, eventAt: now(), source: "Live Server", biometricMethod: body.biometricMethod || "session_gps", passkeyCredentialId: body.passkeyCredentialId || "", ...evaluation, requiresReview: !evaluation.canRecord || evaluation.requiresReview };
+    const event = { id: makeId("att"), employeeId: body.employeeId, eventAt: now(), source: "Live Server", biometricMethod: body.biometricMethod || "session_gps", passkeyCredentialId: body.passkeyCredentialId || "", trustedDeviceId: body.trustedDeviceId || "", deviceFingerprintHash: body.deviceFingerprintHash || "", browserInstallId: body.browserInstallId || "", branchQrStatus: body.branchQrStatus || "NOT_PROVIDED", branchQrChallengeId: body.branchQrChallengeId || "", antiSpoofingFlags: body.antiSpoofingFlags || [], selfieUrl: body.selfieUrl || "", identityCheck: body.identityCheck || {}, riskScore: body.riskScore || 0, riskLevel: body.riskLevel || "LOW", riskFlags: body.riskFlags || [], ...evaluation, requiresReview: Boolean(body.requiresReview || !evaluation.canRecord || evaluation.requiresReview || (body.riskScore || 0) >= 35) };
     db.attendanceEvents.unshift(event);
     upsertDailyFromEvent(db, body.employeeId, event);
     audit(db, "check_in", "attendance", event.id, null, event);
@@ -3029,7 +3029,7 @@ const localEndpoints = {
   checkOut: async (body) => {
     const db = loadDb();
     const evaluation = evaluateAttendance(db, body, "CHECK_OUT");
-    const event = { id: makeId("att"), employeeId: body.employeeId, eventAt: now(), source: "Live Server", biometricMethod: body.biometricMethod || "session_gps", passkeyCredentialId: body.passkeyCredentialId || "", ...evaluation, requiresReview: !evaluation.canRecord || evaluation.requiresReview };
+    const event = { id: makeId("att"), employeeId: body.employeeId, eventAt: now(), source: "Live Server", biometricMethod: body.biometricMethod || "session_gps", passkeyCredentialId: body.passkeyCredentialId || "", trustedDeviceId: body.trustedDeviceId || "", deviceFingerprintHash: body.deviceFingerprintHash || "", browserInstallId: body.browserInstallId || "", branchQrStatus: body.branchQrStatus || "NOT_PROVIDED", branchQrChallengeId: body.branchQrChallengeId || "", antiSpoofingFlags: body.antiSpoofingFlags || [], selfieUrl: body.selfieUrl || "", identityCheck: body.identityCheck || {}, riskScore: body.riskScore || 0, riskLevel: body.riskLevel || "LOW", riskFlags: body.riskFlags || [], ...evaluation, requiresReview: Boolean(body.requiresReview || !evaluation.canRecord || evaluation.requiresReview || (body.riskScore || 0) >= 35) };
     db.attendanceEvents.unshift(event);
     upsertDailyFromEvent(db, body.employeeId, event);
     audit(db, "check_out", "attendance", event.id, null, event);
@@ -3654,6 +3654,12 @@ const localEndpoints = {
     saveDb(db);
     return ok(enrichByEmployee(db, item));
   },
+  uploadPunchSelfie: async (body = {}) => {
+    const file = body.file || null;
+    if (!file) return ok({ url: "" });
+    const url = URL.createObjectURL(file);
+    return ok({ url, localPreviewOnly: true });
+  },
   subscribePush: async (body = {}) => {
     const db = loadDb();
     const item = { id: makeId("push"), userId: currentUser(db)?.id || "local", employeeId: currentUser(db)?.employeeId || currentUser(db)?.employee?.id || "", endpoint: body.endpoint || "local-notification", keys: body.keys || {}, permission: body.permission || globalThis.Notification?.permission || "default", userAgent: body.userAgent || "", platform: body.platform || "browser", isActive: true, createdAt: now() };
@@ -3666,12 +3672,78 @@ const localEndpoints = {
   registerPasskey: async (body = {}) => {
     const db = loadDb();
     const user = currentUser(db);
-    const item = { id: makeId("passkey"), userId: user?.id || "local", employeeId: user?.employeeId || "", label: body.label || "مفتاح مرور المتصفح", credentialId: body.credentialId || makeId("credential"), platform: body.platform || navigator.platform || "browser", trusted: true, status: "DEVICE_TRUSTED", createdAt: now(), lastUsedAt: "", browserSupported: browserSupportsWebAuthn() };
+    const item = { id: makeId("passkey"), userId: user?.id || "local", employeeId: user?.employeeId || "", label: body.label || "مفتاح مرور المتصفح", credentialId: body.credentialId || makeId("credential"), platform: body.platform || navigator.platform || "browser", deviceFingerprintHash: body.deviceFingerprintHash || "", trusted: body.trusted !== false, status: "DEVICE_TRUSTED", createdAt: now(), lastUsedAt: "", browserSupported: browserSupportsWebAuthn() };
     db.passkeyCredentials.unshift(item);
     if (user) { const raw = findById(db.users, user.id); if (raw) raw.passkeyEnabled = true; }
     audit(db, "register", "passkey", item.id, null, { ...item, credentialId: "stored-client-side-demo" });
     saveDb(db);
     return ok(item);
+  },
+  trustedDeviceApprovalRequests: async () => {
+    const db = loadDb();
+    db.trustedDeviceApprovalRequests ||= [];
+    return ok(db.trustedDeviceApprovalRequests);
+  },
+  requestTrustedDeviceApproval: async (body = {}) => {
+    const db = loadDb();
+    db.trustedDeviceApprovalRequests ||= [];
+    const employeeId = body.employeeId || currentUser(db)?.employeeId || "";
+    let item = db.trustedDeviceApprovalRequests.find((row) => row.employeeId === employeeId && row.deviceFingerprintHash === body.deviceFingerprintHash);
+    if (!item) {
+      item = { id: makeId("devreq"), employeeId, userId: currentUser(db)?.id || "local", deviceFingerprintHash: body.deviceFingerprintHash || "", deviceName: body.deviceName || "Browser device", userAgent: body.userAgent || "", selfieUrl: body.selfieUrl || "", latitude: body.latitude ?? null, longitude: body.longitude ?? null, accuracyMeters: body.accuracyMeters ?? null, status: "PENDING", createdAt: now() };
+      db.trustedDeviceApprovalRequests.unshift(item);
+    } else {
+      Object.assign(item, { status: item.status === "REJECTED" ? "PENDING" : item.status, updatedAt: now(), selfieUrl: body.selfieUrl || item.selfieUrl });
+    }
+    audit(db, "request", "trusted_device", item.id, null, item);
+    saveDb(db);
+    return ok({ requestId: item.id, status: item.status });
+  },
+  reviewTrustedDeviceApproval: async (body = {}) => {
+    const db = loadDb();
+    db.trustedDeviceApprovalRequests ||= [];
+    const item = db.trustedDeviceApprovalRequests.find((row) => row.id === (body.requestId || body.id));
+    if (!item) throw new Error("طلب اعتماد الجهاز غير موجود.");
+    item.status = body.decision || "APPROVED";
+    item.reason = body.reason || "";
+    item.reviewedAt = now();
+    audit(db, "review", "trusted_device", item.id, null, item);
+    saveDb(db);
+    return ok(item);
+  },
+  validateBranchQrChallenge: async (body = {}) => {
+    const db = loadDb();
+    db.branchQrChallenges ||= [];
+    const code = String(body.code || body.challengeCode || "").trim().toUpperCase();
+    const match = db.branchQrChallenges.find((row) => String(row.challengeCode || "").toUpperCase() === code && (!row.validUntil || new Date(row.validUntil).getTime() > Date.now()));
+    return ok(match ? { valid: true, reason: "VALID", challengeId: match.id } : { valid: false, reason: code ? "INVALID_OR_EXPIRED" : "MISSING" });
+  },
+  createBranchQrChallenge: async (body = {}) => {
+    const db = loadDb();
+    db.branchQrChallenges ||= [];
+    const code = Math.random().toString(36).slice(2, 10).toUpperCase();
+    const item = { id: makeId("qr"), branchId: body.branchId || db.branches?.[0]?.id || "", challengeCode: code, validUntil: new Date(Date.now() + 90000).toISOString(), createdAt: now() };
+    db.branchQrChallenges.unshift(item);
+    saveDb(db);
+    return ok(item);
+  },
+  attendanceRiskCenter: async () => {
+    const db = loadDb();
+    const events = (db.attendanceEvents || []).filter((event) => event.requiresReview || Number(event.riskScore || 0) >= 35 || (event.antiSpoofingFlags || []).length);
+    const rows = events.map((event) => { const enriched = enrichByEmployee(db, event); return { ...enriched, employee: enriched.employee, employeeId: enriched.employeeId, score: enriched.riskScore || 0, level: enriched.riskLevel || "MEDIUM", flags: [...(enriched.riskFlags || []), ...(enriched.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [enriched] }; });
+    const counts = rows.reduce((acc, row) => { acc[row.level] = (acc[row.level] || 0) + 1; return acc; }, {});
+    return ok({ rows, counts, rules: ["اعتماد الجهاز", "QR الفرع", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] });
+  },
+  acknowledgeAttendancePolicy: async (body = {}) => {
+    const db = loadDb();
+    db.attendancePolicyAcknowledgements ||= [];
+    const employeeId = body.employeeId || currentUser(db)?.employeeId || "";
+    const policyVersion = body.policyVersion || "attendance-identity-v3";
+    let item = db.attendancePolicyAcknowledgements.find((row) => row.employeeId === employeeId && row.policyVersion === policyVersion);
+    if (!item) { item = { id: makeId("ack"), employeeId, userId: currentUser(db)?.id || "local", policyVersion, createdAt: now() }; db.attendancePolicyAcknowledgements.unshift(item); }
+    Object.assign(item, { deviceFingerprintHash: body.deviceFingerprintHash || "", browserInstallId: body.browserInstallId || "", userAgent: body.userAgent || "", acknowledgedAt: now() });
+    saveDb(db);
+    return ok({ id: item.id, ok: true });
   },
   offlineQueue: async () => ok(loadDb().offlineQueue || []),
   syncOfflineQueue: async () => {
@@ -3912,7 +3984,7 @@ const localEndpoints = {
       .sort((a, b) => new Date(b.eventAt || 0) - new Date(a.eventAt || 0));
     return ok(rows);
   },
-  reviewRejectedPunch: async (eventId, action = "approve") => {
+  reviewRejectedPunch: async (eventId, action = "approve", checkId = "") => {
     const db = loadDb();
     const event = findById(db.attendanceEvents, eventId);
     if (!event) throw new Error("محاولة البصمة غير موجودة.");
@@ -4321,11 +4393,11 @@ const localEndpoints = {
       "027_fix_executive_hierarchy_accounts.sql",
       "028_primary_admin_and_runtime_fixes.sql",
       "029_employee_photos.sql",
-      "030_executive_role_separation_ui_polish.sql",
-      "031_web_guard_mobile_polish.sql",
-      "032_pre_publish_role_portal_consistency.sql",
-      "033_final_web_production_hardening.sql",
-      "034_final_lockdown_cleanup.sql",
+      "030a_executive_role_separation_ui_polish.sql",
+      "031b_web_guard_mobile_polish.sql",
+      "032b_pre_publish_role_portal_consistency.sql",
+      "033a_final_web_production_hardening.sql",
+      "034a_final_lockdown_cleanup.sql",
       "035_final_sanitization_live_readiness.sql",
       "036_role_kpi_workflow_access.sql",
       "037_kpi_policy_window_hr_scoring.sql",
@@ -4334,11 +4406,17 @@ const localEndpoints = {
       "040_runtime_alignment_fix.sql",
       "041_audit_v7_security_mobile_alignment.sql",
       "042_authorized_roster_phone_login_internal_channel.sql",
-      "043_executive_presence_risk_decisions_reports.sql",
+      "064_attendance_fallback_workflow.sql",
+      "051_attendance_identity_verification.sql",
+      "052_attendance_identity_server_review.sql",
+      "053_trusted_device_approval.sql",
+      "054_attendance_branch_qr_challenge.sql",
+      "055_attendance_anti_spoofing_risk.sql",
+      "056_attendance_risk_center.sql",
     ];
     db.migrationStatus ||= [];
     const applied = new Set(db.migrationStatus.map((item) => item.name));
-    return ok({ expectedPatch: "043_executive_presence_risk_decisions_reports.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: applied.has(name) ? "APPLIED" : (index === expected.length - 1 ? "NEW" : "CHECK_MANUALLY") })), notes: "في Supabase الحقيقي شغّل ملفات SQL بالترتيب من SQL Editor، ثم علّمها هنا كتذكير محلي." });
+    return ok({ expectedPatch: "064_attendance_fallback_workflow.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: applied.has(name) ? "APPLIED" : (index === expected.length - 1 ? "NEW" : "CHECK_MANUALLY") })), notes: "في Supabase الحقيقي شغّل ملفات SQL بالترتيب من SQL Editor، ثم علّمها هنا كتذكير محلي." });
   },
   markMigrationApplied: async (name) => { const db = loadDb(); db.migrationStatus ||= []; if (!db.migrationStatus.some((item) => item.name === name)) db.migrationStatus.unshift({ id: makeId("mig"), name, status: "APPLIED", appliedAt: now(), appliedByUserId: currentUser(db)?.id || "system" }); saveDb(db); return ok({ applied: name }); },
   autoBackupStatus: async () => { const db = loadDb(); return ok({ policy: { keepLast: 30, ...(db.systemSettings?.backupPolicy || {}) }, backups: (db.systemBackups || []).map((item) => ({ ...item, data: undefined })).slice(0, 30), runs: db.autoBackupRuns || [] }); },

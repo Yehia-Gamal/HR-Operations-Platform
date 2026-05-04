@@ -25,7 +25,7 @@ assert(employee.includes('["kpi", "تقييمي"') && employee.includes('renderK
 assert(admin.includes('role-executive-secretary') && !admin.includes('"hr-manager",\n  "role-hr"'), 'Admin full-access set must not treat HR as full technical access.');
 assert(db.includes('emp-hr-manager') && db.includes('مدير الموارد البشرية'), 'Seed data must include HR manager role/person for workflow testing.');
 assert(patch.includes('employee_self_registration_log') && patch.includes('kpi:hr') && patch.includes('executive-secretary'), 'Patch 036 must include registration, KPI HR, and secretary permissions.');
-assert(api.includes('expectedPatch: "043_executive_presence_risk_decisions_reports.sql"'), 'Expected database patch must be 043.');
+assert(api.includes('expectedPatch: "064_attendance_fallback_workflow.sql"'), 'Expected database patch must be 043.');
 
 if (failures.length) {
   console.error('Role/KPI workflow check failed:');

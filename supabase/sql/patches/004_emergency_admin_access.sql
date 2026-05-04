@@ -162,7 +162,7 @@ begin
     ) values (
       'ADMIN-001',
       v_full_name,
-      '01000000000',
+      'PHONE_PLACEHOLDER_001',
       v_email,
       'أدمن رئيسي',
       v_role_id,

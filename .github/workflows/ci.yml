@@ -12,4 +12,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - run: npm ci
       - run: npm run check
+      - run: npm run check:production
+      - run: npm run check:sanitization
+      - run: npm run check:attendance-identity

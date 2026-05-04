@@ -66,7 +66,7 @@ Local route check:
 
 ## 3. SQL Status
 
-Patches available through: `043_executive_presence_risk_decisions_reports.sql`
+Patches available through: `064_attendance_fallback_workflow.sql`
 
 SQL Editor bundle: **created**
 

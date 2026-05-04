@@ -1,17 +1,23 @@
-const CACHE_NAME = "hr-attendance-executive-management-suite-20260502-01";
+// Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
+const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-executive";
 const DEFAULT_OPEN_URL = "./executive/index.html";
 const ASSETS = [
+  "./health.html",
   "./executive/index.html",
   "./operations-gate/index.html",
+  "./shared/offline.html",
   "./shared/js/executive-app.js",
   "./shared/pwa/manifest-executive.json",
   "./index.html",
   "./shared/css/styles.css",
+  "./shared/css/neon-admin-theme.css",
   "./shared/js/api.js",
   "./shared/js/supabase-api.js",
   "./shared/js/supabase-config.js",
   "./shared/js/push.js",
   "./shared/js/register-sw.js",
+  "./shared/js/live-ops-v5.js",
+  "./shared/js/v9-hardening.js",
   "./shared/pwa/manifest.json",
   "./shared/images/ahla-shabab-logo.png",
   "./shared/images/favicon-64.png",
@@ -55,7 +61,7 @@ self.addEventListener("fetch", (event) => {
         if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => undefined);
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || fallbackFor(event.request))),
+      .catch(() => caches.match(event.request).then((cached) => cached || fallbackFor(event.request) || caches.match("./shared/offline.html"))),
   );
 });
 

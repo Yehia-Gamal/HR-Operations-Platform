@@ -36,8 +36,8 @@
 
 ## ملفات SQL الجديدة
 
-- `supabase/sql/patches/043_executive_presence_risk_decisions_reports.sql`
-- `supabase/migrations/20260502074008_043_executive_presence_risk_decisions_reports.sql`
+- `supabase/sql/patches/064_attendance_fallback_workflow.sql`
+- `supabase/migrations/20260502074008_064_attendance_fallback_workflow.sql`
 
 ## ملاحظات تشغيل
 

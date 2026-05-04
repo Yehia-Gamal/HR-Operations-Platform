@@ -89,7 +89,7 @@ begin
 
   if hr_role_id is not null and not exists (select 1 from public.employees where email = 'hr.manager@organization.local') then
     insert into public.employees (full_name, employee_code, phone, email, job_title, role_id, branch_id, department_id, governorate_id, complex_id, manager_employee_id, status, hire_date)
-    values ('مدير الموارد البشرية', 'EMP-HR', '01020000030', 'hr.manager@organization.local', 'مدير الموارد البشرية', hr_role_id, branch_id, dept_id, gov_id, complex_id, secretary_employee_id, 'ACTIVE', current_date);
+    values ('مدير الموارد البشرية', 'EMP-HR', 'PHONE_PLACEHOLDER_044', 'hr.manager@organization.local', 'مدير الموارد البشرية', hr_role_id, branch_id, dept_id, gov_id, complex_id, secretary_employee_id, 'ACTIVE', current_date);
   end if;
 end $$;
 

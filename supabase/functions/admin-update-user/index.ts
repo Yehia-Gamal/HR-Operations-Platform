@@ -1,6 +1,12 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { options, json } from '../_shared/cors.ts';
 
+function strongEnough(pwd: string): boolean {
+  return typeof pwd === 'string' && pwd.length >= 10
+    && /[A-Z]/.test(pwd) && /[a-z]/.test(pwd)
+    && /\d/.test(pwd) && /[^A-Za-z0-9]/.test(pwd);
+}
+
 function normalizeEmail(value: unknown) {
   return String(value || '').trim().toLowerCase();
 }
@@ -45,7 +51,13 @@ Deno.serve(async (req) => {
   const phone = normalizePhone(body.phone);
   const authPatch: Record<string, unknown> = {};
   if (email) authPatch.email = email;
-  if (body.password) authPatch.password = String(body.password);
+  if (body.password) {
+    const newPassword = String(body.password);
+    if (!strongEnough(newPassword)) {
+      return json(req, { error: 'PASSWORD_WEAK', message: 'كلمة المرور ضعيفة. يجب أن تكون 10 أحرف على الأقل وتحتوي حرفاً كبيراً وصغيراً ورقماً ورمزاً.' }, 400);
+    }
+    authPatch.password = newPassword;
+  }
   if (Object.keys(authPatch).length) {
     const { error: authError } = await adminClient.auth.admin.updateUserById(userId, {
       ...authPatch,

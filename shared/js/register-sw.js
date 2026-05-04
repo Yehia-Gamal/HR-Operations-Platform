@@ -1,13 +1,13 @@
 // Service Worker registration is portal-scoped so employee devices do not cache admin UI.
-const HR_SW_CACHE_NAME = "hr-attendance-management-suite-20260502-01";
-const HR_SW_VERSION = "management-suite-20260502-01";
+const HR_SW_CACHE_NAME = "hr-attendance-full-workflow-live-20260504";
+const HR_SW_VERSION = "full-workflow-live-20260504";
 
 function portalServiceWorkerConfig() {
   const path = location.pathname.toLowerCase();
-  if (path.includes("/admin/")) return { url: "../sw-admin.js", scope: "/admin/" };
-  if (path.includes("/executive/")) return { url: "../sw-executive.js", scope: "/executive/" };
-  if (path.includes("/employee/")) return { url: "../sw-employee.js", scope: "/employee/" };
-  return { url: "./sw-employee.js", scope: "/employee/" };
+  if (path.includes("/admin/")) return { url: "../sw-admin.js", scope: "./" };
+  if (path.includes("/executive/")) return { url: "../sw-executive.js", scope: "./" };
+  if (path.includes("/employee/")) return { url: "../sw-employee.js", scope: "./" };
+  return { url: "./sw-employee.js", scope: "./employee/" };
 }
 
 async function clearOldHrCaches() {

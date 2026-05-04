@@ -6,14 +6,14 @@ const failures = [];
 const read = (file) => readFileSync(join(root, file), 'utf8');
 const assert = (condition, message) => { if (!condition) failures.push(message); };
 
-assert(existsSync(join(root, 'supabase/sql/patches/033_final_web_production_hardening.sql')), 'Patch 033 must exist.');
-assert(existsSync(join(root, 'supabase/sql/patches/034_final_lockdown_cleanup.sql')), 'Patch 034 must exist.');
+assert(existsSync(join(root, 'supabase/sql/patches/033a_final_web_production_hardening.sql')), 'Patch 033 must exist.');
+assert(existsSync(join(root, 'supabase/sql/patches/034a_final_lockdown_cleanup.sql')), 'Patch 034 must exist.');
 assert(existsSync(join(root, 'supabase/sql/patches/035_final_sanitization_live_readiness.sql')), 'Patch 035 must exist.');
 assert(!existsSync(join(root, 'shared/images/employees')), 'Bundled personal employee images must not be shipped.');
 
 const config = read('shared/js/supabase-config.js');
 assert(config.includes('allowLocalFallback: false'), 'Production config must disable local fallback.');
-assert(config.includes('management-suite-20260502-01'), 'Production cache/config version must be updated.');
+assert(config.includes('full-workflow-live-20260504'), 'Production cache/config version must be updated.');
 assert(!config.includes('sb_publishable_'), 'Production config template must not contain a real Supabase publishable key.');
 assert(!config.includes('yemradvxmwadlldnxtpz'), 'Production config template must not contain the exposed Supabase project ref.');
 const gitignore = read('.gitignore');
@@ -41,15 +41,15 @@ for (const file of ['supabase/functions/admin-create-user/index.ts', 'supabase/f
 }
 
 const api = read('shared/js/api.js');
-assert(api.includes('033_final_web_production_hardening.sql'), 'API migration list must include Patch 033.');
-assert(api.includes('034_final_lockdown_cleanup.sql'), 'API migration list must include Patch 034.');
+assert(api.includes('033a_final_web_production_hardening.sql'), 'API migration list must include Patch 033a.');
+assert(api.includes('034a_final_lockdown_cleanup.sql'), 'API migration list must include Patch 034a.');
 assert(api.includes('035_final_sanitization_live_readiness.sql'), 'API migration list must include Patch 035.');
 assert(api.includes('تسجيل الدخول المحلي معطّل'), 'Local fallback must be locked when Supabase is not configured.');
 
 const sw = read('sw.js');
 const reg = read('shared/js/register-sw.js');
-assert(sw.includes('hr-attendance-management-suite-20260502-01'), 'Service Worker must use production hardening cache name.');
-assert(reg.includes('hr-attendance-management-suite-20260502-01'), 'Service Worker registration must use production hardening cache name.');
+assert(sw.includes('hr-attendance-full-workflow-live-20260504'), 'Service Worker must use production hardening cache name.');
+assert(reg.includes('hr-attendance-full-workflow-live-20260504'), 'Service Worker registration must use production hardening cache name.');
 
 if (failures.length) {
   console.error('Production hardening check failed:');

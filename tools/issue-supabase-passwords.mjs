@@ -19,11 +19,17 @@ function normalizePhone(value = "") {
     .trim();
 }
 
-function makePhoneLoginPassword(profile = {}) {
-  const phone = normalizePhone(profile.phone || "");
-  const digits = phone.replace(/\D/g, "");
-  const suffix = (digits.slice(-4) || String(profile.id || profile.email || "0000").replace(/\D/g, "").slice(-4) || "0000").padStart(4, "0");
-  return `Ahla@${suffix}#2026A`;
+function makeSecurePassword() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789@#$!*';
+  const arr = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(arr);
+  let pwd = Array.from(arr, (b) => chars[b % chars.length]).join('');
+  // Guarantee complexity even if random selection misses a class.
+  return pwd.slice(0, 12) + 'A' + '7' + '#' + 'a';
+}
+
+function makePhoneLoginPassword(_profile = {}) {
+  return makeSecurePassword();
 }
 
 async function supabaseFetch(path, options = {}) {
@@ -95,7 +101,7 @@ const failures = [];
 const issued = [];
 
 for (const profile of activeProfiles) {
-  const password = makePhoneLoginPassword(profile);
+  const password = makeSecurePassword();
   try {
     await updateAuthPassword(profile, password);
     await updateProfile(profile, password);

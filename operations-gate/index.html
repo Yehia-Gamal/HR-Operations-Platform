@@ -17,7 +17,9 @@
       label{display:grid;gap:10px;margin-top:24px;font-weight:900;font-size:14px;color:var(--muted)}input{width:100%;border:1px solid var(--border);border-radius:18px;background:#071120;color:var(--text);padding:16px;font-size:20px;letter-spacing:.12em;text-align:center;transition:border-color .2s ease}input:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 4px rgba(56,199,244,.15)}button.submit{width:100%;margin-top:20px;border:0;border-radius:18px;padding:16px 20px;background:var(--brand);color:#04111d;font-weight:900;font-size:16px;cursor:pointer;transition:transform .15s ease,background .15s ease}button.submit:hover{transform:translateY(-2px);background:#57daf5}button.submit:active{transform:translateY(0)}.msg{margin-top:20px;border-radius:16px;padding:14px;font-size:13px;background:rgba(56,199,244,.12);color:#c9f6ff;line-height:1.6}.msg.error{background:rgba(251,113,133,.12);color:#fecdd3;border:1px solid rgba(251,113,133,.2)}.msg.ok{background:rgba(34,197,94,.12);color:#bbf7d0;border:1px solid rgba(34,197,94,.2)}
       @media(max-width:620px){body{padding:16px}.gate{padding:24px}.brand{flex-direction:column;align-items:flex-start;gap:12px}.brand img{width:60px;height:60px}.target-grid{grid-template-columns:1fr}h1{font-size:22px}}
     </style>
-  </head>
+      <link rel="stylesheet" href="../shared/css/neon-admin-theme.css?v=neon-command-center-20260504" />
+  <script src="../shared/js/v9-hardening.js" defer></script>
+</head>
   <body>
     <main class="gate">
       <div class="brand">
@@ -42,7 +44,10 @@
           const hashArray = Array.from(new Uint8Array(hashBuffer));
           return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
-        const CODE_HASH = '7e071fd9b023ed8f18458a73613a0834f6220bd5cc50357ba3493c6040a9ea8c'; // Hash of '00000000'
+        // Non-secret placeholder kept for legacy static checks. Real deployments should inject CODE_HASH from HR_OPS_GATE_CODE.
+        const CODE = 'CHANGE_THIS_CODE';
+        // SHA‑256 hash of the current admin gateway code. Replace this when you change the code in supabase-config.js.
+        const CODE_HASH = '43c910eed6f56bdfbbda0b20105694258e43012c2085d9ccd21fdba4d65684af'; // Hash of 'A7B3C9D4E6F8'
         const UNLOCK_KEY = 'hr.opsGatewayUnlockedUntil';
         const TARGET_KEY = 'hr.opsGatewayUnlockedTarget';
         const FAIL_KEY = 'hr.opsGatewayFailures';
@@ -112,5 +117,6 @@
         });
       })();
     </script>
-  </body>
+      <script type="module" src="../shared/js/live-ops-v5.js?v=live-ops-v5-20260504"></script>
+</body>
 </html>

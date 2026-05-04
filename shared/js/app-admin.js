@@ -1599,7 +1599,7 @@ async function renderAttendance() {
           <div class="form-actions"><button class="button primary" type="submit">تطبيق الفلتر</button><button class="button ghost" type="button" data-reset-attendance-filters>آخر 30 يوم</button></div>
         </form>
         <div class="table-summary"><strong>يعرض ${escapeHtml(visibleEvents.length)} من ${escapeHtml(events.length)} حركة</strong><span>المدى: ${escapeHtml(filters.from)} إلى ${escapeHtml(filters.to)}</span></div>
-        ${table(["الموظف", "النوع", "الموقع", "المراجعة", "المخاطر", "الوقت"], visibleEvents.map((event) => `<tr><td class="person-cell">${avatar(event.employee, "tiny")}<span>${escapeHtml(event.employee?.fullName || event.employeeId)}<small>${escapeHtml(event.notes || "")}</small></span></td><td>${badge(event.type)}</td><td>${badge(event.geofenceStatus || "unknown")}<small>${event.distanceFromBranchMeters != null ? `${event.distanceFromBranchMeters} متر` : ""}</small></td><td>${event.requiresReview ? badge("PENDING") : badge("APPROVED")}</td><td>${(event.riskFlags || []).length ? event.riskFlags.map((flag) => `<span class="status">${escapeHtml(flag)}</span>`).join(" ") : `<span class="status ACTIVE">آمن</span>`}</td><td>${date(event.eventAt)}</td></tr>`), "attendance-table")}
+        ${table(["الموظف", "النوع", "الموقع", "المراجعة", "المخاطر", "سيلفي", "الوقت"], visibleEvents.map((event) => `<tr><td class="person-cell">${avatar(event.employee, "tiny")}<span>${escapeHtml(event.employee?.fullName || event.employeeId)}<small>${escapeHtml(event.notes || "")}</small></span></td><td>${badge(event.type)}</td><td>${badge(event.geofenceStatus || "unknown")}<small>${event.distanceFromBranchMeters != null ? `${event.distanceFromBranchMeters} متر` : ""}</small></td><td>${event.requiresReview ? badge("PENDING") : badge("APPROVED")}</td><td><strong>${escapeHtml(event.riskScore ?? 0)}%</strong> ${event.riskLevel ? badge(event.riskLevel) : ""}<br>${(event.riskFlags || []).length ? event.riskFlags.map((flag) => `<span class="status warning">${escapeHtml(flag)}</span>`).join(" ") : `<span class="status ACTIVE">آمن</span>`}</td><td>${event.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(event.selfieUrl)}">عرض</a>` : `<span class="status warning">لا يوجد</span>`}</td><td>${date(event.eventAt)}</td></tr>`), "attendance-table")}
         ${hasMore ? `<div class="load-more-row"><button class="button ghost" data-attendance-more>عرض 500 حركة أخرى</button><small>استخدم فلاتر أضيق عند السجلات الكبيرة جدًا.</small></div>` : ""}
       </article>
       <article class="panel span-12">
@@ -2823,7 +2823,7 @@ async function renderAttendanceReview() {
   shell(
     `<section class="panel attendance-review-page">
       <div class="panel-head"><div><h2>مراجعة البصمات المرفوضة</h2><p>أي محاولة مرفوضة بسبب الموقع أو الدقة أو فشل البصمة تظهر هنا لاعتمادها يدويًا أو تثبيت رفضها.</p></div><button class="button ghost" data-route="attendance">كل الحضور</button></div>
-      ${table(["الموظف", "النوع", "السبب", "المسافة", "الدقة", "التاريخ", "الإجراء"], rows.map((event) => `<tr><td>${escapeHtml(event.employee?.fullName || event.employeeId || "-")}</td><td>${badge(event.type)}</td><td>${escapeHtml(event.notes || event.blockReason || "-")}</td><td>${formatMeters(event.distanceFromBranchMeters)}</td><td>${formatMeters(event.accuracyMeters)}</td><td>${date(event.eventAt)}</td><td><div class="toolbar"><button class="button primary" data-review-punch="approve" data-id="${escapeHtml(event.id)}">اعتماد</button><button class="button danger" data-review-punch="reject" data-id="${escapeHtml(event.id)}">رفض نهائي</button></div></td></tr>`))}
+      ${table(["الموظف", "النوع", "السبب", "المخاطر", "سيلفي", "المسافة", "الدقة", "التاريخ", "الإجراء"], rows.map((event) => `<tr><td>${escapeHtml(event.employee?.fullName || event.employeeId || "-")}</td><td>${badge(event.type)}</td><td>${escapeHtml(event.notes || event.blockReason || "-")}</td><td><strong>${escapeHtml(event.riskScore ?? 0)}%</strong> ${event.riskLevel ? badge(event.riskLevel) : ""}<br>${(event.riskFlags || []).map((flag) => `<span class="status warning">${escapeHtml(flag)}</span>`).join(" ") || "-"}</td><td>${event.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(event.selfieUrl)}">عرض السيلفي</a>` : `<span class="status warning">لا يوجد</span>`}</td><td>${formatMeters(event.distanceFromBranchMeters)}</td><td>${formatMeters(event.accuracyMeters)}</td><td>${date(event.eventAt)}</td><td><div class="toolbar"><button class="button primary" data-review-punch="approve" data-id="${escapeHtml(event.id)}" data-check-id="${escapeHtml(event.identityCheckId || '')}">اعتماد</button><button class="button danger" data-review-punch="reject" data-id="${escapeHtml(event.id)}" data-check-id="${escapeHtml(event.identityCheckId || '')}">رفض نهائي</button></div></td></tr>`))}
     </section>`,
     "مراجعة البصمات",
     "اعتماد أو رفض محاولات البصمة المرفوضة.",
@@ -2832,7 +2832,7 @@ async function renderAttendanceReview() {
     const action = button.dataset.reviewPunch;
     const ok = await confirmAction({ title: action === "approve" ? "اعتماد محاولة البصمة" : "رفض محاولة البصمة", message: action === "approve" ? "سيتم اعتماد المحاولة يدويًا وإزالة علامة المراجعة." : "سيتم تثبيت الرفض وإغلاق المراجعة.", confirmLabel: action === "approve" ? "اعتماد" : "رفض نهائي", danger: action !== "approve" });
     if (!ok) return;
-    await endpoints.reviewRejectedPunch(button.dataset.id, action);
+    await endpoints.reviewRejectedPunch(button.dataset.id, action, button.dataset.checkId || "");
     setMessage(action === "approve" ? "تم اعتماد البصمة يدويًا." : "تم تثبيت رفض البصمة.", "");
     render();
   }));
@@ -2847,13 +2847,22 @@ async function renderEmployeeQr() {
   shell(
     `<section class="grid qr-page">
       <article class="panel span-4"><h2>اختيار الموظف</h2><label>الموظف<select id="qr-employee">${optionList(employees.map((e) => ({ id: e.id, name: `${e.fullName}${e.jobTitle ? " — " + e.jobTitle : ""}` })), employee.id)}</select></label><div class="message warning">الـ QR يفتح صفحة البصمة. يجب أن يسجل الموظف دخوله بحسابه ثم يؤكد ببصمة الجهاز وGPS.</div></article>
-      <article class="panel span-8 qr-card-panel"><div class="qr-print-card"><div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(employee.fullName || "-")}</strong><small>${escapeHtml(employee.jobTitle || "")}</small></span></div><img class="qr-img" src="${escapeHtml(qrImageUrl(link, 260))}" alt="QR" /><p class="muted breakable">${escapeHtml(link)}</p><div class="toolbar"><button class="button primary" id="print-qr">طباعة QR</button><button class="button ghost" id="copy-qr-link">نسخ الرابط</button></div></div></article>
+      <article class="panel span-8 qr-card-panel"><div class="qr-print-card"><div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(employee.fullName || "-")}</strong><small>${escapeHtml(employee.jobTitle || "")}</small></span></div><img class="qr-img" src="${escapeHtml(qrImageUrl(link, 260))}" alt="QR" /><p class="muted breakable">${escapeHtml(link)}</p><div class="toolbar"><button class="button primary" id="print-qr">طباعة QR</button><button class="button ghost" id="copy-qr-link">نسخ الرابط</button><button class="button primary" id="create-branch-qr">إنشاء QR الفرع المتغير</button></div><div id="branch-qr-result" class="message hidden"></div></div></article>
     </section>`,
     "QR البصمة",
     "QR Code سريع لفتح صفحة البصمة من الموبايل.",
   );
   app.querySelector("#qr-employee")?.addEventListener("change", (event) => { location.hash = `employee-qr?employeeId=${event.target.value}`; });
   app.querySelector("#copy-qr-link")?.addEventListener("click", async () => { await navigator.clipboard?.writeText(link); setMessage("تم نسخ رابط البصمة.", ""); });
+  app.querySelector("#create-branch-qr")?.addEventListener("click", async () => {
+    const result = await endpoints.createBranchQrChallenge({ branchId: employee.branchId || "" }).then(unwrap);
+    const box = app.querySelector("#branch-qr-result");
+    if (box) {
+      const qrText = result.challengeCode || result.challenge_code || "";
+      box.classList.remove("hidden");
+      box.innerHTML = `<strong>QR الفرع المتغير</strong><p>الكود صالح لمدة قصيرة: <b>${escapeHtml(qrText)}</b></p><img class="qr-img" src="${escapeHtml(qrImageUrl(qrText, 220))}" alt="QR الفرع" /><p>ينتهي: ${date(result.validUntil || result.valid_until)}</p>`;
+    }
+  });
   app.querySelector("#print-qr")?.addEventListener("click", () => {
     const rows = [[employee.fullName || "-", employee.jobTitle || "-", link]];
     printBrandedReport("QR البصمة للموظف", `<div class="summary"><div><span>الموظف</span><strong>${escapeHtml(employee.fullName || "-")}</strong></div><div><span>المسمى</span><strong>${escapeHtml(employee.jobTitle || "-")}</strong></div></div><p><img class="qr-print" src="${escapeHtml(qrImageUrl(link, 300))}" /></p>`, ["الموظف", "المسمى", "الرابط"], rows);
@@ -2861,16 +2870,27 @@ async function renderEmployeeQr() {
 }
 
 async function renderTrustedDevices() {
-  const [devices, employees] = await Promise.all([endpoints.trustedDevices().then(unwrap), endpoints.employees().then(unwrap)]);
+  const [devices, employees, requests] = await Promise.all([
+    endpoints.trustedDevices().then(unwrap),
+    endpoints.employees().then(unwrap),
+    endpoints.trustedDeviceApprovalRequests().then(unwrap).catch(() => []),
+  ]);
   const byEmployee = new Map(employees.map((e) => [e.id, e]));
   shell(
     `<section class="grid devices-page">
+      <article class="panel span-12"><div class="panel-head"><div><h2>طلبات اعتماد الأجهزة الجديدة</h2><p>أي جهاز جديد أو غير معتمد يتحول إلى هذه القائمة قبل اعتماد بصمته تلقائيًا.</p></div></div>
+      ${table(["الموظف", "الجهاز", "الحالة", "السيلفي", "الموقع", "التاريخ", "إجراء"], (requests || []).map((r) => { const employee = byEmployee.get(r.employeeId) || {}; return `<tr><td>${escapeHtml(employee.fullName || r.employeeName || r.employeeId || "-")}</td><td><strong>${escapeHtml(r.deviceName || "جهاز متصفح")}</strong><br><small>${escapeHtml(String(r.deviceFingerprintHash || "").slice(0,16))}</small></td><td>${badge(r.status || "PENDING")}</td><td>${r.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(r.selfieUrl)}">عرض</a>` : "-"}</td><td>${r.latitude ? `<a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${escapeHtml(r.latitude)},${escapeHtml(r.longitude)}">خريطة</a>` : "-"}</td><td>${date(r.createdAt)}</td><td><div class="toolbar"><button class="button primary" data-device-review="APPROVED" data-request-id="${escapeHtml(r.id)}">اعتماد</button><button class="button danger" data-device-review="REJECTED" data-request-id="${escapeHtml(r.id)}">رفض</button></div></td></tr>`; }))}</article>
       <article class="panel span-12"><div class="panel-head"><div><h2>الأجهزة المعتمدة</h2><p>قائمة Passkeys والأجهزة التي يستخدمها الموظفون في بصمة الحضور.</p></div><button class="button ghost" data-route="employee-punch">تسجيل بصمة جهاز</button></div>
-      ${table(["الموظف", "الجهاز", "المنصة", "الحالة", "آخر استخدام", "إجراءات"], devices.map((d) => { const employee = d.employee || byEmployee.get(d.employeeId) || employees.find((e) => e.userId === d.userId) || {}; return `<tr><td>${escapeHtml(employee.fullName || d.employeeId || d.userId || "-")}</td><td>${escapeHtml(d.label || d.deviceLabel || "مفتاح مرور")}</td><td>${escapeHtml(d.platform || d.userAgent || "-")}</td><td>${badge(d.status || (d.trusted === false ? "DEVICE_DISABLED" : "DEVICE_TRUSTED"))}</td><td>${date(d.lastUsedAt)}</td><td><div class="toolbar"><button class="button ghost" data-device-action="trust" data-id="${escapeHtml(d.id)}">اعتماد</button><button class="button danger" data-device-action="disable" data-id="${escapeHtml(d.id)}">تعطيل</button></div></td></tr>`; }))}</article>
+      ${table(["الموظف", "الجهاز", "المنصة", "الحالة", "آخر استخدام", "إجراءات"], devices.map((d) => { const employee = d.employee || byEmployee.get(d.employeeId) || employees.find((e) => e.userId === d.userId) || {}; return `<tr><td>${escapeHtml(employee.fullName || d.employeeId || d.userId || "-")}</td><td>${escapeHtml(d.label || d.deviceLabel || "مفتاح مرور")}</td><td>${escapeHtml(d.platform || d.userAgent || "-")}</td><td>${badge(d.approvalStatus || d.status || (d.trusted === false ? "DEVICE_DISABLED" : "DEVICE_TRUSTED"))}</td><td>${date(d.lastUsedAt)}</td><td><div class="toolbar"><button class="button ghost" data-device-action="trust" data-id="${escapeHtml(d.id)}">اعتماد</button><button class="button danger" data-device-action="disable" data-id="${escapeHtml(d.id)}">تعطيل</button></div></td></tr>`; }))}</article>
     </section>`,
     "الأجهزة المعتمدة",
     "إدارة مفاتيح المرور والأجهزة الموثوقة.",
   );
+  app.querySelectorAll("[data-device-review]").forEach((button) => button.addEventListener("click", async () => {
+    await endpoints.reviewTrustedDeviceApproval({ requestId: button.dataset.requestId, decision: button.dataset.deviceReview });
+    setMessage(button.dataset.deviceReview === "APPROVED" ? "تم اعتماد الجهاز." : "تم رفض الجهاز.", "");
+    renderTrustedDevices();
+  }));
   app.querySelectorAll("[data-device-action]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.updateTrustedDevice(button.dataset.id, { action: button.dataset.deviceAction });
     setMessage(button.dataset.deviceAction === "trust" ? "تم اعتماد الجهاز." : "تم تعطيل الجهاز.", "");

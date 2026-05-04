@@ -29,11 +29,11 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     // مطلوب لتفعيل Web Push الحقيقي. اتركه فارغًا حتى تولد VAPID keys وتضيف المفتاح العام هنا.
     vapidPublicKey: "",
   },
-  cacheVersion: "management-suite-20260502-01",
+  cacheVersion: "full-workflow-live-20260504",
 });
 
 window.__HR_SUPABASE_CONFIG_LOADED__ = true;
-window.__HR_SUPABASE_CONFIG_VERSION__ = "management-suite-20260502-01";
+window.__HR_SUPABASE_CONFIG_VERSION__ = "full-workflow-live-20260504";
 
 (function showSupabaseModeBanner() {
   const cfg = window.HR_SUPABASE_CONFIG || {};

@@ -11,7 +11,7 @@ const allSql = [read('supabase/sql/001_schema_rls_seed.sql'), ...patches.map((na
 
 assert(patches.includes('040_runtime_alignment_fix.sql'), 'Patch 040_runtime_alignment_fix.sql is required.');
 assert(patches.includes('041_audit_v7_security_mobile_alignment.sql'), 'Patch 041_audit_v7_security_mobile_alignment.sql is required.');
-assert(patches.includes('043_executive_presence_risk_decisions_reports.sql'), 'Patch 043_executive_presence_risk_decisions_reports.sql is required.');
+assert(patches.includes('064_attendance_fallback_workflow.sql'), 'Patch 064_attendance_fallback_workflow.sql is required.');
 assert(existsSync(join(root, 'supabase/migrations/20260502074005_040_runtime_alignment_fix.sql')), 'Migration 040 mirror is required.');
 assert(existsSync(join(root, 'supabase/migrations/20260502074006_041_audit_v7_security_mobile_alignment.sql')), 'Migration 041 mirror is required.');
 assert(existsSync(join(root, 'supabase/migrations/20260502074008_043_executive_presence_risk_decisions_reports.sql')), 'Migration 043 mirror is required.');

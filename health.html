@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>فحص جاهزية نظام أحلى شباب HR</title>
+  <link rel="stylesheet" href="shared/css/styles.css" />
+  <link rel="stylesheet" href="shared/css/neon-admin-theme.css" />
+  <style>
+    body{min-height:100vh;padding:24px;background:#050b16;color:#eef5ff;font-family:Cairo,Tahoma,Arial,sans-serif}
+    .health{max-width:920px;margin:auto;display:grid;gap:18px}
+    .health-card{border:1px solid rgba(56,199,244,.32);background:rgba(8,19,35,.88);border-radius:24px;padding:22px;box-shadow:0 24px 80px rgba(0,0,0,.35)}
+    .row{display:flex;justify-content:space-between;gap:16px;border-top:1px solid rgba(255,255,255,.08);padding:12px 0;align-items:center}.row:first-child{border-top:0}
+    .ok{color:#22c55e}.warn{color:#f59e0b}.bad{color:#fb7185}.muted{color:#9aa8bd}code{direction:ltr;unicode-bidi:bidi-override;background:#071120;padding:3px 7px;border-radius:8px}
+  </style>
+</head>
+<body>
+  <main class="health">
+    <section class="health-card">
+      <h1>فحص جاهزية نظام أحلى شباب HR</h1>
+      <p class="muted">هذه الصفحة لفحص تحميل الملفات الأساسية بعد النشر. لا تعرض أي مفاتيح أو أسرار.</p>
+      <div id="results"></div>
+    </section>
+  </main>
+  <script src="shared/js/supabase-config.js"></script>
+  <script>
+    const checks = [];
+    function add(name, ok, detail, level = ok ? 'ok' : 'bad') { checks.push({ name, ok, detail, level }); }
+    const cfg = window.HR_SUPABASE_CONFIG || {};
+    add('ملف Supabase config', Boolean(window.__HR_SUPABASE_CONFIG_LOADED__), window.__HR_SUPABASE_CONFIG_VERSION__ || 'غير معروف');
+    add('حالة Supabase', Boolean(cfg.url && cfg.anonKey), cfg.url ? 'تم ضبط الرابط' : 'في انتظار حقن أسرار النشر', cfg.url && cfg.anonKey ? 'ok' : 'warn');
+    add('Patch المتوقع', cfg.deployment?.expectedPatch === '064_attendance_fallback_workflow.sql', cfg.deployment?.expectedPatch || 'غير محدد');
+    add('Service Worker', 'serviceWorker' in navigator, 'مدعوم في هذا المتصفح');
+    add('Push API', 'PushManager' in window, 'مدعوم في هذا المتصفح', 'PushManager' in window ? 'ok' : 'warn');
+    add('Camera API', Boolean(navigator.mediaDevices?.getUserMedia), 'مطلوب لسيلفي البصمة', navigator.mediaDevices?.getUserMedia ? 'ok' : 'warn');
+    add('Geolocation API', 'geolocation' in navigator, 'مطلوب للموقع والبصمة', 'geolocation' in navigator ? 'ok' : 'bad');
+    document.getElementById('results').innerHTML = checks.map(c => `<div class="row"><strong>${c.name}</strong><span class="${c.level}">${c.detail}</span></div>`).join('');
+  </script>
+</body>
+</html>

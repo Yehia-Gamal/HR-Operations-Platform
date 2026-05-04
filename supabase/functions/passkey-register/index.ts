@@ -29,13 +29,23 @@ Deno.serve(async (req) => {
     return json(req, { error: 'INVALID_WEBAUTHN_RESPONSE', message: 'استجابة Passkey غير مكتملة.' }, 400);
   }
 
+  const { data: profile } = await client
+    .from('profiles')
+    .select('employee_id')
+    .eq('id', authData.user.id)
+    .maybeSingle();
+
   const { data, error } = await client.from('passkey_credentials').upsert({
     user_id: authData.user.id,
+    employee_id: profile?.employee_id || null,
     label: body.label || 'Passkey',
     credential_id: credentialId,
     public_key: body.publicKey || body.attestationObject || '',
     transports: body.transports || [],
     platform: body.platform || '',
+    device_fingerprint_hash: body.deviceFingerprintHash || null,
+    trusted: body.trusted !== false,
+    status: 'DEVICE_TRUSTED',
     browser_supported: true,
   }, { onConflict: 'user_id,credential_id' }).select('*').single();
   if (error) return json(req, { error: error.message }, 400);

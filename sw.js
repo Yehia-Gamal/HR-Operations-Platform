@@ -1,19 +1,25 @@
-const CACHE_NAME = "hr-attendance-management-suite-20260502-production";
+const CACHE_NAME = "hr-attendance-full-workflow-live-20260504";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
+  "./health.html",
   "./index.html",
   "./employee/index.html",
   "./executive/index.html",
   "./operations-gate/index.html",
+  "./shared/offline.html",
   "./shared/css/styles.css",
+  "./shared/css/neon-admin-theme.css",
   "./shared/css/employee.css",
   "./shared/js/api.js",
   "./shared/js/supabase-api.js",
   "./shared/js/supabase-config.js",
   "./shared/js/push.js",
   "./shared/js/employee-app.js",
+  "./shared/js/attendance-identity.js",
   "./shared/js/executive-app.js",
   "./shared/js/register-sw.js",
+  "./shared/js/live-ops-v5.js",
+  "./shared/js/v9-hardening.js",
   "./shared/pwa/manifest.json",
   "./shared/pwa/manifest-employee.json",
   "./shared/pwa/manifest-executive.json",
@@ -59,7 +65,7 @@ self.addEventListener("fetch", (event) => {
         if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => undefined);
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || fallbackFor(event.request))),
+      .catch(() => caches.match(event.request).then((cached) => cached || fallbackFor(event.request) || caches.match("./shared/offline.html"))),
   );
 });
 

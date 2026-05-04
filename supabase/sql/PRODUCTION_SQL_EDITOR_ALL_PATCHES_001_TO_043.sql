@@ -983,11 +983,11 @@ on conflict do nothing;
 -- موظفون مبدئيون. أنشئ مستخدمي Auth بنفس الإيميلات، وسيتم ربط profile تلقائيًا.
 insert into public.employees (employee_code, full_name, phone, email, job_title, role_id, branch_id, department_id, governorate_id, complex_id, shift_id, status, hire_date)
 select * from (
-  select 'EMP-001' employee_code, 'المدير التنفيذي' full_name, '01000000001' phone, 'executive.director@organization.local' email, 'المدير التنفيذي' job_title, (select id from public.roles where slug='executive') role_id, (select id from public.branches where code='MAIN') branch_id, (select id from public.departments where code='EXEC') department_id, (select id from public.governorates where code='GZ') governorate_id, (select id from public.complexes where code='AHLA-MANIL') complex_id, (select id from public.shifts where name='وردية 9ص إلى 5م' limit 1) shift_id, 'ACTIVE' status, current_date hire_date
-  union all select 'EMP-002','السكرتير التنفيذي','01000000002','executive.secretary@organization.local','السكرتير التنفيذي',(select id from public.roles where slug='executive-secretary'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='EXEC'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
-  union all select 'EMP-003','مسؤول الموارد البشرية','01000000003','hr@ahla.local','HR',(select id from public.roles where slug='hr-manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='HR'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
-  union all select 'EMP-004','مدير التشغيل','01000000004','manager.ops@ahla.local','مدير مباشر',(select id from public.roles where slug='manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
-  union all select 'EMP-005','موظف تجريبي','01000000005','employee@ahla.local','موظف',(select id from public.roles where slug='employee'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
+  select 'EMP-001' employee_code, 'المدير التنفيذي' full_name, 'PHONE_PLACEHOLDER_002' phone, 'executive.director@organization.local' email, 'المدير التنفيذي' job_title, (select id from public.roles where slug='executive') role_id, (select id from public.branches where code='MAIN') branch_id, (select id from public.departments where code='EXEC') department_id, (select id from public.governorates where code='GZ') governorate_id, (select id from public.complexes where code='AHLA-MANIL') complex_id, (select id from public.shifts where name='وردية 9ص إلى 5م' limit 1) shift_id, 'ACTIVE' status, current_date hire_date
+  union all select 'EMP-002','السكرتير التنفيذي','PHONE_PLACEHOLDER_003','executive.secretary@organization.local','السكرتير التنفيذي',(select id from public.roles where slug='executive-secretary'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='EXEC'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
+  union all select 'EMP-003','مسؤول الموارد البشرية','PHONE_PLACEHOLDER_004','hr@ahla.local','HR',(select id from public.roles where slug='hr-manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='HR'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
+  union all select 'EMP-004','مدير التشغيل','PHONE_PLACEHOLDER_005','manager.ops@ahla.local','مدير مباشر',(select id from public.roles where slug='manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
+  union all select 'EMP-005','موظف تجريبي','PHONE_PLACEHOLDER_006','employee@ahla.local','موظف',(select id from public.roles where slug='employee'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
 ) s
 on conflict (employee_code) do update set full_name = excluded.full_name, email = excluded.email, role_id = excluded.role_id, branch_id = excluded.branch_id, department_id = excluded.department_id, shift_id = excluded.shift_id;
 
@@ -1286,7 +1286,7 @@ begin
     ) values (
       'ADMIN-001',
       v_full_name,
-      '01000000000',
+      'PHONE_PLACEHOLDER_001',
       v_email,
       'أدمن رئيسي',
       v_role_id,
@@ -2284,7 +2284,7 @@ insert into public.employees (
 select
   'EMP-DEMO-001',
   'موظف تجربة آمن',
-  '01000000000',
+  'PHONE_PLACEHOLDER_001',
   'demo.employee@ahla-shabab.local',
   'موظف تجربة',
   (select id from public.roles where slug = 'employee' limit 1),
@@ -2416,29 +2416,29 @@ on conflict (code) do update set name = excluded.name, branch_id = excluded.bran
 
 with roster(employee_code, full_name, phone, email, job_title, role_slug, department_code, manager_code, hire_date) as (
   values
-  ('EMP-001', 'المدير التنفيذي', '01020000001', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', '', '2020-01-01'),
-  ('EMP-002', 'السكرتير التنفيذي', '01020000002', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
-  ('EMP-003', 'مدير مباشر رابع', '01020000003', 'direct.manager.04@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-004', 'مدير مباشر أول', '01020000004', 'direct.manager.01@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-005', 'مدير مباشر ثانٍ', '01020000005', 'direct.manager.02@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-006', 'مدير مباشر ثالث', '01020000006', 'direct.manager.03@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-007', 'موظف تشغيلي 01', '01020000007', 'employee.001@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-008', 'موظف تشغيلي 18', '01020000008', 'employee.017@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-009', 'موظف تشغيلي 14', '01020000009', 'direct.manager.07@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-010', 'موظف تشغيلي 07', '01020000010', 'employee.006@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-011', 'موظف تشغيلي 08', '01020000011', 'employee.007@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-012', 'موظف تشغيلي 04', '01020000012', 'direct.manager.08@organization.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
-  ('EMP-013', 'موظف تشغيلي 05', '01020000013', 'employee.004@organization.local', 'موظف تحت إشراف مباشر', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
-  ('EMP-014', 'موظف تشغيلي 13', '01020000014', 'abdullah.hussein@ahla-shabab.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-015', 'موظف تشغيلي 06', '01020000015', 'employee.005@organization.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-016', 'موظف تشغيلي 16', '01020000016', 'employee.015@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-017', 'موظف تشغيلي 10', '01020000017', 'employee.009@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-018', 'موظف تشغيلي 15', '01020000018', 'employee.014@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-019', 'موظف تشغيلي 17', '01020000019', 'employee.016@organization.local', 'موظف فريق المدير المباشر الأول', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
-  ('EMP-020', 'موظف تشغيلي 11', '01020000020', 'employee.010@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-021', 'موظف تشغيلي 12', '01020000021', 'employee.011@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-022', 'موظف تشغيلي 03', '01020000022', 'employee.002@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-023', 'موظف تشغيلي 09', '01020000023', 'tarek.ibrahim@ahla-shabab.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01')
+  ('EMP-001', 'المدير التنفيذي', 'PHONE_PLACEHOLDER_021', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', '', '2020-01-01'),
+  ('EMP-002', 'السكرتير التنفيذي', 'PHONE_PLACEHOLDER_022', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
+  ('EMP-003', 'مدير مباشر رابع', 'PHONE_PLACEHOLDER_023', 'direct.manager.04@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-004', 'مدير مباشر أول', 'PHONE_PLACEHOLDER_024', 'direct.manager.01@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-005', 'مدير مباشر ثانٍ', 'PHONE_PLACEHOLDER_025', 'direct.manager.02@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-006', 'مدير مباشر ثالث', 'PHONE_PLACEHOLDER_026', 'direct.manager.03@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-007', 'موظف تشغيلي 01', 'PHONE_PLACEHOLDER_027', 'employee.001@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-008', 'موظف تشغيلي 18', 'PHONE_PLACEHOLDER_028', 'employee.017@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-009', 'موظف تشغيلي 14', 'PHONE_PLACEHOLDER_029', 'direct.manager.07@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-010', 'موظف تشغيلي 07', 'PHONE_PLACEHOLDER_030', 'employee.006@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-011', 'موظف تشغيلي 08', 'PHONE_PLACEHOLDER_031', 'employee.007@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-012', 'موظف تشغيلي 04', 'PHONE_PLACEHOLDER_032', 'direct.manager.08@organization.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
+  ('EMP-013', 'موظف تشغيلي 05', 'PHONE_PLACEHOLDER_033', 'employee.004@organization.local', 'موظف تحت إشراف مباشر', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
+  ('EMP-014', 'موظف تشغيلي 13', 'PHONE_PLACEHOLDER_034', 'abdullah.hussein@ahla-shabab.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-015', 'موظف تشغيلي 06', 'PHONE_PLACEHOLDER_035', 'employee.005@organization.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-016', 'موظف تشغيلي 16', 'PHONE_PLACEHOLDER_036', 'employee.015@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-017', 'موظف تشغيلي 10', 'PHONE_PLACEHOLDER_037', 'employee.009@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-018', 'موظف تشغيلي 15', 'PHONE_PLACEHOLDER_038', 'employee.014@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-019', 'موظف تشغيلي 17', 'PHONE_PLACEHOLDER_039', 'employee.016@organization.local', 'موظف فريق المدير المباشر الأول', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
+  ('EMP-020', 'موظف تشغيلي 11', 'PHONE_PLACEHOLDER_040', 'employee.010@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-021', 'موظف تشغيلي 12', 'PHONE_PLACEHOLDER_041', 'employee.011@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-022', 'موظف تشغيلي 03', 'PHONE_PLACEHOLDER_042', 'employee.002@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-023', 'موظف تشغيلي 09', 'PHONE_PLACEHOLDER_043', 'tarek.ibrahim@ahla-shabab.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01')
 ), upserted as (
   insert into public.employees (
     employee_code, full_name, phone, email, job_title, role_id, branch_id, department_id,
@@ -3773,29 +3773,29 @@ truncate tmp_ahla_roster_027;
 
 insert into tmp_ahla_roster_027 (employee_code, full_name, phone, email, job_title, role_slug, department_code, manager_code, hire_date)
 values
-  ('EMP-001', 'المدير التنفيذي', '01020000001', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', null, '2020-01-01'),
-  ('EMP-002', 'السكرتير التنفيذي', '01020000002', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
-  ('EMP-003', 'مدير مباشر رابع', '01020000003', 'ahmed.mahgoob@ahla.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-004', 'مدير مباشر أول', '01020000004', 'direct.manager.01@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-005', 'مدير مباشر ثانٍ', '01020000005', 'direct.manager.02@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-006', 'مدير مباشر ثالث', '01020000006', 'direct.manager.03@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-007', 'موظف تشغيلي 01', '01020000007', 'direct.manager.05@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-008', 'موظف تشغيلي 18', '01020000008', 'direct.manager.06@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-009', 'موظف تشغيلي 14', '01020000009', 'direct.manager.07@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-010', 'موظف تشغيلي 07', '01020000010', 'employee.006@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-011', 'موظف تشغيلي 08', '01020000011', 'employee.007@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-012', 'موظف تشغيلي 04', '01020000012', 'direct.manager.08@organization.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
-  ('EMP-013', 'موظف تشغيلي 05', '01020000013', 'employee.005@organization.local', 'موظف تحت إشراف مباشر', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
-  ('EMP-014', 'موظف تشغيلي 13', '01020000014', 'abdullah.hussein@ahla.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-015', 'موظف تشغيلي 06', '01020000015', 'employee.006@organization.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-016', 'موظف تشغيلي 16', '01020000016', 'employee.016@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-017', 'موظف تشغيلي 10', '01020000017', 'employee.010@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-018', 'موظف تشغيلي 15', '01020000018', 'employee.015@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-019', 'موظف تشغيلي 17', '01020000019', 'employee.017@organization.local', 'موظف فريق المدير المباشر الأول', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
-  ('EMP-020', 'موظف تشغيلي 11', '01020000020', 'employee.011@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-021', 'موظف تشغيلي 12', '01020000021', 'employee.012@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-022', 'موظف تشغيلي 03', '01020000022', 'employee.003@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-023', 'موظف تشغيلي 09', '01020000023', 'tarek.ibrahim@ahla.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01');
+  ('EMP-001', 'المدير التنفيذي', 'PHONE_PLACEHOLDER_021', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', null, '2020-01-01'),
+  ('EMP-002', 'السكرتير التنفيذي', 'PHONE_PLACEHOLDER_022', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
+  ('EMP-003', 'مدير مباشر رابع', 'PHONE_PLACEHOLDER_023', 'ahmed.mahgoob@ahla.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-004', 'مدير مباشر أول', 'PHONE_PLACEHOLDER_024', 'direct.manager.01@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-005', 'مدير مباشر ثانٍ', 'PHONE_PLACEHOLDER_025', 'direct.manager.02@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-006', 'مدير مباشر ثالث', 'PHONE_PLACEHOLDER_026', 'direct.manager.03@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-007', 'موظف تشغيلي 01', 'PHONE_PLACEHOLDER_027', 'direct.manager.05@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-008', 'موظف تشغيلي 18', 'PHONE_PLACEHOLDER_028', 'direct.manager.06@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-009', 'موظف تشغيلي 14', 'PHONE_PLACEHOLDER_029', 'direct.manager.07@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-010', 'موظف تشغيلي 07', 'PHONE_PLACEHOLDER_030', 'employee.006@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-011', 'موظف تشغيلي 08', 'PHONE_PLACEHOLDER_031', 'employee.007@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-012', 'موظف تشغيلي 04', 'PHONE_PLACEHOLDER_032', 'direct.manager.08@organization.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
+  ('EMP-013', 'موظف تشغيلي 05', 'PHONE_PLACEHOLDER_033', 'employee.005@organization.local', 'موظف تحت إشراف مباشر', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
+  ('EMP-014', 'موظف تشغيلي 13', 'PHONE_PLACEHOLDER_034', 'abdullah.hussein@ahla.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-015', 'موظف تشغيلي 06', 'PHONE_PLACEHOLDER_035', 'employee.006@organization.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-016', 'موظف تشغيلي 16', 'PHONE_PLACEHOLDER_036', 'employee.016@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-017', 'موظف تشغيلي 10', 'PHONE_PLACEHOLDER_037', 'employee.010@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-018', 'موظف تشغيلي 15', 'PHONE_PLACEHOLDER_038', 'employee.015@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-019', 'موظف تشغيلي 17', 'PHONE_PLACEHOLDER_039', 'employee.017@organization.local', 'موظف فريق المدير المباشر الأول', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
+  ('EMP-020', 'موظف تشغيلي 11', 'PHONE_PLACEHOLDER_040', 'employee.011@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-021', 'موظف تشغيلي 12', 'PHONE_PLACEHOLDER_041', 'employee.012@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-022', 'موظف تشغيلي 03', 'PHONE_PLACEHOLDER_042', 'employee.003@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-023', 'موظف تشغيلي 09', 'PHONE_PLACEHOLDER_043', 'tarek.ibrahim@ahla.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01');
 
 -- Upsert the canonical roster.
 insert into public.employees (
@@ -4288,7 +4288,7 @@ where avatar_url like '%/shared/images/employees/%';
 
 
 -- =========================================================
--- BEGIN PATCH: 030_executive_role_separation_ui_polish.sql
+-- BEGIN PATCH: 030a_executive_role_separation_ui_polish.sql
 -- =========================================================
 
 -- =========================================================
@@ -4358,11 +4358,11 @@ exception when others then
 end $$;
 
 
--- END PATCH: 030_executive_role_separation_ui_polish.sql
+-- END PATCH: 030a_executive_role_separation_ui_polish.sql
 
 
 -- =========================================================
--- BEGIN PATCH: 031_web_guard_mobile_polish.sql
+-- BEGIN PATCH: 031b_web_guard_mobile_polish.sql
 -- =========================================================
 
 -- =========================================================
@@ -4372,7 +4372,7 @@ end $$;
 --   - Remove any legacy direct '*' permissions from executive profiles if an older
 --     schema stored profile-level permissions in addition to role permissions.
 --   - Add an audit marker for the front-end scoped gateway/mobile dialog polish.
--- Run after: 030_executive_role_separation_ui_polish.sql
+-- Run after: 030a_executive_role_separation_ui_polish.sql
 -- =========================================================
 
 -- Re-assert role permissions in case an older seed or manual edit reintroduced '*'.
@@ -4461,11 +4461,11 @@ exception when others then
 end $$;
 
 
--- END PATCH: 031_web_guard_mobile_polish.sql
+-- END PATCH: 031b_web_guard_mobile_polish.sql
 
 
 -- =========================================================
--- BEGIN PATCH: 032_pre_publish_role_portal_consistency.sql
+-- BEGIN PATCH: 032b_pre_publish_role_portal_consistency.sql
 -- =========================================================
 
 -- =========================================================
@@ -4475,7 +4475,7 @@ end $$;
 --     that ran older seeds or were manually edited.
 --   - Ensure all executive portal scopes exist in permissions catalog.
 --   - Remove accidental profile-level '*' permissions from executive profiles.
--- Run after: 031_web_guard_mobile_polish.sql
+-- Run after: 031b_web_guard_mobile_polish.sql
 -- =========================================================
 
 insert into public.permissions (scope, name) values
@@ -4578,15 +4578,15 @@ exception when others then
 end $$;
 
 
--- END PATCH: 032_pre_publish_role_portal_consistency.sql
+-- END PATCH: 032b_pre_publish_role_portal_consistency.sql
 
 
 -- =========================================================
--- BEGIN PATCH: 033_final_web_production_hardening.sql
+-- BEGIN PATCH: 033a_final_web_production_hardening.sql
 -- =========================================================
 
 -- =========================================================
--- 033_final_web_production_hardening.sql
+-- 033a_final_web_production_hardening.sql
 -- Final web production hardening before APK/PWA packaging.
 -- Goals:
 -- 1) Keep executive roles separate from full admin.
@@ -4656,15 +4656,15 @@ create index if not exists idx_profiles_role_status on public.profiles(role_id, 
 
 
 
--- END PATCH: 033_final_web_production_hardening.sql
+-- END PATCH: 033a_final_web_production_hardening.sql
 
 
 -- =========================================================
--- BEGIN PATCH: 034_final_lockdown_cleanup.sql
+-- BEGIN PATCH: 034a_final_lockdown_cleanup.sql
 -- =========================================================
 
 -- =========================================================
--- 034_final_lockdown_cleanup.sql
+-- 034a_final_lockdown_cleanup.sql
 -- Final lockdown cleanup for web production handoff.
 -- Goals:
 -- 1) Keep Demo/Training permission out of every non-admin role.
@@ -4736,7 +4736,7 @@ begin
 end $$;
 
 
--- END PATCH: 034_final_lockdown_cleanup.sql
+-- END PATCH: 034a_final_lockdown_cleanup.sql
 
 
 -- =========================================================
@@ -4944,7 +4944,7 @@ begin
 
   if hr_role_id is not null and not exists (select 1 from public.employees where email = 'hr.manager@organization.local') then
     insert into public.employees (full_name, employee_code, phone, email, job_title, role_id, branch_id, department_id, governorate_id, complex_id, manager_employee_id, status, hire_date)
-    values ('مدير الموارد البشرية', 'EMP-HR', '01020000030', 'hr.manager@organization.local', 'مدير الموارد البشرية', hr_role_id, branch_id, dept_id, gov_id, complex_id, secretary_employee_id, 'ACTIVE', current_date);
+    values ('مدير الموارد البشرية', 'EMP-HR', 'PHONE_PLACEHOLDER_044', 'hr.manager@organization.local', 'مدير الموارد البشرية', hr_role_id, branch_id, dept_id, gov_id, complex_id, secretary_employee_id, 'ACTIVE', current_date);
   end if;
 end $$;
 
@@ -5726,34 +5726,34 @@ create table if not exists public.authorized_employee_roster (
 
 with roster(employee_code, full_name, phone, email, photo_url, job_title, role_slug, department_code, manager_employee_code) as (
   values
-    ('AHS-001', 'الشيخ محمد يوسف', '010040455849', 'emp.010040455849@ahla.local', 'employee-avatars/emp-executive-director.png', 'المدير لتنفيذي للجمعية', 'executive', 'EXEC', ''),
-    ('AHS-002', 'يحيي جمال السبع', '01154869616', 'emp.01154869616@ahla.local', 'employee-avatars/emp-executive-secretary.png', 'السكرتير التنفيذي + تكنولوجيا المعلومات (IT) والبرمجة', 'executive-secretary', 'EXEC', 'AHS-001'),
-    ('AHS-003', 'محمد ابو عمار', '01226905602', 'emp.01226905602@ahla.local', 'employee-avatars/emp-direct-manager-01.png', 'مدير تشغيل 1', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-004', 'محمد عبدالعظيم محمد', '01092701744', 'emp.01092701744@ahla.local', 'employee-avatars/emp-xlsx-004.png', 'مسؤول اللجنة الطبية', 'direct-manager', 'MGT', 'AHS-003'),
-    ('AHS-005', 'بلال محمد الشاكر', '01028403239', 'emp.01028403239@ahla.local', 'employee-avatars/emp-hr-manager.png', 'مسؤول الموارد البشرية + الاعلام', 'hr-manager', 'HR', 'AHS-001'),
-    ('AHS-006', 'ياسر فتحي نور الدين', '01145809595', 'emp.01145809595@ahla.local', 'employee-avatars/emp-direct-manager-06.png', 'مدير تشغيل 2', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-007', 'مصطفي فايد', '01009052140', 'emp.01009052140@ahla.local', 'employee-avatars/emp-xlsx-007.png', 'مدير الحسابات', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-008', 'حامد محمود العمدة', '01008214530', 'emp.01008214530@ahla.local', 'employee-avatars/emp-direct-manager-02.png', 'مسؤول لجنة أسرة كريمة', 'direct-manager', 'MGT', 'AHS-003'),
-    ('AHS-009', 'مصطفي احمد', '01099505229', 'emp.01099505229@ahla.local', 'employee-avatars/emp-direct-manager-03.png', 'ادارة اللوجيستك', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-010', 'محمد سيد', '01015398047', 'emp.01015398047@ahla.local', 'employee-avatars/emp-xlsx-010.png', 'موظف مشتريات', 'employee', 'OPS', 'AHS-009'),
-    ('AHS-011', 'حاتم محمد سالم', '01096842589', 'emp.01096842589@ahla.local', 'employee-avatars/emp-xlsx-011.png', 'سائق العربية عزيزة', 'employee', 'OPS', 'AHS-009'),
-    ('AHS-012', 'ربيع محمد ابو زيد', '0114321080', 'emp.0114321080@ahla.local', '', 'سائق العربية مسك', 'employee', 'OPS', 'AHS-009'),
-    ('AHS-013', 'طارق سيد إبراهيم', '01008083891', 'emp.01008083891@ahla.local', 'employee-avatars/emp-xlsx-013.png', 'مدير الحركة سائق + مطبخ المتععفين 2', 'direct-manager', 'MGT', 'AHS-009'),
-    ('AHS-014', 'عمار محمد عبدالباسط', '01115714930', 'emp.01115714930@ahla.local', '', 'جرافيك ديزاينر', 'employee', 'OPS', 'AHS-005'),
-    ('AHS-015', 'احمد محمد محجوب', '01033447012', 'emp.01033447012@ahla.local', 'employee-avatars/emp-direct-manager-04.png', 'مدير الشؤون الادارية', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-016', 'عبدالله حسين حافظ', '01110867632', 'emp.01110867632@ahla.local', 'employee-avatars/emp-xlsx-016.png', 'شؤون ادارية', 'direct-manager', 'MGT', 'AHS-015'),
-    ('AHS-017', 'عبد القادر جمال', '01024962522', 'emp.01024962522@ahla.local', 'employee-avatars/emp-xlsx-017.png', 'شؤون إدارية', 'direct-manager', 'MGT', 'AHS-015'),
-    ('AHS-018', 'هاني احمد نصير', '01012141949', 'emp.01012141949@ahla.local', 'employee-avatars/emp-xlsx-018.png', 'مسؤول المشروعات و طلاب العلم', 'direct-manager', 'MGT', 'AHS-003'),
-    ('AHS-019', 'يوسف رسمي شعبان', '01000719835', 'emp.01000719835@ahla.local', '', 'المشرف الفني لمجمع منيل شيحة', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-020', 'اسماعيل عبدالله', '01093976980', 'emp.01093976980@ahla.local', 'employee-avatars/emp-xlsx-020.png', 'موظف بالمجمع', 'employee', 'OPS', 'AHS-019'),
-    ('AHS-021', 'عبدالرحمن حسين مرعي', '01116164951', 'emp.01116164951@ahla.local', 'employee-avatars/emp-xlsx-021.png', 'موظف لجنة أسرة كريمة', 'employee', 'OPS', 'AHS-008'),
-    ('AHS-022', 'محمد عبده مزار', '01004466039', 'emp.01004466039@ahla.local', '', 'طباخ بمجمع أحلى شباب', 'employee', 'OPS', 'AHS-019'),
-    ('AHS-023', 'حسام عفيفي جمعة', '010023827201', 'emp.010023827201@ahla.local', '', 'موظف بالمجمع', 'employee', 'OPS', 'AHS-019'),
-    ('AHS-024', 'محمد الاندونيسي', '01111144881', 'emp.01111144881@ahla.local', 'employee-avatars/emp-xlsx-024.png', 'مسؤول الدعايا', 'direct-manager', 'MGT', 'AHS-006'),
-    ('AHS-025', 'ياسين طارق الباسل', '01127260359', 'emp.01127260359@ahla.local', '', 'مسؤول الدعايا', 'direct-manager', 'MGT', 'AHS-006'),
-    ('AHS-026', 'عبد العزيز طارق الباسل', '01000867705', 'emp.01000867705@ahla.local', 'employee-avatars/emp-xlsx-026.png', 'مسؤول سفير + مطيخ المتعففين 3', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-027', 'محمد عبد المنعم', '01009919558', 'emp.01009919558@ahla.local', '', 'مسؤول الاستكشاف', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-028', 'عبداالله نصر', '01016664229', 'emp.01016664229@ahla.local', '', 'أدارة المتطوعين', 'direct-manager', 'MGT', 'AHS-006')
+    ('AHS-001', 'الشيخ محمد يوسف', 'PHONE_PLACEHOLDER_010', 'emp.demo010@ahla.local', 'employee-avatars/emp-executive-director.png', 'المدير لتنفيذي للجمعية', 'executive', 'EXEC', ''),
+    ('AHS-002', 'يحيي جمال السبع', 'PHONE_PLACEHOLDER_083', 'emp.demo083@ahla.local', 'employee-avatars/emp-executive-secretary.png', 'السكرتير التنفيذي + تكنولوجيا المعلومات (IT) والبرمجة', 'executive-secretary', 'EXEC', 'AHS-001'),
+    ('AHS-003', 'محمد ابو عمار', 'PHONE_PLACEHOLDER_084', 'emp.demo084@ahla.local', 'employee-avatars/emp-direct-manager-01.png', 'مدير تشغيل 1', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-004', 'محمد عبدالعظيم محمد', 'PHONE_PLACEHOLDER_072', 'emp.demo072@ahla.local', 'employee-avatars/emp-xlsx-004.png', 'مسؤول اللجنة الطبية', 'direct-manager', 'MGT', 'AHS-003'),
+    ('AHS-005', 'بلال محمد الشاكر', 'PHONE_PLACEHOLDER_046', 'emp.demo046@ahla.local', 'employee-avatars/emp-hr-manager.png', 'مسؤول الموارد البشرية + الاعلام', 'hr-manager', 'HR', 'AHS-001'),
+    ('AHS-006', 'ياسر فتحي نور الدين', 'PHONE_PLACEHOLDER_082', 'emp.demo082@ahla.local', 'employee-avatars/emp-direct-manager-06.png', 'مدير تشغيل 2', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-007', 'مصطفي فايد', 'PHONE_PLACEHOLDER_014', 'emp.demo014@ahla.local', 'employee-avatars/emp-xlsx-007.png', 'مدير الحسابات', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-008', 'حامد محمود العمدة', 'PHONE_PLACEHOLDER_013', 'emp.demo013@ahla.local', 'employee-avatars/emp-direct-manager-02.png', 'مسؤول لجنة أسرة كريمة', 'direct-manager', 'MGT', 'AHS-003'),
+    ('AHS-009', 'مصطفي احمد', 'PHONE_PLACEHOLDER_075', 'emp.demo075@ahla.local', 'employee-avatars/emp-direct-manager-03.png', 'ادارة اللوجيستك', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-010', 'محمد سيد', 'PHONE_PLACEHOLDER_019', 'emp.demo019@ahla.local', 'employee-avatars/emp-xlsx-010.png', 'موظف مشتريات', 'employee', 'OPS', 'AHS-009'),
+    ('AHS-011', 'حاتم محمد سالم', 'PHONE_PLACEHOLDER_074', 'emp.demo074@ahla.local', 'employee-avatars/emp-xlsx-011.png', 'سائق العربية عزيزة', 'employee', 'OPS', 'AHS-009'),
+    ('AHS-012', 'ربيع محمد ابو زيد', 'PHONE_PLACEHOLDER_081', 'emp.demo081@ahla.local', '', 'سائق العربية مسك', 'employee', 'OPS', 'AHS-009'),
+    ('AHS-013', 'طارق سيد إبراهيم', 'PHONE_PLACEHOLDER_012', 'emp.demo012@ahla.local', 'employee-avatars/emp-xlsx-013.png', 'مدير الحركة سائق + مطبخ المتععفين 2', 'direct-manager', 'MGT', 'AHS-009'),
+    ('AHS-014', 'عمار محمد عبدالباسط', 'PHONE_PLACEHOLDER_078', 'emp.demo078@ahla.local', '', 'جرافيك ديزاينر', 'employee', 'OPS', 'AHS-005'),
+    ('AHS-015', 'احمد محمد محجوب', 'PHONE_PLACEHOLDER_047', 'emp.demo047@ahla.local', 'employee-avatars/emp-direct-manager-04.png', 'مدير الشؤون الادارية', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-016', 'عبدالله حسين حافظ', 'PHONE_PLACEHOLDER_076', 'emp.demo076@ahla.local', 'employee-avatars/emp-xlsx-016.png', 'شؤون ادارية', 'direct-manager', 'MGT', 'AHS-015'),
+    ('AHS-017', 'عبد القادر جمال', 'PHONE_PLACEHOLDER_045', 'emp.demo045@ahla.local', 'employee-avatars/emp-xlsx-017.png', 'شؤون إدارية', 'direct-manager', 'MGT', 'AHS-015'),
+    ('AHS-018', 'هاني احمد نصير', 'PHONE_PLACEHOLDER_018', 'emp.demo018@ahla.local', 'employee-avatars/emp-xlsx-018.png', 'مسؤول المشروعات و طلاب العلم', 'direct-manager', 'MGT', 'AHS-003'),
+    ('AHS-019', 'يوسف رسمي شعبان', 'PHONE_PLACEHOLDER_007', 'emp.demo007@ahla.local', '', 'المشرف الفني لمجمع منيل شيحة', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-020', 'اسماعيل عبدالله', 'PHONE_PLACEHOLDER_073', 'emp.demo073@ahla.local', 'employee-avatars/emp-xlsx-020.png', 'موظف بالمجمع', 'employee', 'OPS', 'AHS-019'),
+    ('AHS-021', 'عبدالرحمن حسين مرعي', 'PHONE_PLACEHOLDER_079', 'emp.demo079@ahla.local', 'employee-avatars/emp-xlsx-021.png', 'موظف لجنة أسرة كريمة', 'employee', 'OPS', 'AHS-008'),
+    ('AHS-022', 'محمد عبده مزار', 'PHONE_PLACEHOLDER_011', 'emp.demo011@ahla.local', '', 'طباخ بمجمع أحلى شباب', 'employee', 'OPS', 'AHS-019'),
+    ('AHS-023', 'حسام عفيفي جمعة', 'PHONE_PLACEHOLDER_009', 'emp.demo009@ahla.local', '', 'موظف بالمجمع', 'employee', 'OPS', 'AHS-019'),
+    ('AHS-024', 'محمد الاندونيسي', 'PHONE_PLACEHOLDER_077', 'emp.demo077@ahla.local', 'employee-avatars/emp-xlsx-024.png', 'مسؤول الدعايا', 'direct-manager', 'MGT', 'AHS-006'),
+    ('AHS-025', 'ياسين طارق الباسل', 'PHONE_PLACEHOLDER_080', 'emp.demo080@ahla.local', '', 'مسؤول الدعايا', 'direct-manager', 'MGT', 'AHS-006'),
+    ('AHS-026', 'عبد العزيز طارق الباسل', 'PHONE_PLACEHOLDER_008', 'emp.demo008@ahla.local', 'employee-avatars/emp-xlsx-026.png', 'مسؤول سفير + مطيخ المتعففين 3', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-027', 'محمد عبد المنعم', 'PHONE_PLACEHOLDER_015', 'emp.demo015@ahla.local', '', 'مسؤول الاستكشاف', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-028', 'عبداالله نصر', 'PHONE_PLACEHOLDER_020', 'emp.demo020@ahla.local', '', 'أدارة المتطوعين', 'direct-manager', 'MGT', 'AHS-006')
 )
 insert into public.authorized_employee_roster (
   employee_code, full_name, phone, email, photo_url, job_title, role_slug, department_code, manager_employee_code
@@ -6229,3 +6229,8 @@ commit;
 
 -- END PATCH: 043_executive_presence_risk_decisions_reports.sql
 
+
+
+-- Post-043 required security patches are provided separately:
+--   patches/044_encrypt_credential_vault.sql
+--   patches/045_enable_pg_cron_backup.sql

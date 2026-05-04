@@ -436,10 +436,54 @@ async function upsertDaily(employeeId, event) {
   fail(error, 'تعذر تحديث يومية الحضور.');
 }
 
+function riskLevelFromScore(score = 0) {
+  const value = Math.min(100, Math.max(0, Number(score || 0)));
+  if (value >= 70) return "HIGH";
+  if (value >= 35) return "MEDIUM";
+  return "LOW";
+}
+
+async function serverSharedDeviceFlags(client, employeeId, deviceFingerprintHash) {
+  if (!deviceFingerprintHash || !employeeId) return [];
+  const since = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  const { data, error } = await client
+    .from("attendance_events")
+    .select("employee_id,event_at")
+    .eq("device_fingerprint_hash", deviceFingerprintHash)
+    .gte("event_at", since)
+    .neq("employee_id", employeeId)
+    .limit(5);
+  if (error) {
+    console.warn("تعذر فحص استخدام نفس الجهاز على الخادم", error);
+    return [];
+  }
+  return (data || []).length ? ["SERVER_SHARED_DEVICE_RECENT"] : [];
+}
+
+async function withServerIdentityRisk(client, employeeId, body = {}) {
+  const serverFlags = await serverSharedDeviceFlags(client, employeeId, body.deviceFingerprintHash);
+  if (!serverFlags.length) return body;
+  const mergedFlags = Array.from(new Set([...(body.riskFlags || []), ...serverFlags]));
+  const riskScore = Math.min(100, Math.max(Number(body.riskScore || 0), 70));
+  return {
+    ...body,
+    riskFlags: mergedFlags,
+    riskScore,
+    riskLevel: riskLevelFromScore(riskScore),
+    requiresReview: true,
+    identityCheck: {
+      ...(body.identityCheck || {}),
+      serverSharedDeviceCheck: "MATCHED_OTHER_EMPLOYEE_WITHIN_30_MINUTES",
+      serverRiskFlags: serverFlags,
+    },
+  };
+}
+
 async function recordPunch(type, body = {}, forceEmployeeId = "") {
   const client = await sb();
   const user = await currentUser();
   const employee = forceEmployeeId ? await employeeById(forceEmployeeId) : await myEmployee();
+  body = await withServerIdentityRisk(client, employee.id, body);
   const address = await attendanceAddress(employee);
   const evaluation = evaluateGeo(address, body);
   const requiresReview = !evaluation.canRecord;
@@ -454,7 +498,7 @@ async function recordPunch(type, body = {}, forceEmployeeId = "") {
     lateMinutes = Number(calculatedLate || 0);
   }
   const status = type === "CHECK_IN" ? (lateMinutes > 0 ? "LATE" : "PRESENT") : "CHECK_OUT"; // للتقارير فقط، لا يمنع التسجيل
-  const payload = {
+  const basePayload = {
     employee_id: employee.id,
     user_id: user?.id || null,
     type,
@@ -470,13 +514,70 @@ async function recordPunch(type, body = {}, forceEmployeeId = "") {
     biometric_method: body.biometricMethod || "session_gps",
     passkey_credential_id: body.passkeyCredentialId || null,
     passkey_verified_at: body.passkeyCredentialId ? eventAt : null,
-    selfie_url: selfieUrl,
+    selfie_url: body.selfieUrl || selfieUrl,
     notes: body.notes || "",
     late_minutes: lateMinutes,
-    requires_review: requiresReview,
+    requires_review: Boolean(requiresReview || body.requiresReview),
   };
-  const { data, error } = await client.from("attendance_events").insert(payload).select("*").single();
+  const identityPayload = compact({
+    trusted_device_id: body.trustedDeviceId || null,
+    device_fingerprint_hash: body.deviceFingerprintHash || null,
+    browser_install_id: body.browserInstallId || null,
+    branch_qr_status: body.branchQrStatus || null,
+    branch_qr_challenge_id: body.branchQrChallengeId || null,
+    anti_spoofing_flags: body.antiSpoofingFlags || null,
+    identity_check: body.identityCheck || null,
+    risk_score: body.riskScore ?? null,
+    risk_level: body.riskLevel || null,
+    risk_flags: body.riskFlags || null,
+  });
+  const extendedPayload = { ...basePayload, ...identityPayload };
+  let insert = await client.from("attendance_events").insert(extendedPayload).select("*").single();
+  if (insert.error && ["42703", "PGRST204"].includes(insert.error.code)) {
+    insert = await client.from("attendance_events").insert(basePayload).select("*").single();
+  }
+  const { data, error } = insert;
   fail(error, "تعذر حفظ البصمة.");
+  if (data?.id && (body.identityCheck || body.riskFlags || body.riskScore != null)) {
+    await ignoreSupabaseError(client.from("attendance_identity_checks").insert({
+      attendance_event_id: data.id,
+      employee_id: employee.id,
+      user_id: user?.id || null,
+      trusted_device_id: body.trustedDeviceId || null,
+      device_fingerprint_hash: body.deviceFingerprintHash || null,
+      passkey_credential_id: body.passkeyCredentialId || null,
+      selfie_url: body.selfieUrl || selfieUrl || "",
+      risk_score: body.riskScore ?? 0,
+      risk_level: body.riskLevel || "LOW",
+      risk_flags: body.riskFlags || [],
+      browser_install_id: body.browserInstallId || null,
+      branch_qr_status: body.branchQrStatus || "NOT_PROVIDED",
+      branch_qr_challenge_id: body.branchQrChallengeId || null,
+      anti_spoofing_flags: body.antiSpoofingFlags || [],
+      location_trust: body.identityCheck?.locationTrust || {},
+      liveness_status: body.identityCheck?.livenessStatus || "SELFIE_ONLY",
+      identity_check: body.identityCheck || {},
+      requires_review: Boolean(requiresReview || body.requiresReview),
+    }));
+    for (const flag of body.riskFlags || []) {
+      await ignoreSupabaseError(client.from("attendance_risk_events").insert({
+        attendance_event_id: data.id,
+        employee_id: employee.id,
+        risk_flag: flag,
+        risk_score: body.riskScore ?? 0,
+        details: body.identityCheck || {},
+      }));
+    }
+    if (Number(body.riskScore || 0) >= 70 || (body.requiresReview && (body.riskFlags || []).length)) {
+      await ignoreSupabaseError(client.rpc("create_attendance_risk_escalation", {
+        p_employee_id: employee.id,
+        p_attendance_event_id: data.id,
+        p_risk_score: body.riskScore ?? 0,
+        p_risk_flags: body.riskFlags || [],
+      }));
+    }
+  }
+  const payload = basePayload;
   await upsertDaily(employee.id, payload);
   await client.from("employee_locations").insert({ employee_id: employee.id, latitude: body.latitude, longitude: body.longitude, accuracy_meters: body.accuracyMeters ?? body.accuracy ?? null, source: "attendance", attendance_event_id: data.id, created_at: now() });
   await audit("attendance.punch", "attendance_event", data.id, data);
@@ -601,7 +702,7 @@ async function resolveLoginEmail(identifier) {
   const { data, error } = await client.functions.invoke("resolve-login-identifier", { body: { identifier: phone } });
   if (error) {
     console.warn("resolve-login-identifier function failed", error);
-    throw new Error("تسجيل الدخول برقم الهاتف يحتاج نشر Edge Function resolve-login-identifier وتطبيق Patch رقم 015، أو استخدم البريد الإلكتروني مؤقتًا.");
+    throw new Error("خدمة الدخول برقم الهاتف تواجه مشكلة أو تم تجاوز الحد المسموح. يرجى المحاولة باستخدام البريد الإلكتروني.");
   }
   const email = String(data?.email || "").trim();
   if (!email) throw new Error("لا يوجد حساب دخول مرتبط بهذا الرقم. تواصل مع الإدارة لربط الرقم بالموظف.");
@@ -1228,7 +1329,8 @@ export const supabaseEndpoints = {
     await supabaseEndpoints.createAnnouncement?.({ audience: "managers", title: "مأمورية جديدة تحتاج اعتماد", body: body.title || "مأمورية" }).catch(() => null);
     return row;
   },
-  updateMission: async (id, action) => createOrUpdate("missions", { status: action === "reject" ? "REJECTED" : action === "complete" ? "COMPLETED" : "APPROVED" }, id),
+  updateMission: async (id, action, extra = {}) => createOrUpdate("missions", { ...extra, status: action === "reject" ? "REJECTED" : action === "manager_approve" ? "PENDING_HR_REVIEW" : action === "complete" ? "COMPLETED" : "APPROVED", workflow_status: action === "manager_approve" ? "pending_hr_review" : action }, id),
+  submitMissionRequest: async (body = {}) => supabaseEndpoints.createMission(body),
   leaves: async () => {
     const rows = await tableRows("leave_requests", "created_at", false);
     const employees = await supabaseEndpoints.employees();
@@ -1242,7 +1344,8 @@ export const supabaseEndpoints = {
     if (String(body.endDate) < String(body.startDate)) throw new Error("تاريخ نهاية الإجازة يجب أن يكون بعد تاريخ البداية.");
     return createOrUpdate("leave_requests", leavePayload(body, employeeId));
   },
-  updateLeave: async (id, action) => createOrUpdate("leave_requests", { status: action === "reject" ? "REJECTED" : "APPROVED" }, id),
+  updateLeave: async (id, action, extra = {}) => createOrUpdate("leave_requests", { ...extra, status: action === "reject" ? "REJECTED" : action === "manager_approve" ? "PENDING_HR_REVIEW" : "APPROVED", workflow_status: action === "manager_approve" ? "pending_hr_review" : action }, id),
+  submitLeaveRequest: async (body = {}) => supabaseEndpoints.createLeave(body),
   exceptions: async () => tableRows("attendance_exceptions", "created_at", false).then(toCamel),
   updateException: async (id, action) => createOrUpdate("attendance_exceptions", { status: action === "reject" ? "REJECTED" : "APPROVED" }, id),
   notifications: async () => tableRows("notifications", "created_at", false).then(toCamel),
@@ -1350,6 +1453,7 @@ export const supabaseEndpoints = {
     return row;
   },
   updateDispute: async (id, body = {}) => createOrUpdate("dispute_cases", disputePayload(body), id),
+  submitDisputeCase: async (body = {}) => supabaseEndpoints.createDispute(body),
   locations: async () => {
     const [requests, locations, employees] = await Promise.all([
       tableRows("location_requests", "created_at", false).then(toCamel),
@@ -1526,6 +1630,16 @@ export const supabaseEndpoints = {
     fail(error, "تعذر حفظ اشتراك Web Push. تأكد من تطبيق Patch 040.");
     return toCamel(data);
   },
+  uploadPunchSelfie: async (body = {}) => {
+    const employee = body.employeeId ? await employeeById(body.employeeId).catch(() => null) : await myEmployee().catch(() => null);
+    const bucket = CONFIG().storage?.punchSelfiesBucket || "punch-selfies";
+    const folder = `attendance/${employee?.id || body.employeeId || "unknown"}`;
+    const file = body.file || null;
+    if (!file) return { url: "" };
+    const result = await uploadFile(bucket, folder, file, { privateFile: false });
+    if (typeof result === "string") return { url: result };
+    return { url: result.url || "", bucket: result.bucket, path: result.path };
+  },
   passkeyStatus: async () => tableRows("passkey_credentials", "created_at", false).then(toCamel),
   registerPasskey: async (body = {}) => {
     const client = await sb();
@@ -1601,15 +1715,29 @@ export const supabaseEndpoints = {
   },
   rejectedPunches: async () => {
     const client = await sb();
-    const { data, error } = await client.from("attendance_events").select("*, employee:employees(*)").or("status.eq.REJECTED,requires_review.eq.true").order("event_at", { ascending: false }).limit(500);
+    let query = await client.from("attendance_events").select("*, employee:employees(*), identity_checks:attendance_identity_checks(*)").or("status.eq.REJECTED,requires_review.eq.true").order("event_at", { ascending: false }).limit(500);
+    if (query.error && ["PGRST200", "PGRST201", "42P01"].includes(query.error.code)) {
+      query = await client.from("attendance_events").select("*, employee:employees(*)").or("status.eq.REJECTED,requires_review.eq.true").order("event_at", { ascending: false }).limit(500);
+    }
+    const { data, error } = query;
     fail(error, "تعذر قراءة البصمات المرفوضة.");
     return (data || []).map((row) => {
-      const { employee, ...event } = row;
-      return { ...mapEvent(event), employee: employee ? enrichEmployee(employee) : null };
+      const { employee, identity_checks: identityChecks = [], ...event } = row;
+      const identityCheck = Array.isArray(identityChecks) ? identityChecks[0] : null;
+      return { ...mapEvent(event), identityCheckId: identityCheck?.id || "", identityCheck: toCamel(identityCheck || {}), employee: employee ? enrichEmployee(employee) : null };
     }).filter((event) => event.status !== "REJECTED_CONFIRMED" && event.verificationStatus !== "manual_approved");
   },
-  reviewRejectedPunch: async (eventId, action = "approve") => {
+  reviewRejectedPunch: async (eventId, action = "approve", checkId = "") => {
     const client = await sb();
+    if (checkId) {
+      const { data, error } = await client.rpc("review_attendance_identity_check", {
+        p_check_id: checkId,
+        p_decision: action === "approve" ? "APPROVED" : "REJECTED",
+        p_notes: action === "approve" ? "اعتماد يدوي من لوحة HR" : "رفض يدوي من لوحة HR",
+      });
+      if (!error) return toCamel(data || {});
+      console.warn("تعذر استخدام RPC review_attendance_identity_check؛ سيتم استخدام التحديث القديم", error);
+    }
     const payload = action === "approve"
       ? { status: "MANUAL_APPROVED", verification_status: "manual_approved", requires_review: false, review_decision: "APPROVED", reviewed_at: now() }
       : { status: "REJECTED_CONFIRMED", requires_review: false, review_decision: "REJECTED", reviewed_at: now() };
@@ -2239,6 +2367,83 @@ export const supabaseEndpoints = {
   smartAdminAlerts: async () => ({ alerts: await maybeTableRows("smart_alerts", "created_at", false).then(toCamel), snapshot: await supabaseEndpoints.runSmartAttendance({ date: now().slice(0, 10) }).catch(() => null) }),
   managerSuite: async () => { const base = await supabaseEndpoints.managerDashboard(); const smart = await supabaseEndpoints.runSmartAttendance({ date: now().slice(0, 10) }).catch(() => ({ rows: [] })); const ids = new Set((base.team || []).map((employee) => employee.id)); return { ...base, smartRows: (smart.rows || []).filter((row) => ids.has(row.employeeId)), pending: base.pending || [], generatedAt: now() }; },
   autoBackupStatus: async () => ({ policy: { keepLast: 30 }, backups: await maybeTableRows("system_backups", "created_at", false).then(toCamel), runs: await maybeTableRows("auto_backup_runs", "created_at", false).then(toCamel) }),
+  trustedDeviceApprovalRequests: async () => {
+    const client = await sb();
+    const { data, error } = await client.from("trusted_device_approval_requests").select("*").order("created_at", { ascending: false }).limit(200);
+    if (error && ["42P01", "PGRST200", "PGRST204"].includes(error.code)) return [];
+    fail(error, "تعذر قراءة طلبات اعتماد الأجهزة.");
+    return toCamel(data || []);
+  },
+  requestTrustedDeviceApproval: async (body = {}) => {
+    const client = await sb();
+    const { data, error } = await client.rpc("request_trusted_device_approval", {
+      p_employee_id: body.employeeId,
+      p_device_fingerprint_hash: body.deviceFingerprintHash || "",
+      p_device_name: body.deviceName || "",
+      p_user_agent: body.userAgent || "",
+      p_selfie_url: body.selfieUrl || "",
+      p_latitude: body.latitude ?? null,
+      p_longitude: body.longitude ?? null,
+      p_accuracy_meters: body.accuracyMeters ?? body.accuracy ?? null,
+    });
+    if (error && ["42883", "42P01"].includes(error.code)) return { requestId: "LOCAL_PENDING", status: "PENDING" };
+    fail(error, "تعذر إرسال طلب اعتماد الجهاز.");
+    return { requestId: data, status: "PENDING" };
+  },
+  reviewTrustedDeviceApproval: async (body = {}) => {
+    const client = await sb();
+    const { data, error } = await client.rpc("review_trusted_device_approval", {
+      p_request_id: body.requestId || body.id,
+      p_decision: body.decision || "APPROVED",
+      p_reason: body.reason || "",
+    });
+    fail(error, "تعذر مراجعة اعتماد الجهاز.");
+    return toCamel(data || {});
+  },
+  validateBranchQrChallenge: async (body = {}) => {
+    const client = await sb();
+    const { data, error } = await client.rpc("validate_branch_qr_challenge", {
+      p_branch_id: body.branchId || null,
+      p_challenge_code: body.code || body.challengeCode || "",
+    });
+    if (error && ["42883", "42P01"].includes(error.code)) return { valid: false, reason: "PATCH_054_NOT_APPLIED" };
+    fail(error, "تعذر التحقق من QR الفرع.");
+    const row = Array.isArray(data) ? data[0] : data;
+    return toCamel(row || { valid: false, reason: "NOT_FOUND" });
+  },
+  createBranchQrChallenge: async (body = {}) => {
+    const client = await sb();
+    const { data, error } = await client.rpc("create_branch_qr_challenge", { p_branch_id: body.branchId || null });
+    fail(error, "تعذر إنشاء QR الفرع.");
+    const row = Array.isArray(data) ? data[0] : data;
+    return toCamel(row || {});
+  },
+  attendanceRiskCenter: async () => {
+    const client = await sb();
+    const { data, error } = await client.from("attendance_risk_center").select("*").limit(500);
+    if (error && ["42P01", "PGRST200", "PGRST204"].includes(error.code)) {
+      const fallback = await supabaseEndpoints.rejectedPunches().catch(() => []);
+      return { rows: fallback.map((event) => ({ employeeId: event.employeeId, employee: event.employee, score: event.riskScore || 0, level: event.riskLevel || "MEDIUM", flags: (event.riskFlags || []).map((flag) => ({ label: flag })), events: [event] })), counts: {}, rules: ["Identity Guard fallback"] };
+    }
+    fail(error, "تعذر قراءة مركز مخاطر الحضور.");
+    const rows = toCamel(data || []);
+    const counts = rows.reduce((acc, row) => { const level = row.riskLevel || "LOW"; acc[level] = (acc[level] || 0) + 1; return acc; }, {});
+    return { rows: rows.map((row) => ({ ...row, employee: { fullName: row.employeeName }, score: row.riskScore || 0, level: row.riskLevel || "LOW", flags: [...(row.riskFlags || []), ...(row.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [row] })), counts, rules: ["اعتماد الجهاز", "QR الفرع", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] };
+  },
+  acknowledgeAttendancePolicy: async (body = {}) => {
+    const client = await sb();
+    const { data, error } = await client.rpc("acknowledge_attendance_identity_policy", {
+      p_employee_id: body.employeeId,
+      p_policy_version: body.policyVersion || "attendance-identity-v3",
+      p_device_fingerprint_hash: body.deviceFingerprintHash || "",
+      p_browser_install_id: body.browserInstallId || "",
+      p_user_agent: body.userAgent || "",
+    });
+    if (error && ["42883", "42P01"].includes(error.code)) return { ok: true, localOnly: true };
+    fail(error, "تعذر حفظ إقرار سياسة الحضور.");
+    return { id: data, ok: true };
+  },
+  acknowledgeAttendanceIdentityPolicy: async (body = {}) => supabaseEndpoints.acknowledgeAttendancePolicy(body),
   runAutomaticBackup: async (body = {}) => {
     const client = await sb();
     const snapshot = await supabaseEndpoints.exportFullBackup();
@@ -2247,10 +2452,11 @@ export const supabaseEndpoints = {
     return toCamel(data);
   },
   databaseMigrationsStatus: async () => {
-    const expected = ["001_schema_rls_seed.sql", "035_final_sanitization_live_readiness.sql", "036_role_kpi_workflow_access.sql", "037_kpi_policy_window_hr_scoring.sql", "038_kpi_cycle_control_reports.sql", "039_management_hr_reports_workflow.sql", "040_runtime_alignment_fix.sql", "041_audit_v7_security_mobile_alignment.sql", "042_authorized_roster_phone_login_internal_channel.sql", "043_executive_presence_risk_decisions_reports.sql"];
+    const expected = ["001_schema_rls_seed.sql", "035_final_sanitization_live_readiness.sql", "036_role_kpi_workflow_access.sql", "037_kpi_policy_window_hr_scoring.sql", "038_kpi_cycle_control_reports.sql", "039_management_hr_reports_workflow.sql", "040_runtime_alignment_fix.sql", "041_audit_v7_security_mobile_alignment.sql", "042_authorized_roster_phone_login_internal_channel.sql", "064_attendance_fallback_workflow.sql",
+      "051_attendance_identity_verification.sql", "052_attendance_identity_server_review.sql", "053_trusted_device_approval.sql", "054_attendance_branch_qr_challenge.sql", "055_attendance_anti_spoofing_risk.sql", "056_attendance_risk_center.sql"];
     const applied = await maybeTableRows("database_migration_status", "applied_at", false).then(toCamel);
     const appliedSet = new Set(applied.map((row) => row.name));
-    return { expectedPatch: "043_executive_presence_risk_decisions_reports.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: appliedSet.has(name) ? "APPLIED" : "CHECK_MANUALLY" })), applied };
+    return { expectedPatch: "064_attendance_fallback_workflow.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: appliedSet.has(name) ? "APPLIED" : "CHECK_MANUALLY" })), applied };
   },
   markMigrationApplied: async (name) => createOrUpdate("database_migration_status", { name, status: "APPLIED", appliedAt: now(), notes: "Marked from admin UI" }).catch(async () => {
     const client = await sb();

@@ -29,10 +29,10 @@ assert(employee.includes('enableWebPushSubscription'), 'Employee app must use re
 const api = read('shared/js/api.js');
 assert(!api.includes('demo:manage'), 'Local API seed must not expose demo:manage permission.');
 assert(api.includes('035_final_sanitization_live_readiness.sql'), 'API migration list must include Patch 035.');
-assert(api.includes('expectedPatch: "043_executive_presence_risk_decisions_reports.sql"'), 'Expected patch must be 043.');
+assert(api.includes('expectedPatch: "064_attendance_fallback_workflow.sql"'), 'Expected patch must be 043.');
 
 const forbiddenNames = /(أبو عمار|بلال|ياسر|يحيى|يحيي|جمال السبع|يوسف رسمي|حامد محمود|هبة مصطفى|yahia|yehia|bilal|yasser|mostafa|hossam|ismail|ammar|hany|hatem|abdelrahman)/i;
-const officialRosterEnabled = read('package.json').includes('1.3.4-executive-presence-risk-decisions-pdf') && read('shared/js/database.js').includes('rosterSource');
+const officialRosterEnabled = read('package.json').includes('1.4.0-full-workflow-live-20260504') && read('shared/js/database.js').includes('rosterSource');
 for (const file of ['shared/js/database.js', 'shared/js/app-admin.js', 'shared/js/employee-app.js', 'docs/ORGANIZATION_HIERARCHY.md', 'README.md', 'docs/FINAL_DEPLOY_NOW.md', 'docs/PRODUCTION_CHECKLIST.md']) {
   if (officialRosterEnabled && file === 'shared/js/database.js') continue;
   assert(!forbiddenNames.test(read(file)), `${file} still contains personal/demo names.`);

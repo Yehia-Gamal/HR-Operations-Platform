@@ -1,7 +1,7 @@
 [
   {
     "fullName": "أحمد محمد عبدالعزيز",
-    "phone": "01010000001",
+    "phone": "PHONE_PLACEHOLDER_016",
     "email": "ahmed.hr@company.local",
     "photoUrl": "/uploads/avatars/example-ahmed.jpg",
     "employeeCode": "HR-001",
@@ -18,7 +18,7 @@
   },
   {
     "fullName": "سارة علي حسن",
-    "phone": "01010000002",
+    "phone": "PHONE_PLACEHOLDER_017",
     "email": "sara.ops@company.local",
     "photoUrl": "",
     "employeeCode": "OP-014",

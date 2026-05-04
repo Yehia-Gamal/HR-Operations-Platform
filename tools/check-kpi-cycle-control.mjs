@@ -8,7 +8,7 @@ const api = read('shared/js/api.js');
 const patch = read('supabase/sql/patches/038_kpi_cycle_control_reports.sql');
 assert(api.includes('kpiWindowInfo') && api.includes('assertKpiSubmitAllowed'), 'API must include KPI cycle window enforcement.');
 assert(api.includes('recomputeKpi') && api.includes('sendKpiReminders') && api.includes('closeKpiCycle'), 'API must include KPI cycle actions.');
-assert(api.includes('expectedPatch: "043_executive_presence_risk_decisions_reports.sql"'), 'Expected patch must be 043 after executive presence/risk alignment.');
+assert(api.includes('expectedPatch: "064_attendance_fallback_workflow.sql"'), 'Expected patch must be 043 after executive presence/risk alignment.');
 assert(api.includes('038_kpi_cycle_control_reports.sql'), 'Database updates list must retain Patch 038.');
 assert(patch.includes('kpi_cycle_stage_report') && patch.includes('kpi_employee_stage_report'), 'Patch 038 must create KPI stage reports.');
 console.log('KPI cycle control check passed.');
