@@ -46,13 +46,13 @@ export const seedDatabase = {
     { id: "role-employee", name: "موظف", key: "EMPLOYEE", slug: "employee", description: "يرى بياناته وبصماته وتقييمه الذاتي فقط", permissions: ["dashboard:view","attendance:self","kpi:self","disputes:create","location:self","tasks:self","documents:self","requests:self","daily-report:self","action-center:self","live-location:respond","decisions:acknowledge"] },
   ],
   governorates: [
-    { id: "gov-giza", code: "GIZ", name: "الجيزة", latitude: 29.951196809090636, longitude: 31.238367688465857, active: true },
+    { id: "gov-giza", code: "GIZ", name: "الجيزة", latitude: 29.950738592862045, longitude: 31.238094542328678, active: true },
   ],
   complexes: [
-    { id: "cx-ahla-manil", code: "CX-AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", branchId: "b-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.951196809090636, longitude: 31.238367688465857, radiusMeters: 300, maxAccuracyMeters: 500, managerEmployeeId: "emp-executive-director", active: true },
+    { id: "cx-ahla-manil", code: "CX-AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", branchId: "b-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.950738592862045, longitude: 31.238094542328678, radiusMeters: 180, maxAccuracyMeters: 90, managerEmployeeId: "emp-executive-director", active: true },
   ],
   branches: [
-    { id: "b-ahla-manil", code: "AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", complexId: "cx-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.951196809090636, longitude: 31.238367688465857, radiusMeters: 300, geofenceRadiusMeters: 300, maxAccuracyMeters: 500, managerEmployeeId: "emp-executive-director", active: true },
+    { id: "b-ahla-manil", code: "AHLA-MANIL", name: "مجمع منيل شيحة", governorateId: "gov-giza", complexId: "cx-ahla-manil", address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912", latitude: 29.950738592862045, longitude: 31.238094542328678, radiusMeters: 180, geofenceRadiusMeters: 180, maxAccuracyMeters: 90, managerEmployeeId: "emp-executive-director", active: true },
   ],
   departments: [
     {

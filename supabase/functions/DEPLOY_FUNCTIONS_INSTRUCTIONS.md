@@ -10,6 +10,7 @@ Use rotated secrets only. Do not print or commit secret values.
 - `resolve-login-identifier`
 - `passkey-register`
 - `send-push-notification`
+- `send-attendance-reminders`
 
 ## Required Secrets
 
@@ -19,6 +20,7 @@ Use rotated secrets only. Do not print or commit secret values.
 - `VAPID_PUBLIC_KEY`
 - `VAPID_PRIVATE_KEY`
 - `VAPID_SUBJECT`
+- `ATTENDANCE_REMINDER_CRON_SECRET` for scheduled 09:30 reminder runner
 - `LOGIN_RATE_LIMIT_SALT` recommended for `resolve-login-identifier`
 - `ALLOWED_ORIGINS` recommended for CORS
 - `SITE_URL` recommended for CORS
@@ -34,6 +36,7 @@ npx supabase functions deploy employee-register --project-ref "<PROJECT_REF>" --
 npx supabase functions deploy resolve-login-identifier --project-ref "<PROJECT_REF>" --use-api
 npx supabase functions deploy passkey-register --project-ref "<PROJECT_REF>" --use-api
 npx supabase functions deploy send-push-notification --project-ref "<PROJECT_REF>" --use-api
+npx supabase functions deploy send-attendance-reminders --project-ref "<PROJECT_REF>" --use-api
 ```
 
 Set secrets from Supabase Dashboard > Edge Functions > Secrets, or with CLI after placing values only in the current shell environment.
@@ -46,6 +49,7 @@ npx supabase secrets set `
   VAPID_PUBLIC_KEY="$env:VAPID_PUBLIC_KEY" `
   VAPID_PRIVATE_KEY="$env:VAPID_PRIVATE_KEY" `
   VAPID_SUBJECT="$env:VAPID_SUBJECT" `
+  ATTENDANCE_REMINDER_CRON_SECRET="$env:ATTENDANCE_REMINDER_CRON_SECRET" `
   --project-ref "<PROJECT_REF>"
 ```
 

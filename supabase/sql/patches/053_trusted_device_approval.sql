@@ -36,17 +36,20 @@ create table if not exists public.trusted_device_approval_requests (
 
 alter table public.trusted_device_approval_requests enable row level security;
 
-create policy if not exists "employee_create_own_device_request"
+drop policy if exists "employee_create_own_device_request" on public.trusted_device_approval_requests;
+create policy "employee_create_own_device_request"
   on public.trusted_device_approval_requests
   for insert
   with check (auth.uid() = user_id);
 
-create policy if not exists "employee_read_own_device_request"
+drop policy if exists "employee_read_own_device_request" on public.trusted_device_approval_requests;
+create policy "employee_read_own_device_request"
   on public.trusted_device_approval_requests
   for select
   using (auth.uid() = user_id or public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'));
 
-create policy if not exists "reviewers_manage_device_requests"
+drop policy if exists "reviewers_manage_device_requests" on public.trusted_device_approval_requests;
+create policy "reviewers_manage_device_requests"
   on public.trusted_device_approval_requests
   for update
   using (public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'))

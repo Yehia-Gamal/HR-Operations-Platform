@@ -16,7 +16,8 @@ create table if not exists public.branch_qr_challenges (
 
 alter table public.branch_qr_challenges enable row level security;
 
-create policy if not exists "reviewers_manage_branch_qr"
+drop policy if exists "reviewers_manage_branch_qr" on public.branch_qr_challenges;
+create policy "reviewers_manage_branch_qr"
   on public.branch_qr_challenges
   for all
   using (public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'))

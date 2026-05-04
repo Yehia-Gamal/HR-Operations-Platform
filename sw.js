@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const CACHE_NAME = "hr-attendance-full-workflow-live-20260504";
-=======
-const CACHE_NAME = "hr-attendance-management-suite-20260502-01";
->>>>>>> a0f4b201274ec937c2f9eb66379060c47f74f8db
+const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-private-v13";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./health.html",
@@ -13,6 +9,7 @@ const ASSETS = [
   "./shared/offline.html",
   "./shared/css/styles.css",
   "./shared/css/neon-admin-theme.css",
+  "./shared/css/v10-private-deploy-theme.css",
   "./shared/css/employee.css",
   "./shared/js/api.js",
   "./shared/js/supabase-api.js",
@@ -22,8 +19,8 @@ const ASSETS = [
   "./shared/js/attendance-identity.js",
   "./shared/js/executive-app.js",
   "./shared/js/register-sw.js",
-  "./shared/js/live-ops-v5.js",
   "./shared/js/v9-hardening.js",
+  "./shared/js/v10-private-deploy-fixes.js",
   "./shared/pwa/manifest.json",
   "./shared/pwa/manifest-employee.json",
   "./shared/pwa/manifest-executive.json",

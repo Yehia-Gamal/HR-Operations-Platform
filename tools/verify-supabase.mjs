@@ -2,7 +2,11 @@
  * Run post-deploy verification queries against Supabase.
  */
 const ACCESS_TOKEN = process.env.SUPABASE_ACCESS_TOKEN || '';
-const PROJECT_REF = 'yemradvxmwadlldnxtpz';
+const PROJECT_REF = process.env.SUPABASE_PROJECT_REF || '';
+if (!PROJECT_REF) {
+  console.error('Missing SUPABASE_PROJECT_REF.');
+  process.exit(1);
+}
 const API_URL = `https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query`;
 
 async function runQuery(label, sql) {

@@ -14,7 +14,12 @@ select
 from public.attendance_events e
 left join public.attendance_identity_checks c on c.attendance_event_id = e.id
 left join public.employees emp on emp.id = e.employee_id
-left join lateral unnest(coalesce(e.risk_flags, '{}'::text[]) || coalesce(c.risk_flags, '{}'::text[])) flag on true
+left join lateral unnest(
+  coalesce(
+    (select array_agg(value) from jsonb_array_elements_text(coalesce(e.risk_flags, '[]'::jsonb)) as value),
+    '{}'::text[]
+  ) || coalesce(c.risk_flags, '{}'::text[])
+) flag on true
 where coalesce(e.device_fingerprint_hash, c.device_fingerprint_hash, '') <> ''
   and e.event_at >= now() - interval '30 days'
 group by 1

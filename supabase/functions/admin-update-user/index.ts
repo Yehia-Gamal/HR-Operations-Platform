@@ -53,8 +53,9 @@ Deno.serve(async (req) => {
   if (email) authPatch.email = email;
   if (body.password) {
     const newPassword = String(body.password);
-    if (!strongEnough(newPassword)) {
-      return json(req, { error: 'PASSWORD_WEAK', message: 'كلمة المرور ضعيفة. يجب أن تكون 10 أحرف على الأقل وتحتوي حرفاً كبيراً وصغيراً ورقماً ورمزاً.' }, 400);
+    const phonePassword = Boolean(phone && newPassword === phone);
+    if (!strongEnough(newPassword) && !phonePassword) {
+      return json(req, { error: 'PASSWORD_WEAK', message: 'كلمة المرور ضعيفة. يجب أن تكون قوية أو مطابقة لرقم هاتف الموظف ككلمة مرور مؤقتة.' }, 400);
     }
     authPatch.password = newPassword;
   }
@@ -82,6 +83,8 @@ Deno.serve(async (req) => {
     governorate_id: body.governorateId || undefined,
     complex_id: body.complexId || undefined,
     status: body.status || undefined,
+    temporary_password: body.password ? true : undefined,
+    must_change_password: body.password ? true : undefined,
   };
 
   const { data: profile, error: updateError } = await adminClient

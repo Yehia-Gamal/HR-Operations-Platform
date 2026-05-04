@@ -16,12 +16,14 @@ create table if not exists public.attendance_policy_acknowledgements (
 
 alter table public.attendance_policy_acknowledgements enable row level security;
 
-create policy if not exists "employee_ack_own_policy"
+drop policy if exists "employee_ack_own_policy" on public.attendance_policy_acknowledgements;
+create policy "employee_ack_own_policy"
   on public.attendance_policy_acknowledgements
   for insert
   with check (auth.uid() = user_id);
 
-create policy if not exists "employee_read_own_policy"
+drop policy if exists "employee_read_own_policy" on public.attendance_policy_acknowledgements;
+create policy "employee_read_own_policy"
   on public.attendance_policy_acknowledgements
   for select
   using (auth.uid() = user_id or public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'));
@@ -37,7 +39,11 @@ select
   e.requires_review,
   coalesce(e.risk_score, c.risk_score, 0) as risk_score,
   coalesce(e.risk_level, c.risk_level, 'LOW') as risk_level,
-  coalesce(e.risk_flags, c.risk_flags, '{}'::text[]) as risk_flags,
+  coalesce(
+    (select array_agg(value) from jsonb_array_elements_text(coalesce(e.risk_flags, '[]'::jsonb)) as value),
+    c.risk_flags,
+    '{}'::text[]
+  ) as risk_flags,
   coalesce(e.anti_spoofing_flags, c.anti_spoofing_flags, '{}'::text[]) as anti_spoofing_flags,
   coalesce(e.selfie_url, c.selfie_url, '') as selfie_url,
   coalesce(e.device_fingerprint_hash, c.device_fingerprint_hash, '') as device_fingerprint_hash,
@@ -67,7 +73,7 @@ select
   array_remove(array_agg(distinct flag), null) as risk_flags
 from public.attendance_events e
 left join public.employees emp on emp.id = e.employee_id
-left join lateral unnest(coalesce(e.risk_flags, '{}'::text[])) flag on true
+left join lateral jsonb_array_elements_text(coalesce(e.risk_flags, '[]'::jsonb)) flag on true
 group by 1,2,3
 order by month desc, high_risk_count desc, max_risk_score desc;
 

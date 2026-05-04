@@ -4,7 +4,7 @@ This document lists the environment variables and secrets that **must** be confi
 
 ### Edge Function secrets (Supabase Dashboard → Edge Functions → Secrets)
 
-- `SUPABASE_URL` – e.g. `https://yemradvxmwadlldnxtpz.supabase.co`
+- `SUPABASE_URL` – e.g. `https://your-project-ref.supabase.co`
 - `SUPABASE_ANON_KEY` – the publishable (anon) key for your project
 - `SUPABASE_SERVICE_ROLE_KEY` – the service role key (never expose to the client)
 - `VAPID_PUBLIC_KEY` – your public push notification key

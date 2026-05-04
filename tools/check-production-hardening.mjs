@@ -11,11 +11,14 @@ assert(existsSync(join(root, 'supabase/sql/patches/034a_final_lockdown_cleanup.s
 assert(existsSync(join(root, 'supabase/sql/patches/035_final_sanitization_live_readiness.sql')), 'Patch 035 must exist.');
 assert(!existsSync(join(root, 'shared/images/employees')), 'Bundled personal employee images must not be shipped.');
 
-const config = read('shared/js/supabase-config.js');
-assert(config.includes('allowLocalFallback: false'), 'Production config must disable local fallback.');
-assert(config.includes('full-workflow-live-20260504'), 'Production cache/config version must be updated.');
-assert(!config.includes('sb_publishable_'), 'Production config template must not contain a real Supabase publishable key.');
-assert(!config.includes('yemradvxmwadlldnxtpz'), 'Production config template must not contain the exposed Supabase project ref.');
+const configTemplate = read('shared/js/supabase-config.production.example.js');
+assert(configTemplate.includes('allowLocalFallback: false'), 'Production config template must disable local fallback.');
+assert(configTemplate.includes('full-workflow-live-20260504'), 'Production cache/config version must be updated.');
+assert(!configTemplate.includes('sb_publishable_'), 'Production config template must not contain a real Supabase publishable key.');
+const exposedProjectRef = process.env.SUPABASE_PROJECT_REF || '';
+if (exposedProjectRef) {
+  assert(!configTemplate.includes(exposedProjectRef), 'Production config template must not contain the exposed Supabase project ref.');
+}
 const gitignore = read('.gitignore');
 assert(gitignore.includes('shared/js/supabase-config.js'), 'Runtime Supabase config must be ignored.');
 assert(gitignore.includes('server.*.log'), 'Server logs must be ignored.');

@@ -8,10 +8,10 @@ const clone = (value) => JSON.parse(JSON.stringify(value ?? null));
 const DEFAULT_COMPLEX = {
   name: "مجمع منيل شيحة",
   address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912",
-  latitude: 29.951196809090636,
-  longitude: 31.238367688465857,
-  radiusMeters: 300,
-  maxAccuracyMeters: 500,
+  latitude: 29.950738592862045,
+  longitude: 31.238094542328678,
+  radiusMeters: 180,
+  maxAccuracyMeters: 90,
 };
 const KPI_POLICY_DEFAULTS = {
   evaluationStartDay: 20,
@@ -631,7 +631,8 @@ function evaluateAttendance(db, body, eventType) {
   } else {
     distanceFromBranchMeters = distanceMeters(currentLocation, branchLocation);
     const weakAccuracy = accuracyMeters != null && accuracyMeters > maxAccuracyMeters;
-    const effectiveRadius = radiusMeters + (weakAccuracy ? Math.min(accuracyMeters, maxAccuracyMeters) : 0);
+    const safetyBufferMeters = Number(globalThis.HR_SUPABASE_CONFIG?.attendance?.gpsSafetyBufferMeters || globalThis.HR_SUPABASE_CONFIG?.attendance?.branchLocation?.safetyBufferMeters || 90);
+    const effectiveRadius = radiusMeters + safetyBufferMeters + (accuracyMeters ? Math.min(Math.max(accuracyMeters, 0), Math.max(maxAccuracyMeters, 300)) : 0);
     if (distanceFromBranchMeters != null && distanceFromBranchMeters <= radiusMeters) {
       geofenceStatus = weakAccuracy ? "inside_branch_low_accuracy" : "inside_branch";
       if (weakAccuracy) riskFlags.push("location_low_accuracy_accepted");
@@ -769,8 +770,8 @@ function createUserRecord(db, body = {}) {
     governorateId: body.governorateId || employee?.governorateId || "",
     complexId: body.complexId || employee?.complexId || "",
     status: body.status || "ACTIVE",
-    temporaryPassword: false,
-    mustChangePassword: false,
+    temporaryPassword: true,
+    mustChangePassword: true,
     passkeyEnabled: body.passkeyEnabled === "on" || body.passkeyEnabled === true,
     failedLogins: 0,
     lastLoginAt: "",
@@ -1075,6 +1076,11 @@ const remoteEndpoints = {
   evaluateGeofence: (body) => apiRequest("/geofence/evaluate", { method: "POST", body }),
   checkIn: (body) => apiRequest("/attendance/check-in", { method: "POST", body }),
   checkOut: (body) => apiRequest("/attendance/check-out", { method: "POST", body }),
+  recordAttendance: (body = {}) => {
+    const action = String(body.eventType || body.type || body.action || "").toLowerCase();
+    const out = ["out", "checkout", "check_out", "انصراف"].includes(action);
+    return apiRequest("/employee/attendance", { method: "POST", body: { ...(body || {}), action: out ? "check_out" : "check_in" } });
+  },
   selfCheckIn: (body) => apiRequest("/employee/attendance", { method: "POST", body: { ...(body || {}), action: "check_in" } }),
   selfCheckOut: (body) => apiRequest("/employee/attendance", { method: "POST", body: { ...(body || {}), action: "check_out" } }),
   regenerateAttendance: (body) => apiRequest("/attendance/regenerate", { method: "POST", body }),
@@ -3048,6 +3054,11 @@ const localEndpoints = {
     if (!user?.employeeId) throw new Error("لا يوجد موظف مرتبط بحسابك.");
     return localEndpoints.checkOut({ ...body, employeeId: user.employeeId, verificationStatus: body.verificationStatus || "verified" });
   },
+  recordAttendance: async (body = {}) => {
+    const action = String(body.eventType || body.type || body.action || "").toLowerCase();
+    const out = ["out", "checkout", "check_out", "انصراف"].includes(action);
+    return out ? localEndpoints.selfCheckOut(body) : localEndpoints.selfCheckIn(body);
+  },
   adjustAttendance: async (body) => {
     const db = loadDb();
     const item = { id: makeId("exc"), employeeId: body.employeeId, title: body.title || "طلب تعديل حضور", reason: body.reason || body.notes || "", status: "PENDING", createdAt: now(), workflow: [] };
@@ -3628,7 +3639,7 @@ const localEndpoints = {
     });
     audit(db, "import", "employees", "bulk", null, { count: created });
     saveDb(db);
-    return ok({ created });
+    return ok({ created, pushed: 0 });
   },
   realtimeSnapshot: async () => {
     const db = loadDb();
@@ -3711,28 +3722,14 @@ const localEndpoints = {
     saveDb(db);
     return ok(item);
   },
-  validateBranchQrChallenge: async (body = {}) => {
-    const db = loadDb();
-    db.branchQrChallenges ||= [];
-    const code = String(body.code || body.challengeCode || "").trim().toUpperCase();
-    const match = db.branchQrChallenges.find((row) => String(row.challengeCode || "").toUpperCase() === code && (!row.validUntil || new Date(row.validUntil).getTime() > Date.now()));
-    return ok(match ? { valid: true, reason: "VALID", challengeId: match.id } : { valid: false, reason: code ? "INVALID_OR_EXPIRED" : "MISSING" });
-  },
-  createBranchQrChallenge: async (body = {}) => {
-    const db = loadDb();
-    db.branchQrChallenges ||= [];
-    const code = Math.random().toString(36).slice(2, 10).toUpperCase();
-    const item = { id: makeId("qr"), branchId: body.branchId || db.branches?.[0]?.id || "", challengeCode: code, validUntil: new Date(Date.now() + 90000).toISOString(), createdAt: now() };
-    db.branchQrChallenges.unshift(item);
-    saveDb(db);
-    return ok(item);
-  },
+  validateBranchQrChallenge: async (body = {}) => ({ valid: true, status: "DISABLED", challengeId: "", disabled: true }),
+  createBranchQrChallenge: async (body = {}) => ({ disabled: true, status: "DISABLED", message: "QR متوقف في هذه النسخة ولا يتم إنشاء أكواد فرع." }),
   attendanceRiskCenter: async () => {
     const db = loadDb();
     const events = (db.attendanceEvents || []).filter((event) => event.requiresReview || Number(event.riskScore || 0) >= 35 || (event.antiSpoofingFlags || []).length);
     const rows = events.map((event) => { const enriched = enrichByEmployee(db, event); return { ...enriched, employee: enriched.employee, employeeId: enriched.employeeId, score: enriched.riskScore || 0, level: enriched.riskLevel || "MEDIUM", flags: [...(enriched.riskFlags || []), ...(enriched.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [enriched] }; });
     const counts = rows.reduce((acc, row) => { acc[row.level] = (acc[row.level] || 0) + 1; return acc; }, {});
-    return ok({ rows, counts, rules: ["اعتماد الجهاز", "QR الفرع", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] });
+    return ok({ rows, counts, rules: ["اعتماد الجهاز", "QR متوقف", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] });
   },
   acknowledgeAttendancePolicy: async (body = {}) => {
     const db = loadDb();
@@ -3973,7 +3970,7 @@ const localEndpoints = {
     });
     audit(db, "notify.missing_punch", "attendance", "bulk", null, { created });
     saveDb(db);
-    return ok({ created });
+    return ok({ created, pushed: 0 });
   },
   rejectedPunches: async () => {
     const db = loadDb();

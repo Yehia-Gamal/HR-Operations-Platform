@@ -30,7 +30,8 @@ create table if not exists public.attendance_risk_escalations (
 
 alter table public.attendance_risk_escalations enable row level security;
 
-create policy if not exists "reviewers_read_risk_escalations"
+drop policy if exists "reviewers_read_risk_escalations" on public.attendance_risk_escalations;
+create policy "reviewers_read_risk_escalations"
   on public.attendance_risk_escalations
   for select
   using (public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'));

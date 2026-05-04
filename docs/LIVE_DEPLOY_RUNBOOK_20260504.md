@@ -84,12 +84,12 @@ punch-selfies
 انشر الوظائف المطلوبة:
 
 ```bash
-supabase functions deploy admin-create-user --project-ref yemradvxmwadlldnxtpz
-supabase functions deploy admin-update-user --project-ref yemradvxmwadlldnxtpz
-supabase functions deploy resolve-login-identifier --project-ref yemradvxmwadlldnxtpz
-supabase functions deploy passkey-register --project-ref yemradvxmwadlldnxtpz
-supabase functions deploy send-push-notification --project-ref yemradvxmwadlldnxtpz
-supabase functions deploy employee-register --project-ref yemradvxmwadlldnxtpz
+supabase functions deploy admin-create-user --project-ref <project-ref>
+supabase functions deploy admin-update-user --project-ref <project-ref>
+supabase functions deploy resolve-login-identifier --project-ref <project-ref>
+supabase functions deploy passkey-register --project-ref <project-ref>
+supabase functions deploy send-push-notification --project-ref <project-ref>
+supabase functions deploy employee-register --project-ref <project-ref>
 ```
 
 ## 5) بعد الرفع مباشرة

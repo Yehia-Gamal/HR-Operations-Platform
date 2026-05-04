@@ -8,10 +8,10 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const DEFAULT_COMPLEX = {
   name: "مجمع منيل شيحة",
   address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912",
-  latitude: 29.951196809090636,
-  longitude: 31.238367688465857,
-  radiusMeters: 300,
-  maxAccuracyMeters: 500,
+  latitude: 29.950738592862045,
+  longitude: 31.238094542328678,
+  radiusMeters: 180,
+  maxAccuracyMeters: 90,
 };
 
 let clientPromise = null;
@@ -332,6 +332,33 @@ async function uploadDataUrl(bucket, folder, dataUrl, fileName = "selfie.jpg") {
   return data.publicUrl;
 }
 
+
+async function compressImageFile(file, { maxSide = 900, quality = 0.82 } = {}) {
+  if (typeof document === "undefined" || !file || !String(file.type || "").startsWith("image/")) return file;
+  const dataUrl = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("تعذر قراءة الصورة."));
+    reader.readAsDataURL(file);
+  });
+  const image = await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("ملف الصورة غير صالح."));
+    img.src = dataUrl;
+  });
+  const scale = Math.min(1, maxSide / Math.max(image.width || maxSide, image.height || maxSide));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round((image.width || maxSide) * scale));
+  canvas.height = Math.max(1, Math.round((image.height || maxSide) * scale));
+  const ctx = canvas.getContext("2d", { alpha: false });
+  ctx.fillStyle = "#07101f";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+  if (!blob) return file;
+  return new File([blob], String(file.name || "avatar.jpg").replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg", lastModified: Date.now() });
+}
 async function uploadFile(bucket, folder, file, { privateFile = false } = {}) {
   if (!file) return privateFile ? { url: "", bucket, path: "" } : "";
   const client = await sb();
@@ -413,7 +440,8 @@ function evaluateGeo(address, body = {}) {
   } else {
     distanceFromBranchMeters = distanceMeters(current, { latitude: address.latitude, longitude: address.longitude });
     const weakAccuracy = accuracyMeters != null && accuracyMeters > address.maxAccuracyMeters;
-    const effectiveRadius = Number(address.radiusMeters || 300) + (weakAccuracy ? Math.min(accuracyMeters, Number(address.maxAccuracyMeters || 500)) : 0);
+    const safetyBufferMeters = Number(CONFIG?.().attendance?.gpsSafetyBufferMeters || CONFIG?.().attendance?.branchLocation?.safetyBufferMeters || 90);
+    const effectiveRadius = Number(address.radiusMeters || 300) + safetyBufferMeters + (accuracyMeters ? Math.min(Math.max(accuracyMeters, 0), Math.max(Number(address.maxAccuracyMeters || 500), 300)) : 0);
     allowed = distanceFromBranchMeters != null && (distanceFromBranchMeters <= address.radiusMeters || (weakAccuracy && distanceFromBranchMeters <= effectiveRadius));
     geofenceStatus = allowed ? (weakAccuracy ? "inside_branch_low_accuracy" : "inside_branch") : (weakAccuracy ? "location_low_accuracy" : "outside_branch");
     message = allowed
@@ -1000,7 +1028,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const user = await currentUser();
     if (!user?.email) throw new Error("لا توجد جلسة نشطة.");
-    if (!body.newPassword || String(body.newPassword).length < 10 || !/[A-Z]/.test(body.newPassword) || !/[a-z]/.test(body.newPassword) || !/\d/.test(body.newPassword) || !/[^A-Za-z0-9]/.test(body.newPassword)) throw new Error("كلمة المرور الجديدة يجب أن تكون 10 أحرف على الأقل وتحتوي على حرف كبير وصغير ورقم ورمز.");
+    if (!body.newPassword || String(body.newPassword).length < 8) throw new Error("كلمة المرور الجديدة يجب ألا تقل عن 8 أحرف.");
     if (body.confirmPassword && body.newPassword !== body.confirmPassword) throw new Error("تأكيد كلمة المرور غير مطابق.");
     const recoveryMode = body.recoveryMode === true || body.recoveryMode === "true";
     if (!recoveryMode) {
@@ -1313,6 +1341,11 @@ export const supabaseEndpoints = {
   checkOut: (body = {}) => recordPunch("CHECK_OUT", body, body.employeeId),
   selfCheckIn: (body = {}) => recordPunch("CHECK_IN", body),
   selfCheckOut: (body = {}) => recordPunch("CHECK_OUT", body),
+  recordAttendance: (body = {}) => {
+    const action = String(body.eventType || body.type || body.action || "").toLowerCase();
+    const out = ["out", "checkout", "check_out", "انصراف"].includes(action);
+    return recordPunch(out ? "CHECK_OUT" : "CHECK_IN", body, body.employeeId);
+  },
   regenerateAttendance: async () => ({ generated: 0, message: "في Supabase يتم تحديث اليومية عند كل بصمة، ويمكن إضافة Cron لاحقًا." }),
   manualAttendance: async (body = {}) => recordManualPunch(body.type || "CHECK_IN", body, body.employeeId),
   adjustAttendance: async (body = {}) => createOrUpdate("attendance_exceptions", body),
@@ -1586,8 +1619,9 @@ export const supabaseEndpoints = {
   },
   uploadAvatar: async (file) => {
     if (!file || !String(file.type || "").startsWith("image/")) throw new Error("اختر ملف صورة صالح.");
-    if (Number(file.size || 0) > 2 * 1024 * 1024) throw new Error("حجم الصورة أكبر من 2MB.");
-    return uploadFile(CONFIG().storage?.avatarsBucket || "avatars", "avatars", file);
+    const uploadable = await compressImageFile(file, { maxSide: 900, quality: 0.82 }).catch(() => file);
+    if (Number(uploadable.size || file.size || 0) > 2 * 1024 * 1024) throw new Error("حجم الصورة أكبر من 2MB حتى بعد الضغط.");
+    return uploadFile(CONFIG().storage?.avatarsBucket || "avatars", "avatars", uploadable);
   },
   attachments: async (scope, entityId) => {
     const rows = toCamel(await tableRows("attachments", "created_at", false));
@@ -1691,14 +1725,23 @@ export const supabaseEndpoints = {
   },
   generateAttendanceAlerts: async () => {
     const client = await sb();
-    const [employees, events] = await Promise.all([
+    try {
+      const { data, error } = await client.functions.invoke("send-attendance-reminders", { body: { source: "admin_manual", sendPush: true } });
+      if (!error && data) return data;
+      if (error) console.warn("send-attendance-reminders failed; using local notification fallback", error.message || error);
+    } catch (error) {
+      console.warn("send-attendance-reminders unavailable; using local notification fallback", error);
+    }
+    const [employees, events, existing] = await Promise.all([
       supabaseEndpoints.employees().catch(() => []),
       supabaseEndpoints.attendanceEvents({ from: now().slice(0, 10), to: now().slice(0, 10), limit: 5000 }).catch(() => []),
+      client.from("notifications").select("employee_id,created_at,type").eq("type", "MISSING_PUNCH").gte("created_at", `${now().slice(0, 10)}T00:00:00`).catch(() => ({ data: [] })),
     ]);
     const seen = new Set((events || []).map((event) => event.employeeId).filter(Boolean));
+    const already = new Set((existing?.data || []).map((item) => item.employee_id).filter(Boolean));
     let created = 0;
     for (const employee of employees || []) {
-      if (seen.has(employee.id)) continue;
+      if (seen.has(employee.id) || already.has(employee.id)) continue;
       const { error } = await client.from("notifications").insert({
         user_id: employee.userId || null,
         employee_id: employee.id,
@@ -1707,11 +1750,12 @@ export const supabaseEndpoints = {
         type: "MISSING_PUNCH",
         status: "UNREAD",
         is_read: false,
+        route: "punch",
       });
       if (!error) created += 1;
     }
-    await audit("notify.missing_punch", "attendance", "bulk", { created }).catch(() => null);
-    return { created };
+    await audit("notify.missing_punch", "attendance", "bulk", { created, pushed: 0, fallback: true }).catch(() => null);
+    return { created, pushed: 0, fallback: true };
   },
   rejectedPunches: async () => {
     const client = await sb();
@@ -2347,7 +2391,7 @@ export const supabaseEndpoints = {
     await client.functions.invoke("send-push-notification", { body: { title: "تذكير تقييم KPI", body: "يرجى استكمال تقييم الأداء الشهري قبل الإغلاق.", tag: "kpi-reminder", targetEmployeeIds: pending.map((row) => row.employeeId) } }).then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); }).catch(() => null);
     return { sent: pending.length, pushed };
   },
-  smartAttendanceRules: async () => ({ rules: { absentAfterHour: 12, missingCheckoutAfterHour: 20, duplicateWindowMinutes: 10, maxAccuracyMeters: 500 }, runs: await maybeTableRows("attendance_rule_runs", "created_at", false).then(toCamel), settings: await supabaseEndpoints.settings().catch(() => ({})) }),
+  smartAttendanceRules: async () => ({ rules: { absentAfterHour: 12, missingCheckoutAfterHour: 20, duplicateWindowMinutes: 10, maxAccuracyMeters: 90 }, runs: await maybeTableRows("attendance_rule_runs", "created_at", false).then(toCamel), settings: await supabaseEndpoints.settings().catch(() => ({})) }),
   saveSmartAttendanceRules: async (body = {}) => {
     const client = await sb();
     const value = { absentAfterHour: Number(body.absentAfterHour || 12), missingCheckoutAfterHour: Number(body.missingCheckoutAfterHour || 20), duplicateWindowMinutes: Number(body.duplicateWindowMinutes || 10), maxAccuracyMeters: Number(body.maxAccuracyMeters || 500) };
@@ -2400,24 +2444,8 @@ export const supabaseEndpoints = {
     fail(error, "تعذر مراجعة اعتماد الجهاز.");
     return toCamel(data || {});
   },
-  validateBranchQrChallenge: async (body = {}) => {
-    const client = await sb();
-    const { data, error } = await client.rpc("validate_branch_qr_challenge", {
-      p_branch_id: body.branchId || null,
-      p_challenge_code: body.code || body.challengeCode || "",
-    });
-    if (error && ["42883", "42P01"].includes(error.code)) return { valid: false, reason: "PATCH_054_NOT_APPLIED" };
-    fail(error, "تعذر التحقق من QR الفرع.");
-    const row = Array.isArray(data) ? data[0] : data;
-    return toCamel(row || { valid: false, reason: "NOT_FOUND" });
-  },
-  createBranchQrChallenge: async (body = {}) => {
-    const client = await sb();
-    const { data, error } = await client.rpc("create_branch_qr_challenge", { p_branch_id: body.branchId || null });
-    fail(error, "تعذر إنشاء QR الفرع.");
-    const row = Array.isArray(data) ? data[0] : data;
-    return toCamel(row || {});
-  },
+  validateBranchQrChallenge: async (body = {}) => ({ valid: true, status: "DISABLED", challengeId: "", disabled: true, rpc: "validate_branch_qr_challenge" }),
+  createBranchQrChallenge: async (body = {}) => ({ disabled: true, status: "DISABLED", message: "QR متوقف في هذه النسخة ولا يتم إنشاء أكواد فرع." }),
   attendanceRiskCenter: async () => {
     const client = await sb();
     const { data, error } = await client.from("attendance_risk_center").select("*").limit(500);
@@ -2428,7 +2456,7 @@ export const supabaseEndpoints = {
     fail(error, "تعذر قراءة مركز مخاطر الحضور.");
     const rows = toCamel(data || []);
     const counts = rows.reduce((acc, row) => { const level = row.riskLevel || "LOW"; acc[level] = (acc[level] || 0) + 1; return acc; }, {});
-    return { rows: rows.map((row) => ({ ...row, employee: { fullName: row.employeeName }, score: row.riskScore || 0, level: row.riskLevel || "LOW", flags: [...(row.riskFlags || []), ...(row.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [row] })), counts, rules: ["اعتماد الجهاز", "QR الفرع", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] };
+    return { rows: rows.map((row) => ({ ...row, employee: { fullName: row.employeeName }, score: row.riskScore || 0, level: row.riskLevel || "LOW", flags: [...(row.riskFlags || []), ...(row.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [row] })), counts, rules: ["اعتماد الجهاز", "QR متوقف", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] };
   },
   acknowledgeAttendancePolicy: async (body = {}) => {
     const client = await sb();

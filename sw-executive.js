@@ -1,9 +1,5 @@
 // Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
-<<<<<<< HEAD
-const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-executive";
-=======
-const CACHE_NAME = "hr-attendance-executive-v8-security-20260503";
->>>>>>> a0f4b201274ec937c2f9eb66379060c47f74f8db
+const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-executive-private-v13";
 const DEFAULT_OPEN_URL = "./executive/index.html";
 const ASSETS = [
   "./health.html",
@@ -15,13 +11,14 @@ const ASSETS = [
   "./index.html",
   "./shared/css/styles.css",
   "./shared/css/neon-admin-theme.css",
+  "./shared/css/v10-private-deploy-theme.css",
   "./shared/js/api.js",
   "./shared/js/supabase-api.js",
   "./shared/js/supabase-config.js",
   "./shared/js/push.js",
   "./shared/js/register-sw.js",
-  "./shared/js/live-ops-v5.js",
   "./shared/js/v9-hardening.js",
+  "./shared/js/v10-private-deploy-fixes.js",
   "./shared/pwa/manifest.json",
   "./shared/images/ahla-shabab-logo.png",
   "./shared/images/favicon-64.png",

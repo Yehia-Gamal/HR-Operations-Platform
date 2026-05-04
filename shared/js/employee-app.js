@@ -410,6 +410,22 @@ function readForm(form) {
   return Object.fromEntries(new FormData(form).entries());
 }
 
+function normalizeEgyptPhone(value = "") {
+  let text = String(value || "").trim();
+  const ar = "٠١٢٣٤٥٦٧٨٩";
+  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  text = text.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)));
+  let digits = text.replace(/\D/g, "");
+  if (digits.startsWith("0020")) digits = digits.slice(2);
+  if (digits.startsWith("20") && digits.length >= 12) digits = `0${digits.slice(2)}`;
+  if (digits.length === 10 && digits.startsWith("1")) digits = `0${digits}`;
+  return digits;
+}
+
+function validEgyptPhone(value = "") {
+  return /^01[0125][0-9]{8}$/.test(normalizeEgyptPhone(value));
+}
+
 function fileToAvatarDataUrl(file) {
   if (!file || !String(file.type || "").startsWith("image/")) return Promise.resolve("");
   return new Promise((resolve, reject) => {
@@ -553,6 +569,71 @@ const BRANCH_DISPLAY_AREA = "منيل شيحة - الجيزة";
 const ATTENDANCE_REMINDER_HOUR = 9;
 const ATTENDANCE_REMINDER_MINUTE = 30;
 
+function attendanceConfig() {
+  return (window.HR_SUPABASE_CONFIG && window.HR_SUPABASE_CONFIG.attendance) || {};
+}
+function branchConfig() {
+  return attendanceConfig().branchLocation || {};
+}
+function branchName() { return branchConfig().name || BRANCH_DISPLAY_NAME; }
+function branchArea() { return branchConfig().area || BRANCH_DISPLAY_AREA; }
+function isQrDisabled() { return attendanceConfig().qrRequired === false || window.HR_QR_REQUIRED === false; }
+function gpsPolicy() {
+  const cfg = attendanceConfig();
+  return {
+    samples: Number(cfg.gpsSamples || 12),
+    windowMs: Number(cfg.gpsSampleWindowMs || 30000),
+    targetAccuracy: Number(cfg.gpsTargetAccuracyMeters || 25),
+    maxAcceptableAccuracy: Number(cfg.gpsMaxAcceptableAccuracyMeters || 180),
+    safetyBuffer: Number(cfg.gpsSafetyBufferMeters || 90),
+    uncertainReviewOnly: cfg.gpsUncertainReviewOnly !== false,
+  };
+}
+
+function distanceMetersBetween(a = {}, b = {}) {
+  if (![a.latitude, a.longitude, b.latitude, b.longitude].every((value) => Number.isFinite(Number(value)))) return null;
+  const toRad = (value) => (Number(value) * Math.PI) / 180;
+  const radius = 6371000;
+  const dLat = toRad(Number(b.latitude) - Number(a.latitude));
+  const dLng = toRad(Number(b.longitude) - Number(a.longitude));
+  const lat1 = toRad(Number(a.latitude));
+  const lat2 = toRad(Number(b.latitude));
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLng / 2) ** 2;
+  return Math.round(2 * radius * Math.asin(Math.sqrt(h)));
+}
+
+function configuredBranchTarget() {
+  const cfg = branchConfig();
+  const latitude = Number(cfg.latitude);
+  const longitude = Number(cfg.longitude);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+  return {
+    latitude,
+    longitude,
+    radiusMeters: Number(cfg.radiusMeters || 300),
+    safetyBufferMeters: Number(cfg.safetyBufferMeters || gpsPolicy().safetyBuffer),
+    maxAccuracyMeters: Number(cfg.maxAccuracyMeters || gpsPolicy().maxAcceptableAccuracy),
+  };
+}
+
+function localGeofenceEvaluation(location = {}) {
+  const target = configuredBranchTarget();
+  if (!target || !Number.isFinite(Number(location.latitude)) || !Number.isFinite(Number(location.longitude))) return {};
+  const distance = distanceMetersBetween(location, target);
+  const accuracy = Number(location.accuracyMeters ?? location.accuracy ?? 0);
+  const effectiveRadius = Number(target.radiusMeters || 300) + Number(target.safetyBufferMeters || 0) + Math.min(Math.max(accuracy || 0, 0), Math.max(Number(target.maxAccuracyMeters || 180), 300));
+  const insideHard = distance != null && distance <= Number(target.radiusMeters || 300);
+  const insideSoft = distance != null && distance <= effectiveRadius;
+  return {
+    distanceFromBranchMeters: distance,
+    localDistanceFromBranchMeters: distance,
+    localRadiusMeters: target.radiusMeters,
+    localEffectiveRadiusMeters: effectiveRadius,
+    localInsideBranch: insideHard,
+    localInsideSoft: insideSoft,
+  };
+}
+
 function renderRequestList(requests = []) {
   if (!requests || !requests.length) return `<div class="empty-state">لا توجد طلبات مسجلة.</div>`;
   return `<div class="employee-list">${requests.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title || item.leaveType?.name || item.leaveType || item.type || "طلب")}</strong><span>${escapeHtml(date(item.createdAt || item.startDate || item.plannedStart || "-"))}</span><small>${escapeHtml(item.reason || item.notes || item.destinationName || "-")}</small></div><div class="list-item-side">${badge(item.finalStatus || item.workflowStatus || item.status)}</div></div>`).join("")}</div>`;
@@ -572,15 +653,17 @@ function employeeHeaderCell(subject = employeeSubject()) {
 
 function locationLabelFromRecord(record = {}) {
   const branchish = ["inside_branch", "INSIDE_BRANCH", "inside", "IN_RANGE", "ACTIVE"].includes(String(record.status || record.locationStatus || record.geofenceStatus || ""));
-  if (branchish) return `${BRANCH_DISPLAY_NAME} — ${BRANCH_DISPLAY_AREA}`;
+  if (branchish) return `${branchName()} — ${branchArea()}`;
   return record.addressLabel || record.locationLabel || record.placeLabel || record.address || record.destinationName || "لم يتم تحديد عنوان نصي بعد";
 }
 
 function locationStatusBadge(record = {}) {
   const status = String(record.status || record.locationStatus || record.geofenceStatus || "").toLowerCase();
   const inside = status.includes("inside") || status.includes("in_range") || status === "active" || status === "approved";
-  const outside = status.includes("outside") || status.includes("out_of_range") || status.includes("branch");
+  const uncertain = status.includes("uncertain") || status.includes("low_accuracy") || status.includes("unavailable") || status.includes("unknown") || record.locationUncertain;
+  const outside = status.includes("outside") || status.includes("out_of_range") || status.includes("geofence_miss");
   if (inside) return `<span class="pill success">داخل المجمع</span>`;
+  if (uncertain) return `<span class="pill warning">الموقع غير مؤكد</span>`;
   if (outside) return `<span class="pill danger">خارج المجمع</span>`;
   return `<span class="pill warning">بحاجة للتحقق</span>`;
 }
@@ -647,6 +730,7 @@ function shell(content, title = "تطبيق الموظف", subtitle = "") {
         <section class="employee-page-head">
           <div><h1>${escapeHtml(title)}</h1><p>${escapeHtml(subtitle || routeSubtitles[current] || "")}</p></div>
         </section>
+        ${(user.mustChangePassword || user.temporaryPassword) && current !== "profile" ? `<section class="employee-card full must-change-card"><strong>كلمة المرور مؤقتة</strong><span>من فضلك غيّر كلمة المرور من صفحة حسابي لتأمين حسابك.</span><button class="button primary small" type="button" data-route="profile">تغيير الآن</button></section>` : ""}
         ${content}
       </main>
       <nav class="employee-bottom-nav" aria-label="تنقل تطبيق الموظف">
@@ -738,22 +822,21 @@ async function renderLogin() {
   const passwordValue = state.loginPassword || "";
   app.innerHTML = `
     <div class="employee-login-screen">
-      <form class="employee-login-card" id="employee-login-form" novalidate>
+      <form class="employee-login-card refined-login-card" id="employee-login-form" novalidate>
         <div class="login-brand-row">
           <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
-          <div><strong>أحلى شباب</strong><span>منصة الموظفين</span></div>
+          <div><strong>أحلى شباب</strong><span>تطبيق الموظفين</span></div>
         </div>
         <h1>دخول الموظفين</h1>
-        <p>يتم إنشاء الحسابات من لوحة HR فقط. ادخل برقم هاتفك المسجل، وكلمة المرور الافتراضية هي نفس رقمك الشخصي/رقم الهاتف المسجل في قائمة الموظفين المعتمدة.</p>
-        <div class="login-features"><span class="login-feature">دخول بالهاتف</span><span class="login-feature">بصمة + GPS</span><span class="login-feature">إشعارات داخلية</span></div>
+        <div class="employee-login-intro"><span class="login-highlight">الدخول برقم الهاتف</span><span class="login-separator"></span><span class="login-highlight">كلمة المرور المؤقتة = رقم الهاتف</span></div>
+        <div class="login-features"><span class="login-feature">دخول بالهاتف</span><span class="login-feature">GPS + البصمة</span><span class="login-feature">إشعارات داخلية</span></div>
         ${state.error ? `<div class="message error">${escapeHtml(state.error)}</div>` : ""}
         ${state.message ? `<div class="message">${escapeHtml(state.message)}</div>` : ""}
-        ${state.lastLoginFailed ? `<div class="message warning compact">تحقق من رقم الهاتف وكلمة المرور. الحسابات تُدار من HR فقط.</div>` : ""}
-        <label>رقم الهاتف<input name="identifier" value="${escapeHtml(identifierValue)}" autocomplete="username" inputmode="tel" placeholder="اكتب رقم الهاتف المسجل" required /></label>
-        <label>كلمة المرور<input name="password" type="password" value="${escapeHtml(passwordValue)}" autocomplete="current-password" placeholder="نفس الرقم الشخصي/رقم الهاتف أول مرة" required /></label>
-        <button class="button primary full" type="submit">دخول للتطبيق</button>
-        <button class="button ghost full" type="button" data-forgot-password>نسيت كلمة السر؟ تواصل مع HR أو أرسل رابط إعادة التعيين</button>
-        <div class="message compact">لا يوجد تسجيل ذاتي من تطبيق الموظف. أي موظف جديد تتم إضافته من لوحة HR فقط لضمان اعتماد القائمة الرسمية.</div>
+        ${state.lastLoginFailed ? `<div class="message warning compact">تعذر تسجيل الدخول. تأكد من الرقم وكلمة المرور ثم أعد المحاولة.</div>` : ""}
+        <label>رقم الهاتف<input name="identifier" value="${escapeHtml(identifierValue)}" autocomplete="username" inputmode="tel" placeholder="01xxxxxxxxx" required /></label>
+        <label>كلمة المرور<input name="password" type="password" value="${escapeHtml(passwordValue)}" autocomplete="current-password" placeholder="أدخل كلمة المرور" /></label>
+        <button class="button primary full" type="submit">دخول التطبيق</button>
+        <button class="button ghost full compact-ghost" type="button" data-forgot-password>نسيت كلمة السر؟</button>
       </form>
     </div>
   `;
@@ -761,16 +844,16 @@ async function renderLogin() {
   form.addEventListener("input", () => {
     const values = readForm(form);
     state.loginIdentifier = values.identifier || state.loginIdentifier || "";
-    state.loginPassword = values.password || "";
+    state.loginPassword = values.password || values.identifier || "";
   });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
     try {
       state.loginIdentifier = values.identifier || "";
-      state.loginPassword = values.password || "";
+      state.loginPassword = values.password || values.identifier || "";
       if (state.loginIdentifier) localStorage.setItem("hr.login.lastIdentifier", state.loginIdentifier);
-      state.user = unwrap(await endpoints.login(values.identifier, values.password));
+      state.user = unwrap(await endpoints.login(state.loginIdentifier, state.loginPassword));
       state.loginPassword = "";
       state.lastLoginFailed = false;
       setMessage("تم تسجيل الدخول بنجاح.", "");
@@ -787,13 +870,13 @@ async function renderLogin() {
     state.loginIdentifier = values.identifier || state.loginIdentifier || "";
     state.loginPassword = values.password || state.loginPassword || "";
     if (!state.loginIdentifier) {
-      setMessage("", "اكتب رقم الهاتف أولًا ثم اضغط نسيت كلمة السر.");
+      setMessage("", "اكتب رقم الهاتف أولًا.");
       return renderLogin();
     }
     try {
       await endpoints.forgotPassword(state.loginIdentifier);
       state.lastLoginFailed = false;
-      setMessage("تم إرسال طلب إعادة تعيين كلمة المرور إلى الإدارة/البريد المرتبط.", "");
+      setMessage("تم إرسال طلب إعادة تعيين كلمة المرور.", "");
       renderLogin();
     } catch (error) {
       state.lastLoginFailed = true;
@@ -805,58 +888,90 @@ async function renderLogin() {
 
 async function getBrowserLocation() {
   if (!navigator.geolocation) return { locationPermission: "unavailable", accuracyMeters: null };
+  const policy = gpsPolicy();
   return await new Promise((resolve) => {
-    let bestPosition = null;
-    const timeout = 15000; // Increased to 15s for better lock chance
-    const targetAccuracy = 35; // meters (more realistic for city)
-    const unacceptableAccuracy = 2000; // if > 2km, it's definitely IP-based
-    
-    const watcher = navigator.geolocation.watchPosition(
+    const samples = [];
+    let watcher = null;
+    let timer = null;
+    const normalize = (position) => ({
+      locationPermission: "granted",
+      latitude: Number(position.coords.latitude),
+      longitude: Number(position.coords.longitude),
+      accuracy: Math.round(Number(position.coords.accuracy || 9999)),
+      accuracyMeters: Math.round(Number(position.coords.accuracy || 9999)),
+      altitude: position.coords.altitude,
+      speed: position.coords.speed,
+      heading: position.coords.heading,
+      timestamp: position.timestamp || Date.now(),
+      capturedAt: new Date(position.timestamp || Date.now()).toISOString(),
+    });
+    const best = () => samples.slice().sort((a, b) => (a.accuracyMeters || 9999) - (b.accuracyMeters || 9999) || (b.timestamp || 0) - (a.timestamp || 0))[0] || null;
+    const finish = (fallback = null) => {
+      try { if (watcher != null) navigator.geolocation.clearWatch(watcher); } catch {}
+      try { if (timer) window.clearTimeout(timer); } catch {}
+      const value = best() || fallback || { locationPermission: "timeout", accuracyMeters: null };
+      if (value.accuracyMeters && value.accuracyMeters > policy.maxAcceptableAccuracy) {
+        value.locationWarning = "GPS_UNRELIABLE";
+        value.locationError = "قراءة الموقع غير دقيقة كفاية للحكم داخل/خارج المجمع. أعد المحاولة في مكان مفتوح أو أرسلها للمراجعة.";
+      }
+      resolve(value);
+    };
+    watcher = navigator.geolocation.watchPosition(
       (position) => {
-        const acc = Math.round(Number(position.coords.accuracy || 9999));
-        
-        // If we get an IP-based location (very low accuracy), we keep it as last resort but flag it
-        if (!bestPosition || acc < (bestPosition.accuracy || 9999)) {
-          bestPosition = {
-            locationPermission: "granted",
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: acc,
-            accuracyMeters: acc,
-            isIpBased: acc > unacceptableAccuracy,
-            capturedAt: new Date().toISOString(),
-          };
-        }
-        
-        // If we reach a good GPS accuracy, stop and resolve immediately
-        if (acc <= targetAccuracy) {
-          navigator.geolocation.clearWatch(watcher);
-          window.clearTimeout(timer);
-          resolve(bestPosition);
-        }
+        const row = normalize(position);
+        samples.push(row);
+        if (samples.length >= policy.samples || row.accuracyMeters <= policy.targetAccuracy) finish(row);
       },
       (error) => {
-        if (!bestPosition) {
-          navigator.geolocation.clearWatch(watcher);
-          window.clearTimeout(timer);
-          resolve({ locationPermission: error.code === error.PERMISSION_DENIED ? "denied" : "unknown", accuracyMeters: null });
-        }
+        if (!samples.length) finish({ locationPermission: error.code === error.PERMISSION_DENIED ? "denied" : "unknown", accuracyMeters: null, error: error.message || "GPS error" });
       },
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
     );
-
-    const timer = window.setTimeout(() => {
-      navigator.geolocation.clearWatch(watcher);
-      if (bestPosition) {
-        if (bestPosition.accuracy > unacceptableAccuracy) {
-          bestPosition.locationError = "تم رصد موقع تقريبي جداً (عن طريق الإنترنت وليس GPS). يرجى تفعيل الموقع الدقيق Precise Location في إعدادات المتصفح والموبايل والاقتراب من نافذة.";
-        }
-        resolve(bestPosition);
-      }
-      else resolve({ locationPermission: "timeout", accuracyMeters: null });
-    }, timeout);
+    timer = window.setTimeout(() => finish(), policy.windowMs);
   });
 }
+
+
+async function getVerifiedBrowserLocation(employeeId = "") {
+  const raw = await getBrowserLocation();
+  let evaluation = {};
+  try {
+    evaluation = unwrap(await endpoints.evaluateGeofence({ ...raw, employeeId, accuracyMeters: raw.accuracyMeters || raw.accuracy }));
+  } catch (error) {
+    evaluation = {};
+  }
+  const local = localGeofenceEvaluation(raw);
+  const policy = gpsPolicy();
+  const status = String(evaluation.geofenceStatus || raw.geofenceStatus || "").toLowerCase();
+  const accuracy = Number(raw.accuracyMeters || raw.accuracy || evaluation.accuracyMeters || 0);
+  const weak = Boolean(accuracy && accuracy > policy.maxAcceptableAccuracy);
+  const serverInside = status.includes("inside") || evaluation.allowed === true || evaluation.canRecord === true;
+  const serverOutside = status.includes("outside") || status.includes("geofence_miss");
+  const localInsideHard = local.localInsideBranch === true;
+  const localInsideSoft = local.localInsideSoft === true;
+  const uncertain = weak || status.includes("low_accuracy") || status.includes("unavailable") || status.includes("unknown") || (serverOutside && localInsideSoft && policy.uncertainReviewOnly);
+  const inside = serverInside || localInsideHard || (localInsideSoft && !serverOutside && !weak);
+  const finalStatus = inside
+    ? (weak ? "inside_branch_low_accuracy" : "inside_branch")
+    : (uncertain ? "location_uncertain" : (evaluation.geofenceStatus || "outside_branch"));
+  const merged = {
+    ...raw,
+    ...evaluation,
+    ...local,
+    accuracyMeters: accuracy || evaluation.accuracyMeters || raw.accuracyMeters,
+    insideBranch: Boolean(inside),
+    locationUncertain: Boolean(uncertain && !inside),
+    geofenceStatus: finalStatus,
+    canRecord: Boolean(inside),
+    allowed: Boolean(inside),
+    requiresReview: Boolean((uncertain && !inside) || evaluation.requiresReview),
+  };
+  if (merged.insideBranch) merged.addressLabel = `${branchName()} — ${branchArea()}`;
+  else if (merged.locationUncertain) merged.addressLabel = "الموقع غير مؤكد — سيتم إرساله للمراجعة بدل الحكم الخاطئ";
+  else merged.addressLabel = merged.addressLabel || "موقع خارج المجمع";
+  return merged;
+}
+
 
 function friendlyError(error, fallback = "تعذر تنفيذ العملية.") {
   const text = String(error?.message || error || fallback);
@@ -927,7 +1042,7 @@ async function renderHome() {
         <div class="hero-meta"><span class="hero-chip">${escapeHtml(fullDateText())}</span><span class="hero-chip">الساعة ${escapeHtml(timeNowText())}</span>${todayEvents.length ? `<span class="hero-chip success">تم تسجيل ${todayEvents.length} حركة اليوم</span>` : `<span class="hero-chip warning">لم تسجل حضور اليوم</span>`}</div>
       </article>
 
-      ${reminder ? `<article class="employee-card full attendance-reminder-card"><h2>تذكير بصمة 9:30 صباحًا</h2><p>لم يتم تسجيل بصمة الحضور حتى الآن. يرجى تسجيل البصمة وإرسال الموقع عند الوصول إلى مجمع أحلى شباب.</p><button class="button primary full" data-route="punch">تسجيل بصمة الآن</button></article>` : ""}
+      ${reminder ? `<article class="employee-card full attendance-reminder-card"><h2>تذكير بصمة 10:00 صباحًا</h2><p>لم يتم تسجيل بصمة الحضور حتى الآن. يرجى تسجيل البصمة عند الوصول. سيصلك تنبيه الموبايل الساعة 9:30 صباحًا.</p><button class="button primary full" data-route="punch">تسجيل بصمة الآن</button></article>` : ""}
 
       <article class="employee-card full punch-primary-card">
         <div class="panel-kicker">البصمة اليومية</div>
@@ -938,10 +1053,11 @@ async function renderHome() {
 
       <article class="employee-card full location-status-card">
         <h2>حالة الموقع</h2>
-        ${lastEvent?.id ? readableLocationBlock(lastEvent) : `<div class="readable-location"><div><span class="pill warning">لم يتم التحقق بعد</span><strong>${BRANCH_DISPLAY_NAME}</strong><small>${BRANCH_DISPLAY_AREA}</small></div></div>`}
+        ${lastEvent?.id ? readableLocationBlock(lastEvent) : `<div class="readable-location"><div><span class="pill warning">لم يتم التحقق بعد</span><strong>${branchName()}</strong><small>${branchArea()}</small></div></div>`}
         <div class="employee-actions-row"><button class="button ghost small" data-route="punch">عرض الخريطة واختبار الموقع</button></div>
       </article>
 
+      <div class="employee-actions-row v10-permissions-row"><button class="button ghost small" data-enable-notifications type="button">تفعيل الإشعارات</button><button class="button ghost small" data-enable-location type="button">تفعيل الموقع</button></div>
       <section class="quick-actions-grid unified-actions">
         ${compactMetric("بصمات اليوم", todayEvents.length, "👁", "punch")}
         ${compactMetric("إشعارات", unread, "🔔", "notifications")}
@@ -1014,7 +1130,7 @@ async function renderPunch() {
         <div class="punch-focus">${employeeHeaderCell(employee)}<div class="punch-orb">👁</div></div>
         <div class="branch-readable-card">
           <div class="branch-circle">📍</div>
-          <div><strong>${BRANCH_DISPLAY_NAME}</strong><small>${BRANCH_DISPLAY_AREA}</small></div>
+          <div><strong>${branchName()}</strong><small>${branchArea()}</small></div>
         </div>
         <div id="gps-map-preview" class="gps-map-preview"><div class="geo-circle"><span>نطاق المجمع</span><i></i></div><small>اضغط اختبار الموقع لعرض حالتك داخل/خارج المجمع.</small></div>
         ${attendanceNoteField()}
@@ -1035,12 +1151,12 @@ async function renderPunch() {
     try {
       resultBox?.classList.remove("hidden", "danger-box");
       if (resultBox) resultBox.textContent = "جاري اختبار الموقع بدقة عالية...";
-      const current = await getBrowserLocation();
-      const normalized = { ...current, status: current.insideBranch ? "inside_branch" : "outside_branch", addressLabel: current.insideBranch ? `${BRANCH_DISPLAY_NAME} — ${BRANCH_DISPLAY_AREA}` : (current.addressLabel || "موقع خارج المجمع") };
+      const current = await getVerifiedBrowserLocation(employeeId);
+      const normalized = { ...current, status: current.geofenceStatus || (current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch")), addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || (current.locationUncertain ? "الموقع غير مؤكد" : "موقع خارج المجمع")) };
       sessionStorage.setItem("hr.employee.lastGpsTest", JSON.stringify({ ...normalized, testedAt: new Date().toISOString() }));
       const preview = app.querySelector("#gps-map-preview");
       if (preview) preview.innerHTML = `${readableLocationBlock(normalized)}<a class="button ghost small" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}">فتح الخريطة</a>`;
-      if (resultBox) resultBox.textContent = current.insideBranch ? "أنت داخل نطاق مجمع أحلى شباب." : "أنت خارج المجمع، سيتم تسجيل المكان الفعلي والملاحظة عند البصمة.";
+      if (resultBox) resultBox.textContent = current.insideBranch ? "أنت داخل نطاق مجمع أحلى شباب." : (current.locationUncertain ? "الموقع غير مؤكد؛ لن نحكم أنك خارج المجمع، وسيُرسل للمراجعة مع الدقة والمسافة." : "أنت خارج المجمع، سيتم تسجيل المكان الفعلي والملاحظة عند البصمة.");
     } catch (error) {
       resultBox?.classList.remove("hidden");
       resultBox?.classList.add("danger-box");
@@ -1060,23 +1176,23 @@ async function renderPunch() {
       try { device = await requestEmployeePasskey({ employeeId: employee.id || employeeId, username: employee.fullName || state.user?.fullName || "employee" }); }
       catch (err) { device = { ok: false, status: "PASSKEY_FAILED", error: err?.message || "Passkey failed", deviceFingerprintHash: preFingerprint }; }
       let current = {};
-      try { current = await getBrowserLocation(); }
+      try { current = await getVerifiedBrowserLocation(employeeId); }
       catch (err) { current = { locationPermission: "denied", error: err?.message || "GPS failed" }; }
       // uploadPunchSelfie is performed inside capturePunchSelfie via endpoints.uploadPunchSelfie when available.
       const selfie = await capturePunchSelfie({ employeeId: employee.id || employeeId, endpoints }).catch((err) => ({ ok: false, reason: err?.message || "SELFIE_FAILED" }));
-      const qr = await requestBranchQrChallenge({ endpoints, branchId: address.branch?.id || address.branchId || "main" }).catch(() => ({ status: "NOT_PROVIDED" }));
-      const trustedDevice = await ensureTrustedDeviceApproval({ endpoints, employeeId: employee.id || employeeId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, passkeyCredentialId: device.passkeyCredentialId || "" }).catch(() => ({ status: "PENDING_REVIEW" }));
-      const locationTrust = analyzeLocationTrust(current, { branch: address.branch || address });
-      const v4 = evaluateAttendanceV4Controls({ location: current, identity: { trustedDevice }, qr, selfie }).catch ? {} : evaluateAttendanceV4Controls({ location: current, identity: { trustedDevice }, qr, selfie });
-      const risk = mergeRiskSignals(calculateAttendanceRisk({ currentLocation: current, device, selfie, trustedDevice }), locationTrust);
+      const qr = isQrDisabled() ? { valid: true, status: "DISABLED", riskFlags: [], requiresReview: false } : await requestBranchQrChallenge({ endpoints, branchId: address.branch?.id || address.branchId || "main" }).catch(() => ({ status: "NOT_PROVIDED" }));
+      const trustedDevice = await ensureTrustedDeviceApproval({ endpoints, employee, device: { ...device, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint }, selfieUrl: selfie.selfieUrl || selfie.url || "", location: current }).catch(() => ({ status: "PENDING_REVIEW", requiresReview: true, riskFlags: ["DEVICE_APPROVAL_CHECK_FAILED"] }));
+      const locationTrust = analyzeLocationTrust(current, { branch: address.branch || address, geofenceStatus: current.geofenceStatus });
+      const risk = mergeRiskSignals(calculateAttendanceRisk({ currentLocation: current, device, selfie, trustedDevice }), locationTrust, qr, trustedDevice);
+      const v4 = await evaluateAttendanceV4Controls({ endpoints, employee, device: { ...device, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint }, location: current, risk }).catch(() => ({}));
       const merged = mergeV4RiskSignals ? mergeV4RiskSignals(risk, v4) : risk;
-      const status = current.insideBranch ? "inside_branch" : "outside_branch";
+      const status = current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch");
       const notes = app.querySelector("#punch-notes")?.value || "";
-      const body = { ...current, type: actionText, eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${BRANCH_DISPLAY_NAME} — ${BRANCH_DISPLAY_AREA}` : (current.addressLabel || current.locationLabel || "خارج نطاق المجمع"), verificationStatus: "verified", biometricMethod: "passkey+gps+selfie+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: merged.riskScore || risk.riskScore, riskLevel: merged.riskLevel || risk.riskLevel, riskFlags: merged.riskFlags || risk.riskFlags, requiresReview: merged.requiresReview || risk.requiresReview || status === "outside_branch" };
+      const body = { ...current, type: actionText, eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || current.locationLabel || (current.locationUncertain ? "الموقع غير مؤكد — مراجعة" : "خارج نطاق المجمع")), verificationStatus: "verified", biometricMethod: isQrDisabled() ? "passkey+gps+selfie" : "passkey+gps+selfie+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: merged.riskScore || risk.riskScore, riskLevel: merged.riskLevel || risk.riskLevel, riskFlags: merged.riskFlags || risk.riskFlags, requiresReview: merged.requiresReview || risk.requiresReview || status !== "inside_branch" };
       if (!device.ok || !selfie.ok || current.locationPermission === "denied") await createFormalFallbackRequest?.({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => submitFallbackAttendanceRequest({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => null));
       await endpoints.recordAttendance(body);
       rememberDevicePunch({ employeeId, deviceFingerprintHash: body.deviceFingerprintHash, eventType: type });
-      setMessage(status === "inside_branch" ? `تم تسجيل بصمة ${actionText} داخل مجمع أحلى شباب.` : `تم تسجيل بصمة ${actionText} خارج المجمع وستظهر للمراجعة مع المكان والملاحظة.`, "");
+      setMessage(status === "inside_branch" ? `تم تسجيل بصمة ${actionText} داخل مجمع أحلى شباب.` : (status === "location_uncertain" ? `تم تسجيل بصمة ${actionText} كموقع غير مؤكد وستظهر للمراجعة بدل الحكم بالخروج.` : `تم تسجيل بصمة ${actionText} خارج المجمع وستظهر للمراجعة مع المكان والملاحظة.`), "");
       renderPunch();
     } catch (error) {
       resultBox?.classList.remove("hidden");
@@ -1116,7 +1232,7 @@ async function renderLocation() {
     const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {});
     const passkeyCredentialId = device.passkeyCredentialId;
     if (result) result.textContent = "جاري قراءة الموقع بدقة عالية...";
-    const current = await getBrowserLocation();
+    const current = await getVerifiedBrowserLocation(employeeId);
     if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع. فعّل GPS واسمح للتطبيق بالوصول للموقع.");
     await endpoints.respondLiveLocationRequest(id, { status: "APPROVED", ...current, biometricMethod: "passkey", passkeyCredentialId });
   };
@@ -1135,7 +1251,7 @@ async function renderLocation() {
       const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {});
       const passkeyCredentialId = device.passkeyCredentialId;
       if (result) result.textContent = "جاري قراءة الموقع...";
-      const current = await getBrowserLocation();
+      const current = await getVerifiedBrowserLocation(employeeId);
       if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع.");
       const pendingLocationRequest = mine.find((item) => item.status === "PENDING" && item.id && String(item.id).startsWith("locreq"));
       if (pendingLocationRequest) await endpoints.updateLocationRequest(pendingLocationRequest.id, { status: "APPROVED", ...current, biometricMethod: "passkey", passkeyCredentialId });
@@ -1205,28 +1321,50 @@ async function renderDisputes() {
   const employeeId = state.user?.employeeId || state.user?.employee?.id;
   const mine = cases.filter((item) => !item.employeeId || item.employeeId === employeeId).slice(0, 20);
   shell(`
-    <section class="employee-grid">
-      <form class="employee-card full" data-ajax="dispute">
+    <section class="employee-grid disputes-polished-page">
+      <article class="employee-card full disputes-hero-card">
         <div class="panel-kicker">لجنة حل المشاكل والخلافات</div>
-        <h2>تقديم شكوى / فض خلاف</h2>
-        <p>الشكوى تذهب مباشرة للجنة المختصة ولا تحتاج موافقة المدير المباشر حفاظًا على الخصوصية.</p>
-        <div class="employee-form-grid">
-          <label class="span-2 checkbox-line"><input type="checkbox" name="hasRelatedEmployee" value="yes" data-toggle-related-employee /> الشكوى ضد موظف معين</label>
-          <label class="span-2 related-employee-field hidden">اختيار الموظف<select name="relatedEmployeeId"><option value="">اختر الموظف</option>${employees.map((e)=>`<option value="${escapeHtml(e.id)}">${escapeHtml(e.fullName || e.name || e.email || e.id)}</option>`).join("")}</select></label>
-          <label class="span-2">عنوان المشكلة<input name="title" required placeholder="مثال: خلاف أو موقف معين" /></label>
-          <label class="span-2 checkbox-line"><input type="checkbox" name="repeatedBefore" value="yes" /> سبق أن تكررت هذه المشكلة</label>
-          <label class="span-2 checkbox-line"><input type="checkbox" name="repeatedWithSamePerson" value="yes" /> سبق أن تكررت نفس المشكلة مع نفس الشخص</label>
-          <label class="span-2">التفاصيل كاملة<textarea name="description" rows="6" required placeholder="اكتب ماذا حدث، متى، أين، ومن الأطراف إن وجدوا."></textarea></label>
+        <h2>تقديم شكوى أو طلب فض خلاف</h2>
+        <p>يتم رفع الطلب للجنة المختصة بسرية، ثم المتابعة عبر السكرتير التنفيذي والتصعيد للمدير التنفيذي عند الحاجة.</p>
+        <div class="workflow-steps compact-workflow">
+          ${["الموظف", "اللجنة", "السكرتير التنفيذي", "المدير التنفيذي"].map((step, index) => `<span><strong>${index + 1}</strong>${escapeHtml(step)}</span>`).join("")}
         </div>
-        <button class="button primary full" type="submit">رفع إلى لجنة الخلافات</button>
+      </article>
+      <form class="employee-card full dispute-form-card" data-ajax="dispute">
+        <div class="employee-form-grid">
+          <div class="span-2 segmented-field">
+            <span>نوع الطلب</span>
+            <label><input type="radio" name="category" value="شكوى" checked /> شكوى</label>
+            <label><input type="radio" name="category" value="فض خلاف" /> فض خلاف</label>
+            <label><input type="radio" name="category" value="ملاحظة سلوكية" /> ملاحظة سلوكية</label>
+          </div>
+          <div class="span-2 segmented-field danger-levels">
+            <span>الأولوية</span>
+            <label><input type="radio" name="priority" value="LOW" /> عادية</label>
+            <label><input type="radio" name="priority" value="MEDIUM" checked /> متوسطة</label>
+            <label><input type="radio" name="priority" value="HIGH" /> عاجلة</label>
+          </div>
+          <label class="span-2 checkbox-line polished-check"><input type="checkbox" name="hasRelatedEmployee" value="yes" data-toggle-related-employee /> الطلب متعلق بموظف معين</label>
+          <label class="span-2 related-employee-field hidden">اختيار الموظف<select name="relatedEmployeeId"><option value="">اختر الموظف</option>${employees.map((e)=>`<option value="${escapeHtml(e.id)}">${escapeHtml(e.fullName || e.name || e.email || e.id)}</option>`).join("")}</select></label>
+          <label class="span-2">عنوان مختصر<input name="title" required placeholder="مثال: خلاف في تسليم مهمة" /></label>
+          <div class="span-2 repeat-grid">
+            <label class="checkbox-line polished-check"><input type="checkbox" name="repeatedBefore" value="yes" /> تكررت سابقًا</label>
+            <label class="checkbox-line polished-check"><input type="checkbox" name="repeatedWithSamePerson" value="yes" /> تكررت مع نفس الشخص</label>
+          </div>
+          <label class="span-2">التفاصيل كاملة<textarea name="description" rows="7" required placeholder="اكتب ماذا حدث، متى، أين، ومن الأطراف إن وجدوا. كلما كانت التفاصيل أوضح كان القرار أسرع."></textarea></label>
+          <label class="span-2">ملاحظات أو شهود<input name="notes" placeholder="اختياري" /></label>
+          <label class="span-2">مرفقات داعمة<input name="attachmentNote" placeholder="اذكر أسماء الملفات أو سلمها للجنة عند الطلب" /></label>
+        </div>
+        <button class="button primary full" type="submit">رفع الطلب للجنة</button>
       </form>
-      <article class="employee-card full"><h2>طلباتي السابقة</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${date(item.createdAt)}</span><small>${escapeHtml(item.publicUpdate || "قيد مراجعة اللجنة")}</small></div><div class="list-item-side">${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد شكاوى مسجلة.</div>`}</article>
+      <article class="employee-card full"><h2>طلباتي السابقة</h2>${mine.length ? `<div class="employee-list polished-history-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${date(item.createdAt)}</span><small>${escapeHtml(item.publicUpdate || item.committeeDecision || "قيد مراجعة اللجنة")}</small></div><div class="list-item-side">${badge(item.priority || item.severity || "MEDIUM")} ${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد شكاوى مسجلة.</div>`}</article>
     </section>
-  `, "الشكاوى", "طلب شكوى أو فض خلاف.");
+  `, "الشكاوى", "طلب شكوى أو فض خلاف بسرية ووضوح.");
   const toggle = app.querySelector("[data-toggle-related-employee]");
   const field = app.querySelector(".related-employee-field");
   toggle?.addEventListener("change", () => field?.classList.toggle("hidden", !toggle.checked));
 }
+
 
 async function renderKpi() {
   const payload = await endpoints.kpi().then(unwrap).catch(() => ({ metrics: [], evaluations: [], pendingEmployees: [], currentEmployeeId: state.user?.employeeId || state.user?.employee?.id || "" }));
@@ -1454,26 +1592,127 @@ async function renderNotifications() {
 }
 
 
+function employeeRoleSlug(employee = {}) {
+  return String(employee.role?.slug || employee.role?.key || employee.roleId || employee.role || "").toLowerCase();
+}
+
+function sortHierarchyChildren(children = [], priorityId = "") {
+  return [...children].sort((a, b) => {
+    const aSlug = employeeRoleSlug(a);
+    const bSlug = employeeRoleSlug(b);
+    const aScore = a.id === priorityId ? -20 : aSlug.includes("executive-secretary") || aSlug.includes("admin") ? -10 : aSlug.includes("manager") ? 0 : 10;
+    const bScore = b.id === priorityId ? -20 : bSlug.includes("executive-secretary") || bSlug.includes("admin") ? -10 : bSlug.includes("manager") ? 0 : 10;
+    return aScore - bScore || String(a.fullName || "").localeCompare(String(b.fullName || ""), "ar");
+  });
+}
+
+function collectDescendants(employeeId, byManager = new Map()) {
+  const direct = byManager.get(employeeId) || [];
+  return direct.flatMap((child) => [child, ...collectDescendants(child.id, byManager)]);
+}
+
+function renderEmployeeOrgTree(roots = [], byManager = new Map(), options = {}) {
+  const currentId = options.currentEmployeeId || "";
+  const myManagerId = options.myManagerId || "";
+  const myTeamIds = options.myTeamIds || new Set();
+  const renderNode = (employee, depth = 0) => {
+    const children = sortHierarchyChildren(byManager.get(employee.id) || [], options.secretaryId || "");
+    const classes = ["employee-org-node"];
+    if (employee.id === currentId) classes.push("is-me");
+    if (employee.id === myManagerId) classes.push("is-my-manager");
+    if (myTeamIds.has(employee.id)) classes.push("is-direct-report");
+    const childMeta = children.length ? `${children.length} مباشر / ${collectDescendants(employee.id, byManager).length} إجمالي` : "بدون تابعين";
+    return `<div class="employee-org-tree-item" style="--org-depth:${depth}">
+      <article class="${classes.join(" ")}">
+        <div class="org-node-head">
+          ${avatar(employee, "medium")}
+          <div class="org-node-copy">
+            <strong>${escapeHtml(employee.fullName || "-")}</strong>
+            <span>${escapeHtml(employee.jobTitle || employee.role?.name || "-")}</span>
+          </div>
+        </div>
+        <div class="org-node-meta">
+          <span class="org-chip">${escapeHtml(employee.department?.name || employee.branch?.name || employee.role?.name || "الهيكل الوظيفي")}</span>
+          <span class="org-chip org-chip-muted">${escapeHtml(childMeta)}</span>
+        </div>
+      </article>
+      ${children.length ? `<div class="employee-org-children">${children.map((child) => renderNode(child, depth + 1)).join("")}</div>` : ""}
+    </div>`;
+  };
+  return `<div class="employee-org-tree">${roots.map((root) => renderNode(root)).join("")}</div>`;
+}
+
+function buildEmployeeOrgModel(employees = []) {
+  const active = employees.filter((employee) => !employee.isDeleted && String(employee.status || "ACTIVE").toUpperCase() !== "DELETED");
+  const byId = new Map(active.map((employee) => [employee.id, employee]));
+  const byManager = new Map();
+  active.forEach((employee) => {
+    const managerId = employee.managerEmployeeId || employee.managerId || employee.directManagerId || employee.manager?.id || "";
+    if (!managerId) return;
+    if (!byManager.has(managerId)) byManager.set(managerId, []);
+    byManager.get(managerId).push(employee);
+  });
+  const executiveDirector = active.find((employee) => {
+    const slug = employeeRoleSlug(employee);
+    return slug.includes("executive") && !slug.includes("secretary");
+  }) || active.find((employee) => !(employee.managerEmployeeId || employee.managerId || employee.directManagerId || employee.manager?.id || "")) || active[0] || null;
+  const secretary = active.find((employee) => {
+    const slug = employeeRoleSlug(employee);
+    const title = String(employee.jobTitle || employee.role?.name || "");
+    return slug.includes("executive-secretary") || title.includes("السكرتير التنفيذي");
+  }) || null;
+  const allRoots = active.filter((employee) => !byId.has(employee.managerEmployeeId || employee.managerId || employee.directManagerId || employee.manager?.id || ""));
+  const roots = executiveDirector ? [executiveDirector, ...allRoots.filter((employee) => employee.id !== executiveDirector.id)] : allRoots;
+  return { active, byId, byManager, roots: sortHierarchyChildren(roots, secretary?.id || ""), executiveDirector, secretary };
+}
+
+
 async function renderTeam() {
-  const [employees, leaves, missions, attendance] = await Promise.all([
+  const [employees, leaves, missions] = await Promise.all([
     endpoints.employees().then(unwrap).catch(() => []),
     endpoints.leaves().then(unwrap).catch(() => []),
     endpoints.missions().then(unwrap).catch(() => []),
-    endpoints.myAttendanceEvents().then(unwrap).catch(() => []),
   ]);
   const myId = state.user?.employeeId || state.user?.employee?.id;
   const team = employees.filter((e) => e.managerId === myId || e.directManagerId === myId || e.managerEmployeeId === myId);
   const teamIds = new Set(team.map((e) => e.id));
   const pendingLeaves = leaves.filter((x) => teamIds.has(x.employeeId) && /pending/i.test(String(x.workflowStatus || x.status || "")));
   const pendingMissions = missions.filter((x) => teamIds.has(x.employeeId) && /pending/i.test(String(x.workflowStatus || x.status || "")));
+  const org = buildEmployeeOrgModel(employees || []);
+  const managerLike = (org.byManager.get(myId) || []).length > 0;
+  const descendantsCount = collectDescendants(myId, org.byManager).length;
+  const managerNode = org.byId.get(myId) || state.user?.employee || null;
+  const myManagerId = managerNode?.managerEmployeeId || managerNode?.managerId || managerNode?.directManagerId || managerNode?.manager?.id || "";
+  const hierarchyMarkup = renderEmployeeOrgTree(org.roots, org.byManager, { currentEmployeeId: myId, myManagerId, myTeamIds: teamIds, secretaryId: org.secretary?.id || "" });
   shell(`
     <section class="employee-grid team-manager-page">
-      <article class="employee-card full"><div class="panel-kicker">إدارة الفريق</div><h2>فريقي</h2><p>هذه الصفحة تظهر للمدير المباشر لمراجعة طلبات الفريق قبل انتقالها إلى HR.</p></article>
-      <article class="employee-card full"><h2>موظفو فريقي</h2>${team.length ? `<div class="employee-list">${team.map((e)=>`<div class="employee-list-item"><div>${employeeHeaderCell(e)}</div><div class="list-item-side">${badge(e.status || "ACTIVE")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بيانات فريق مرتبطة بحسابك حتى الآن.</div>`}</article>
+      <article class="employee-card full employee-org-shell">
+        <div class="panel-kicker">الهيكل الوظيفي</div>
+        <h2>فريقي والهيكل الوظيفي</h2>
+        <p>عرض احترافي متصل يبدأ من المدير التنفيذي ثم السكرتير التنفيذي ثم المديرين ثم الموظفين مع إبراز موقعك وفريقك داخل الشبكة.</p>
+        <div class="team-overview-grid">
+          <article class="team-summary-card"><span>قمة الهيكل</span><strong>${escapeHtml(org.executiveDirector?.fullName || "المدير التنفيذي")}</strong><small>${escapeHtml(org.executiveDirector?.jobTitle || "القيادة التنفيذية")}</small></article>
+          <article class="team-summary-card"><span>السكرتير التنفيذي</span><strong>${escapeHtml(org.secretary?.fullName || "-")}</strong><small>${escapeHtml(org.secretary?.jobTitle || "-")}</small></article>
+          <article class="team-summary-card"><span>فريقي المباشر</span><strong>${escapeHtml(team.length)}</strong><small>${managerLike ? "تابعون مباشرون" : "لا يوجد فريق مباشر"}</small></article>
+          <article class="team-summary-card"><span>إجمالي تحت مسؤوليتي</span><strong>${escapeHtml(descendantsCount)}</strong><small>مباشر + غير مباشر</small></article>
+        </div>
+        <div class="employee-org-legend">
+          <span class="org-legend-item"><i class="legend-dot executive"></i>القيادة العليا</span>
+          <span class="org-legend-item"><i class="legend-dot me"></i>حسابي</span>
+          <span class="org-legend-item"><i class="legend-dot team"></i>فريقي المباشر</span>
+          <span class="org-legend-item"><i class="legend-dot manager"></i>مديري المباشر</span>
+        </div>
+        ${hierarchyMarkup}
+      </article>
+      <article class="employee-card full">
+        <div class="panel-kicker">فريقي المباشر</div>
+        <h2>موظفو فريقي</h2>
+        ${team.length ? `<div class="employee-list my-team-focus-grid">${team.map((e)=>`<div class="employee-list-item"><div>${employeeHeaderCell(e)}</div><div class="list-item-side">${badge(e.status || "ACTIVE")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بيانات فريق مرتبطة بحسابك حتى الآن.</div>`}
+      </article>
       <article class="employee-card full"><h2>طلبات إجازة تنتظر مراجعتي</h2>${pendingLeaves.length ? renderManagerReviewList(pendingLeaves, "leave") : `<div class="empty-state">لا توجد إجازات معلقة للمدير.</div>`}</article>
       <article class="employee-card full"><h2>طلبات مأمورية تنتظر مراجعتي</h2>${pendingMissions.length ? renderManagerReviewList(pendingMissions, "mission") : `<div class="empty-state">لا توجد مأموريات معلقة للمدير.</div>`}</article>
     </section>
-  `, "فريقي", "اعتماد طلبات الفريق ومتابعة الحضور.");
+  `, "فريقي", "الهيكل الوظيفي الكامل ومراجعات الفريق.");
   app.querySelectorAll("[data-manager-review]").forEach((button)=>button.addEventListener("click", async()=>{
     const [kind, id, action] = button.dataset.managerReview.split(":");
     const note = "";
@@ -1508,14 +1747,17 @@ async function renderProfile() {
       <form class="employee-card full" id="employee-contact-form">
         <div class="panel-kicker">قائمة التعديلات</div>
         <h2>تعديل الصورة والبريد ورقم الهاتف</h2>
-        <p>الصورة تظهر داخل التطبيق. تحديث رقم الهاتف يساعدك على الدخول بالموبايل، وتغيير البريد قد يحتاج تأكيد البريد الجديد.</p>
+        <p>يمكنك تحديث الصورة ورقم الهاتف والبريد. يتم ضغط الصورة قبل الرفع لتسريع التطبيق، ورقم الهاتف يجب أن يكون رقمًا مصريًا صحيحًا.</p>
         <div class="profile-photo-editor">
-          ${avatar(user, "large")}
-          <label class="button ghost">تغيير الصورة<input class="hidden-file" type="file" name="avatarFile" accept="image/*" /></label>
+          <div data-avatar-preview>${avatar(user, "large")}</div>
+          <div class="profile-photo-actions">
+            <label class="button ghost">تغيير الصورة<input class="hidden-file" type="file" name="avatarFile" accept="image/*" /></label>
+            <small>معاينة فورية وضغط تلقائي قبل الحفظ</small>
+          </div>
         </div>
         <div class="employee-form-grid">
           <label class="span-2">البريد الإلكتروني<input type="email" name="email" autocomplete="email" value="${escapeHtml(user.email || employee.email || "")}" required /></label>
-          <label class="span-2">رقم الهاتف<input name="phone" inputmode="tel" autocomplete="tel" value="${escapeHtml(employee.phone || user.phone || "")}" placeholder="01xxxxxxxxx" required /></label>
+          <label class="span-2">رقم الهاتف<input name="phone" inputmode="tel" autocomplete="tel" pattern="01[0125][0-9]{8}" value="${escapeHtml(employee.phone || user.phone || "")}" placeholder="01xxxxxxxxx" required /></label>
           <input type="hidden" name="avatarUrl" value="${escapeHtml(user.avatarUrl || user.photoUrl || employee.photoUrl || "")}" />
         </div>
         <button class="button primary full" type="submit">حفظ التعديلات</button>
@@ -1526,7 +1768,7 @@ async function renderProfile() {
         <div class="employee-form-grid">
           <input class="visually-hidden" type="text" name="username" autocomplete="username" value="${escapeHtml(user.email || employee.email || employee.phone || user.phone || "")}" tabindex="-1" aria-hidden="true" />
           <label class="span-2">كلمة المرور الحالية<input type="password" name="currentPassword" autocomplete="current-password" required /></label>
-          <label class="span-2">كلمة المرور الجديدة<input type="password" name="newPassword" autocomplete="new-password" minlength="8" required /></label>
+          <label class="span-2">كلمة المرور الجديدة<input type="password" name="newPassword" autocomplete="new-password" minlength="8" placeholder="8 أحرف على الأقل" required /></label>
           <div class="span-2">${passwordStrengthMarkup()}</div>
           <label class="span-2">تأكيد كلمة المرور الجديدة<input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required /></label>
         </div>
@@ -1535,6 +1777,18 @@ async function renderProfile() {
     </section>
   `, "حسابي", "بياناتي ووسائل الاتصال.");
   bindPasswordStrength(app.querySelector("#employee-password-form"));
+  const profileForm = app.querySelector("#employee-contact-form");
+  profileForm?.querySelector("[name='avatarFile']")?.addEventListener("change", async (event) => {
+    const file = event.currentTarget.files?.[0];
+    if (!file) return;
+    try {
+      const dataUrl = await fileToAvatarDataUrl(file);
+      const preview = profileForm.querySelector("[data-avatar-preview]");
+      if (preview && dataUrl) preview.innerHTML = `<img class="person-avatar large" src="${escapeHtml(dataUrl)}" alt="معاينة الصورة" />`;
+    } catch (error) {
+      setMessage("", error.message || "تعذر معاينة الصورة.");
+    }
+  });
   app.querySelector("#employee-password-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
@@ -1542,9 +1796,11 @@ async function renderProfile() {
     try { await endpoints.changePassword(values); setMessage("تم تغيير كلمة المرور بنجاح.", ""); event.currentTarget.reset(); } catch (error) { setMessage("", error.message || "تعذر تغيير كلمة المرور."); }
     renderProfile();
   });
-  app.querySelector("#employee-contact-form")?.addEventListener("submit", async (event) => {
+  profileForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
+    values.phone = normalizeEgyptPhone(values.phone || "");
+    if (!validEgyptPhone(values.phone)) { setMessage("", "اكتب رقم هاتف مصري صحيح يبدأ بـ 01."); return renderProfile(); }
     try {
       const file = event.currentTarget.querySelector("[name='avatarFile']")?.files?.[0];
       if (file) {

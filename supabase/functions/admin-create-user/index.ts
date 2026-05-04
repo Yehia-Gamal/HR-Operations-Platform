@@ -147,8 +147,8 @@ Deno.serve(async (req) => {
     governorate_id: body.governorateId || null,
     complex_id: body.complexId || null,
     status: body.status || 'ACTIVE',
-    temporary_password: !isRosterPhonePassword,
-    must_change_password: false,
+    temporary_password: true,
+    must_change_password: true,
   };
 
   await adminClient.from('profiles').upsert({ id: userId, ...patch }, { onConflict: 'id' });
@@ -163,6 +163,6 @@ Deno.serve(async (req) => {
       full_name: patch.full_name,
       phone: patch.phone,
     },
-    temporaryPasswordGenerated: !explicitPassword,
+    temporaryPasswordGenerated: !explicitPassword || isRosterPhonePassword,
   });
 });

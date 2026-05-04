@@ -1,6 +1,6 @@
 {
   "name": "ahla-shabab-hr-supabase",
-  "version": "1.4.0-full-workflow-live-20260504",
+  "version": "1.4.0-full-workflow-live-20260504-v13-production-polish",
   "private": true,
   "type": "module",
   "scripts": {
@@ -23,12 +23,8 @@
     "check:attendance-identity": "node tools/check-attendance-identity.mjs",
     "generate:runtime-config": "node tools/generate-runtime-config.mjs",
     "check:theme": "node tools/check-theme.mjs",
-    "check:full-workflow-notes": "node tools/check-full-workflow-notes.mjs",
-    "check:patches": "node tools/check-full-workflow-notes.mjs",
     "check:live-deploy-readiness": "node tools/check-live-deploy-readiness.mjs",
-    "check:v5-ops": "node tools/check-v5-ops.mjs",
-    "check:v9-audit-fixes": "node tools/check-v9-audit-fixes.mjs",
-    "check:v9-final-qa": "node tools/check-v9-final-qa.mjs"
+    "check:v13-production-polish": "node tools/check-v13-production-polish.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.1",

@@ -6,7 +6,6 @@ const required = [
   'docs/LIVE_DEPLOY_RUNBOOK_20260504.md',
   'docs/LIVE_SMOKE_TEST_MATRIX_20260504.md',
   'supabase/sql/PRODUCTION_SQL_EDITOR_PATCHES_051_TO_064_ALL.sql',
-  'tools/check-full-workflow-notes.mjs',
   'tools/check-attendance-identity.mjs',
   'tools/check-theme.mjs',
   'shared/js/attendance-identity.js',

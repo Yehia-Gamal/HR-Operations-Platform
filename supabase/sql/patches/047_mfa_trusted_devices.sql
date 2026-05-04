@@ -17,6 +17,7 @@ create unique index if not exists idx_trusted_devices_user_fp
 
 alter table public.trusted_devices enable row level security;
 
+drop policy if exists "user_own_devices" on public.trusted_devices;
 create policy "user_own_devices" on public.trusted_devices
   for all using (auth.uid() = user_id);
 

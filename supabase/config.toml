@@ -1,4 +1,4 @@
-project_id = "yemradvxmwadlldnxtpz"
+project_id = "your-project-ref"
 
 [functions.admin-create-user]
 verify_jwt = true
@@ -16,4 +16,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.employee-register]
+verify_jwt = false
+
+[functions.send-attendance-reminders]
 verify_jwt = false

@@ -16,7 +16,7 @@ begin
     raise warning 'app.vault_key is not set; encrypted_password migration skipped. Set the secret and re-run this patch.';
   else
     update public.credential_vault
-    set encrypted_password = pgp_sym_encrypt(coalesce(temporary_password, ''), vault_key)
+    set encrypted_password = extensions.pgp_sym_encrypt(coalesce(temporary_password, ''), vault_key)
     where temporary_password is not null
       and temporary_password <> ''
       and encrypted_password is null;
@@ -36,7 +36,7 @@ as $$
   select
     cv.id::text,
     cv.created_at,
-    pgp_sym_decrypt(cv.encrypted_password, current_setting('app.vault_key', true)) as decrypted_password
+    extensions.pgp_sym_decrypt(cv.encrypted_password, current_setting('app.vault_key', true)) as decrypted_password
   from public.credential_vault cv
   where cv.encrypted_password is not null
     and (public.current_can_view_password_vault())

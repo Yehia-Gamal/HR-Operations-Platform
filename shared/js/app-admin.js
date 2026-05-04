@@ -16,7 +16,7 @@ const state = {
 };
 
 const navGroups = [
-  ["الرئيسية", [["dashboard", "لوحة المتابعة"], ["executive-report", "تقرير المدير التنفيذي"], ["executive-mobile", "المتابعة التنفيذية"], ["presence-map", "خريطة الحضور اللحظية"], ["attendance-risk", "مخاطر البصمة"], ["manager-dashboard", "لوحة المدير"], ["manager-suite", "لوحة المدير المباشر"], ["realtime", "لوحة Live"], ["employee-punch", "بصمة الموظف"], ["attendance", "الحضور"], ["attendance-review", "مراجعة البصمات"], ["smart-attendance", "قواعد الحضور الذكية"], ["attendance-calendar", "تقويم الحضور"], ["employee-qr", "QR البصمة"]]],
+  ["الرئيسية", [["dashboard", "لوحة المتابعة"], ["executive-report", "تقرير المدير التنفيذي"], ["executive-mobile", "المتابعة التنفيذية"], ["presence-map", "خريطة الحضور اللحظية"], ["attendance-risk", "مخاطر البصمة"], ["manager-dashboard", "لوحة المدير"], ["manager-suite", "لوحة المدير المباشر"], ["realtime", "لوحة Live"], ["employee-punch", "بصمة الموظف"], ["attendance", "الحضور"], ["attendance-review", "مراجعة البصمات"], ["smart-attendance", "قواعد الحضور الذكية"], ["attendance-calendar", "تقويم الحضور"]]],
   ["الأفراد", [["employees", "الأشخاص والموظفون"], ["management-structure", "هيكل الإدارة والفرق"], ["team-dashboard", "فريق المدير"], ["hr-operations", "عمليات HR"], ["employee-archive", "أرشيف موظف"], ["users", "المستخدمون"], ["leave-balances", "أرصدة الإجازات"], ["documents", "مستندات الموظفين"], ["trusted-devices", "الأجهزة المعتمدة"], ["org-chart", "الهيكل الوظيفي"]]],
   ["الصلاحيات", [["roles", "الأدوار والصلاحيات"], ["permission-matrix", "مصفوفة الصلاحيات"], ["password-vault", "خزنة كلمات المرور"], ["sensitive-approvals", "اعتمادات حساسة"]]],
   ["الطلبات", [["requests", "مركز الطلبات"], ["tasks", "المهام"], ["missions", "المأموريات"], ["leaves", "الإجازات"], ["locations", "طلبات وسجل المواقع"], ["disputes", "الشكاوى وفض الخلافات"], ["admin-decisions", "سجل القرارات الإدارية"], ["dispute-workflow", "مسار الشكاوى والتصعيد"]]],
@@ -47,7 +47,6 @@ const routePermissions = {
   "password-vault": ["users:manage"],
   "sensitive-approvals": ["sensitive-actions:approve", "approvals:manage", "audit:view", "users:manage"],
   "employee-punch": ["dashboard:view", "attendance:self", "attendance:manage"],
-  "employee-qr": ["attendance:self", "attendance:manage", "employees:view"],
   "smart-attendance": ["attendance:smart", "attendance:rules", "attendance:manage"],
   "manager-suite": ["manager:suite", "manager:team", "kpi:team", "attendance:manage", "requests:approve"],
   "executive-pdf": ["executive:report", "reports:export"],
@@ -651,7 +650,7 @@ function punchUrlForEmployee(employee = {}) {
 }
 
 function qrImageUrl(value, size = 220) {
-  return `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=10&data=${encodeURIComponent(value)}`;
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><rect width="100%" height="100%" fill="#071120"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#94a3b8" font-size="16" font-family="Arial">QR متوقف</text></svg>`);
 }
 
 function todayIso() {
@@ -2426,8 +2425,8 @@ async function renderComplexSettings() {
   const current = {
     name: address.branch?.name || address.name || getSetting("complex.name", "مجمع منيل شيحة"),
     address: cleanAddressText(address.address || address.branch?.address || getSetting("complex.address", "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912")),
-    latitude: address.latitude ?? getSetting("complex.latitude", "29.951196809090636"),
-    longitude: address.longitude ?? getSetting("complex.longitude", "31.238367688465857"),
+    latitude: address.latitude ?? getSetting("complex.latitude", "29.950738592862045"),
+    longitude: address.longitude ?? getSetting("complex.longitude", "31.238094542328678"),
     radiusMeters: address.radiusMeters || getSetting("complex.radiusMeters", 300),
     maxAccuracyMeters: address.maxAccuracyMeters || getSetting("complex.maxAccuracyMeters", 500),
   };
@@ -2813,7 +2812,7 @@ async function renderManagerDashboard() {
   app.querySelectorAll("[data-profile]").forEach((button) => button.addEventListener("click", () => { location.hash = `employee-profile?id=${button.dataset.profile}`; }));
   app.querySelector("[data-generate-attendance-alerts]")?.addEventListener("click", async () => {
     const result = await endpoints.generateAttendanceAlerts();
-    setMessage(`تم إنشاء ${result.created || 0} إشعار للموظفين الذين لم يبصموا.`, "");
+    setMessage(`تم إنشاء ${result.created || 0} إشعار، وتم إرسال ${result.pushed || result.attempted || 0} Push للموبايلات المشتركة.`, "");
     render();
   });
 }
@@ -2839,35 +2838,18 @@ async function renderAttendanceReview() {
 }
 
 async function renderEmployeeQr() {
-  const employees = await endpoints.employees().then(unwrap);
-  const params = routeParams();
-  const selectedId = params.get("employeeId") || employees[0]?.id || "";
-  const employee = employees.find((item) => item.id === selectedId) || employees[0] || {};
-  const link = punchUrlForEmployee(employee);
-  shell(
-    `<section class="grid qr-page">
-      <article class="panel span-4"><h2>اختيار الموظف</h2><label>الموظف<select id="qr-employee">${optionList(employees.map((e) => ({ id: e.id, name: `${e.fullName}${e.jobTitle ? " — " + e.jobTitle : ""}` })), employee.id)}</select></label><div class="message warning">الـ QR يفتح صفحة البصمة. يجب أن يسجل الموظف دخوله بحسابه ثم يؤكد ببصمة الجهاز وGPS.</div></article>
-      <article class="panel span-8 qr-card-panel"><div class="qr-print-card"><div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(employee.fullName || "-")}</strong><small>${escapeHtml(employee.jobTitle || "")}</small></span></div><img class="qr-img" src="${escapeHtml(qrImageUrl(link, 260))}" alt="QR" /><p class="muted breakable">${escapeHtml(link)}</p><div class="toolbar"><button class="button primary" id="print-qr">طباعة QR</button><button class="button ghost" id="copy-qr-link">نسخ الرابط</button><button class="button primary" id="create-branch-qr">إنشاء QR الفرع المتغير</button></div><div id="branch-qr-result" class="message hidden"></div></div></article>
-    </section>`,
-    "QR البصمة",
-    "QR Code سريع لفتح صفحة البصمة من الموبايل.",
-  );
-  app.querySelector("#qr-employee")?.addEventListener("change", (event) => { location.hash = `employee-qr?employeeId=${event.target.value}`; });
-  app.querySelector("#copy-qr-link")?.addEventListener("click", async () => { await navigator.clipboard?.writeText(link); setMessage("تم نسخ رابط البصمة.", ""); });
-  app.querySelector("#create-branch-qr")?.addEventListener("click", async () => {
-    const result = await endpoints.createBranchQrChallenge({ branchId: employee.branchId || "" }).then(unwrap);
-    const box = app.querySelector("#branch-qr-result");
-    if (box) {
-      const qrText = result.challengeCode || result.challenge_code || "";
-      box.classList.remove("hidden");
-      box.innerHTML = `<strong>QR الفرع المتغير</strong><p>الكود صالح لمدة قصيرة: <b>${escapeHtml(qrText)}</b></p><img class="qr-img" src="${escapeHtml(qrImageUrl(qrText, 220))}" alt="QR الفرع" /><p>ينتهي: ${date(result.validUntil || result.valid_until)}</p>`;
-    }
-  });
-  app.querySelector("#print-qr")?.addEventListener("click", () => {
-    const rows = [[employee.fullName || "-", employee.jobTitle || "-", link]];
-    printBrandedReport("QR البصمة للموظف", `<div class="summary"><div><span>الموظف</span><strong>${escapeHtml(employee.fullName || "-")}</strong></div><div><span>المسمى</span><strong>${escapeHtml(employee.jobTitle || "-")}</strong></div></div><p><img class="qr-print" src="${escapeHtml(qrImageUrl(link, 300))}" /></p>`, ["الموظف", "المسمى", "الرابط"], rows);
-  });
+  shell(`
+    <section class="grid qr-page">
+      <article class="panel span-12">
+        <div class="panel-kicker">QR متوقف</div>
+        <h2>تم إيقاف QR البصمة بالكامل</h2>
+        <p>تم حذف QR من مسار البصمة ومنع إنشاء QR الفرع في هذه النسخة. البصمة تعتمد الآن على Passkey + GPS عالي الدقة + سيلفي + مراجعة HR عند الشك.</p>
+        <div class="message warning">لا يوجد مسح QR ولا إنشاء QR ولا اعتماد على أي خدمة QR خارجية.</div>
+      </article>
+    </section>
+  `, "QR متوقف", "تم إيقاف QR من التشغيل والواجهة.");
 }
+
 
 async function renderTrustedDevices() {
   const [devices, employees, requests] = await Promise.all([

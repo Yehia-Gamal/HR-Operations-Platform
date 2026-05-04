@@ -46,7 +46,7 @@ export async function ensureAttendancePolicyAcknowledged({ endpoints, employee, 
         <p>أقر أن تسجيل الحضور والانصراف يجب أن يتم بواسطتي شخصيًا ومن جهازي المعتمد فقط، وأن مشاركة الحساب أو الجهاز أو تسجيل بصمة لشخص آخر مخالفة إدارية.</p>
         <ul>
           <li>سيتم استخدام Passkey خاص بحسابي.</li>
-          <li>سيتم التقاط سيلفي وموقع GPS وقراءة كود QR داخل الفرع عند الحاجة.</li>
+          <li>سيتم التقاط سيلفي وموقع GPS عالي الدقة. تم إيقاف QR بالكامل في هذه النسخة.</li>
           <li>أي بصمة مشبوهة قد تتحول إلى مراجعة HR أو تصعيد إداري.</li>
         </ul>
         <div class="identity-selfie-actions">
@@ -175,6 +175,15 @@ async function scanQrWithCamera() {
 }
 
 export async function requestBranchQrChallenge({ endpoints, branchId = "", required = false } = {}) {
+  // QR is intentionally disabled for this deployment. Keep the function as a no-op
+  // so older callers and database columns remain compatible without showing QR UI.
+  return { valid: true, status: "DISABLED", challengeId: "", riskFlags: ["BRANCH_QR_DISABLED"], requiresReview: false };
+
+  const cfg = window.HR_SUPABASE_CONFIG || {};
+  const qrGloballyDisabled = cfg?.attendance?.qrRequired === false || window.HR_QR_REQUIRED === false;
+  if (qrGloballyDisabled) {
+    return { valid: true, status: "DISABLED", challengeId: "", riskFlags: [], requiresReview: false };
+  }
   const qrRequired = required || localStorage.getItem(QR_REQUIRED_KEY) === "1";
   let code = await scanQrWithCamera();
   if (!code) {
@@ -262,8 +271,9 @@ export async function submitFallbackAttendanceRequest({ endpoints, employee, act
 export function describeIdentityFlags(flags = []) {
   const labels = {
     DEVICE_APPROVAL_REQUIRED: "الجهاز يحتاج اعتماد HR",
-    BRANCH_QR_MISSING: "كود QR الفرع غير متاح",
-    BRANCH_QR_INVALID: "كود QR الفرع غير صالح أو منتهي",
+    BRANCH_QR_DISABLED: "QR متوقف في هذه النسخة",
+    BRANCH_QR_MISSING: "QR متوقف ولا يتم طلبه",
+    BRANCH_QR_INVALID: "QR متوقف ولا يتم التحقق منه",
     GPS_ACCURACY_WEAK: "دقة GPS ضعيفة",
     GPS_ACCURACY_VERY_WEAK: "دقة GPS ضعيفة جدًا",
     GPS_SPEED_SUSPICIOUS: "سرعة انتقال GPS غير منطقية",
