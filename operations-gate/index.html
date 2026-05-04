@@ -31,7 +31,7 @@
     </section>
 
     <form id="gate-form" class="fields">
-      <label>البريد المصرّح له<input name="email" type="email" autocomplete="email" placeholder="name@example.com" required /></label>
+      <label>البريد أو رقم الهاتف المصرّح له<input name="identity" type="text" inputmode="email" autocomplete="username" placeholder="name@example.com / 01xxxxxxxxx" required /></label>
       <label>كود التشغيل<input name="code" type="password" autocomplete="one-time-code" placeholder="كود التشغيل" required /></label>
       <button class="submit" type="submit">فتح البوابة المختارة</button>
     </form>
@@ -49,9 +49,32 @@
       const cfg = window.HR_SUPABASE_CONFIG || {};
       const g = cfg.gateways || {};
       return {
-        admin: Object.assign({ code: cfg.adminGateway?.accessCode || 'A7B3C9D4E6F8', allowedEmails: [], target: '../admin/' }, g.admin || {}),
-        executive: Object.assign({ code: 'EXEC-AHLA-2026', allowedEmails: [], target: '../executive/' }, g.executive || {})
+        admin: Object.assign({ code: cfg.adminGateway?.accessCode || 'A7B3C9D4E6F8', allowedEmails: [], allowedPhones: [], allowedIdentifiers: [], target: '../admin/' }, g.admin || {}),
+        executive: Object.assign({ code: 'EXEC-AHLA-2026', allowedEmails: [], allowedPhones: [], allowedIdentifiers: [], target: '../executive/' }, g.executive || {})
       };
+    }
+    function normalizePhone(value) {
+      let text = String(value || '').trim();
+      const ar = '٠١٢٣٤٥٦٧٨٩';
+      const fa = '۰۱۲۳۴۵۶۷۸۹';
+      text = text.replace(/[٠-٩]/g, d => String(ar.indexOf(d))).replace(/[۰-۹]/g, d => String(fa.indexOf(d)));
+      let digits = text.replace(/\D/g, '');
+      if (!digits) return '';
+      if (digits.startsWith('0020')) digits = digits.slice(2);
+      if (digits.startsWith('20') && digits.length >= 12) digits = '0' + digits.slice(2);
+      if (digits.length === 10 && digits.startsWith('1')) digits = '0' + digits;
+      return digits;
+    }
+    function identityAllowed(input, cfg) {
+      const raw = String(input || '').trim();
+      const email = raw.toLowerCase();
+      const phone = normalizePhone(raw);
+      const allowedEmails = (cfg.allowedEmails || []).map(x => String(x).trim().toLowerCase()).filter(Boolean);
+      const allowedPhones = (cfg.allowedPhones || []).map(normalizePhone).filter(Boolean);
+      const allowedIdentifiers = (cfg.allowedIdentifiers || []).map(x => String(x).trim().toLowerCase()).filter(Boolean);
+      const normalizedIdentifiers = (cfg.allowedIdentifiers || []).map(normalizePhone).filter(Boolean);
+      if (!allowedEmails.length && !allowedPhones.length && !allowedIdentifiers.length) return true;
+      return allowedEmails.includes(email) || allowedPhones.includes(phone) || allowedIdentifiers.includes(email) || normalizedIdentifiers.includes(phone);
     }
     document.querySelectorAll('[data-target]').forEach(btn => btn.addEventListener('click', () => {
       selected = btn.dataset.target || 'admin';
@@ -62,21 +85,21 @@
     document.getElementById('gate-form').addEventListener('submit', (event) => {
       event.preventDefault();
       const fd = new FormData(event.currentTarget);
-      const email = String(fd.get('email') || '').trim().toLowerCase();
+      const identity = String(fd.get('identity') || '').trim();
       const code = String(fd.get('code') || '').trim();
       const cfg = gatewayConfig()[selected];
-      const allowed = (cfg.allowedEmails || []).map(x => String(x).toLowerCase()).filter(Boolean);
-      const emailOk = !allowed.length || allowed.includes(email);
+      const identityOk = identityAllowed(identity, cfg);
       const codeOk = code && code === String(cfg.code || '');
-      if (!emailOk || !codeOk) {
+      if (!identityOk || !codeOk) {
         msg.className = 'msg error';
-        msg.textContent = !emailOk ? 'هذا البريد غير مصرح له بهذه البوابة.' : 'كود التشغيل غير صحيح لهذه البوابة.';
+        msg.textContent = !identityOk ? 'هذا البريد أو رقم الهاتف غير مصرح له بهذه البوابة.' : 'كود التشغيل غير صحيح لهذه البوابة.';
         return;
       }
       sessionStorage.setItem('hr.ops.gate.target', selected);
       sessionStorage.setItem('hr.opsGatewayUnlockedTarget', selected);
       sessionStorage.setItem('hr.opsGatewayUnlockedUntil', String(Date.now() + 4 * 60 * 60 * 1000));
-      sessionStorage.setItem('hr.ops.gate.email', email);
+      sessionStorage.setItem('hr.ops.gate.email', identity.toLowerCase());
+      sessionStorage.setItem('hr.ops.gate.identity', identity);
       sessionStorage.setItem('hr.ops.gate.ok', String(Date.now()));
       location.href = cfg.target || (selected === 'executive' ? '../executive/' : '../admin/');
     });

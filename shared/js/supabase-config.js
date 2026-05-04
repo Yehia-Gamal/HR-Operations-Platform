@@ -56,6 +56,8 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
       label: "بوابة HR / الإدارة",
       code: "A7B3C9D4E6F8",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
+      allowedPhones: ["01154869616"],
+      allowedIdentifiers: ["yahia.gamal.idh@gmail.com", "01154869616"],
       target: "../admin/"
     },
     executive: {
@@ -63,6 +65,8 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
       label: "بوابة المدير التنفيذي",
       code: "EXEC-AHLA-2026",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
+      allowedPhones: ["01154869616"],
+      allowedIdentifiers: ["yahia.gamal.idh@gmail.com", "01154869616"],
       target: "../executive/"
     }
   },
