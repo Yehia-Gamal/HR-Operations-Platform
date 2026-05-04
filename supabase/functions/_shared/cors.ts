@@ -1,5 +1,7 @@
 const defaultOrigins = [
   Deno.env.get('SITE_URL') || '',
+  'https://yehia-gamal.github.io',
+  'https://yehia-gamal.github.io/HR-Operations-Platform',
   'http://localhost:5500',
   'http://localhost:4173',
 ];
