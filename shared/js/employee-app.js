@@ -1,6 +1,6 @@
 import { endpoints, unwrap } from "./api.js?v=v17-login-resolve-fix-20260505";
 import { enableWebPushSubscription } from "./push.js?v=v16-location-device-hotfix-20260504";
-import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, requestPunchCameraStream, capturePunchSelfie, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v18-camera-gps-punch-fix-20260505";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v18-camera-gps-punch-fix-20260505";
 import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v16-location-device-hotfix-20260504";
 import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v16-location-device-hotfix-20260504";
 
@@ -593,6 +593,7 @@ const BRANCH_DISPLAY_NAME = "مجمع أحلى شباب";
 const BRANCH_DISPLAY_AREA = "منيل شيحة - الجيزة";
 const ATTENDANCE_REMINDER_HOUR = 9;
 const ATTENDANCE_REMINDER_MINUTE = 30;
+const FACE_SELFIE_TEMP_DISABLED = true;
 
 function attendanceConfig() {
   return (window.HR_SUPABASE_CONFIG && window.HR_SUPABASE_CONFIG.attendance) || {};
@@ -603,6 +604,7 @@ function branchConfig() {
 function branchName() { return branchConfig().name || BRANCH_DISPLAY_NAME; }
 function branchArea() { return branchConfig().area || BRANCH_DISPLAY_AREA; }
 function isQrDisabled() { return attendanceConfig().qrRequired === false || window.HR_QR_REQUIRED === false; }
+function isFaceSelfieDisabled() { return FACE_SELFIE_TEMP_DISABLED || attendanceConfig().faceSelfieRequired === false || window.HR_FACE_SELFIE_REQUIRED === false; }
 function gpsPolicy() {
   const cfg = attendanceConfig();
   return {
@@ -1205,19 +1207,10 @@ async function renderPunch() {
       const preFingerprint = await getDeviceFingerprintHash().catch(() => "");
       const policyAck = await ensureAttendancePolicyAcknowledged({ endpoints, employee, deviceFingerprintHash: preFingerprint });
       const device = await requestBrowserPasskeyForAction(`تأكيد بصمة ${actionText}`, employee, { autoRegisterOnMissing: true, resultBox });
-      if (resultBox) resultBox.textContent = "جاري فتح الكاميرا وقراءة GPS في نفس الوقت...";
-      const camera = await requestPunchCameraStream();
-      if (!camera.ok) throw new Error(camera.message || "لم يتم السماح بالكاميرا. افتح إعدادات الموقع واسمح بالكاميرا ثم حاول مرة أخرى.");
-      const gpsPromise = getVerifiedBrowserLocation(employeeId, { samples: 4, windowMs: 10000, targetAccuracy: 60 });
-      const selfiePromise = capturePunchSelfie({ employeeId: employee.id || employeeId, employeeName: employee.fullName || state.user?.fullName || "الموظف", endpoints, stream: camera.stream });
-      const [current, selfieCapture] = await Promise.all([gpsPromise, selfiePromise]);
+      if (resultBox) resultBox.textContent = "جاري قراءة GPS. بصمة الوجه معطلة مؤقتاً...";
+      const current = await getVerifiedBrowserLocation(employeeId, { samples: 4, windowMs: 10000, targetAccuracy: 60 });
+      const selfie = { ok: true, reason: "FACE_SELFIE_TEMP_DISABLED", selfieUrl: "" };
       if (!current.latitude || !current.longitude || current.locationPermission === "denied") throw new Error("لم يتم استلام إحداثيات GPS. فعّل الموقع من المتصفح واضغط اختبار الموقع أولاً.");
-      if (!selfieCapture.ok) throw new Error(selfieCapture.message || selfieCapture.reason || "لم يتم التقاط صورة تحقق للموظف. اسمح للكاميرا ثم حاول مرة أخرى.");
-      let selfie = selfieCapture;
-      if (selfieCapture.file && typeof endpoints.uploadPunchSelfie === "function") {
-        const uploaded = await endpoints.uploadPunchSelfie({ employeeId: employee.id || employeeId, file: selfieCapture.file }).catch(() => null);
-        selfie = { ...selfieCapture, ...(uploaded || {}), selfieUrl: uploaded?.url || uploaded?.selfieUrl || "" };
-      }
       const qr = isQrDisabled() ? { valid: true, status: "DISABLED", riskFlags: [], requiresReview: false } : await requestBranchQrChallenge({ endpoints, branchId: address.branch?.id || address.branchId || "main" }).catch(() => ({ status: "NOT_PROVIDED" }));
       const trustedDevice = await ensureTrustedDeviceApproval({ endpoints, employee, device: { ...device, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint }, selfieUrl: selfie.selfieUrl || selfie.url || "", location: current }).catch(() => ({ status: "PENDING_REVIEW", requiresReview: true, riskFlags: ["DEVICE_APPROVAL_CHECK_FAILED"] }));
       const status = current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch");

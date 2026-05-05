@@ -16,10 +16,11 @@ assert(existsSync(join(root, 'supabase/sql/patches/056_attendance_risk_center.sq
 assert(existsSync(join(root, 'shared/js/attendance-v3-security.js')), 'Attendance V3 security helper must exist.');
 
 const employeeApp = read('shared/js/employee-app.js');
+const faceSelfieTemporarilyDisabled = employeeApp.includes('FACE_SELFIE_TEMP_DISABLED = true');
 assert(employeeApp.includes('requestEmployeePasskey'), 'Employee app must request employee-specific passkey.');
-assert(employeeApp.includes('capturePunchSelfie'), 'Employee app must capture punch selfie.');
+assert(faceSelfieTemporarilyDisabled || employeeApp.includes('capturePunchSelfie'), 'Employee app must capture punch selfie.');
 assert(employeeApp.includes('calculateAttendanceRisk'), 'Employee app must calculate identity risk.');
-assert(employeeApp.includes('uploadPunchSelfie'), 'Employee app must upload punch selfie.');
+assert(faceSelfieTemporarilyDisabled || employeeApp.includes('uploadPunchSelfie'), 'Employee app must upload punch selfie.');
 assert(employeeApp.includes('rememberDevicePunch'), 'Employee app must remember recent device usage to detect shared device abuse.');
 assert(employeeApp.includes('ensureAttendancePolicyAcknowledged'), 'Employee app must require attendance policy acknowledgement.');
 assert(employeeApp.includes('requestBranchQrChallenge'), 'Employee app must require/check branch QR challenge.');
