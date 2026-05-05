@@ -41,6 +41,7 @@ async function getSupabase() {
         autoRefreshToken: true,
         detectSessionInUrl: true,
         storageKey: "ahla-shabab-hr.supabase-session",
+        lock: async (_name, _acquireTimeout, fn) => await fn(),
       },
       realtime: { params: { eventsPerSecond: 10 } },
     }));

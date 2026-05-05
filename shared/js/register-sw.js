@@ -1,6 +1,6 @@
 // Service Worker registration is portal-scoped so employee devices do not cache admin UI.
-const HR_SW_CACHE_NAME = "hr-attendance-full-workflow-live-20260504-v20-live-location-org";
-const HR_SW_VERSION = "full-workflow-live-20260504-v20-live-location-org";
+const HR_SW_CACHE_NAME = "hr-attendance-full-workflow-live-20260504-v21-session-gate-logout";
+const HR_SW_VERSION = "full-workflow-live-20260504-v21-session-gate-logout";
 
 function portalServiceWorkerConfig() {
   const path = location.pathname.toLowerCase();
@@ -32,6 +32,24 @@ async function unregisterLegacyRootWorkers(expectedUrl) {
   }));
 }
 
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function registerPortalServiceWorker(swUrl, scope) {
+  try {
+    const registration = await navigator.serviceWorker.register(swUrl, { scope, updateViaCache: "none" });
+    await registration.update().catch(() => null);
+    return registration;
+  } catch (error) {
+    if (error?.name !== "AbortError") throw error;
+    const existing = await navigator.serviceWorker.getRegistration(scope).catch(() => null);
+    await existing?.unregister?.().catch(() => null);
+    await wait(250);
+    const registration = await navigator.serviceWorker.register(swUrl, { scope, updateViaCache: "none" });
+    await registration.update().catch(() => null);
+    return registration;
+  }
+}
+
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   window.addEventListener("load", async () => {
     try {
@@ -39,10 +57,9 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
       const cfg = portalServiceWorkerConfig();
       const swUrl = `${cfg.url}?v=${HR_SW_VERSION}`;
       await unregisterLegacyRootWorkers(cfg.url);
-      const registration = await navigator.serviceWorker.register(swUrl, { scope: cfg.scope, updateViaCache: "none" });
-      await registration.update();
+      await registerPortalServiceWorker(swUrl, cfg.scope);
     } catch (error) {
-      console.warn("تعذر تحديث Service Worker:", error);
+      console.info("تعذر تحديث Service Worker مؤقتاً، سيعمل التطبيق بدون كاش محدث في هذه الزيارة.", error?.message || error);
     }
   });
 }

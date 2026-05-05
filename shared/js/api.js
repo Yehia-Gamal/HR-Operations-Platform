@@ -1,5 +1,5 @@
 import { seedDatabase } from "./database.js?v=v16-location-device-hotfix-20260504";
-import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=v20-live-location-org-20260505";
+import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=v21-session-gate-logout-20260505";
 
 const STORAGE_KEY = "hr-attendance.local-db.v19-management-suite";
 const LEGACY_KEYS = ["hr-attendance.local-db.v14", "hr-attendance.local-db.v13", "hr-attendance.local-db.v12", "hr-attendance.local-db.v11", "hr-attendance.local-db.v10", "hr-attendance.local-db.v9", "hr-attendance.local-db.v8", "hr-attendance.local-db.v7", "hr-attendance.local-db.v6", "hr-attendance.local-db.v5", "hr-attendance.local-db.v4", "hr-attendance.local-db.v3"];

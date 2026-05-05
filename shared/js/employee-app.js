@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=v20-live-location-org-20260505";
+import { endpoints, unwrap } from "./api.js?v=v21-session-gate-logout-20260505";
 import { enableWebPushSubscription } from "./push.js?v=v16-location-device-hotfix-20260504";
 import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v18-camera-gps-punch-fix-20260505";
 import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v16-location-device-hotfix-20260504";

@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=v20-live-location-org-20260505";
+import { endpoints, unwrap } from "./api.js?v=v21-session-gate-logout-20260505";
 import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
 
 const app = document.querySelector("#app");
@@ -230,7 +230,7 @@ function canRoute(key) {
 
 function isAdminPortalUser(user = state.user) {
   if (!user) return false;
-  if (isExecutiveOnlyRole(user)) return false;
+  if (isExecutiveOnlyRole(user)) return true;
   if (hasFullAccess(user)) return true;
   const previousUser = state.user;
   state.user = user;
@@ -249,6 +249,47 @@ function isAdminPortalUser(user = state.user) {
   ]);
   state.user = previousUser;
   return allowed;
+}
+
+function normalizeGateIdentifier(value = "") {
+  const raw = String(value || "").trim().toLowerCase();
+  const ar = "٠١٢٣٤٥٦٧٨٩";
+  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  const digits = raw.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d))).replace(/\D/g, "");
+  if (!digits) return raw;
+  if (digits.startsWith("0020")) return `0${digits.slice(4)}`;
+  if (digits.startsWith("20") && digits.length >= 12) return `0${digits.slice(2)}`;
+  if (digits.length === 10 && digits.startsWith("1")) return `0${digits}`;
+  return digits;
+}
+
+function gateIdentityForPortal(target = "admin") {
+  if (sessionStorage.getItem("hr.opsGatewayUnlockedTarget") !== target) return "";
+  return sessionStorage.getItem("hr.ops.gate.identity") || sessionStorage.getItem("hr.ops.gate.email") || "";
+}
+
+function sessionMatchesGateIdentity(user = state.user, target = "admin") {
+  const gateIdentity = normalizeGateIdentifier(gateIdentityForPortal(target));
+  if (!gateIdentity || !user) return true;
+  const employee = user.employee || {};
+  const tokens = [
+    user.email, user.phone, user.mobile, user.identifier, user.fullName, user.name,
+    employee.email, employee.phone, employee.mobile, employee.fullName,
+  ].map(normalizeGateIdentifier).filter(Boolean);
+  return tokens.includes(gateIdentity);
+}
+
+async function enforceGateSessionIdentity(target = "admin") {
+  const gateIdentity = gateIdentityForPortal(target);
+  if (!gateIdentity || !state.user || sessionMatchesGateIdentity(state.user, target)) return false;
+  await endpoints.logout().catch(() => null);
+  state.user = null;
+  state.loginIdentifier = gateIdentity;
+  state.loginPassword = "";
+  state.lastLoginFailed = false;
+  setMessage("", "تم تسجيل خروج الجلسة السابقة لأنها لا تطابق الرقم الذي فتح البوابة. سجل الدخول بالرقم المطلوب.");
+  renderLogin();
+  return true;
 }
 
 function goEmployeePortal(route = "home") {
@@ -735,6 +776,7 @@ function shell(content, title, description = "") {
               <small>${escapeHtml(roleLabel())}</small>
             </div>
           </div>
+          <button class="button ghost full" type="button" data-action="logout">تسجيل الخروج</button>
         </div>
         <nav class="nav" aria-label="القائمة الرئيسية">
           ${navGroups.map(([group, routes]) => `
@@ -765,6 +807,7 @@ function shell(content, title, description = "") {
           <div class="toolbar mobile-hidden">
             <span class="user-chip" title="${escapeHtml(roleLabel())}">${avatar(userAvatarSubject(), "tiny")}<span>${escapeHtml(state.user?.name || state.user?.fullName || "مستخدم")}</span></span>
             <button class="button ghost" data-action="refresh">تحديث</button>
+            <button class="button danger" data-action="logout">تسجيل الخروج</button>
           </div>
         </header>
         ${state.user?.mustChangePassword ? `<div class="message warning">كلمة المرور الحالية مؤقتة. افتح الإعدادات وغير كلمة المرور قبل الاعتماد على الحساب.</div>` : ""}
@@ -836,7 +879,7 @@ window.addEventListener("keydown", (event) => {
 });
 
 async function renderLogin() {
-  const identifierValue = state.loginIdentifier || "";
+  const identifierValue = state.loginIdentifier || gateIdentityForPortal("admin") || "";
   const passwordValue = state.loginPassword || "";
   app.innerHTML = `
     <div class="login-screen">
@@ -3580,6 +3623,7 @@ async function render() {
   try {
     state.error = "";
     if (!state.user) state.user = await endpoints.me().then(unwrap).catch(() => null);
+    if (await enforceGateSessionIdentity("admin")) return;
     if (!state.user && routeKey() !== "login") return renderLogin();
     if (state.user && !isAdminPortalUser(state.user)) return isExecutiveOnlyRole(state.user) ? goExecutivePortal("home") : goEmployeePortal("home");
 

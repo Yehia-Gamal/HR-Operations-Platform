@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=management-suite-20260502-production";
+import { endpoints, unwrap } from "./api.js?v=v21-session-gate-logout-20260505";
 
 const app = document.querySelector("#app");
 const EMPLOYEE_PORTAL = "../employee/index.html#home";
@@ -108,9 +108,50 @@ function canOpenAdminPortal(user = state.user) {
   const role = roleMeta(user);
   const permissions = currentPermissions(user);
   const keys = [role.id, role.key, role.slug, role.name].filter(Boolean).map((item) => String(item).toLowerCase());
-  const executiveOnly = keys.some((key) => ["role-executive", "executive", "المدير التنفيذي"].includes(key));
   const adminRole = keys.some((key) => ["role-admin", "admin", "مدير النظام"].includes(key));
-  return adminRole || (permissions.has("*") && !executiveOnly);
+  return adminRole || permissions.has("*") || permissions.has("employees:view") || permissions.has("dashboard:view");
+}
+
+function normalizeGateIdentifier(value = "") {
+  const raw = String(value || "").trim().toLowerCase();
+  const ar = "٠١٢٣٤٥٦٧٨٩";
+  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  const digits = raw.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d))).replace(/\D/g, "");
+  if (!digits) return raw;
+  if (digits.startsWith("0020")) return `0${digits.slice(4)}`;
+  if (digits.startsWith("20") && digits.length >= 12) return `0${digits.slice(2)}`;
+  if (digits.length === 10 && digits.startsWith("1")) return `0${digits}`;
+  return digits;
+}
+
+function gateIdentityForPortal(target = "executive") {
+  if (sessionStorage.getItem("hr.opsGatewayUnlockedTarget") !== target) return "";
+  return sessionStorage.getItem("hr.ops.gate.identity") || sessionStorage.getItem("hr.ops.gate.email") || "";
+}
+
+function sessionMatchesGateIdentity(user = state.user, target = "executive") {
+  const gateIdentity = normalizeGateIdentifier(gateIdentityForPortal(target));
+  if (!gateIdentity || !user) return true;
+  const employee = user.employee || {};
+  const tokens = [
+    user.email, user.phone, user.mobile, user.identifier, user.fullName, user.name,
+    employee.email, employee.phone, employee.mobile, employee.fullName,
+  ].map(normalizeGateIdentifier).filter(Boolean);
+  return tokens.includes(gateIdentity);
+}
+
+async function enforceGateSessionIdentity(target = "executive") {
+  const gateIdentity = gateIdentityForPortal(target);
+  if (!gateIdentity || !state.user || sessionMatchesGateIdentity(state.user, target)) return false;
+  await endpoints.logout().catch(() => null);
+  state.user = null;
+  state.dataCache = null;
+  state.loginIdentifier = gateIdentity;
+  state.loginPassword = "";
+  state.lastLoginFailed = false;
+  setMessage("", "تم تسجيل خروج الجلسة السابقة لأنها لا تطابق الرقم الذي فتح البوابة. سجل الدخول بالرقم المطلوب.");
+  renderLogin();
+  return true;
 }
 
 function statusLabel(value) {
@@ -374,7 +415,7 @@ function shell(content, title = "المتابعة التنفيذية", descripti
 }
 
 function renderLogin() {
-  const identifierValue = state.loginIdentifier || "";
+  const identifierValue = state.loginIdentifier || gateIdentityForPortal("executive") || "";
   const passwordValue = state.loginPassword || "";
   app.innerHTML = `
     <div class="login-screen executive-login-screen">
@@ -725,6 +766,7 @@ async function render() {
   try {
     state.error = "";
     if (!state.user) state.user = await endpoints.me().then(unwrap).catch(() => null);
+    if (await enforceGateSessionIdentity("executive")) return;
     if (!state.user) return renderLogin();
     if (!isExecutivePortalUser(state.user)) return renderNoPermission();
 
