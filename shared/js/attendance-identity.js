@@ -94,6 +94,25 @@ function stopStream(stream) {
   try { stream?.getTracks?.().forEach((track) => track.stop()); } catch {}
 }
 
+export async function requestPunchCameraStream() {
+  if (!navigator.mediaDevices?.getUserMedia) {
+    return { ok: false, reason: "CAMERA_UNAVAILABLE", message: "الكاميرا غير متاحة على هذا الجهاز." };
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
+      audio: false,
+    });
+    return { ok: true, stream };
+  } catch {
+    return {
+      ok: false,
+      reason: "CAMERA_DENIED",
+      message: "لم يتم السماح بالكاميرا. افتح إعدادات الموقع من المتصفح واسمح بالكاميرا ثم حاول مرة أخرى.",
+    };
+  }
+}
+
 async function blobFromVideo(video) {
   const sourceWidth = video.videoWidth || 720;
   const sourceHeight = video.videoHeight || 720;
@@ -106,16 +125,10 @@ async function blobFromVideo(video) {
   return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/jpeg", SELFIE_QUALITY));
 }
 
-export async function capturePunchSelfie({ employeeName = "الموظف" } = {}) {
-  if (!navigator.mediaDevices?.getUserMedia) {
-    return { ok: false, reason: "CAMERA_UNAVAILABLE", message: "الكاميرا غير متاحة على هذا الجهاز." };
-  }
-  let stream = null;
-  try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user", width: { ideal: 960 }, height: { ideal: 960 } }, audio: false });
-  } catch (error) {
-    return { ok: false, reason: "CAMERA_DENIED", message: "لم يتم السماح بالكاميرا. سيتم تحويل البصمة للمراجعة." };
-  }
+export async function capturePunchSelfie({ employeeName = "الموظف", stream: providedStream = null } = {}) {
+  const camera = providedStream ? { ok: true, stream: providedStream } : await requestPunchCameraStream();
+  if (!camera.ok) return camera;
+  const stream = camera.stream;
   return await new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.className = "identity-selfie-overlay";

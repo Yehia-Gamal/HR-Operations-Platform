@@ -1,5 +1,5 @@
 // Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
-const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-employee-private-v17-login-resolve-fix";
+const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-employee-private-v18-camera-gps-punch-fix";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./health.html",

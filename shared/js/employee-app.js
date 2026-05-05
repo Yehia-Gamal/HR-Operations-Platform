@@ -1,6 +1,6 @@
 import { endpoints, unwrap } from "./api.js?v=v17-login-resolve-fix-20260505";
 import { enableWebPushSubscription } from "./push.js?v=v16-location-device-hotfix-20260504";
-import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, capturePunchSelfie, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v16-location-device-hotfix-20260504";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, requestPunchCameraStream, capturePunchSelfie, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v18-camera-gps-punch-fix-20260505";
 import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v16-location-device-hotfix-20260504";
 import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v16-location-device-hotfix-20260504";
 
@@ -911,9 +911,16 @@ async function renderLogin() {
   });
 }
 
-async function getBrowserLocation() {
+async function getBrowserLocation(options = {}) {
   if (!navigator.geolocation) return { locationPermission: "unavailable", accuracyMeters: null };
-  const policy = gpsPolicy();
+  const basePolicy = gpsPolicy();
+  const policy = {
+    ...basePolicy,
+    samples: Number(options.samples || basePolicy.samples),
+    windowMs: Number(options.windowMs || basePolicy.windowMs),
+    targetAccuracy: Number(options.targetAccuracy || basePolicy.targetAccuracy),
+    maxAcceptableAccuracy: Number(options.maxAcceptableAccuracy || basePolicy.maxAcceptableAccuracy),
+  };
   return await new Promise((resolve) => {
     const samples = [];
     let watcher = null;
@@ -950,15 +957,15 @@ async function getBrowserLocation() {
       (error) => {
         if (!samples.length) finish({ locationPermission: error.code === error.PERMISSION_DENIED ? "denied" : "unknown", accuracyMeters: null, error: error.message || "GPS error" });
       },
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+      { enableHighAccuracy: true, timeout: Math.min(12000, policy.windowMs), maximumAge: 15000 }
     );
     timer = window.setTimeout(() => finish(), policy.windowMs);
   });
 }
 
 
-async function getVerifiedBrowserLocation(employeeId = "") {
-  const raw = await getBrowserLocation();
+async function getVerifiedBrowserLocation(employeeId = "", options = {}) {
+  const raw = await getBrowserLocation(options);
   let evaluation = {};
   try {
     evaluation = unwrap(await endpoints.evaluateGeofence({ ...raw, employeeId, accuracyMeters: raw.accuracyMeters || raw.accuracy }));
@@ -1198,11 +1205,13 @@ async function renderPunch() {
       const preFingerprint = await getDeviceFingerprintHash().catch(() => "");
       const policyAck = await ensureAttendancePolicyAcknowledged({ endpoints, employee, deviceFingerprintHash: preFingerprint });
       const device = await requestBrowserPasskeyForAction(`تأكيد بصمة ${actionText}`, employee, { autoRegisterOnMissing: true, resultBox });
-      if (resultBox) resultBox.textContent = "جاري قراءة GPS بدقة عالية...";
-      const current = await getVerifiedBrowserLocation(employeeId);
+      if (resultBox) resultBox.textContent = "جاري فتح الكاميرا وقراءة GPS في نفس الوقت...";
+      const camera = await requestPunchCameraStream();
+      if (!camera.ok) throw new Error(camera.message || "لم يتم السماح بالكاميرا. افتح إعدادات الموقع واسمح بالكاميرا ثم حاول مرة أخرى.");
+      const gpsPromise = getVerifiedBrowserLocation(employeeId, { samples: 4, windowMs: 10000, targetAccuracy: 60 });
+      const selfiePromise = capturePunchSelfie({ employeeId: employee.id || employeeId, employeeName: employee.fullName || state.user?.fullName || "الموظف", endpoints, stream: camera.stream });
+      const [current, selfieCapture] = await Promise.all([gpsPromise, selfiePromise]);
       if (!current.latitude || !current.longitude || current.locationPermission === "denied") throw new Error("لم يتم استلام إحداثيات GPS. فعّل الموقع من المتصفح واضغط اختبار الموقع أولاً.");
-      if (resultBox) resultBox.textContent = "جاري التقاط صورة تحقق للموظف...";
-      const selfieCapture = await capturePunchSelfie({ employeeId: employee.id || employeeId, employeeName: employee.fullName || state.user?.fullName || "الموظف", endpoints });
       if (!selfieCapture.ok) throw new Error(selfieCapture.message || selfieCapture.reason || "لم يتم التقاط صورة تحقق للموظف. اسمح للكاميرا ثم حاول مرة أخرى.");
       let selfie = selfieCapture;
       if (selfieCapture.file && typeof endpoints.uploadPunchSelfie === "function") {
