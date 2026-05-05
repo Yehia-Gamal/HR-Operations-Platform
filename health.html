@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>فحص جاهزية نظام أحلى شباب HR</title>
+  <link rel="icon" href="shared/images/favicon-64.png" />
   <link rel="stylesheet" href="shared/css/styles.css" />
   <link rel="stylesheet" href="shared/css/neon-admin-theme.css" />
   <style>
@@ -34,6 +35,8 @@
     add('Push API', 'PushManager' in window, 'مدعوم في هذا المتصفح', 'PushManager' in window ? 'ok' : 'warn');
     add('Camera API', Boolean(navigator.mediaDevices?.getUserMedia), 'مطلوب لسيلفي البصمة', navigator.mediaDevices?.getUserMedia ? 'ok' : 'warn');
     add('Geolocation API', 'geolocation' in navigator, 'مطلوب للموقع والبصمة', 'geolocation' in navigator ? 'ok' : 'bad');
+    const patchCheck = checks.find((check) => check.name.includes('Patch'));
+    if (patchCheck) patchCheck.level = cfg.deployment?.expectedPatch ? 'ok' : 'bad';
     document.getElementById('results').innerHTML = checks.map(c => `<div class="row"><strong>${c.name}</strong><span class="${c.level}">${c.detail}</span></div>`).join('');
   </script>
 </body>

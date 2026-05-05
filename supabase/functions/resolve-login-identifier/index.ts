@@ -54,6 +54,23 @@ Deno.serve(async (req) => {
   const maxAttempts = Number(Deno.env.get('LOGIN_RESOLVE_MAX_ATTEMPTS') || 8);
   const blockMinutes = Number(Deno.env.get('LOGIN_RESOLVE_BLOCK_MINUTES') || 15);
 
+  const { data, error } = await adminClient.rpc('resolve_login_identifier', { login_identifier: phone });
+  if (error) {
+    console.warn('resolve_login_identifier failed', error.message);
+    return json(req, { error: 'RESOLVER_UNAVAILABLE' }, 503);
+  }
+
+  const email = String(data || '').trim().toLowerCase();
+  if (email) {
+    await adminClient
+      .from('login_identifier_attempts')
+      .delete()
+      .eq('ip_hash', ipHash)
+      .eq('identifier_hash', identifierHash);
+    // The browser still needs an email for Supabase signInWithPassword. Failed lookups are rate limited.
+    return json(req, { email });
+  }
+
   const { data: currentAttempt } = await adminClient
     .from('login_identifier_attempts')
     .select('id, attempts, blocked_until')
@@ -76,15 +93,5 @@ Deno.serve(async (req) => {
   }, { onConflict: 'ip_hash,identifier_hash' });
 
   if (blockedUntil) return json(req, { error: 'RATE_LIMITED', retryAfterSeconds: blockMinutes * 60 }, 429);
-
-  const { data, error } = await adminClient.rpc('resolve_login_identifier', { login_identifier: phone });
-  if (error) {
-    console.warn('resolve_login_identifier failed', error.message);
-    return json(req, { error: 'RESOLVER_UNAVAILABLE' }, 503);
-  }
-
-  const email = String(data || '').trim().toLowerCase();
-  // The browser still needs an email for Supabase signInWithPassword. Rate limiting protects lookup abuse.
-  if (!email) return json(req, { error: 'ACCOUNT_NOT_FOUND' }, 404);
-  return json(req, { email });
+  return json(req, { error: 'ACCOUNT_NOT_FOUND' }, 404);
 });

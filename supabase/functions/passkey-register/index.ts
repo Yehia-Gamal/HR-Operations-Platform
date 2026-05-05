@@ -5,10 +5,10 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return options(req);
   if (req.method !== 'POST') return json(req, { error: 'METHOD_NOT_ALLOWED' }, 405);
 
-  if (Deno.env.get('WEBAUTHN_ENABLED') !== 'true') {
+  if (Deno.env.get('WEBAUTHN_ENABLED') === 'false') {
     return json(req, {
       error: 'PASSKEYS_DISABLED',
-      message: 'تم تعطيل مفاتيح المرور حتى يتم تفعيل تحقق WebAuthn كامل من الخادم.'
+      message: 'تم تعطيل مفاتيح المرور من إعدادات الخادم WEBAUTHN_ENABLED=false.'
     }, 501);
   }
 

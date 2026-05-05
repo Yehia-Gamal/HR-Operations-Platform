@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=management-suite-20260502-production";
+import { endpoints, unwrap } from "./api.js?v=v17-login-resolve-fix-20260505";
 import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
 
 const app = document.querySelector("#app");

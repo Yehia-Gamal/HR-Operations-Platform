@@ -9,6 +9,7 @@ scratch/
 PRIVATE_SECRETS/
 docs/OPS_GATE_TEMP_CODE.txt
 !shared/js/supabase-config.example.js
+shared/js/supabase-config.js
 # Public runtime config required by GitHub Pages; never place service_role or private keys in it.
 server.*.log
 supabase/VAPID_SECRETS_TO_SET.env

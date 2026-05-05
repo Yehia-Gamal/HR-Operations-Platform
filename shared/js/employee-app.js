@@ -1,8 +1,8 @@
-import { endpoints, unwrap } from "./api.js?v=management-suite-20260502-production";
-import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
-import { getDeviceFingerprintHash, requestEmployeePasskey, capturePunchSelfie, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=identity-v1";
-import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=identity-v3";
-import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=identity-v4-notes";
+import { endpoints, unwrap } from "./api.js?v=v17-login-resolve-fix-20260505";
+import { enableWebPushSubscription } from "./push.js?v=v16-location-device-hotfix-20260504";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, capturePunchSelfie, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v16-location-device-hotfix-20260504";
+import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v16-location-device-hotfix-20260504";
+import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v16-location-device-hotfix-20260504";
 
 document.documentElement.classList.add("employee-portal-root");
 document.body.classList.add("employee-portal");
@@ -276,12 +276,37 @@ async function registerBrowserPasskey() {
   const clientDataJSON = credential.response?.clientDataJSON ? toBase64Url(credential.response.clientDataJSON) : "";
   const transports = typeof credential.response?.getTransports === "function" ? credential.response.getTransports() : [];
   const deviceFingerprintHash = await getDeviceFingerprintHash();
-  await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "بصمة جهاز الموظف", platform: navigator.platform || "browser", deviceFingerprintHash, trusted: true });
-  return rawId;
+  const registered = unwrap(await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "بصمة جهاز الموظف", platform: navigator.platform || "browser", deviceFingerprintHash, trusted: true }));
+  const credentialRow = registered?.credential || registered?.data || registered || {};
+  state.user = { ...(state.user || {}), passkeyEnabled: true };
+  if (state.user.employee) state.user.employee = { ...state.user.employee, passkeyEnabled: true };
+  return {
+    ok: true,
+    credentialId: rawId,
+    passkeyCredentialId: rawId,
+    trustedDeviceId: credentialRow.id || credentialRow.trustedDeviceId || credentialRow.trusted_device_id || "",
+    deviceFingerprintHash,
+    passkeyUserVerified: true,
+    deviceRiskFlags: [],
+    justRegistered: true,
+  };
 }
 
-async function requestBrowserPasskeyForAction(label = "تأكيد العملية", employee = {}) {
-  return await requestEmployeePasskey({ endpoints, user: state.user, employee, label });
+function isMissingTrustedDeviceError(error) {
+  const message = String(error?.message || error || "");
+  return /لا توجد بصمة جهاز|بصمة جهاز موثوقة|مفتاح المرور|Passkey|passkey|MISSING_PASSKEY/i.test(message);
+}
+
+async function requestBrowserPasskeyForAction(label = "تأكيد العملية", employee = {}, options = {}) {
+  try {
+    return { ok: true, ...(await requestEmployeePasskey({ endpoints, user: state.user, employee, label })) };
+  } catch (error) {
+    if (!options.autoRegisterOnMissing || !isMissingTrustedDeviceError(error)) throw error;
+    if (options.resultBox) options.resultBox.textContent = "لا توجد بصمة جهاز مسجلة لهذا الحساب. سيتم تسجيل بصمة هذا الموبايل الآن ثم إكمال العملية.";
+    const registered = await registerBrowserPasskey();
+    if (options.resultBox) options.resultBox.textContent = "تم تسجيل بصمة الجهاز. جارٍ إكمال العملية...";
+    return registered;
+  }
 }
 
 function playInternalAlertSound() {
@@ -1076,7 +1101,7 @@ async function renderHome() {
         <div class="employee-actions-row"><button class="button ghost" data-route="missions">طلب مأمورية</button><button class="button ghost" data-route="leaves">طلب إجازة</button></div>
       </article>
 
-      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 3).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.type || item.eventType || "حركة")}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small></div><div class="list-item-side">${locationStatusBadge(item)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة بعد.</div>`}</article>
+      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 3).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(statusLabel(item.type || item.eventType || "حركة"))}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small></div><div class="list-item-side">${locationStatusBadge(item)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة بعد.</div>`}</article>
       <article class="employee-card full"><h2>آخر طلباتي</h2>${renderRequestList([...leaves.filter((x)=>x.employeeId===employeeId), ...missions.filter((x)=>x.employeeId===employeeId)].slice(0,3))}</article>
     </section>
   `, "الرئيسية", "ملخص سريع ومختصر لحسابك اليوم.");
@@ -1142,7 +1167,7 @@ async function renderPunch() {
         <div id="punch-result" class="message compact hidden"></div>
         <p class="form-hint">تسجيل/تحديث بصمة الجهاز انتقل إلى: حسابي ← أمان الجهاز، حتى لا يختلط بزر البصمة.</p>
       </article>
-      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 5).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.type || item.eventType || "حركة")}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small>${item.notes ? `<small>ملاحظة: ${escapeHtml(item.notes)}</small>` : ""}</div><div class="list-item-side">${locationStatusBadge(item)}${badge(item.riskLevel || item.status || "")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة.</div>`}</article>
+      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 5).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(statusLabel(item.type || item.eventType || "حركة"))}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small>${item.notes ? `<small>ملاحظة: ${escapeHtml(item.notes)}</small>` : ""}</div><div class="list-item-side">${locationStatusBadge(item)}${badge(item.riskLevel || item.status || "")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة.</div>`}</article>
     </section>
   `, "البصمة", "تسجيل حضور أو انصراف ببصمة الجهاز + GPS.");
 
@@ -1169,29 +1194,33 @@ async function renderPunch() {
     const actionText = type === "out" ? "انصراف" : "حضور";
     try {
       resultBox?.classList.remove("hidden", "danger-box");
-      if (resultBox) resultBox.textContent = `جاري تسجيل بصمة ${actionText}...`;
+      if (resultBox) resultBox.textContent = `جاري تأكيد بصمة الجهاز ثم GPS ثم صورة التحقق لتسجيل ${actionText}...`;
       const preFingerprint = await getDeviceFingerprintHash().catch(() => "");
       const policyAck = await ensureAttendancePolicyAcknowledged({ endpoints, employee, deviceFingerprintHash: preFingerprint });
-      let device = {};
-      try { device = await requestEmployeePasskey({ employeeId: employee.id || employeeId, username: employee.fullName || state.user?.fullName || "employee" }); }
-      catch (err) { device = { ok: false, status: "PASSKEY_FAILED", error: err?.message || "Passkey failed", deviceFingerprintHash: preFingerprint }; }
-      let current = {};
-      try { current = await getVerifiedBrowserLocation(employeeId); }
-      catch (err) { current = { locationPermission: "denied", error: err?.message || "GPS failed" }; }
-      // uploadPunchSelfie is performed inside capturePunchSelfie via endpoints.uploadPunchSelfie when available.
-      const selfie = await capturePunchSelfie({ employeeId: employee.id || employeeId, endpoints }).catch((err) => ({ ok: false, reason: err?.message || "SELFIE_FAILED" }));
+      const device = await requestBrowserPasskeyForAction(`تأكيد بصمة ${actionText}`, employee, { autoRegisterOnMissing: true, resultBox });
+      if (resultBox) resultBox.textContent = "جاري قراءة GPS بدقة عالية...";
+      const current = await getVerifiedBrowserLocation(employeeId);
+      if (!current.latitude || !current.longitude || current.locationPermission === "denied") throw new Error("لم يتم استلام إحداثيات GPS. فعّل الموقع من المتصفح واضغط اختبار الموقع أولاً.");
+      if (resultBox) resultBox.textContent = "جاري التقاط صورة تحقق للموظف...";
+      const selfieCapture = await capturePunchSelfie({ employeeId: employee.id || employeeId, employeeName: employee.fullName || state.user?.fullName || "الموظف", endpoints });
+      if (!selfieCapture.ok) throw new Error(selfieCapture.message || selfieCapture.reason || "لم يتم التقاط صورة تحقق للموظف. اسمح للكاميرا ثم حاول مرة أخرى.");
+      let selfie = selfieCapture;
+      if (selfieCapture.file && typeof endpoints.uploadPunchSelfie === "function") {
+        const uploaded = await endpoints.uploadPunchSelfie({ employeeId: employee.id || employeeId, file: selfieCapture.file }).catch(() => null);
+        selfie = { ...selfieCapture, ...(uploaded || {}), selfieUrl: uploaded?.url || uploaded?.selfieUrl || "" };
+      }
       const qr = isQrDisabled() ? { valid: true, status: "DISABLED", riskFlags: [], requiresReview: false } : await requestBranchQrChallenge({ endpoints, branchId: address.branch?.id || address.branchId || "main" }).catch(() => ({ status: "NOT_PROVIDED" }));
       const trustedDevice = await ensureTrustedDeviceApproval({ endpoints, employee, device: { ...device, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint }, selfieUrl: selfie.selfieUrl || selfie.url || "", location: current }).catch(() => ({ status: "PENDING_REVIEW", requiresReview: true, riskFlags: ["DEVICE_APPROVAL_CHECK_FAILED"] }));
-      const locationTrust = analyzeLocationTrust(current, { branch: address.branch || address, geofenceStatus: current.geofenceStatus });
-      const risk = mergeRiskSignals(calculateAttendanceRisk({ currentLocation: current, device, selfie, trustedDevice }), locationTrust, qr, trustedDevice);
+      const status = current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch");
+      const locationTrust = analyzeLocationTrust(current, { branch: address.branch || address, geofenceStatus: current.geofenceStatus || status });
+      const risk = mergeRiskSignals(calculateAttendanceRisk({ employeeId, location: current, device, selfie, evaluation: { ...(trustedDevice || {}), geofenceStatus: status } }), locationTrust, qr, trustedDevice);
       const v4 = await evaluateAttendanceV4Controls({ endpoints, employee, device: { ...device, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint }, location: current, risk }).catch(() => ({}));
       const merged = mergeV4RiskSignals ? mergeV4RiskSignals(risk, v4) : risk;
-      const status = current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch");
       const notes = app.querySelector("#punch-notes")?.value || "";
-      const body = { ...current, type: actionText, eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || current.locationLabel || (current.locationUncertain ? "الموقع غير مؤكد — مراجعة" : "خارج نطاق المجمع")), verificationStatus: "verified", biometricMethod: isQrDisabled() ? "passkey+gps+selfie" : "passkey+gps+selfie+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: merged.riskScore || risk.riskScore, riskLevel: merged.riskLevel || risk.riskLevel, riskFlags: merged.riskFlags || risk.riskFlags, requiresReview: merged.requiresReview || risk.requiresReview || status !== "inside_branch" };
+      const body = { ...current, type: type === "out" ? "CHECK_OUT" : "CHECK_IN", eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || current.locationLabel || (current.locationUncertain ? "الموقع غير مؤكد — مراجعة" : "خارج نطاق المجمع")), verificationStatus: "verified", biometricMethod: isQrDisabled() ? "passkey+gps+selfie" : "passkey+gps+selfie+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: merged.riskScore || risk.riskScore, riskLevel: merged.riskLevel || risk.riskLevel, riskFlags: merged.riskFlags || risk.riskFlags, requiresReview: merged.requiresReview || risk.requiresReview || status !== "inside_branch" };
       if (!device.ok || !selfie.ok || current.locationPermission === "denied") await createFormalFallbackRequest?.({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => submitFallbackAttendanceRequest({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => null));
       await endpoints.recordAttendance(body);
-      rememberDevicePunch({ employeeId, deviceFingerprintHash: body.deviceFingerprintHash, eventType: type });
+      rememberDevicePunch(body.deviceFingerprintHash, employeeId);
       setMessage(status === "inside_branch" ? `تم تسجيل بصمة ${actionText} داخل مجمع أحلى شباب.` : (status === "location_uncertain" ? `تم تسجيل بصمة ${actionText} كموقع غير مؤكد وستظهر للمراجعة بدل الحكم بالخروج.` : `تم تسجيل بصمة ${actionText} خارج المجمع وستظهر للمراجعة مع المكان والملاحظة.`), "");
       renderPunch();
     } catch (error) {
@@ -1203,12 +1232,16 @@ async function renderPunch() {
 }
 
 async function renderLocation() {
-  const [rows, liveRequests] = await Promise.all([
+  const [rows, liveRequests, _actionCenter, passkeys] = await Promise.all([
     endpoints.locations().then(unwrap).catch(() => []),
     endpoints.myLiveLocationRequests().then(unwrap).catch(() => []),
     endpoints.myActionCenter().then(unwrap).catch(() => ({ actions: [] })),
+    endpoints.passkeyStatus().then(unwrap).catch(() => []),
   ]);
   const employeeId = state.user?.employeeId || state.user?.employee?.id;
+  const employee = state.user?.employee || { id: employeeId, fullName: state.user?.fullName || "الموظف" };
+  const trustedPasskeys = filterEmployeePasskeys(passkeys || [], state.user || {}, employee);
+  const hasTrustedDevice = trustedPasskeys.length > 0;
   const mine = rows.filter((item) => !item.employeeId || item.employeeId === employeeId).slice(0, 20);
   const pending = liveRequests.filter((item) => item.status === "PENDING").slice(0, 5);
   shell(`
@@ -1219,6 +1252,11 @@ async function renderLocation() {
         <h2>إرسال موقعي الحالي</h2>
         <p>استخدم هذا الزر لإرسال موقعك الحالي طوعًا أو عند وجود طلب من الإدارة. لا يوجد تتبع مستمر في الخلفية.</p>
         <button class="button primary full" data-send-location>إرسال موقعي الآن</button>
+        <div class="device-inline-status ${hasTrustedDevice ? 'ok' : 'warn'}">
+          <strong>${hasTrustedDevice ? '✅ بصمة الجهاز مسجلة' : '⚠️ بصمة الجهاز غير مسجلة'}</strong>
+          <span>${hasTrustedDevice ? 'سيطلب النظام بصمة الهاتف قبل إرسال الموقع.' : 'يمكن تسجيل بصمة هذا الموبايل من هنا مباشرة بدون الذهاب لحسابي.'}</span>
+          ${hasTrustedDevice ? '' : '<button class="button ghost full" type="button" data-register-location-passkey>تسجيل بصمة هذا الجهاز الآن</button>'}
+        </div>
         <div id="location-result" class="risk-box hidden"></div>
       </article>
       <article class="employee-card full"><h2>سجل المواقع والطلبات</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${statusLabel(item.status)}</strong><span>${date(item.requestedAt || item.date || item.createdAt)}</span><small>${item.latitude && item.longitude ? `${escapeHtml(item.latitude)} , ${escapeHtml(item.longitude)}` : "لم يتم إرسال إحداثيات بعد"}</small></div><div class="list-item-side">${item.latitude && item.longitude ? `<a target="_blank" rel="noopener" class="button ghost" href="https://www.google.com/maps?q=${escapeHtml(item.latitude)},${escapeHtml(item.longitude)}">خريطة</a>` : badge(item.status || "PENDING")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد طلبات موقع بعد.</div>`}</article>
@@ -1229,7 +1267,7 @@ async function renderLocation() {
   const sendLive = async (id) => {
     result?.classList.remove("hidden", "danger-box");
     if (result) result.textContent = "جاري تأكيد بصمة الجهاز قبل إرسال الموقع...";
-    const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {});
+    const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {}, { autoRegisterOnMissing: true, resultBox: result });
     const passkeyCredentialId = device.passkeyCredentialId;
     if (result) result.textContent = "جاري قراءة الموقع بدقة عالية...";
     const current = await getVerifiedBrowserLocation(employeeId);
@@ -1244,11 +1282,29 @@ async function renderLocation() {
     if (reason === null) return;
     try { await endpoints.respondLiveLocationRequest(button.dataset.liveReject, { status: "REJECTED", reason }); setMessage("تم إرسال سبب الرفض للإدارة.", ""); renderLocation(); } catch (error) { setMessage("", error.message || "تعذر حفظ الرد."); renderLocation(); }
   }));
+  app.querySelector("[data-register-location-passkey]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    try {
+      button.disabled = true;
+      result?.classList.remove("hidden", "danger-box");
+      if (result) result.textContent = "افتح بصمة الهاتف أو قفل الشاشة لتسجيل بصمة هذا الجهاز...";
+      await registerBrowserPasskey();
+      if (result) result.textContent = "تم تسجيل بصمة الجهاز بنجاح. يمكنك الآن إرسال موقعك أو تسجيل البصمة.";
+      setMessage("تم تسجيل بصمة الجهاز بنجاح.", "");
+      renderLocation();
+    } catch (error) {
+      result?.classList.remove("hidden");
+      result?.classList.add("danger-box");
+      if (result) result.textContent = friendlyError(error, "تعذر تسجيل بصمة الجهاز.");
+    } finally {
+      button.disabled = false;
+    }
+  });
   app.querySelector("[data-send-location]")?.addEventListener("click", async () => {
     try {
       result?.classList.remove("hidden", "danger-box");
       if (result) result.textContent = "جاري تأكيد بصمة الجهاز قبل إرسال الموقع...";
-      const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {});
+      const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {}, { autoRegisterOnMissing: true, resultBox: result });
       const passkeyCredentialId = device.passkeyCredentialId;
       if (result) result.textContent = "جاري قراءة الموقع...";
       const current = await getVerifiedBrowserLocation(employeeId);
@@ -1762,6 +1818,16 @@ async function renderProfile() {
         </div>
         <button class="button primary full" type="submit">حفظ التعديلات</button>
       </form>
+      <article class="employee-card full device-security-card" id="employee-device-security">
+        <div class="panel-kicker">أمان الجهاز</div>
+        <h2>تسجيل بصمة الجهاز لهذا الحساب</h2>
+        <p>اضغط الزر من نفس الموبايل لتسجيل Passkey/بصمة الجهاز. بعدها سيطلب النظام بصمة الهاتف قبل إرسال الموقع أو تسجيل الحضور/الانصراف.</p>
+        <div class="employee-actions-stack">
+          <button class="button primary full" type="button" data-register-passkey>تسجيل / تحديث بصمة الجهاز</button>
+          <button class="button ghost full" type="button" data-test-gps>اختبار الموقع قبل البصمة</button>
+        </div>
+        <div id="device-security-result" class="message compact hidden"></div>
+      </article>
       <form class="employee-card full" id="employee-password-form">
         <div class="panel-kicker">الأمان</div>
         <h2>تغيير كلمة المرور</h2>
@@ -1787,6 +1853,37 @@ async function renderProfile() {
       if (preview && dataUrl) preview.innerHTML = `<img class="person-avatar large" src="${escapeHtml(dataUrl)}" alt="معاينة الصورة" />`;
     } catch (error) {
       setMessage("", error.message || "تعذر معاينة الصورة.");
+    }
+  });
+  app.querySelector("[data-register-passkey]")?.addEventListener("click", async (event) => {
+    const button = event.currentTarget;
+    const box = app.querySelector("#device-security-result");
+    try {
+      button.disabled = true;
+      box?.classList.remove("hidden", "danger-box");
+      if (box) box.textContent = "افتح بصمة الهاتف/قفل الشاشة لتسجيل الجهاز...";
+      await registerBrowserPasskey();
+      if (box) box.textContent = "تم تسجيل بصمة الجهاز وربطها بحسابك. يمكنك الآن إرسال الموقع وتسجيل الحضور/الانصراف.";
+      setMessage("تم تسجيل بصمة الجهاز بنجاح.", "");
+    } catch (error) {
+      box?.classList.remove("hidden");
+      box?.classList.add("danger-box");
+      if (box) box.textContent = friendlyError(error, "تعذر تسجيل بصمة الجهاز.");
+    } finally {
+      button.disabled = false;
+    }
+  });
+  app.querySelector("#employee-device-security [data-test-gps]")?.addEventListener("click", async () => {
+    const box = app.querySelector("#device-security-result");
+    try {
+      box?.classList.remove("hidden", "danger-box");
+      if (box) box.textContent = "جاري اختبار GPS بدقة عالية...";
+      const current = await getVerifiedBrowserLocation(user.employeeId || employee.id || state.user?.employeeId || "");
+      if (box) box.innerHTML = `${readableLocationBlock(current)}${current.latitude && current.longitude ? `<a class="button ghost small" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}">فتح الخريطة</a>` : ""}`;
+    } catch (error) {
+      box?.classList.remove("hidden");
+      box?.classList.add("danger-box");
+      if (box) box.textContent = friendlyError(error, "تعذر اختبار الموقع.");
     }
   });
   app.querySelector("#employee-password-form")?.addEventListener("submit", async (event) => {

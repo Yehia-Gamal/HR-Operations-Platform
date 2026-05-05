@@ -1624,3 +1624,19 @@ body.employee-portal .must-change-card {
 body.employee-portal .must-change-card strong { color: #fde68a; }
 body.employee-portal .must-change-card span { color: rgba(226, 232, 240, .86); }
 @media (max-width:640px){ body.employee-portal .must-change-card { grid-template-columns: 1fr; } }
+
+body.employee-portal .device-inline-status {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(56, 199, 244, .24);
+  background: rgba(7, 16, 31, .62);
+  color: rgba(226, 232, 240, .88);
+}
+body.employee-portal .device-inline-status strong { color: #eaf6ff; font-weight: 900; }
+body.employee-portal .device-inline-status span { color: rgba(203, 213, 225, .84); line-height: 1.7; }
+body.employee-portal .device-inline-status.ok { border-color: rgba(34, 197, 94, .30); background: rgba(22, 163, 74, .08); }
+body.employee-portal .device-inline-status.warn { border-color: rgba(245, 158, 11, .35); background: rgba(245, 158, 11, .10); }
+body.employee-portal .device-security-card { border-color: rgba(56, 199, 244, .28) !important; }

@@ -1,4 +1,4 @@
-const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-private-v13";
+const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-private-v16-location-device-hotfix";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./health.html",

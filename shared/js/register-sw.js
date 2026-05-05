@@ -1,6 +1,6 @@
 // Service Worker registration is portal-scoped so employee devices do not cache admin UI.
-const HR_SW_CACHE_NAME = "hr-attendance-full-workflow-live-20260504";
-const HR_SW_VERSION = "full-workflow-live-20260504";
+const HR_SW_CACHE_NAME = "hr-attendance-full-workflow-live-20260504-v17-login-resolve-fix";
+const HR_SW_VERSION = "full-workflow-live-20260504-v17-login-resolve-fix";
 
 function portalServiceWorkerConfig() {
   const path = location.pathname.toLowerCase();

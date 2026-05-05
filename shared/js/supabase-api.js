@@ -720,6 +720,46 @@ function looksLikeEmail(value) {
   return /^[^\s@]+@[^\s@]+$/.test(String(value || "").trim());
 }
 
+const loginResolveCache = new Map();
+const LOGIN_RESOLVE_CACHE_MS = 10 * 60 * 1000;
+const LOGIN_RESOLVE_COOLDOWN_MS = 60 * 1000;
+
+function loginResolveCacheKey(phone) {
+  return `hr.login.resolve.${phone}`;
+}
+
+function getCachedLoginEmail(phone) {
+  const memory = loginResolveCache.get(phone);
+  if (memory?.email && memory.expiresAt > Date.now()) return memory.email;
+  try {
+    const cached = JSON.parse(sessionStorage.getItem(loginResolveCacheKey(phone)) || "null");
+    if (cached?.email && cached.expiresAt > Date.now()) {
+      loginResolveCache.set(phone, cached);
+      return cached.email;
+    }
+  } catch {}
+  return "";
+}
+
+function cacheLoginEmail(phone, email) {
+  const row = { email, expiresAt: Date.now() + LOGIN_RESOLVE_CACHE_MS };
+  loginResolveCache.set(phone, row);
+  try { sessionStorage.setItem(loginResolveCacheKey(phone), JSON.stringify(row)); } catch {}
+}
+
+function getLoginResolveCooldown(phone) {
+  try {
+    const until = Number(sessionStorage.getItem(`${loginResolveCacheKey(phone)}.cooldown`) || 0);
+    return until > Date.now() ? Math.ceil((until - Date.now()) / 1000) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function setLoginResolveCooldown(phone) {
+  try { sessionStorage.setItem(`${loginResolveCacheKey(phone)}.cooldown`, String(Date.now() + LOGIN_RESOLVE_COOLDOWN_MS)); } catch {}
+}
+
 async function resolveLoginEmail(identifier) {
   const client = await sb();
   const raw = String(identifier || "").trim();
@@ -727,13 +767,19 @@ async function resolveLoginEmail(identifier) {
   if (looksLikeEmail(raw)) return raw.toLowerCase();
   const phone = normalizeLoginPhone(raw);
   if (!phone) throw new Error("اكتب رقم هاتف صحيح أو بريد إلكتروني صحيح.");
+  const cachedEmail = getCachedLoginEmail(phone);
+  if (cachedEmail) return cachedEmail;
+  const cooldownSeconds = getLoginResolveCooldown(phone);
+  if (cooldownSeconds) throw new Error(`خدمة الدخول برقم الهاتف تم استدعاؤها بشكل متكرر. انتظر ${cooldownSeconds} ثانية أو استخدم البريد الإلكتروني.`);
   const { data, error } = await client.functions.invoke("resolve-login-identifier", { body: { identifier: phone } });
   if (error) {
     console.warn("resolve-login-identifier function failed", error);
+    setLoginResolveCooldown(phone);
     throw new Error("خدمة الدخول برقم الهاتف تواجه مشكلة أو تم تجاوز الحد المسموح. يرجى المحاولة باستخدام البريد الإلكتروني.");
   }
   const email = String(data?.email || "").trim();
   if (!email) throw new Error("لا يوجد حساب دخول مرتبط بهذا الرقم. تواصل مع الإدارة لربط الرقم بالموظف.");
+  cacheLoginEmail(phone, email.toLowerCase());
   return email.toLowerCase();
 }
 
@@ -2066,8 +2112,10 @@ export const supabaseEndpoints = {
   adminAccessLog: async (body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
+    if (!user?.id) return null;
     const payload = { actor_user_id: user?.id || null, actor_employee_id: user?.employeeId || null, action: body.action || "admin.gateway", route: body.route || location.hash || "", result: body.result || "INFO", user_agent: navigator.userAgent || "", metadata: body.metadata || {}, created_at: now() };
     const { data, error } = await client.from("admin_access_logs").insert(payload).select("*").single();
+    if (error && ["401", "403", "42501"].includes(String(error.code || error.status || ""))) return null;
     fail(error, "تعذر حفظ سجل دخول الإدارة. تأكد من تطبيق Patch 023.");
     return toCamel(data);
   },
