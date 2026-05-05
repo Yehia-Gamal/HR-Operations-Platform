@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=v17-login-resolve-fix-20260505";
+import { endpoints, unwrap } from "./api.js?v=v20-live-location-org-20260505";
 import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
 
 const app = document.querySelector("#app");
@@ -1984,6 +1984,44 @@ async function renderOrgChart() {
       ${children.length ? `<div class="org-children">${children.map((child) => node(child, depth + 1)).join("")}</div>` : ""}
     </div>`;
   };
+  const roleSlugOf = (employee) => String(employee.role?.slug || employee.roleSlug || "").toLowerCase();
+  const normalizedName = (employee) => String(employee.fullName || employee.name || "").trim();
+  const sortPeople = (list) => list
+    .filter(Boolean)
+    .filter((employee, index, self) => self.findIndex((item) => item.id === employee.id) === index)
+    .sort((a, b) => String(a.fullName || "").localeCompare(String(b.fullName || ""), "ar"));
+  const executive = active.find((employee) => roleSlugOf(employee) === "executive")
+    || active.find((employee) => normalizedName(employee).includes("محمد يوسف") || String(employee.jobTitle || "").includes("تنفيذي"))
+    || roots[0];
+  const secretary = active.find((employee) => ["executive-secretary", "admin"].includes(roleSlugOf(employee)) && employee.id !== executive?.id)
+    || active.find((employee) => normalizedName(employee).includes("يحي") || normalizedName(employee).includes("يحيى"));
+  const managerLike = active.filter((employee) => employee.id !== executive?.id && employee.id !== secretary?.id)
+    .filter((employee) => childrenOf(employee.id).length || ["manager", "direct-manager", "operations-manager-1", "operations-manager-2", "hr-manager"].includes(roleSlugOf(employee)));
+  const firstLine = sortPeople([
+    ...(executive ? childrenOf(executive.id).filter((employee) => employee.id !== secretary?.id) : []),
+    ...managerLike.filter((employee) => !employee.managerEmployeeId || employee.managerEmployeeId === executive?.id),
+  ]);
+  const firstLineIds = new Set(firstLine.map((employee) => employee.id));
+  const branchNode = (employee, depth = 0) => {
+    const children = childrenOf(employee.id).filter((child) => child.id !== secretary?.id && !firstLineIds.has(child.id));
+    return `<div class="org-feature-branch" style="--depth:${depth}">
+      <div class="org-feature-node ${depth === 0 ? "is-manager" : ""}">
+        ${avatar(employee, "tiny")}
+        <span><strong>${escapeHtml(employee.fullName)}</strong><small>${escapeHtml(employee.jobTitle || employee.role?.name || "")}</small></span>
+        <em>${children.length ? `${children.length} مباشر` : "تنفيذ"}</em>
+      </div>
+      ${children.length ? `<div class="org-feature-children">${children.map((child) => branchNode(child, depth + 1)).join("")}</div>` : ""}
+    </div>`;
+  };
+  const featuredChart = executive ? `<div class="org-featured-chart">
+    <div class="org-feature-top">
+      <div class="org-feature-node is-executive">${avatar(executive, "tiny")}<span><strong>${escapeHtml(executive.fullName)}</strong><small>${escapeHtml(executive.jobTitle || "المدير التنفيذي")}</small></span></div>
+      ${secretary ? `<div class="org-feature-node is-secretary">${avatar(secretary, "tiny")}<span><strong>${escapeHtml(secretary.fullName)}</strong><small>${escapeHtml(secretary.jobTitle || secretary.role?.name || "السكرتير التنفيذي")}</small></span></div>` : ""}
+    </div>
+    <div class="org-feature-line" aria-hidden="true"></div>
+    <div class="org-feature-managers">${firstLine.length ? firstLine.map((employee) => branchNode(employee)).join("") : roots.filter((employee) => employee.id !== executive.id && employee.id !== secretary?.id).map((employee) => branchNode(employee)).join("")}</div>
+  </div>` : "";
+  const fallbackRoots = roots.filter((employee) => employee.id !== executive?.id && employee.id !== secretary?.id && !firstLineIds.has(employee.id));
   shell(`
     <section class="stack">
       <div class="metric-grid org-summary-grid">
@@ -2000,7 +2038,7 @@ async function renderOrgChart() {
           <div><h2>الهيكل الوظيفي لجمعية خواطر أحلى شباب</h2><p>حسب المدير المباشر المسجل في ملفات الموظفين — يدعم أكثر من مستوى إداري.</p></div>
           <div class="toolbar"><button class="button ghost" data-export-org>تصدير CSV</button><button class="button ghost" data-print-org>طباعة</button></div>
         </div>
-        <div class="org-chart org-tree">${roots.map((employee) => node(employee)).join("")}</div>
+        <div class="org-chart org-tree">${featuredChart || roots.map((employee) => node(employee)).join("")}${fallbackRoots.length && featuredChart ? `<div class="org-fallback-tree">${fallbackRoots.map((employee) => node(employee)).join("")}</div>` : ""}</div>
       </section>
       <section class="panel">
         <div class="panel-head"><div><h2>جدول العلاقات الإدارية</h2><p>مراجعة سريعة لكل موظف ومديره وعدد التابعين.</p></div></div>

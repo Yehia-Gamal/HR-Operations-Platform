@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=v17-login-resolve-fix-20260505";
+import { endpoints, unwrap } from "./api.js?v=v20-live-location-org-20260505";
 import { enableWebPushSubscription } from "./push.js?v=v16-location-device-hotfix-20260504";
 import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v18-camera-gps-punch-fix-20260505";
 import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v16-location-device-hotfix-20260504";
@@ -679,19 +679,25 @@ function employeeHeaderCell(subject = employeeSubject()) {
 }
 
 function locationLabelFromRecord(record = {}) {
-  const branchish = ["inside_branch", "INSIDE_BRANCH", "inside", "IN_RANGE", "ACTIVE"].includes(String(record.status || record.locationStatus || record.geofenceStatus || ""));
+  const locationStatus = String(record.locationStatus || record.geofenceStatus || "").toLowerCase();
+  const attendanceStatus = String(record.status || record.type || record.eventType || "").toLowerCase();
+  const branchish = ["inside_branch", "inside_branch_low_accuracy", "inside", "in_range", "active", "approved"].includes(locationStatus)
+    || (!locationStatus && ["check_in", "check_out", "present", "late", "checked_out", "manual_approved"].includes(attendanceStatus) && !record.requiresReview);
   if (branchish) return `${branchName()} — ${branchArea()}`;
   return record.addressLabel || record.locationLabel || record.placeLabel || record.address || record.destinationName || "لم يتم تحديد عنوان نصي بعد";
 }
 
 function locationStatusBadge(record = {}) {
-  const status = String(record.status || record.locationStatus || record.geofenceStatus || "").toLowerCase();
+  const status = String(record.locationStatus || record.geofenceStatus || "").toLowerCase();
+  const attendanceStatus = String(record.status || record.type || record.eventType || "").toLowerCase();
   const inside = status.includes("inside") || status.includes("in_range") || status === "active" || status === "approved";
   const uncertain = status.includes("uncertain") || status.includes("low_accuracy") || status.includes("unavailable") || status.includes("unknown") || record.locationUncertain;
   const outside = status.includes("outside") || status.includes("out_of_range") || status.includes("geofence_miss");
+  const acceptedAttendance = ["check_in", "check_out", "present", "late", "checked_out", "manual_approved"].includes(attendanceStatus);
   if (inside) return `<span class="pill success">داخل المجمع</span>`;
   if (uncertain) return `<span class="pill warning">الموقع غير مؤكد</span>`;
   if (outside) return `<span class="pill danger">خارج المجمع</span>`;
+  if (acceptedAttendance && !record.requiresReview) return `<span class="pill success">تم التسجيل</span>`;
   return `<span class="pill warning">بحاجة للتحقق</span>`;
 }
 
@@ -1203,7 +1209,7 @@ async function renderPunch() {
     const actionText = type === "out" ? "انصراف" : "حضور";
     try {
       resultBox?.classList.remove("hidden", "danger-box");
-      if (resultBox) resultBox.textContent = `جاري تأكيد بصمة الجهاز ثم GPS ثم صورة التحقق لتسجيل ${actionText}...`;
+      if (resultBox) resultBox.textContent = `جاري تأكيد بصمة الجهاز ثم GPS لتسجيل ${actionText}...`;
       const preFingerprint = await getDeviceFingerprintHash().catch(() => "");
       const policyAck = await ensureAttendancePolicyAcknowledged({ endpoints, employee, deviceFingerprintHash: preFingerprint });
       const device = await requestBrowserPasskeyForAction(`تأكيد بصمة ${actionText}`, employee, { autoRegisterOnMissing: true, resultBox });
@@ -1218,8 +1224,16 @@ async function renderPunch() {
       const risk = mergeRiskSignals(calculateAttendanceRisk({ employeeId, location: current, device, selfie, evaluation: { ...(trustedDevice || {}), geofenceStatus: status } }), locationTrust, qr, trustedDevice);
       const v4 = await evaluateAttendanceV4Controls({ endpoints, employee, device: { ...device, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint }, location: current, risk }).catch(() => ({}));
       const merged = mergeV4RiskSignals ? mergeV4RiskSignals(risk, v4) : risk;
+      const faceDisabled = isFaceSelfieDisabled();
+      const insideBranch = status === "inside_branch" || String(current.geofenceStatus || "").includes("inside_branch");
+      const finalRiskFlags = Array.from(new Set(merged.riskFlags || risk.riskFlags || []))
+        .filter((flag) => !(faceDisabled && ["MISSING_SELFIE", "FACE_SELFIE_TEMP_DISABLED", "SELFIE_CAPTURE_FAILED"].includes(String(flag))));
+      const directRecord = insideBranch && device.ok !== false && current.locationPermission === "granted";
+      const finalRequiresReview = directRecord ? false : Boolean(merged.requiresReview || risk.requiresReview || status !== "inside_branch");
+      const finalRiskScore = directRecord ? 0 : Number(merged.riskScore ?? risk.riskScore ?? 0);
+      const finalRiskLevel = directRecord ? "LOW" : (merged.riskLevel || risk.riskLevel || "MEDIUM");
       const notes = app.querySelector("#punch-notes")?.value || "";
-      const body = { ...current, type: type === "out" ? "CHECK_OUT" : "CHECK_IN", eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || current.locationLabel || (current.locationUncertain ? "الموقع غير مؤكد — مراجعة" : "خارج نطاق المجمع")), verificationStatus: "verified", biometricMethod: isQrDisabled() ? "passkey+gps+selfie" : "passkey+gps+selfie+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: merged.riskScore || risk.riskScore, riskLevel: merged.riskLevel || risk.riskLevel, riskFlags: merged.riskFlags || risk.riskFlags, requiresReview: merged.requiresReview || risk.requiresReview || status !== "inside_branch" };
+      const body = { ...current, type: type === "out" ? "CHECK_OUT" : "CHECK_IN", eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || current.locationLabel || (current.locationUncertain ? "الموقع غير مؤكد — مراجعة" : "خارج نطاق المجمع")), verificationStatus: "verified", biometricMethod: isQrDisabled() ? "passkey+gps" : "passkey+gps+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: finalRiskScore, riskLevel: finalRiskLevel, riskFlags: finalRiskFlags, requiresReview: finalRequiresReview };
       if (!device.ok || !selfie.ok || current.locationPermission === "denied") await createFormalFallbackRequest?.({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => submitFallbackAttendanceRequest({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => null));
       await endpoints.recordAttendance(body);
       rememberDevicePunch(body.deviceFingerprintHash, employeeId);

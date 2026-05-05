@@ -2164,7 +2164,34 @@ export const supabaseEndpoints = {
     const payload = { employee_id: employeeId, requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expires_at: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), created_at: now() };
     const { data, error } = await client.from("live_location_requests").insert(payload).select("*").single();
     fail(error, "تعذر إنشاء طلب الموقع المباشر. تأكد من تطبيق Patch 023.");
-    await ignoreSupabaseError(client.from("notifications").insert({ employee_id: employeeId, title: "طلب مشاركة موقعك الحالي", body: payload.requested_by_name + " يطلب إرسال موقعك المباشر الآن. السبب: " + payload.reason, type: "ACTION_REQUIRED", status: "UNREAD", is_read: false, created_at: now() }));
+    const targetEmployee = await employeeById(employeeId).catch(() => null);
+    const notificationTitle = "طلب مشاركة موقعك الحالي";
+    const notificationBody = payload.requested_by_name + " يطلب إرسال موقعك المباشر الآن. السبب: " + payload.reason;
+    const notificationPayload = {
+      user_id: targetEmployee?.userId || null,
+      employee_id: employeeId,
+      title: notificationTitle,
+      body: notificationBody,
+      type: "ACTION_REQUIRED",
+      status: "UNREAD",
+      is_read: false,
+      route: "location",
+      created_at: now(),
+    };
+    const notificationInsert = await client.from("notifications").insert(notificationPayload);
+    if (notificationInsert.error && ["42703", "PGRST204"].includes(notificationInsert.error.code)) {
+      const { route, ...baseNotificationPayload } = notificationPayload;
+      await ignoreSupabaseError(client.from("notifications").insert(baseNotificationPayload));
+    }
+    await client.functions.invoke("send-push-notification", {
+      body: {
+        title: notificationTitle,
+        body: notificationBody,
+        tag: `live-location-${data.id}`,
+        targetEmployeeIds: [employeeId],
+        data: { route: "location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
+      },
+    }).catch(() => null);
     await audit("live_location.request", "employee", employeeId, payload).catch(() => null);
     return toCamel(data);
   },
