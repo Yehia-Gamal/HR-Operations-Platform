@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=v21-session-gate-logout-20260505";
+import { endpoints, unwrap } from "./api.js?v=v22-location-notify-photo-20260505";
 import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
 
 const app = document.querySelector("#app");

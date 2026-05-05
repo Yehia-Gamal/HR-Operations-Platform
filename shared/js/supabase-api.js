@@ -1173,8 +1173,9 @@ export const supabaseEndpoints = {
     const client = await sb();
     const user = await currentUser();
     if (!user?.id) throw new Error("لا توجد جلسة نشطة.");
-    const payload = contactPayload(body);
-    if (!payload.email && !payload.phone) throw new Error("اكتب بريدًا إلكترونيًا أو رقم هاتف للتعديل.");
+    const avatarUrl = body.avatarUrl || body.photoUrl || "";
+    const payload = compact({ ...contactPayload(body), avatar_url: avatarUrl || undefined });
+    if (!payload.email && !payload.phone && !payload.avatar_url) throw new Error("اكتب بريدًا إلكترونيًا أو رقم هاتف أو اختر صورة للحفظ.");
     if (payload.email && payload.email !== String(user.email || "").toLowerCase()) {
       const { error: authError } = await client.auth.updateUser({ email: payload.email });
       fail(authError, "تعذر طلب تعديل بريد تسجيل الدخول. قد يحتاج البريد الجديد إلى تأكيد.");
@@ -1182,7 +1183,8 @@ export const supabaseEndpoints = {
     const { data, error } = await client.from("profiles").update(payload).eq("id", user.id).select("*").single();
     fail(error, "تعذر حفظ بيانات الاتصال.");
     if (user.employeeId || user.employee?.id) {
-      await client.from("employees").update(payload).eq("id", user.employeeId || user.employee.id).catch(() => null);
+      const employeePayload = compact({ ...contactPayload(body), photo_url: avatarUrl || undefined, avatar_url: avatarUrl || undefined });
+      await client.from("employees").update(employeePayload).eq("id", user.employeeId || user.employee.id).catch(() => null);
     }
     await audit("profile.contact_update", "profile", user.id, payload);
     return enrichProfile(data, await core());
@@ -2168,7 +2170,7 @@ export const supabaseEndpoints = {
     const targetEmployee = await employeeById(employeeId).catch(() => null);
     const notificationTitle = "طلب مشاركة موقعك الحالي";
     const notificationBody = payload.requested_by_name + " يطلب إرسال موقعك المباشر الآن. السبب: " + payload.reason;
-    const notificationPayload = {
+    const baseNotificationPayload = {
       user_id: targetEmployee?.userId || null,
       employee_id: employeeId,
       title: notificationTitle,
@@ -2176,13 +2178,13 @@ export const supabaseEndpoints = {
       type: "ACTION_REQUIRED",
       status: "UNREAD",
       is_read: false,
-      route: "location",
       created_at: now(),
     };
-    const notificationInsert = await client.from("notifications").insert(notificationPayload);
-    if (notificationInsert.error && ["42703", "PGRST204"].includes(notificationInsert.error.code)) {
-      const { route, ...baseNotificationPayload } = notificationPayload;
-      await ignoreSupabaseError(client.from("notifications").insert(baseNotificationPayload));
+    const notificationInsert = await client.from("notifications").insert(baseNotificationPayload).select("id").single();
+    if (!notificationInsert.error && notificationInsert.data?.id) {
+      await ignoreSupabaseError(client.from("notifications").update({ route: "location" }).eq("id", notificationInsert.data.id));
+    } else {
+      console.warn("live location notification insert failed", notificationInsert.error?.message || notificationInsert.error);
     }
     await client.functions.invoke("send-push-notification", {
       body: {

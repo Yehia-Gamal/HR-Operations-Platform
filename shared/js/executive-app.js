@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=v21-session-gate-logout-20260505";
+import { endpoints, unwrap } from "./api.js?v=v22-location-notify-photo-20260505";
 
 const app = document.querySelector("#app");
 const EMPLOYEE_PORTAL = "../employee/index.html#home";

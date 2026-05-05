@@ -34,7 +34,11 @@ Deno.serve(async (req) => {
   if (profileError) return json(req, { error: profileError.message }, 400);
   const role = Array.isArray(profile?.roles) ? profile.roles[0] : profile?.roles;
   const permissions = role?.permissions || [];
-  const allowed = permissions.includes('*') || permissions.includes('alerts:manage') || permissions.includes('users:manage') || ['admin', 'hr-manager'].includes(role?.slug);
+  const allowed = permissions.includes('*')
+    || permissions.includes('alerts:manage')
+    || permissions.includes('users:manage')
+    || permissions.includes('live-location:request')
+    || ['admin', 'executive', 'executive-secretary', 'hr-manager'].includes(role?.slug);
   if (!allowed) return json(req, { error: 'FORBIDDEN_NOTIFICATION_SEND' }, 403);
 
   const body = await req.json().catch(() => ({}));
