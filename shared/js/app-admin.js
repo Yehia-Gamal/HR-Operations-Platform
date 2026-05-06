@@ -1,5 +1,5 @@
-import { endpoints, unwrap } from "./api.js?v=v22-location-notify-photo-20260505";
-import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
+﻿import { endpoints, unwrap } from "./api.js?v=v31-production-deploy-ready-keep-dev-files";
+import { enableWebPushSubscription } from "./push.js?v=v31-production-deploy-ready-keep-dev-files";
 
 const app = document.querySelector("#app");
 
@@ -16,12 +16,12 @@ const state = {
 };
 
 const navGroups = [
-  ["الرئيسية", [["dashboard", "لوحة المتابعة"], ["executive-report", "تقرير المدير التنفيذي"], ["executive-mobile", "المتابعة التنفيذية"], ["presence-map", "خريطة الحضور اللحظية"], ["attendance-risk", "مخاطر البصمة"], ["manager-dashboard", "لوحة المدير"], ["manager-suite", "لوحة المدير المباشر"], ["realtime", "لوحة Live"], ["employee-punch", "بصمة الموظف"], ["attendance", "الحضور"], ["attendance-review", "مراجعة البصمات"], ["smart-attendance", "قواعد الحضور الذكية"], ["attendance-calendar", "تقويم الحضور"]]],
-  ["الأفراد", [["employees", "الأشخاص والموظفون"], ["management-structure", "هيكل الإدارة والفرق"], ["team-dashboard", "فريق المدير"], ["hr-operations", "عمليات HR"], ["employee-archive", "أرشيف موظف"], ["users", "المستخدمون"], ["leave-balances", "أرصدة الإجازات"], ["documents", "مستندات الموظفين"], ["trusted-devices", "الأجهزة المعتمدة"], ["org-chart", "الهيكل الوظيفي"]]],
-  ["الصلاحيات", [["roles", "الأدوار والصلاحيات"], ["permission-matrix", "مصفوفة الصلاحيات"], ["password-vault", "خزنة كلمات المرور"], ["sensitive-approvals", "اعتمادات حساسة"]]],
-  ["الطلبات", [["requests", "مركز الطلبات"], ["tasks", "المهام"], ["missions", "المأموريات"], ["leaves", "الإجازات"], ["locations", "طلبات وسجل المواقع"], ["disputes", "الشكاوى وفض الخلافات"], ["admin-decisions", "سجل القرارات الإدارية"], ["dispute-workflow", "مسار الشكاوى والتصعيد"]]],
-  ["المتابعة", [["kpi", "مؤشرات الأداء"], ["monthly-evaluations", "التقييم الشهري"], ["control-room", "غرفة التحكم"], ["daily-reports", "التقارير اليومية"], ["ai-analytics", "تحليلات AI"], ["reports", "التقارير"], ["report-center", "مركز التقارير والتصدير"], ["executive-pdf", "تقارير المدير التنفيذي PDF"], ["monthly-auto-pdf", "PDF شهري تلقائي"], ["smart-alerts", "التنبيهات الذكية"], ["monthly-report", "تقرير شهري"], ["advanced-reports", "منشئ التقارير"], ["audit", "سجل التدقيق"], ["security-log", "سجل الأمان"], ["notifications", "الإشعارات"]]],
-  ["النظام", [["settings", "الإعدادات"], ["supabase-setup", "إعداد Supabase"], ["db-updates", "تحديثات Database"], ["auto-backup", "Backup تلقائي"], ["data-center", "مركز البيانات"], ["complex-settings", "إعدادات المجمع"], ["system-diagnostics", "اختبار النظام"], ["quality-center", "مركز الجودة والإصلاح"], ["policies", "السياسات والتوقيعات"], ["route-access", "صلاحيات الواجهة"], ["integrations", "التكاملات"], ["access-control", "الأجهزة والبوابات"], ["offline-sync", "Offline Sync"], ["health", "حالة النظام"], ["backup", "نسخ واستيراد"]]],
+  ["Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", [["dashboard", "Ù„ÙˆØ­Ø© Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø©"], ["executive-report", "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ"], ["executive-mobile", "Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©"], ["presence-map", "Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ù„Ø­Ø¸ÙŠØ©"], ["attendance-risk", "Ù…Ø®Ø§Ø·Ø± Ø§Ù„Ø¨ØµÙ…Ø©"], ["manager-dashboard", "Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ±"], ["manager-suite", "Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±"], ["realtime", "Ù„ÙˆØ­Ø© Live"], ["employee-punch", "Ø¨ØµÙ…Ø© Ø§Ù„Ù…ÙˆØ¸Ù"], ["attendance", "Ø§Ù„Ø­Ø¶ÙˆØ±"], ["attendance-review", "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª"], ["smart-attendance", "Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠØ©"], ["attendance-calendar", "ØªÙ‚ÙˆÙŠÙ… Ø§Ù„Ø­Ø¶ÙˆØ±"]]],
+  ["Ø§Ù„Ø£ÙØ±Ø§Ø¯", [["employees", "Ø§Ù„Ø£Ø´Ø®Ø§Øµ ÙˆØ§Ù„Ù…ÙˆØ¸ÙÙˆÙ†"], ["management-structure", "Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ÙˆØ§Ù„ÙØ±Ù‚"], ["team-dashboard", "ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ±"], ["hr-operations", "Ø¹Ù…Ù„ÙŠØ§Øª HR"], ["employee-archive", "Ø£Ø±Ø´ÙŠÙ Ù…ÙˆØ¸Ù"], ["users", "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙˆÙ†"], ["leave-balances", "Ø£Ø±ØµØ¯Ø© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª"], ["documents", "Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†"], ["trusted-devices", "Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©"], ["org-chart", "Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ"]]],
+  ["Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª", [["roles", "Ø§Ù„Ø£Ø¯ÙˆØ§Ø± ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª"], ["permission-matrix", "Ù…ØµÙÙˆÙØ© Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª"], ["password-vault", "Ø®Ø²Ù†Ø© ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ±"], ["sensitive-approvals", "Ø§Ø¹ØªÙ…Ø§Ø¯Ø§Øª Ø­Ø³Ø§Ø³Ø©"]]],
+  ["Ø§Ù„Ø·Ù„Ø¨Ø§Øª", [["requests", "Ù…Ø±ÙƒØ² Ø§Ù„Ø·Ù„Ø¨Ø§Øª"], ["tasks", "Ø§Ù„Ù…Ù‡Ø§Ù…"], ["missions", "Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª"], ["leaves", "Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª"], ["locations", "Ø·Ù„Ø¨Ø§Øª ÙˆØ³Ø¬Ù„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹"], ["disputes", "Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆÙØ¶ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª"], ["admin-decisions", "Ø³Ø¬Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©"], ["dispute-workflow", "Ù…Ø³Ø§Ø± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯"]]],
+  ["Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø©", [["kpi", "Ù…Ø¤Ø´Ø±Ø§Øª Ø§Ù„Ø£Ø¯Ø§Ø¡"], ["monthly-evaluations", "Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø´Ù‡Ø±ÙŠ"], ["control-room", "ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ…"], ["daily-reports", "Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©"], ["ai-analytics", "ØªØ­Ù„ÙŠÙ„Ø§Øª AI"], ["reports", "Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±"], ["report-center", "Ù…Ø±ÙƒØ² Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± ÙˆØ§Ù„ØªØµØ¯ÙŠØ±"], ["executive-pdf", "ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ PDF"], ["monthly-auto-pdf", "PDF Ø´Ù‡Ø±ÙŠ ØªÙ„Ù‚Ø§Ø¦ÙŠ"], ["smart-alerts", "Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©"], ["monthly-report", "ØªÙ‚Ø±ÙŠØ± Ø´Ù‡Ø±ÙŠ"], ["advanced-reports", "Ù…Ù†Ø´Ø¦ Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±"], ["audit", "Ø³Ø¬Ù„ Ø§Ù„ØªØ¯Ù‚ÙŠÙ‚"], ["security-log", "Ø³Ø¬Ù„ Ø§Ù„Ø£Ù…Ø§Ù†"], ["notifications", "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª"]]],
+  ["Ø§Ù„Ù†Ø¸Ø§Ù…", [["settings", "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª"], ["supabase-setup", "Ø¥Ø¹Ø¯Ø§Ø¯ Supabase"], ["db-updates", "ØªØ­Ø¯ÙŠØ«Ø§Øª Database"], ["auto-backup", "Backup ØªÙ„Ù‚Ø§Ø¦ÙŠ"], ["data-center", "Ù…Ø±ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª"], ["complex-settings", "Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹"], ["system-diagnostics", "Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù†Ø¸Ø§Ù…"], ["quality-center", "Ù…Ø±ÙƒØ² Ø§Ù„Ø¬ÙˆØ¯Ø© ÙˆØ§Ù„Ø¥ØµÙ„Ø§Ø­"], ["policies", "Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª ÙˆØ§Ù„ØªÙˆÙ‚ÙŠØ¹Ø§Øª"], ["route-access", "ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„ÙˆØ§Ø¬Ù‡Ø©"], ["integrations", "Ø§Ù„ØªÙƒØ§Ù…Ù„Ø§Øª"], ["access-control", "Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© ÙˆØ§Ù„Ø¨ÙˆØ§Ø¨Ø§Øª"], ["offline-sync", "Offline Sync"], ["health", "Ø­Ø§Ù„Ø© Ø§Ù„Ù†Ø¸Ø§Ù…"], ["backup", "Ù†Ø³Ø® ÙˆØ§Ø³ØªÙŠØ±Ø§Ø¯"]]],
 ];
 
 const routePermissions = {
@@ -100,8 +100,8 @@ const FULL_ACCESS_ROLE_KEYS = new Set([
   "role-admin",
   "executive-secretary",
   "role-executive-secretary",
-  "مدير النظام",
-  "السكرتير التنفيذي",
+  "Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…",
+  "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ",
 ]);
 
 function safeList(value) {
@@ -115,15 +115,15 @@ function normalizeDashboardPayload(value = {}) {
   const attendanceBreakdown = safeList(dashboard.attendanceBreakdown);
   const attendanceTrends = safeList(dashboard.attendanceTrends);
   const fallbackMetrics = [
-    { label: "الموظفون", value: cards.employees ?? 0, helper: "إجمالي الملفات المتاحة" },
-    { label: "حضور اليوم", value: cards.presentToday ?? 0, helper: "الحركات المسجلة اليوم" },
-    { label: "طلبات معلقة", value: cards.pendingRequests ?? 0, helper: "تحتاج مراجعة" },
-    { label: "إجازات اليوم", value: cards.leavesToday ?? 0, helper: "الموافق عليها اليوم" },
+    { label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", value: cards.employees ?? 0, helper: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù…Ù„ÙØ§Øª Ø§Ù„Ù…ØªØ§Ø­Ø©" },
+    { label: "Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…", value: cards.presentToday ?? 0, helper: "Ø§Ù„Ø­Ø±ÙƒØ§Øª Ø§Ù„Ù…Ø³Ø¬Ù„Ø© Ø§Ù„ÙŠÙˆÙ…" },
+    { label: "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", value: cards.pendingRequests ?? 0, helper: "ØªØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©" },
+    { label: "Ø¥Ø¬Ø§Ø²Ø§Øª Ø§Ù„ÙŠÙˆÙ…", value: cards.leavesToday ?? 0, helper: "Ø§Ù„Ù…ÙˆØ§ÙÙ‚ Ø¹Ù„ÙŠÙ‡Ø§ Ø§Ù„ÙŠÙˆÙ…" },
   ];
   const fallbackBreakdown = [
-    { label: "حضور", value: cards.presentToday ?? 0 },
-    { label: "طلبات", value: cards.pendingRequests ?? 0 },
-    { label: "إجازات", value: cards.leavesToday ?? 0 },
+    { label: "Ø­Ø¶ÙˆØ±", value: cards.presentToday ?? 0 },
+    { label: "Ø·Ù„Ø¨Ø§Øª", value: cards.pendingRequests ?? 0 },
+    { label: "Ø¥Ø¬Ø§Ø²Ø§Øª", value: cards.leavesToday ?? 0 },
   ];
   const normalizedBreakdown = attendanceBreakdown.length ? attendanceBreakdown : fallbackBreakdown;
   const normalizedTrends = attendanceTrends.length
@@ -144,7 +144,7 @@ function normalizePermissionList(value) {
   if (typeof value === "string") {
     const trimmed = value.trim();
     if (!trimmed) return [];
-    try { return normalizePermissionList(JSON.parse(trimmed)); } catch { return trimmed.split(/[،,\s]+/).map((item) => item.trim()).filter(Boolean); }
+    try { return normalizePermissionList(JSON.parse(trimmed)); } catch { return trimmed.split(/[ØŒ,\s]+/).map((item) => item.trim()).filter(Boolean); }
   }
   if (value && typeof value === "object") {
     if (Array.isArray(value.permissions)) return normalizePermissionList(value.permissions);
@@ -187,7 +187,7 @@ function currentPermissions(user = state.user) {
 function isExecutiveOnlyRole(user = state.user) {
   const role = roleMeta(user);
   const keys = [role.id, role.key, role.slug, role.name].filter(Boolean).map((item) => String(item).toLowerCase());
-  return keys.some((key) => ["role-executive", "executive", "المدير التنفيذي"].includes(key));
+  return keys.some((key) => ["role-executive", "executive", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ"].includes(key));
 }
 
 function hasFullAccess(user = state.user) {
@@ -215,7 +215,7 @@ function hasAnyPermission(scopes = []) {
 
 function roleLabel(user = state.user) {
   const role = roleMeta(user);
-  return role.name || role.key || role.slug || "بدون دور محدد";
+  return role.name || role.key || role.slug || "Ø¨Ø¯ÙˆÙ† Ø¯ÙˆØ± Ù…Ø­Ø¯Ø¯";
 }
 
 function activeNavKey(key = routeKey()) {
@@ -253,9 +253,9 @@ function isAdminPortalUser(user = state.user) {
 
 function normalizeGateIdentifier(value = "") {
   const raw = String(value || "").trim().toLowerCase();
-  const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
-  const digits = raw.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d))).replace(/\D/g, "");
+  const ar = "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
+  const digits = raw.replace(/[Ù -Ù©]/g, (d) => String(ar.indexOf(d))).replace(/[Û°-Û¹]/g, (d) => String(fa.indexOf(d))).replace(/\D/g, "");
   if (!digits) return raw;
   if (digits.startsWith("0020")) return `0${digits.slice(4)}`;
   if (digits.startsWith("20") && digits.length >= 12) return `0${digits.slice(2)}`;
@@ -287,7 +287,7 @@ async function enforceGateSessionIdentity(target = "admin") {
   state.loginIdentifier = gateIdentity;
   state.loginPassword = "";
   state.lastLoginFailed = false;
-  setMessage("", "تم تسجيل خروج الجلسة السابقة لأنها لا تطابق الرقم الذي فتح البوابة. سجل الدخول بالرقم المطلوب.");
+  setMessage("", "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø®Ø±ÙˆØ¬ Ø§Ù„Ø¬Ù„Ø³Ø© Ø§Ù„Ø³Ø§Ø¨Ù‚Ø© Ù„Ø£Ù†Ù‡Ø§ Ù„Ø§ ØªØ·Ø§Ø¨Ù‚ Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø°ÙŠ ÙØªØ­ Ø§Ù„Ø¨ÙˆØ§Ø¨Ø©. Ø³Ø¬Ù„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ù…Ø·Ù„ÙˆØ¨.");
   renderLogin();
   return true;
 }
@@ -369,7 +369,7 @@ function routeDisplayName(key) {
     const found = routes.find(([routeKey]) => routeKey === key);
     if (found) return found[1];
   }
-  if (key === "employee-profile") return "ملف الموظف";
+  if (key === "employee-profile") return "Ù…Ù„Ù Ø§Ù„Ù…ÙˆØ¸Ù";
   return key;
 }
 
@@ -409,79 +409,79 @@ function metric(label, value, helper = "") {
 
 function statusLabel(value) {
   return {
-    ACTIVE: "نشط",
-    INACTIVE: "غير مفعل",
-    INVITED: "دعوة مؤقتة",
-    LOCKED: "مغلق",
-    TERMINATED: "منتهي",
-    SUSPENDED: "موقوف",
-    DISABLED: "معطل",
-    ON_LEAVE: "إجازة",
-    LEAVE: "إجازة",
-    REMOTE: "عن بعد",
-    PRESENT: "حاضر",
-    PRESENT_REVIEW: "حضور للمراجعة",
-    LATE: "متأخر",
-    ABSENT: "غائب",
-    MISSION: "مأمورية",
-    CHECK_IN: "حضور",
-    CHECK_OUT: "انصراف",
-    CHECKED_OUT: "انصرف",
-    ON_MISSION: "مأمورية",
-    LIVE_SHARED: "موقع مباشر مُرسل",
-    ACTION_REQUIRED: "إجراء مطلوب",
-    SELF_SUBMITTED: "مرسل من الموظف",
-    MANAGER_APPROVED: "اعتماد المدير",
-    HR_REVIEWED: "مراجعة HR",
-    SECRETARY_REVIEWED: "مراجعة السكرتير",
-    EXECUTIVE_APPROVED: "اعتماد المدير التنفيذي",
-    CHECKOUT_REVIEW: "انصراف للمراجعة",
-    APPROVED: "معتمد",
-    REJECTED: "مرفوض",
-    DRAFT: "مسودة",
-    PENDING: "قيد المراجعة",
-    SUBMITTED: "تم التسليم",
-    IN_REVIEW: "قيد فحص اللجنة",
-    OPEN: "مفتوحة",
-    RESOLVED: "تم الحل",
-    CLOSED: "مغلقة",
-    ESCALATED: "مرفوعة للإدارة التنفيذية",
-    MEDIUM: "متوسطة",
-    HIGH: "عالية",
-    LOW: "منخفضة",
-    COMPLETED: "مكتمل",
-    READ: "مقروء",
-    UNREAD: "جديد",
-    INFO: "معلومة",
-    SUCCESS: "نجاح",
-    verified: "تحقق ناجح",
-    not_checked: "بدون تحقق",
-    failed: "فشل التحقق",
-    inside_branch: "داخل الفرع",
-    outside_branch: "خارج النطاق",
-    inside_mission: "داخل مأمورية",
-    location_unavailable: "الموقع غير متاح",
-    permission_denied: "صلاحية الموقع مرفوضة",
-    branch_unknown: "مجمع غير محدد",
-    branch_location_missing: "عنوان الفرع غير مضبوط",
-    location_low_accuracy: "دقة الموقع ضعيفة",
-    inside_branch_low_accuracy: "داخل النطاق بدقة ضعيفة",
-    biometric_pending: "بانتظار البصمة",
-    storage_ok: "Storage سليم",
-    storage_missing: "Bucket ناقص",
-    linked: "مرتبط",
-    unlinked: "غير مرتبط",
-    fixed: "تم التصحيح",
+    ACTIVE: "Ù†Ø´Ø·",
+    INACTIVE: "ØºÙŠØ± Ù…ÙØ¹Ù„",
+    INVITED: "Ø¯Ø¹ÙˆØ© Ù…Ø¤Ù‚ØªØ©",
+    LOCKED: "Ù…ØºÙ„Ù‚",
+    TERMINATED: "Ù…Ù†ØªÙ‡ÙŠ",
+    SUSPENDED: "Ù…ÙˆÙ‚ÙˆÙ",
+    DISABLED: "Ù…Ø¹Ø·Ù„",
+    ON_LEAVE: "Ø¥Ø¬Ø§Ø²Ø©",
+    LEAVE: "Ø¥Ø¬Ø§Ø²Ø©",
+    REMOTE: "Ø¹Ù† Ø¨Ø¹Ø¯",
+    PRESENT: "Ø­Ø§Ø¶Ø±",
+    PRESENT_REVIEW: "Ø­Ø¶ÙˆØ± Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©",
+    LATE: "Ù…ØªØ£Ø®Ø±",
+    ABSENT: "ØºØ§Ø¦Ø¨",
+    MISSION: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©",
+    CHECK_IN: "Ø­Ø¶ÙˆØ±",
+    CHECK_OUT: "Ø§Ù†ØµØ±Ø§Ù",
+    CHECKED_OUT: "Ø§Ù†ØµØ±Ù",
+    ON_MISSION: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©",
+    LIVE_SHARED: "Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø± Ù…ÙØ±Ø³Ù„",
+    ACTION_REQUIRED: "Ø¥Ø¬Ø±Ø§Ø¡ Ù…Ø·Ù„ÙˆØ¨",
+    SELF_SUBMITTED: "Ù…Ø±Ø³Ù„ Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù",
+    MANAGER_APPROVED: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ±",
+    HR_REVIEWED: "Ù…Ø±Ø§Ø¬Ø¹Ø© HR",
+    SECRETARY_REVIEWED: "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø³ÙƒØ±ØªÙŠØ±",
+    EXECUTIVE_APPROVED: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ",
+    CHECKOUT_REVIEW: "Ø§Ù†ØµØ±Ø§Ù Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©",
+    APPROVED: "Ù…Ø¹ØªÙ…Ø¯",
+    REJECTED: "Ù…Ø±ÙÙˆØ¶",
+    DRAFT: "Ù…Ø³ÙˆØ¯Ø©",
+    PENDING: "Ù‚ÙŠØ¯ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©",
+    SUBMITTED: "ØªÙ… Ø§Ù„ØªØ³Ù„ÙŠÙ…",
+    IN_REVIEW: "Ù‚ÙŠØ¯ ÙØ­Øµ Ø§Ù„Ù„Ø¬Ù†Ø©",
+    OPEN: "Ù…ÙØªÙˆØ­Ø©",
+    RESOLVED: "ØªÙ… Ø§Ù„Ø­Ù„",
+    CLOSED: "Ù…ØºÙ„Ù‚Ø©",
+    ESCALATED: "Ù…Ø±ÙÙˆØ¹Ø© Ù„Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©",
+    MEDIUM: "Ù…ØªÙˆØ³Ø·Ø©",
+    HIGH: "Ø¹Ø§Ù„ÙŠØ©",
+    LOW: "Ù…Ù†Ø®ÙØ¶Ø©",
+    COMPLETED: "Ù…ÙƒØªÙ…Ù„",
+    READ: "Ù…Ù‚Ø±ÙˆØ¡",
+    UNREAD: "Ø¬Ø¯ÙŠØ¯",
+    INFO: "Ù…Ø¹Ù„ÙˆÙ…Ø©",
+    SUCCESS: "Ù†Ø¬Ø§Ø­",
+    verified: "ØªØ­Ù‚Ù‚ Ù†Ø§Ø¬Ø­",
+    not_checked: "Ø¨Ø¯ÙˆÙ† ØªØ­Ù‚Ù‚",
+    failed: "ÙØ´Ù„ Ø§Ù„ØªØ­Ù‚Ù‚",
+    inside_branch: "Ø¯Ø§Ø®Ù„ Ø§Ù„ÙØ±Ø¹",
+    outside_branch: "Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø·Ø§Ù‚",
+    inside_mission: "Ø¯Ø§Ø®Ù„ Ù…Ø£Ù…ÙˆØ±ÙŠØ©",
+    location_unavailable: "Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…ØªØ§Ø­",
+    permission_denied: "ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ø±ÙÙˆØ¶Ø©",
+    branch_unknown: "Ù…Ø¬Ù…Ø¹ ØºÙŠØ± Ù…Ø­Ø¯Ø¯",
+    branch_location_missing: "Ø¹Ù†ÙˆØ§Ù† Ø§Ù„ÙØ±Ø¹ ØºÙŠØ± Ù…Ø¶Ø¨ÙˆØ·",
+    location_low_accuracy: "Ø¯Ù‚Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¶Ø¹ÙŠÙØ©",
+    inside_branch_low_accuracy: "Ø¯Ø§Ø®Ù„ Ø§Ù„Ù†Ø·Ø§Ù‚ Ø¨Ø¯Ù‚Ø© Ø¶Ø¹ÙŠÙØ©",
+    biometric_pending: "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ø¨ØµÙ…Ø©",
+    storage_ok: "Storage Ø³Ù„ÙŠÙ…",
+    storage_missing: "Bucket Ù†Ø§Ù‚Øµ",
+    linked: "Ù…Ø±ØªØ¨Ø·",
+    unlinked: "ØºÙŠØ± Ù…Ø±ØªØ¨Ø·",
+    fixed: "ØªÙ… Ø§Ù„ØªØµØ­ÙŠØ­",
 
-    APPROVE: "اعتماد",
-    REJECT: "رفض",
-    REVIEWED: "تمت المراجعة",
-    REVIEW_PENDING: "بانتظار المراجعة",
-    REJECTED_CONFIRMED: "رفض مؤكد",
-    MANUAL_APPROVED: "اعتماد يدوي",
-    DEVICE_TRUSTED: "جهاز معتمد",
-    DEVICE_DISABLED: "جهاز معطل",
-    unknown: "غير معروف",
+    APPROVE: "Ø§Ø¹ØªÙ…Ø§Ø¯",
+    REJECT: "Ø±ÙØ¶",
+    REVIEWED: "ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©",
+    REVIEW_PENDING: "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©",
+    REJECTED_CONFIRMED: "Ø±ÙØ¶ Ù…Ø¤ÙƒØ¯",
+    MANUAL_APPROVED: "Ø§Ø¹ØªÙ…Ø§Ø¯ ÙŠØ¯ÙˆÙŠ",
+    DEVICE_TRUSTED: "Ø¬Ù‡Ø§Ø² Ù…Ø¹ØªÙ…Ø¯",
+    DEVICE_DISABLED: "Ø¬Ù‡Ø§Ø² Ù…Ø¹Ø·Ù„",
+    unknown: "ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ",
   }[value] || value || "-";
 }
 
@@ -490,11 +490,11 @@ function badge(value) {
 }
 
 function healthBadge(ok, label = "") {
-  return `<span class="status ${ok ? "APPROVED" : "REJECTED"}">${escapeHtml(label || (ok ? "سليم" : "يحتاج مراجعة"))}</span>`;
+  return `<span class="status ${ok ? "APPROVED" : "REJECTED"}">${escapeHtml(label || (ok ? "Ø³Ù„ÙŠÙ…" : "ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©"))}</span>`;
 }
 
 function formatMeters(value) {
-  return value == null || value === "" || Number.isNaN(Number(value)) ? "-" : `${Math.round(Number(value))} متر`;
+  return value == null || value === "" || Number.isNaN(Number(value)) ? "-" : `${Math.round(Number(value))} Ù…ØªØ±`;
 }
 
 function initials(name) {
@@ -532,8 +532,8 @@ function userAvatarSubject(user = state.user) {
   const employee = user?.employee || {};
   return {
     ...employee,
-    fullName: employee.fullName || user?.fullName || user?.name || user?.email || "مستخدم",
-    name: employee.fullName || user?.name || user?.fullName || user?.email || "مستخدم",
+    fullName: employee.fullName || user?.fullName || user?.name || user?.email || "Ù…Ø³ØªØ®Ø¯Ù…",
+    name: employee.fullName || user?.name || user?.fullName || user?.email || "Ù…Ø³ØªØ®Ø¯Ù…",
     photoUrl: user?.avatarUrl || user?.photoUrl || employee.photoUrl || employee.avatarUrl || "",
     avatarUrl: user?.avatarUrl || user?.photoUrl || employee.photoUrl || employee.avatarUrl || "",
   };
@@ -550,10 +550,10 @@ function readForm(form, options = {}) {
   const passwordPolicy = options.passwordPolicy || form.dataset.passwordPolicy || "none";
   for (const [name, value] of Object.entries(values)) {
     const text = String(value || "").trim();
-    if (["email", "mail"].includes(name) && text && !emailPattern.test(text)) errors.push("البريد الإلكتروني غير صحيح.");
-    if (["phone", "mobile"].includes(name) && text && !phonePattern.test(text.replace(/\s+/g, ""))) errors.push("رقم الموبايل يجب أن يكون رقمًا مصريًا صحيحًا يبدأ بـ 01.");
+    if (["email", "mail"].includes(name) && text && !emailPattern.test(text)) errors.push("Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØºÙŠØ± ØµØ­ÙŠØ­.");
+    if (["phone", "mobile"].includes(name) && text && !phonePattern.test(text.replace(/\s+/g, ""))) errors.push("Ø±Ù‚Ù… Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø±Ù‚Ù…Ù‹Ø§ Ù…ØµØ±ÙŠÙ‹Ø§ ØµØ­ÙŠØ­Ù‹Ø§ ÙŠØ¨Ø¯Ø£ Ø¨Ù€ 01.");
     const shouldValidatePassword = name === "newPassword" || (name === "password" && passwordPolicy === "strong");
-    if (shouldValidatePassword && text && !isStrongPassword(text)) errors.push("كلمة المرور الجديدة يجب ألا تقل عن 10 أحرف وتحتوي على حرف كبير وصغير ورقم ورمز.");
+    if (shouldValidatePassword && text && !isStrongPassword(text)) errors.push("ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© ÙŠØ¬Ø¨ Ø£Ù„Ø§ ØªÙ‚Ù„ Ø¹Ù† 10 Ø£Ø­Ø±Ù ÙˆØªØ­ØªÙˆÙŠ Ø¹Ù„Ù‰ Ø­Ø±Ù ÙƒØ¨ÙŠØ± ÙˆØµØºÙŠØ± ÙˆØ±Ù‚Ù… ÙˆØ±Ù…Ø².");
   }
   if (errors.length) throw new Error([...new Set(errors)].join("\n"));
   return values;
@@ -571,7 +571,7 @@ function table(headers, rows, className = "") {
     <div class="table-wrap ${className}">
       <table>
         <thead><tr>${headers.map((item) => `<th>${escapeHtml(item)}</th>`).join("")}</tr></thead>
-        <tbody>${rows.length ? rows.join("") : `<tr><td colspan="${headers.length}" class="empty">لا توجد بيانات مطابقة</td></tr>`}</tbody>
+        <tbody>${rows.length ? rows.join("") : `<tr><td colspan="${headers.length}" class="empty">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª Ù…Ø·Ø§Ø¨Ù‚Ø©</td></tr>`}</tbody>
       </table>
     </div>
   `;
@@ -592,7 +592,7 @@ function simpleForm(id, fields, submitText) {
   return `<form id="${id}" class="form-grid compact-form">${fields.map(([name, label, type = "text", opts = "", value = ""]) => `<label>${escapeHtml(label)}${type === "select" ? `<select name="${name}">${opts}</select>` : type === "textarea" ? `<textarea name="${name}">${escapeHtml(value)}</textarea>` : `<input name="${name}" type="${type}" value="${escapeHtml(value)}" ${type !== "checkbox" ? "required" : ""}/>`}</label>`).join("")}<div class="form-actions"><button class="button primary" type="submit">${escapeHtml(submitText)}</button></div></form>`;
 }
 
-function confirmAction({ title = "تأكيد العملية", message = "هل تريد المتابعة؟", confirmLabel = "تأكيد", cancelLabel = "إلغاء", danger = false } = {}) {
+function confirmAction({ title = "ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", message = "Ù‡Ù„ ØªØ±ÙŠØ¯ Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø©ØŸ", confirmLabel = "ØªØ£ÙƒÙŠØ¯", cancelLabel = "Ø¥Ù„ØºØ§Ø¡", danger = false } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.className = "modal-backdrop";
@@ -618,7 +618,7 @@ function confirmAction({ title = "تأكيد العملية", message = "هل ت
   });
 }
 
-function askText({ title = "طلب بيانات", message = "اكتب التفاصيل", defaultValue = "", confirmLabel = "حفظ", cancelLabel = "إلغاء", required = false } = {}) {
+function askText({ title = "Ø·Ù„Ø¨ Ø¨ÙŠØ§Ù†Ø§Øª", message = "Ø§ÙƒØªØ¨ Ø§Ù„ØªÙØ§ØµÙŠÙ„", defaultValue = "", confirmLabel = "Ø­ÙØ¸", cancelLabel = "Ø¥Ù„ØºØ§Ø¡", required = false } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.className = "modal-backdrop";
@@ -673,13 +673,13 @@ function exportHtmlTable(name, headers, rows) {
 function printReport(title, headers, rows) {
   const win = window.open("", "_blank", "width=1100,height=800");
   if (!win) return;
-  win.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8" /><title>${escapeHtml(title)}</title><style>body{font-family:Arial,sans-serif;padding:24px;direction:rtl;color:#111827}h1{font-size:22px}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border:1px solid #d1d5db;padding:8px;text-align:right;font-size:12px}th{background:#f3f4f6}.meta{color:#6b7280;margin-bottom:12px}@media print{button{display:none}}</style></head><body><button onclick="print()">طباعة / حفظ PDF</button><h1>${escapeHtml(title)}</h1><div class="meta">تاريخ التقرير: ${new Date().toLocaleString("ar-EG")}</div><table><thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></body></html>`);
+  win.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8" /><title>${escapeHtml(title)}</title><style>body{font-family:Arial,sans-serif;padding:24px;direction:rtl;color:#111827}h1{font-size:22px}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border:1px solid #d1d5db;padding:8px;text-align:right;font-size:12px}th{background:#f3f4f6}.meta{color:#6b7280;margin-bottom:12px}@media print{button{display:none}}</style></head><body><button onclick="print()">Ø·Ø¨Ø§Ø¹Ø© / Ø­ÙØ¸ PDF</button><h1>${escapeHtml(title)}</h1><div class="meta">ØªØ§Ø±ÙŠØ® Ø§Ù„ØªÙ‚Ø±ÙŠØ±: ${new Date().toLocaleString("ar-EG")}</div><table><thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></body></html>`);
   win.document.close();
 }
 function printBrandedReport(title, summaryHtml, headers, rows) {
   const win = window.open("", "_blank", "width=1200,height=850");
   if (!win) return;
-  win.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8" /><title>${escapeHtml(title)}</title><style>body{font-family:Arial,Tahoma,sans-serif;padding:28px;direction:rtl;color:#0f172a}.brand{display:flex;align-items:center;gap:14px;border-bottom:3px solid #0ea5e9;padding-bottom:16px;margin-bottom:18px}.brand img{width:68px;height:68px;object-fit:contain}.brand h1{margin:0;font-size:24px}.brand p{margin:4px 0 0;color:#64748b}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}.summary div{border:1px solid #dbeafe;background:#eff6ff;border-radius:14px;padding:10px}.summary strong{display:block;font-size:20px;color:#0369a1}.qr-print{display:block;margin:18px auto;width:300px;height:300px}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border:1px solid #d1d5db;padding:8px;text-align:right;font-size:12px}th{background:#e0f2fe}.meta{color:#64748b;margin:10px 0}.actions{margin-bottom:16px}@media print{.actions{display:none}.summary{break-inside:avoid}}</style></head><body><div class="actions"><button onclick="print()">طباعة / حفظ PDF</button></div><div class="brand"><img src="../shared/images/ahla-shabab-logo.png" onerror="this.style.display='none'" /><div><h1>${escapeHtml(title)}</h1><p>جمعية خواطر أحلى شباب الخيرية — مجمع منيل شيحة</p><p class="meta">تاريخ التقرير: ${new Date().toLocaleString("ar-EG")}</p></div></div>${summaryHtml}<table><thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></body></html>`);
+  win.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8" /><title>${escapeHtml(title)}</title><style>body{font-family:Arial,Tahoma,sans-serif;padding:28px;direction:rtl;color:#0f172a}.brand{display:flex;align-items:center;gap:14px;border-bottom:3px solid #0ea5e9;padding-bottom:16px;margin-bottom:18px}.brand img{width:68px;height:68px;object-fit:contain}.brand h1{margin:0;font-size:24px}.brand p{margin:4px 0 0;color:#64748b}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}.summary div{border:1px solid #dbeafe;background:#eff6ff;border-radius:14px;padding:10px}.summary strong{display:block;font-size:20px;color:#0369a1}.qr-print{display:block;margin:18px auto;width:300px;height:300px}table{border-collapse:collapse;width:100%;margin-top:16px}th,td{border:1px solid #d1d5db;padding:8px;text-align:right;font-size:12px}th{background:#e0f2fe}.meta{color:#64748b;margin:10px 0}.actions{margin-bottom:16px}@media print{.actions{display:none}.summary{break-inside:avoid}}</style></head><body><div class="actions"><button onclick="print()">Ø·Ø¨Ø§Ø¹Ø© / Ø­ÙØ¸ PDF</button></div><div class="brand"><img src="../shared/images/ahla-shabab-logo.png" onerror="this.style.display='none'" /><div><h1>${escapeHtml(title)}</h1><p>Ø¬Ù…Ø¹ÙŠØ© Ø®ÙˆØ§Ø·Ø± Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨ Ø§Ù„Ø®ÙŠØ±ÙŠØ© â€” Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©</p><p class="meta">ØªØ§Ø±ÙŠØ® Ø§Ù„ØªÙ‚Ø±ÙŠØ±: ${new Date().toLocaleString("ar-EG")}</p></div></div>${summaryHtml}<table><thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></body></html>`);
   win.document.close();
 }
 
@@ -691,7 +691,7 @@ function punchUrlForEmployee(employee = {}) {
 }
 
 function qrImageUrl(value, size = 220) {
-  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><rect width="100%" height="100%" fill="#071120"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#94a3b8" font-size="16" font-family="Arial">QR متوقف</text></svg>`);
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><rect width="100%" height="100%" fill="#071120"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" fill="#94a3b8" font-size="16" font-family="Arial">QR Ù…ØªÙˆÙ‚Ù</text></svg>`);
 }
 
 function todayIso() {
@@ -763,22 +763,22 @@ function shell(content, title, description = "") {
     <div class="app-shell">
       <div class="sidebar-overlay" data-action="nav-close"></div>
       <aside class="sidebar ${state.sidebarCollapsed ? "is-collapsed" : ""}">
-        <button class="sidebar-close" type="button" data-action="nav-close" aria-label="إغلاق القائمة">×</button>
+        <button class="sidebar-close" type="button" data-action="nav-close" aria-label="Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©">Ã—</button>
         <div class="brand">
           <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
-          <div><strong>نظام الحضور</strong><span>HR Operations SaaS</span></div>
+          <div><strong>Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ±</strong><span>HR Operations SaaS</span></div>
         </div>
         <div class="sidebar-account-section">
           <div class="user-info" data-route="settings">
             ${avatar(userAvatarSubject(), "small")}
             <div>
-              <strong>${escapeHtml(state.user?.name || state.user?.fullName || "مستخدم")}</strong>
+              <strong>${escapeHtml(state.user?.name || state.user?.fullName || "Ù…Ø³ØªØ®Ø¯Ù…")}</strong>
               <small>${escapeHtml(roleLabel())}</small>
             </div>
           </div>
-          <button class="button ghost full" type="button" data-action="logout">تسجيل الخروج</button>
+          <button class="button ghost full" type="button" data-action="logout">ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬</button>
         </div>
-        <nav class="nav" aria-label="القائمة الرئيسية">
+        <nav class="nav" aria-label="Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©">
           ${navGroups.map(([group, routes]) => `
             <section class="nav-group">
               <p>${escapeHtml(group)}</p>
@@ -786,31 +786,31 @@ function shell(content, title, description = "") {
             </section>
           `).join("")}
           <section class="nav-group portal-links">
-            <p>الانتقال للأنظمة</p>
-            <button data-action="employee-portal"><span>تطبيق الموظف</span></button>
-            <button data-action="executive-portal"><span>بوابة المدير التنفيذي</span></button>
+            <p>Ø§Ù„Ø§Ù†ØªÙ‚Ø§Ù„ Ù„Ù„Ø£Ù†Ø¸Ù…Ø©</p>
+            <button data-action="employee-portal"><span>ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù</span></button>
+            <button data-action="executive-portal"><span>Ø¨ÙˆØ§Ø¨Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ</span></button>
           </section>
         </nav>
-        <button class="collapse-button" type="button" data-action="collapse-sidebar">${state.sidebarCollapsed ? "توسيع القائمة" : "طي القائمة"}</button>
+        <button class="collapse-button" type="button" data-action="collapse-sidebar">${state.sidebarCollapsed ? "ØªÙˆØ³ÙŠØ¹ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©" : "Ø·ÙŠ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©"}</button>
       </aside>
-      <button class="nav-fab" type="button" data-action="sidebar-expand" aria-label="فتح القائمة" title="فتح القائمة">☰</button>
+      <button class="nav-fab" type="button" data-action="sidebar-expand" aria-label="ÙØªØ­ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©" title="ÙØªØ­ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©">â˜°</button>
       <main class="main">
         <header class="topbar">
           <div class="topbar-left">
-            <button class="button ghost mobile-menu" type="button" data-action="nav-open" aria-expanded="false">القائمة</button>
+            <button class="button ghost mobile-menu" type="button" data-action="nav-open" aria-expanded="false">Ø§Ù„Ù‚Ø§Ø¦Ù…Ø©</button>
             <div class="compact-user-info desktop-hidden">
                ${avatar(userAvatarSubject(), "tiny")}
-               <div><strong>${escapeHtml(state.user?.name || state.user?.fullName || "مستخدم")}</strong><small>${escapeHtml(roleLabel())}</small></div>
+               <div><strong>${escapeHtml(state.user?.name || state.user?.fullName || "Ù…Ø³ØªØ®Ø¯Ù…")}</strong><small>${escapeHtml(roleLabel())}</small></div>
             </div>
           </div>
           <div class="page-title mobile-hidden"><h1>${escapeHtml(title)}</h1><p>${escapeHtml(description)}</p></div>
           <div class="toolbar mobile-hidden">
-            <span class="user-chip" title="${escapeHtml(roleLabel())}">${avatar(userAvatarSubject(), "tiny")}<span>${escapeHtml(state.user?.name || state.user?.fullName || "مستخدم")}</span></span>
-            <button class="button ghost" data-action="refresh">تحديث</button>
-            <button class="button danger" data-action="logout">تسجيل الخروج</button>
+            <span class="user-chip" title="${escapeHtml(roleLabel())}">${avatar(userAvatarSubject(), "tiny")}<span>${escapeHtml(state.user?.name || state.user?.fullName || "Ù…Ø³ØªØ®Ø¯Ù…")}</span></span>
+            <button class="button ghost" data-action="refresh">ØªØ­Ø¯ÙŠØ«</button>
+            <button class="button danger" data-action="logout">ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬</button>
           </div>
         </header>
-        ${state.user?.mustChangePassword ? `<div class="message warning">كلمة المرور الحالية مؤقتة. افتح الإعدادات وغير كلمة المرور قبل الاعتماد على الحساب.</div>` : ""}
+        ${state.user?.mustChangePassword ? `<div class="message warning">ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø­Ø§Ù„ÙŠØ© Ù…Ø¤Ù‚ØªØ©. Ø§ÙØªØ­ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ÙˆØºÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù‚Ø¨Ù„ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ø­Ø³Ø§Ø¨.</div>` : ""}
         ${state.message ? `<div class="message">${escapeHtml(state.message)}</div>` : ""}
         ${state.error ? `<div class="message error">${escapeHtml(state.error)}</div>` : ""}
         ${content}
@@ -885,15 +885,15 @@ async function renderLogin() {
     <div class="login-screen">
       <form class="login-panel" id="login-form" data-password-policy="none" novalidate>
         <div class="login-mark">HR</div>
-        <h1>تسجيل الدخول</h1>
-        <p>اكتب بريدك وكلمة المرور. عند حدوث خطأ لن يتم مسح البيانات التي أدخلتها.</p>
+        <h1>ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„</h1>
+        <p>Ø§ÙƒØªØ¨ Ø¨Ø±ÙŠØ¯Ùƒ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±. Ø¹Ù†Ø¯ Ø­Ø¯ÙˆØ« Ø®Ø·Ø£ Ù„Ù† ÙŠØªÙ… Ù…Ø³Ø­ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„ØªÙŠ Ø£Ø¯Ø®Ù„ØªÙ‡Ø§.</p>
         ${state.error ? `<div class="message error">${escapeHtml(state.error)}</div>` : ""}
-        ${state.lastLoginFailed ? `<div class="message warning compact">لو نسيت كلمة المرور اضغط على "نسيت كلمة السر" وسيتم إرسال رابط إعادة تعيين إلى بريدك.</div>` : ""}
-        <label>البريد أو الاسم<input name="identifier" value="${escapeHtml(identifierValue)}" autocomplete="username" required /></label>
-        <label>كلمة المرور<input name="password" type="password" value="${escapeHtml(passwordValue)}" autocomplete="current-password" required /></label>
-        <button class="button primary full" type="submit">دخول</button>
-        <button class="button ghost full forgot-password-btn" type="button" data-forgot-password>نسيت كلمة السر؟ أرسل رابط إعادة التعيين</button>
-        <div class="login-help-note">لن يتم مسح رقم الهاتف/البريد أو كلمة المرور المكتوبة عند فشل الدخول.</div>
+        ${state.lastLoginFailed ? `<div class="message warning compact">Ù„Ùˆ Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ø¶ØºØ· Ø¹Ù„Ù‰ "Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ø³Ø±" ÙˆØ³ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† Ø¥Ù„Ù‰ Ø¨Ø±ÙŠØ¯Ùƒ.</div>` : ""}
+        <label>Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø£Ùˆ Ø§Ù„Ø§Ø³Ù…<input name="identifier" value="${escapeHtml(identifierValue)}" autocomplete="username" required /></label>
+        <label>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±<input name="password" type="password" value="${escapeHtml(passwordValue)}" autocomplete="current-password" required /></label>
+        <button class="button primary full" type="submit">Ø¯Ø®ÙˆÙ„</button>
+        <button class="button ghost full forgot-password-btn" type="button" data-forgot-password>Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ø³Ø±ØŸ Ø£Ø±Ø³Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªØ¹ÙŠÙŠÙ†</button>
+        <div class="login-help-note">Ù„Ù† ÙŠØªÙ… Ù…Ø³Ø­ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ/Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø£Ùˆ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…ÙƒØªÙˆØ¨Ø© Ø¹Ù†Ø¯ ÙØ´Ù„ Ø§Ù„Ø¯Ø®ÙˆÙ„.</div>
       </form>
     </div>
   `;
@@ -915,12 +915,12 @@ async function renderLogin() {
       state.loginPassword = "";
       state.lastLoginFailed = false;
       if (!isAdminPortalUser(state.user)) return isExecutiveOnlyRole(state.user) ? goExecutivePortal("home") : goEmployeePortal("home");
-      setMessage("تم تسجيل الدخول.", "");
+      setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„.", "");
       render();
     } catch (error) {
       await endpoints.adminAccessLog?.({ action: "admin.login.failed", result: "FAILED", metadata: { identifier: state.loginIdentifier } }).catch(() => null);
       state.lastLoginFailed = true;
-      setMessage("", error.message || "تعذر تسجيل الدخول.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„.");
       renderLogin();
     }
   });
@@ -929,18 +929,18 @@ async function renderLogin() {
     state.loginIdentifier = values.identifier || state.loginIdentifier || "";
     state.loginPassword = values.password || state.loginPassword || "";
     if (!state.loginIdentifier) {
-      setMessage("", "اكتب البريد أولًا ثم اضغط نسيت كلمة السر.");
+      setMessage("", "Ø§ÙƒØªØ¨ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø£ÙˆÙ„Ù‹Ø§ Ø«Ù… Ø§Ø¶ØºØ· Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ø³Ø±.");
       renderLogin();
       return;
     }
     try {
       await endpoints.forgotPassword(state.loginIdentifier);
       state.lastLoginFailed = false;
-      setMessage("تم إرسال رابط إعادة تعيين كلمة المرور إلى البريد المسجل، راجع Inbox أو Spam.", "");
+      setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø¥Ù„Ù‰ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ù…Ø³Ø¬Ù„ØŒ Ø±Ø§Ø¬Ø¹ Inbox Ø£Ùˆ Spam.", "");
       renderLogin();
     } catch (error) {
       state.lastLoginFailed = true;
-      setMessage("", error.message || "تعذر إرسال رابط إعادة التعيين.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªØ¹ÙŠÙŠÙ†.");
       renderLogin();
     }
   });
@@ -960,38 +960,38 @@ async function renderDashboard() {
     `<section class="grid dashboard-grid executive-dashboard">
       ${safeList(dashboard.metrics).map((metric) => `<article class="metric"><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.helper || "")}</small></article>`).join("")}
       <article class="panel span-12 accent-panel">
-        <div class="panel-head"><div><h2>لوحة تنفيذية ذكية</h2><p>مؤشر الجاهزية، الطلبات العالقة، ومراجعات الحضور في شاشة واحدة.</p></div><div class="score-ring"><strong>${escapeHtml(readiness.score || 0)}%</strong><span>${escapeHtml(readiness.grade || "-")}</span></div></div>
-        <div class="readiness-grid">${safeList(readiness.parts).map((part) => `<div class="readiness-item ${part.ok ? "ok" : "warn"}"><strong>${escapeHtml(part.label)}</strong><span>${escapeHtml(part.detail || "")}</span><small>${escapeHtml(part.score || 0)} نقطة</small></div>`).join("")}</div>
+        <div class="panel-head"><div><h2>Ù„ÙˆØ­Ø© ØªÙ†ÙÙŠØ°ÙŠØ© Ø°ÙƒÙŠØ©</h2><p>Ù…Ø¤Ø´Ø± Ø§Ù„Ø¬Ø§Ù‡Ø²ÙŠØ©ØŒ Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø¹Ø§Ù„Ù‚Ø©ØŒ ÙˆÙ…Ø±Ø§Ø¬Ø¹Ø§Øª Ø§Ù„Ø­Ø¶ÙˆØ± ÙÙŠ Ø´Ø§Ø´Ø© ÙˆØ§Ø­Ø¯Ø©.</p></div><div class="score-ring"><strong>${escapeHtml(readiness.score || 0)}%</strong><span>${escapeHtml(readiness.grade || "-")}</span></div></div>
+        <div class="readiness-grid">${safeList(readiness.parts).map((part) => `<div class="readiness-item ${part.ok ? "ok" : "warn"}"><strong>${escapeHtml(part.label)}</strong><span>${escapeHtml(part.detail || "")}</span><small>${escapeHtml(part.score || 0)} Ù†Ù‚Ø·Ø©</small></div>`).join("")}</div>
       </article>
       <article class="panel span-7">
-        <div class="panel-head"><div><h2>توزيع الحضور حسب القسم</h2><p>مقارنة تشغيلية سريعة</p></div><span>اليوم</span></div>
-        <div class="chart">${trends.map((item) => `<div class="bar"><div class="bar-fill" style="height:${((Number(item.present || 0) + Number(item.late || 0) + Number(item.mission || 0)) / max) * 150}px"></div><span>${escapeHtml(item.label)}</span></div>`).join("") || `<div class="empty-state">لا توجد بيانات اتجاهات بعد.</div>`}</div>
+        <div class="panel-head"><div><h2>ØªÙˆØ²ÙŠØ¹ Ø§Ù„Ø­Ø¶ÙˆØ± Ø­Ø³Ø¨ Ø§Ù„Ù‚Ø³Ù…</h2><p>Ù…Ù‚Ø§Ø±Ù†Ø© ØªØ´ØºÙŠÙ„ÙŠØ© Ø³Ø±ÙŠØ¹Ø©</p></div><span>Ø§Ù„ÙŠÙˆÙ…</span></div>
+        <div class="chart">${trends.map((item) => `<div class="bar"><div class="bar-fill" style="height:${((Number(item.present || 0) + Number(item.late || 0) + Number(item.mission || 0)) / max) * 150}px"></div><span>${escapeHtml(item.label)}</span></div>`).join("") || `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª Ø§ØªØ¬Ø§Ù‡Ø§Øª Ø¨Ø¹Ø¯.</div>`}</div>
       </article>
       <article class="panel span-5">
-        <div class="panel-head"><div><h2>ملخص الطلبات</h2><p>Workflow الموافقات</p></div><button class="button ghost" data-route="requests">فتح المركز</button></div>
+        <div class="panel-head"><div><h2>Ù…Ù„Ø®Øµ Ø§Ù„Ø·Ù„Ø¨Ø§Øª</h2><p>Workflow Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø§Øª</p></div><button class="button ghost" data-route="requests">ÙØªØ­ Ø§Ù„Ù…Ø±ÙƒØ²</button></div>
         <div class="mini-stats">
-          <div><span>معلقة</span><strong>${escapeHtml(workflow.pending || 0)}</strong></div>
-          <div><span>متأخرة</span><strong>${escapeHtml(workflow.stale || 0)}</strong></div>
-          <div><span>مقبولة</span><strong>${escapeHtml(workflow.approved || 0)}</strong></div>
-          <div><span>مرفوضة</span><strong>${escapeHtml(workflow.rejected || 0)}</strong></div>
+          <div><span>Ù…Ø¹Ù„Ù‚Ø©</span><strong>${escapeHtml(workflow.pending || 0)}</strong></div>
+          <div><span>Ù…ØªØ£Ø®Ø±Ø©</span><strong>${escapeHtml(workflow.stale || 0)}</strong></div>
+          <div><span>Ù…Ù‚Ø¨ÙˆÙ„Ø©</span><strong>${escapeHtml(workflow.approved || 0)}</strong></div>
+          <div><span>Ù…Ø±ÙÙˆØ¶Ø©</span><strong>${escapeHtml(workflow.rejected || 0)}</strong></div>
         </div>
-        ${table(["النوع", "الإجمالي", "معلق"], safeList(workflow.byKind).map((item) => `<tr><td>${escapeHtml(item.kind)}</td><td>${escapeHtml(item.count)}</td><td>${escapeHtml(item.pending)}</td></tr>`))}
+        ${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ", "Ù…Ø¹Ù„Ù‚"], safeList(workflow.byKind).map((item) => `<tr><td>${escapeHtml(item.kind)}</td><td>${escapeHtml(item.count)}</td><td>${escapeHtml(item.pending)}</td></tr>`))}
       </article>
       <article class="panel span-8">
-        <div class="panel-head"><div><h2>آخر أحداث الحضور</h2><p>آخر الحركات المسجلة</p></div><button class="button ghost" data-route="attendance">فتح الحضور</button></div>
-        ${table(["الموظف", "النوع", "الوقت", "المصدر"], latestEvents.map((event) => `<tr><td class="person-cell">${avatar(event.employee, "tiny")}<span>${escapeHtml(event.employee?.fullName || event.employeeId || "-")}</span></td><td>${badge(event.type)}</td><td>${date(event.eventAt)}</td><td>${escapeHtml(event.source || "-")}</td></tr>`))}
+        <div class="panel-head"><div><h2>Ø¢Ø®Ø± Ø£Ø­Ø¯Ø§Ø« Ø§Ù„Ø­Ø¶ÙˆØ±</h2><p>Ø¢Ø®Ø± Ø§Ù„Ø­Ø±ÙƒØ§Øª Ø§Ù„Ù…Ø³Ø¬Ù„Ø©</p></div><button class="button ghost" data-route="attendance">ÙØªØ­ Ø§Ù„Ø­Ø¶ÙˆØ±</button></div>
+        ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ÙˆÙ‚Øª", "Ø§Ù„Ù…ØµØ¯Ø±"], latestEvents.map((event) => `<tr><td class="person-cell">${avatar(event.employee, "tiny")}<span>${escapeHtml(event.employee?.fullName || event.employeeId || "-")}</span></td><td>${badge(event.type)}</td><td>${date(event.eventAt)}</td><td>${escapeHtml(event.source || "-")}</td></tr>`))}
       </article>
       <article class="panel span-4">
-        <div class="panel-head"><div><h2>طلبات تحتاج قرار</h2><p>آخر عناصر مركز الطلبات</p></div><button class="button ghost" data-route="requests">مراجعة</button></div>
-        ${table(["الطلب", "الموظف", "الحالة"], workflowLatest.map((item) => `<tr><td>${escapeHtml(item.kindLabel || item.kind)}<br><small>${escapeHtml(item.label || "")}</small></td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.status)}</td></tr>`))}
+        <div class="panel-head"><div><h2>Ø·Ù„Ø¨Ø§Øª ØªØ­ØªØ§Ø¬ Ù‚Ø±Ø§Ø±</h2><p>Ø¢Ø®Ø± Ø¹Ù†Ø§ØµØ± Ù…Ø±ÙƒØ² Ø§Ù„Ø·Ù„Ø¨Ø§Øª</p></div><button class="button ghost" data-route="requests">Ù…Ø±Ø§Ø¬Ø¹Ø©</button></div>
+        ${table(["Ø§Ù„Ø·Ù„Ø¨", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©"], workflowLatest.map((item) => `<tr><td>${escapeHtml(item.kindLabel || item.kind)}<br><small>${escapeHtml(item.label || "")}</small></td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.status)}</td></tr>`))}
       </article>
       <article class="panel span-12">
-        <div class="panel-head"><div><h2>آخر عمليات النظام</h2><p>Audit Log</p></div><button class="button ghost" data-route="audit">عرض الكل</button></div>
-        ${table(["العملية", "الكيان", "الوقت"], latestAudit.map((item) => `<tr><td>${escapeHtml(item.action)}</td><td>${escapeHtml(item.entityType)}</td><td>${date(item.createdAt)}</td></tr>`))}
+        <div class="panel-head"><div><h2>Ø¢Ø®Ø± Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù†Ø¸Ø§Ù…</h2><p>Audit Log</p></div><button class="button ghost" data-route="audit">Ø¹Ø±Ø¶ Ø§Ù„ÙƒÙ„</button></div>
+        ${table(["Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", "Ø§Ù„ÙƒÙŠØ§Ù†", "Ø§Ù„ÙˆÙ‚Øª"], latestAudit.map((item) => `<tr><td>${escapeHtml(item.action)}</td><td>${escapeHtml(item.entityType)}</td><td>${date(item.createdAt)}</td></tr>`))}
       </article>
     </section>`,
-    "لوحة المتابعة",
-    "لوحة قيادة تنفيذية تجمع الحضور والطلبات وجاهزية النظام.",
+    "Ù„ÙˆØ­Ø© Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø©",
+    "Ù„ÙˆØ­Ø© Ù‚ÙŠØ§Ø¯Ø© ØªÙ†ÙÙŠØ°ÙŠØ© ØªØ¬Ù…Ø¹ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„Ù†Ø¸Ø§Ù….",
   );
 }
 
@@ -999,8 +999,8 @@ async function renderDashboard() {
 function employeeFilters(ref) {
   return `
     <form class="filters" id="employee-filters">
-      <input name="q" placeholder="بحث بالاسم أو الهاتف أو البريد أو المسمى الوظيفي" />
-      <select name="managerEmployeeId">${optionList(ref.employees.map((item) => ({ id: item.id, name: item.fullName })), "", "كل المديرين")}</select>
+      <input name="q" placeholder="Ø¨Ø­Ø« Ø¨Ø§Ù„Ø§Ø³Ù… Ø£Ùˆ Ø§Ù„Ù‡Ø§ØªÙ Ø£Ùˆ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø£Ùˆ Ø§Ù„Ù…Ø³Ù…Ù‰ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ" />
+      <select name="managerEmployeeId">${optionList(ref.employees.map((item) => ({ id: item.id, name: item.fullName })), "", "ÙƒÙ„ Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†")}</select>
     </form>`;
 }
 
@@ -1020,31 +1020,31 @@ async function renderEmployees() {
     `<section class="stack employees-control-center">
       <article class="panel">
         <div class="panel-head">
-          <div><h2>قائمة الأشخاص والموظفين</h2><p>إدارة بيانات الموظفين، الربط بالحسابات، والتحديث الجماعي من شاشة واحدة.</p></div>
-          <div class="toolbar"><button class="button primary" data-action="new-employee">إضافة موظف</button><button class="button ghost" data-export-employees>تصدير CSV</button><button class="button ghost" data-export-employees-xls>Excel</button><button class="button ghost" data-print-employees>طباعة</button></div>
+          <div><h2>Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ø£Ø´Ø®Ø§Øµ ÙˆØ§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</h2><p>Ø¥Ø¯Ø§Ø±Ø© Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†ØŒ Ø§Ù„Ø±Ø¨Ø· Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨Ø§ØªØŒ ÙˆØ§Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¬Ù…Ø§Ø¹ÙŠ Ù…Ù† Ø´Ø§Ø´Ø© ÙˆØ§Ø­Ø¯Ø©.</p></div>
+          <div class="toolbar"><button class="button primary" data-action="new-employee">Ø¥Ø¶Ø§ÙØ© Ù…ÙˆØ¸Ù</button><button class="button ghost" data-export-employees>ØªØµØ¯ÙŠØ± CSV</button><button class="button ghost" data-export-employees-xls>Excel</button><button class="button ghost" data-print-employees>Ø·Ø¨Ø§Ø¹Ø©</button></div>
         </div>
         ${employeeFilters(ref)}
         <div class="bulk-bar advanced-bulk" id="employees-bulk-bar">
-          <label class="check-row"><input type="checkbox" id="employee-select-all" /> تحديد النتائج الظاهرة</label>
-          <span id="employee-selected-count">لم يتم تحديد موظفين</span>
-          <select id="bulk-status"><option value="ACTIVE">تنشيط</option><option value="SUSPENDED">إيقاف مؤقت</option><option value="TERMINATED">إنهاء خدمة</option></select>
-          <button class="button ghost" data-bulk-employee-status disabled>تطبيق الحالة</button>
-          <select id="bulk-department"><option value="">نقل لقسم...</option>${optionList(ref.departments)}</select>
-          <select id="bulk-manager"><option value="">تغيير المدير...</option>${optionList(ref.employees.map((item) => ({ id: item.id, name: item.fullName })))}</select>
-          <button class="button ghost" data-bulk-employee-assign disabled>تطبيق النقل</button>
-          <button class="button ghost" data-bulk-employee-notify disabled>إرسال تنبيه</button>
-          <button class="button danger ghost" data-bulk-employee-delete disabled>حذف منطقي</button>
+          <label class="check-row"><input type="checkbox" id="employee-select-all" /> ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù†ØªØ§Ø¦Ø¬ Ø§Ù„Ø¸Ø§Ù‡Ø±Ø©</label>
+          <span id="employee-selected-count">Ù„Ù… ÙŠØªÙ… ØªØ­Ø¯ÙŠØ¯ Ù…ÙˆØ¸ÙÙŠÙ†</span>
+          <select id="bulk-status"><option value="ACTIVE">ØªÙ†Ø´ÙŠØ·</option><option value="SUSPENDED">Ø¥ÙŠÙ‚Ø§Ù Ù…Ø¤Ù‚Øª</option><option value="TERMINATED">Ø¥Ù†Ù‡Ø§Ø¡ Ø®Ø¯Ù…Ø©</option></select>
+          <button class="button ghost" data-bulk-employee-status disabled>ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø­Ø§Ù„Ø©</button>
+          <select id="bulk-department"><option value="">Ù†Ù‚Ù„ Ù„Ù‚Ø³Ù…...</option>${optionList(ref.departments)}</select>
+          <select id="bulk-manager"><option value="">ØªØºÙŠÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ±...</option>${optionList(ref.employees.map((item) => ({ id: item.id, name: item.fullName })))}</select>
+          <button class="button ghost" data-bulk-employee-assign disabled>ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù†Ù‚Ù„</button>
+          <button class="button ghost" data-bulk-employee-notify disabled>Ø¥Ø±Ø³Ø§Ù„ ØªÙ†Ø¨ÙŠÙ‡</button>
+          <button class="button danger ghost" data-bulk-employee-delete disabled>Ø­Ø°Ù Ù…Ù†Ø·Ù‚ÙŠ</button>
         </div>
         <div id="employees-list" class="people-grid"></div>
       </article>
       <article id="employee-editor" class="panel hidden"></article>
     </section>`,
-    "الأشخاص والموظفون",
-    "ملفات فعلية قابلة للإضافة والتعديل والربط والحذف المنطقي والتحديث الجماعي.",
+    "Ø§Ù„Ø£Ø´Ø®Ø§Øµ ÙˆØ§Ù„Ù…ÙˆØ¸ÙÙˆÙ†",
+    "Ù…Ù„ÙØ§Øª ÙØ¹Ù„ÙŠØ© Ù‚Ø§Ø¨Ù„Ø© Ù„Ù„Ø¥Ø¶Ø§ÙØ© ÙˆØ§Ù„ØªØ¹Ø¯ÙŠÙ„ ÙˆØ§Ù„Ø±Ø¨Ø· ÙˆØ§Ù„Ø­Ø°Ù Ø§Ù„Ù…Ù†Ø·Ù‚ÙŠ ÙˆØ§Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¬Ù…Ø§Ø¹ÙŠ.",
   );
 
   const selectedEmployees = new Set();
-  const selectedCountText = () => selectedEmployees.size ? `تم تحديد ${selectedEmployees.size} موظف` : "لم يتم تحديد موظفين";
+  const selectedCountText = () => selectedEmployees.size ? `ØªÙ… ØªØ­Ø¯ÙŠØ¯ ${selectedEmployees.size} Ù…ÙˆØ¸Ù` : "Ù„Ù… ÙŠØªÙ… ØªØ­Ø¯ÙŠØ¯ Ù…ÙˆØ¸ÙÙŠÙ†";
   const updateBulkBar = () => {
     const count = selectedEmployees.size;
     app.querySelector("#employee-selected-count").textContent = selectedCountText();
@@ -1053,7 +1053,7 @@ async function renderEmployees() {
   const selectedIds = () => [...selectedEmployees];
   const runBulk = async (body, success) => {
     const result = await endpoints.bulkEmployeeAction({ ids: selectedIds(), ...body });
-    setMessage(`${success} — تم تحديث ${result.updated || 0} موظف.`, "");
+    setMessage(`${success} â€” ØªÙ… ØªØ­Ø¯ÙŠØ« ${result.updated || 0} Ù…ÙˆØ¸Ù.`, "");
     render();
   };
 
@@ -1072,21 +1072,21 @@ async function renderEmployees() {
         </div>
         <div class="card-body">
           <h3 class="emp-name">${escapeHtml(employee.fullName)}</h3>
-          <p class="emp-job">${escapeHtml(employee.jobTitle || "موظف")}</p>
+          <p class="emp-job">${escapeHtml(employee.jobTitle || "Ù…ÙˆØ¸Ù")}</p>
           <div class="emp-details-grid">
-            <div class="detail-item"><span>الهاتف</span><strong>${escapeHtml(employee.phone || "-")}</strong></div>
-            <div class="detail-item"><span>القسم</span><strong>${escapeHtml(employee.department?.name || "-")}</strong></div>
-            <div class="detail-item full"><span>البريد</span><strong>${escapeHtml(employee.email || "-")}</strong></div>
-            <div class="detail-item full"><span>المدير</span><strong>${escapeHtml(employee.manager?.fullName || "بدون")}</strong></div>
+            <div class="detail-item"><span>Ø§Ù„Ù‡Ø§ØªÙ</span><strong>${escapeHtml(employee.phone || "-")}</strong></div>
+            <div class="detail-item"><span>Ø§Ù„Ù‚Ø³Ù…</span><strong>${escapeHtml(employee.department?.name || "-")}</strong></div>
+            <div class="detail-item full"><span>Ø§Ù„Ø¨Ø±ÙŠØ¯</span><strong>${escapeHtml(employee.email || "-")}</strong></div>
+            <div class="detail-item full"><span>Ø§Ù„Ù…Ø¯ÙŠØ±</span><strong>${escapeHtml(employee.manager?.fullName || "Ø¨Ø¯ÙˆÙ†")}</strong></div>
           </div>
         </div>
         <div class="card-footer-actions">
-          <button class="button primary" data-view="${employee.id}">عرض</button>
-          <button class="button ghost" data-edit="${employee.id}">تعديل</button>
-          <button class="button danger ghost" data-delete="${employee.id}">حذف</button>
+          <button class="button primary" data-view="${employee.id}">Ø¹Ø±Ø¶</button>
+          <button class="button ghost" data-edit="${employee.id}">ØªØ¹Ø¯ÙŠÙ„</button>
+          <button class="button danger ghost" data-delete="${employee.id}">Ø­Ø°Ù</button>
         </div>
       </article>
-    `).join("") || `<div class="empty-box">لا توجد نتائج مطابقة.</div>`;
+    `).join("") || `<div class="empty-box">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù†ØªØ§Ø¦Ø¬ Ù…Ø·Ø§Ø¨Ù‚Ø©.</div>`;
     bindEmployeeActions(ref);
     app.querySelectorAll("[data-select-employee]").forEach((input) => input.addEventListener("change", () => {
       if (input.checked) selectedEmployees.add(input.dataset.selectEmployee);
@@ -1106,30 +1106,30 @@ async function renderEmployees() {
     draw();
   });
   app.querySelector("[data-bulk-employee-delete]").addEventListener("click", async () => {
-    if (!await confirmAction({ title: "حذف منطقي جماعي", message: `سيتم حذف ${selectedEmployees.size} موظف منطقيًا وتعطيل حساباتهم المرتبطة.`, confirmLabel: "حذف المحدد", danger: true })) return;
-    await runBulk({ action: "delete" }, "تم الحذف المنطقي الجماعي");
+    if (!await confirmAction({ title: "Ø­Ø°Ù Ù…Ù†Ø·Ù‚ÙŠ Ø¬Ù…Ø§Ø¹ÙŠ", message: `Ø³ÙŠØªÙ… Ø­Ø°Ù ${selectedEmployees.size} Ù…ÙˆØ¸Ù Ù…Ù†Ø·Ù‚ÙŠÙ‹Ø§ ÙˆØªØ¹Ø·ÙŠÙ„ Ø­Ø³Ø§Ø¨Ø§ØªÙ‡Ù… Ø§Ù„Ù…Ø±ØªØ¨Ø·Ø©.`, confirmLabel: "Ø­Ø°Ù Ø§Ù„Ù…Ø­Ø¯Ø¯", danger: true })) return;
+    await runBulk({ action: "delete" }, "ØªÙ… Ø§Ù„Ø­Ø°Ù Ø§Ù„Ù…Ù†Ø·Ù‚ÙŠ Ø§Ù„Ø¬Ù…Ø§Ø¹ÙŠ");
   });
   app.querySelector("[data-bulk-employee-status]").addEventListener("click", async () => {
     const status = app.querySelector("#bulk-status")?.value || "ACTIVE";
-    await runBulk({ action: "status", status }, "تم تغيير الحالة الجماعية");
+    await runBulk({ action: "status", status }, "ØªÙ… ØªØºÙŠÙŠØ± Ø§Ù„Ø­Ø§Ù„Ø© Ø§Ù„Ø¬Ù…Ø§Ø¹ÙŠØ©");
   });
   app.querySelector("[data-bulk-employee-assign]").addEventListener("click", async () => {
     const departmentId = app.querySelector("#bulk-department")?.value || undefined;
     const managerEmployeeId = app.querySelector("#bulk-manager")?.value || undefined;
-    if (!departmentId && !managerEmployeeId) return setMessage("", "اختر قسمًا أو مديرًا قبل تطبيق النقل.");
-    await runBulk({ action: "assign", departmentId, managerEmployeeId }, "تم تطبيق النقل الجماعي");
+    if (!departmentId && !managerEmployeeId) return setMessage("", "Ø§Ø®ØªØ± Ù‚Ø³Ù…Ù‹Ø§ Ø£Ùˆ Ù…Ø¯ÙŠØ±Ù‹Ø§ Ù‚Ø¨Ù„ ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù†Ù‚Ù„.");
+    await runBulk({ action: "assign", departmentId, managerEmployeeId }, "ØªÙ… ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù†Ù‚Ù„ Ø§Ù„Ø¬Ù…Ø§Ø¹ÙŠ");
   });
   app.querySelector("[data-bulk-employee-notify]").addEventListener("click", async () => {
-    const message = await askText({ title: "تنبيه جماعي", message: "اكتب نص التنبيه الذي سيصل للموظفين المحددين.", defaultValue: "يرجى مراجعة الإدارة عند التفرغ.", confirmLabel: "إرسال التنبيه", required: true });
+    const message = await askText({ title: "ØªÙ†Ø¨ÙŠÙ‡ Ø¬Ù…Ø§Ø¹ÙŠ", message: "Ø§ÙƒØªØ¨ Ù†Øµ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡ Ø§Ù„Ø°ÙŠ Ø³ÙŠØµÙ„ Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ù…Ø­Ø¯Ø¯ÙŠÙ†.", defaultValue: "ÙŠØ±Ø¬Ù‰ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø¹Ù†Ø¯ Ø§Ù„ØªÙØ±Øº.", confirmLabel: "Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡", required: true });
     if (!message) return;
-    await runBulk({ action: "notify", title: "تنبيه من إدارة الجمعية", message }, "تم إرسال التنبيه الجماعي");
+    await runBulk({ action: "notify", title: "ØªÙ†Ø¨ÙŠÙ‡ Ù…Ù† Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©", message }, "ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡ Ø§Ù„Ø¬Ù…Ø§Ø¹ÙŠ");
   });
   app.querySelector('[data-action="new-employee"]').addEventListener("click", () => showEmployeeEditor(ref));
   const employeeExportRows = () => filterEmployees(employees).map((e) => [e.fullName, e.phone, e.email, e.jobTitle, e.department?.name, e.manager?.fullName || "", e.status || ""]);
-  const employeeExportHeaders = ["الاسم","الهاتف","البريد","المسمى الوظيفي","القسم","المدير المباشر", "الحالة"];
+  const employeeExportHeaders = ["Ø§Ù„Ø§Ø³Ù…","Ø§Ù„Ù‡Ø§ØªÙ","Ø§Ù„Ø¨Ø±ÙŠØ¯","Ø§Ù„Ù…Ø³Ù…Ù‰ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ","Ø§Ù„Ù‚Ø³Ù…","Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", "Ø§Ù„Ø­Ø§Ù„Ø©"];
   app.querySelector("[data-export-employees]").addEventListener("click", () => downloadFile("employees.csv", `\ufeff${toCsv([employeeExportHeaders, ...employeeExportRows()])}`, "text/csv;charset=utf-8"));
   app.querySelector("[data-export-employees-xls]").addEventListener("click", () => exportHtmlTable("employees.xls", employeeExportHeaders, employeeExportRows()));
-  app.querySelector("[data-print-employees]").addEventListener("click", () => printReport("تقرير الموظفين", employeeExportHeaders, employeeExportRows()));
+  app.querySelector("[data-print-employees]").addEventListener("click", () => printReport("ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", employeeExportHeaders, employeeExportRows()));
   draw();
 }
 
@@ -1138,9 +1138,9 @@ function bindEmployeeActions(ref) {
   app.querySelectorAll("[data-view]").forEach((button) => button.addEventListener("click", () => (location.hash = `employee-profile?id=${button.dataset.view}`)));
   app.querySelectorAll("[data-edit]").forEach((button) => button.addEventListener("click", async () => showEmployeeEditor(ref, await endpoints.employee(button.dataset.edit))));
   app.querySelectorAll("[data-delete]").forEach((button) => button.addEventListener("click", async () => {
-    if (!await confirmAction({ title: "حذف موظف", message: "سيتم حذف الموظف منطقيًا وتعطيل حسابه المرتبط دون حذف السجل التاريخي.", confirmLabel: "حذف منطقي", danger: true })) return;
+    if (!await confirmAction({ title: "Ø­Ø°Ù Ù…ÙˆØ¸Ù", message: "Ø³ÙŠØªÙ… Ø­Ø°Ù Ø§Ù„Ù…ÙˆØ¸Ù Ù…Ù†Ø·Ù‚ÙŠÙ‹Ø§ ÙˆØªØ¹Ø·ÙŠÙ„ Ø­Ø³Ø§Ø¨Ù‡ Ø§Ù„Ù…Ø±ØªØ¨Ø· Ø¯ÙˆÙ† Ø­Ø°Ù Ø§Ù„Ø³Ø¬Ù„ Ø§Ù„ØªØ§Ø±ÙŠØ®ÙŠ.", confirmLabel: "Ø­Ø°Ù Ù…Ù†Ø·Ù‚ÙŠ", danger: true })) return;
     await endpoints.deleteEmployee(button.dataset.delete);
-    setMessage("تم حذف الموظف منطقيًا.", "");
+    setMessage("ØªÙ… Ø­Ø°Ù Ø§Ù„Ù…ÙˆØ¸Ù Ù…Ù†Ø·Ù‚ÙŠÙ‹Ø§.", "");
     render();
   }));
 }
@@ -1162,25 +1162,25 @@ function showEmployeeEditor(ref, employee = null) {
   const defaults = defaultEmployeeRefs(ref, employee);
   const managerOptions = ref.employees
     .filter((item) => item.id !== employee?.id)
-    .map((item) => ({ id: item.id, name: `${item.fullName}${item.jobTitle ? " — " + item.jobTitle : ""}` }));
+    .map((item) => ({ id: item.id, name: `${item.fullName}${item.jobTitle ? " â€” " + item.jobTitle : ""}` }));
   editor.classList.remove("hidden");
   editor.innerHTML = `
-    <div class="panel-head"><div><h2>${employee ? "تعديل موظف" : "إضافة موظف جديد"}</h2><p>كل تعديل يتم حفظه فورًا. في الوضع المحلي يُحفظ داخل المتصفح، وفي Supabase يُحفظ في قاعدة البيانات.</p></div><button class="button ghost" data-close-editor>إغلاق</button></div>
+    <div class="panel-head"><div><h2>${employee ? "ØªØ¹Ø¯ÙŠÙ„ Ù…ÙˆØ¸Ù" : "Ø¥Ø¶Ø§ÙØ© Ù…ÙˆØ¸Ù Ø¬Ø¯ÙŠØ¯"}</h2><p>ÙƒÙ„ ØªØ¹Ø¯ÙŠÙ„ ÙŠØªÙ… Ø­ÙØ¸Ù‡ ÙÙˆØ±Ù‹Ø§. ÙÙŠ Ø§Ù„ÙˆØ¶Ø¹ Ø§Ù„Ù…Ø­Ù„ÙŠ ÙŠÙØ­ÙØ¸ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…ØªØµÙØ­ØŒ ÙˆÙÙŠ Supabase ÙŠÙØ­ÙØ¸ ÙÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.</p></div><button class="button ghost" data-close-editor>Ø¥ØºÙ„Ø§Ù‚</button></div>
     <form id="employee-form" class="editor-grid" data-password-policy="none">
-      <div class="photo-box"><div id="photo-preview">${avatar(employee || { fullName: "موظف جديد" })}</div><label>الصورة الشخصية<input name="photo" type="file" accept="image/*" /></label></div>
-      <label>الاسم الكامل<input name="fullName" required value="${escapeHtml(employee?.fullName || "")}" /></label>
-      <label>رقم الموبايل<input name="phone" value="${escapeHtml(employee?.phone || "")}" /></label>
-      <label>البريد الإلكتروني<input name="email" type="email" required value="${escapeHtml(employee?.email || "")}" placeholder="name@ahla-shabab.org" /></label>
-      <label>المسمى الوظيفي<input name="jobTitle" value="${escapeHtml(employee?.jobTitle || "")}" /></label>
-      <label>المدير المباشر<select name="managerEmployeeId">${optionList(managerOptions, employee?.managerEmployeeId, "بدون مدير")}</select></label>
+      <div class="photo-box"><div id="photo-preview">${avatar(employee || { fullName: "Ù…ÙˆØ¸Ù Ø¬Ø¯ÙŠØ¯" })}</div><label>Ø§Ù„ØµÙˆØ±Ø© Ø§Ù„Ø´Ø®ØµÙŠØ©<input name="photo" type="file" accept="image/*" /></label></div>
+      <label>Ø§Ù„Ø§Ø³Ù… Ø§Ù„ÙƒØ§Ù…Ù„<input name="fullName" required value="${escapeHtml(employee?.fullName || "")}" /></label>
+      <label>Ø±Ù‚Ù… Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„<input name="phone" value="${escapeHtml(employee?.phone || "")}" /></label>
+      <label>Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ<input name="email" type="email" required value="${escapeHtml(employee?.email || "")}" placeholder="name@ahla-shabab.org" /></label>
+      <label>Ø§Ù„Ù…Ø³Ù…Ù‰ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ<input name="jobTitle" value="${escapeHtml(employee?.jobTitle || "")}" /></label>
+      <label>Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±<select name="managerEmployeeId">${optionList(managerOptions, employee?.managerEmployeeId, "Ø¨Ø¯ÙˆÙ† Ù…Ø¯ÙŠØ±")}</select></label>
       <input type="hidden" name="roleId" value="${escapeHtml(defaults.roleId)}" />
       <input type="hidden" name="branchId" value="${escapeHtml(defaults.branchId)}" />
       <input type="hidden" name="governorateId" value="${escapeHtml(defaults.governorateId)}" />
       <input type="hidden" name="complexId" value="${escapeHtml(defaults.complexId)}" />
       <input type="hidden" name="status" value="ACTIVE" />
-      ${employee ? `<label class="check-row"><input type="checkbox" name="createUser" /> إنشاء حساب مستخدم إذا لم يكن مرتبطًا</label><label>كلمة مرور مؤقتة جديدة<input name="password" value="" placeholder="اتركه فارغًا إن لم تنشئ حسابًا" /></label>` : `<label class="check-row"><input type="checkbox" name="createUser" checked /> إنشاء حساب مستخدم مرتبط</label><label>كلمة مرور مؤقتة<input name="password" value="" placeholder="اتركه فارغًا لاستخدام رقم الهاتف ككلمة مرور" /></label>`}
-      <div class="message compact span-2">البريد الإلكتروني مطلوب لإنشاء حساب. يتم إنشاء الحساب من لوحة HR فقط. عند ترك كلمة المرور فارغة تصبح كلمة المرور الافتراضية هي رقم الهاتف/الرقم الشخصي المسجل.</div>
-      <div class="form-actions wide"><button class="button primary" type="submit">حفظ الملف</button></div>
+      ${employee ? `<label class="check-row"><input type="checkbox" name="createUser" /> Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ù…Ø³ØªØ®Ø¯Ù… Ø¥Ø°Ø§ Ù„Ù… ÙŠÙƒÙ† Ù…Ø±ØªØ¨Ø·Ù‹Ø§</label><label>ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù…Ø¤Ù‚ØªØ© Ø¬Ø¯ÙŠØ¯Ø©<input name="password" value="" placeholder="Ø§ØªØ±ÙƒÙ‡ ÙØ§Ø±ØºÙ‹Ø§ Ø¥Ù† Ù„Ù… ØªÙ†Ø´Ø¦ Ø­Ø³Ø§Ø¨Ù‹Ø§" /></label>` : `<label class="check-row"><input type="checkbox" name="createUser" checked /> Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ù…Ø³ØªØ®Ø¯Ù… Ù…Ø±ØªØ¨Ø·</label><label>ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù…Ø¤Ù‚ØªØ©<input name="password" value="" placeholder="Ø§ØªØ±ÙƒÙ‡ ÙØ§Ø±ØºÙ‹Ø§ Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ÙƒÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ±" /></label>`}
+      <div class="message compact span-2">Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù…Ø·Ù„ÙˆØ¨ Ù„Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨. ÙŠØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨ Ù…Ù† Ù„ÙˆØ­Ø© HR ÙÙ‚Ø·. Ø¹Ù†Ø¯ ØªØ±Ùƒ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙØ§Ø±ØºØ© ØªØµØ¨Ø­ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ© Ù‡ÙŠ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ/Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø´Ø®ØµÙŠ Ø§Ù„Ù…Ø³Ø¬Ù„.</div>
+      <div class="form-actions wide"><button class="button primary" type="submit">Ø­ÙØ¸ Ø§Ù„Ù…Ù„Ù</button></div>
     </form>
   `;
   editor.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1191,7 +1191,7 @@ function showEmployeeEditor(ref, employee = null) {
     const url = await endpoints.uploadAvatar(file);
     editor.querySelector("#photo-preview").innerHTML = `<img class="avatar large" src="${escapeHtml(url)}" alt="" />`;
     photoInput.dataset.uploadedUrl = url;
-    setMessage("تم تجهيز الصورة وضغطها. اضغط حفظ الملف لتثبيتها.", "");
+    setMessage("ØªÙ… ØªØ¬Ù‡ÙŠØ² Ø§Ù„ØµÙˆØ±Ø© ÙˆØ¶ØºØ·Ù‡Ø§. Ø§Ø¶ØºØ· Ø­ÙØ¸ Ø§Ù„Ù…Ù„Ù Ù„ØªØ«Ø¨ÙŠØªÙ‡Ø§.", "");
   });
   editor.querySelector("[data-close-editor]").addEventListener("click", () => editor.classList.add("hidden"));
   editor.querySelector("#employee-form").addEventListener("submit", async (event) => {
@@ -1203,7 +1203,7 @@ function showEmployeeEditor(ref, employee = null) {
       delete values.photo;
       if (employee) await endpoints.updateEmployee(employee.id, values);
       else await endpoints.createEmployee(values);
-      setMessage(employee ? "تم تعديل ملف الموظف وحفظه." : "تم إنشاء ملف الموظف وحساب الدخول. كلمة المرور الافتراضية هي رقم الهاتف/الرقم الشخصي المسجل.", "");
+      setMessage(employee ? "ØªÙ… ØªØ¹Ø¯ÙŠÙ„ Ù…Ù„Ù Ø§Ù„Ù…ÙˆØ¸Ù ÙˆØ­ÙØ¸Ù‡." : "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ù…Ù„Ù Ø§Ù„Ù…ÙˆØ¸Ù ÙˆØ­Ø³Ø§Ø¨ Ø§Ù„Ø¯Ø®ÙˆÙ„. ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ© Ù‡ÙŠ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ/Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø´Ø®ØµÙŠ Ø§Ù„Ù…Ø³Ø¬Ù„.", "");
       render();
     } catch (error) {
       setMessage("", error.message);
@@ -1224,39 +1224,39 @@ async function renderEmployeeProfile() {
         ${avatar(employee, "large")}
         <h2>${escapeHtml(employee.fullName)}</h2>
         <p>${escapeHtml(employee.jobTitle || "-")}</p>
-        <div class="profile-actions"><button class="button" data-route="employees">رجوع للقائمة</button></div>
+        <div class="profile-actions"><button class="button" data-route="employees">Ø±Ø¬ÙˆØ¹ Ù„Ù„Ù‚Ø§Ø¦Ù…Ø©</button></div>
       </article>
       <article class="panel profile-details">
-        <div class="panel-head"><h2>الموقع الحالي</h2></div>
+        <div class="panel-head"><h2>Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ</h2></div>
         <div class="status-location-card">
-          <strong>آخر موقع مسجل</strong>
-          <p>${latestLocation ? `آخر موقع مرسل: ${date(latestLocation.date || latestLocation.requestedAt)}` : "لم يرسل الموظف موقعًا حديثًا بعد."}</p>
-          ${latestLocation ? `<div class="meta-grid"><span>Latitude: ${escapeHtml(latestLocation.latitude)}</span><span>Longitude: ${escapeHtml(latestLocation.longitude)}</span><span>الدقة: ${escapeHtml(latestLocation.accuracyMeters || "-")} متر</span><span>المصدر: ${escapeHtml(latestLocation.source || latestLocation.purpose || "-")}</span></div><a class="button ghost" target="_blank" rel="noopener" href="https://maps.google.com/?q=${escapeHtml(latestLocation.latitude)},${escapeHtml(latestLocation.longitude)}">فتح على الخريطة</a>` : ""}
+          <strong>Ø¢Ø®Ø± Ù…ÙˆÙ‚Ø¹ Ù…Ø³Ø¬Ù„</strong>
+          <p>${latestLocation ? `Ø¢Ø®Ø± Ù…ÙˆÙ‚Ø¹ Ù…Ø±Ø³Ù„: ${date(latestLocation.date || latestLocation.requestedAt)}` : "Ù„Ù… ÙŠØ±Ø³Ù„ Ø§Ù„Ù…ÙˆØ¸Ù Ù…ÙˆÙ‚Ø¹Ù‹Ø§ Ø­Ø¯ÙŠØ«Ù‹Ø§ Ø¨Ø¹Ø¯."}</p>
+          ${latestLocation ? `<div class="meta-grid"><span>Latitude: ${escapeHtml(latestLocation.latitude)}</span><span>Longitude: ${escapeHtml(latestLocation.longitude)}</span><span>Ø§Ù„Ø¯Ù‚Ø©: ${escapeHtml(latestLocation.accuracyMeters || "-")} Ù…ØªØ±</span><span>Ø§Ù„Ù…ØµØ¯Ø±: ${escapeHtml(latestLocation.source || latestLocation.purpose || "-")}</span></div><a class="button ghost" target="_blank" rel="noopener" href="https://maps.google.com/?q=${escapeHtml(latestLocation.latitude)},${escapeHtml(latestLocation.longitude)}">ÙØªØ­ Ø¹Ù„Ù‰ Ø§Ù„Ø®Ø±ÙŠØ·Ø©</a>` : ""}
         </div>
       </article>
       <article class="panel profile-details">
-        <div class="panel-head"><h2>البيانات الأساسية</h2><span>${escapeHtml(employee.jobTitle || "")}</span></div>
-        ${table(["البند", "القيمة"], [
-          ["الهاتف", employee.phone], ["البريد", employee.email], ["المسمى الوظيفي", employee.jobTitle], ["المدير المباشر", employee.manager?.fullName], ["حساب المستخدم", employee.user ? employee.user.email : "غير مرتبط"], ["إجمالي التأخير", `${totalLate} دقيقة`],
+        <div class="panel-head"><h2>Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ©</h2><span>${escapeHtml(employee.jobTitle || "")}</span></div>
+        ${table(["Ø§Ù„Ø¨Ù†Ø¯", "Ø§Ù„Ù‚ÙŠÙ…Ø©"], [
+          ["Ø§Ù„Ù‡Ø§ØªÙ", employee.phone], ["Ø§Ù„Ø¨Ø±ÙŠØ¯", employee.email], ["Ø§Ù„Ù…Ø³Ù…Ù‰ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ", employee.jobTitle], ["Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", employee.manager?.fullName], ["Ø­Ø³Ø§Ø¨ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", employee.user ? employee.user.email : "ØºÙŠØ± Ù…Ø±ØªØ¨Ø·"], ["Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„ØªØ£Ø®ÙŠØ±", `${totalLate} Ø¯Ù‚ÙŠÙ‚Ø©`],
         ].map(([key, value]) => `<tr><td>${escapeHtml(key)}</td><td>${escapeHtml(value || "-")}</td></tr>`))}
       </article>
-      <article class="panel span-4"><h2>الحضور اليومي</h2>${table(["اليوم", "الحالة", "تأخير"], (employee.attendanceDaily || []).map((item) => `<tr><td>${dateOnly(item.date)}</td><td>${badge(item.status)}</td><td>${escapeHtml(item.lateMinutes || 0)} د</td></tr>`))}</article>
-      <article class="panel span-4"><h2>المأموريات</h2>${table(["العنوان", "الحالة"], (employee.missions || []).map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${badge(item.status)}</td></tr>`))}</article>
-      <article class="panel span-4"><h2>الإجازات والاستثناءات</h2>${table(["النوع", "الحالة"], [...(employee.leaves || []).map((item) => ({ name: item.leaveType?.name, status: item.status })), ...(employee.exceptions || []).map((item) => ({ name: item.title, status: item.status }))].map((item) => `<tr><td>${escapeHtml(item.name)}</td><td>${badge(item.status)}</td></tr>`))}</article>
+      <article class="panel span-4"><h2>Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ</h2>${table(["Ø§Ù„ÙŠÙˆÙ…", "Ø§Ù„Ø­Ø§Ù„Ø©", "ØªØ£Ø®ÙŠØ±"], (employee.attendanceDaily || []).map((item) => `<tr><td>${dateOnly(item.date)}</td><td>${badge(item.status)}</td><td>${escapeHtml(item.lateMinutes || 0)} Ø¯</td></tr>`))}</article>
+      <article class="panel span-4"><h2>Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª</h2>${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ø­Ø§Ù„Ø©"], (employee.missions || []).map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${badge(item.status)}</td></tr>`))}</article>
+      <article class="panel span-4"><h2>Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª ÙˆØ§Ù„Ø§Ø³ØªØ«Ù†Ø§Ø¡Ø§Øª</h2>${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø­Ø§Ù„Ø©"], [...(employee.leaves || []).map((item) => ({ name: item.leaveType?.name, status: item.status })), ...(employee.exceptions || []).map((item) => ({ name: item.title, status: item.status }))].map((item) => `<tr><td>${escapeHtml(item.name)}</td><td>${badge(item.status)}</td></tr>`))}</article>
       <article class="panel span-12">
-        <div class="panel-head"><div><h2>المرفقات</h2><p>عقود، بطاقات، شهادات، أو أي مستند مرتبط بالموظف.</p></div><div class="toolbar"><input type="file" id="employee-attachment" /><button class="button" id="upload-employee-attachment">رفع مرفق</button></div></div>
-        ${table(["الملف", "النوع", "الحجم", "التاريخ"], attachments.map((item) => `<tr><td>${item.url || item.filePath ? `<a href="${escapeHtml(item.url || item.filePath)}" target="_blank" rel="noopener">${escapeHtml(item.originalName || item.fileName)} <small>(رابط آمن مؤقت)</small></a>` : escapeHtml(item.originalName || item.fileName)}</td><td>${escapeHtml(item.mimeType || item.scope || "-")}</td><td>${Math.round(Number(item.sizeBytes || 0) / 1024)} KB</td><td>${date(item.createdAt)}</td></tr>`))}
+        <div class="panel-head"><div><h2>Ø§Ù„Ù…Ø±ÙÙ‚Ø§Øª</h2><p>Ø¹Ù‚ÙˆØ¯ØŒ Ø¨Ø·Ø§Ù‚Ø§ØªØŒ Ø´Ù‡Ø§Ø¯Ø§ØªØŒ Ø£Ùˆ Ø£ÙŠ Ù…Ø³ØªÙ†Ø¯ Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ù…ÙˆØ¸Ù.</p></div><div class="toolbar"><input type="file" id="employee-attachment" /><button class="button" id="upload-employee-attachment">Ø±ÙØ¹ Ù…Ø±ÙÙ‚</button></div></div>
+        ${table(["Ø§Ù„Ù…Ù„Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø­Ø¬Ù…", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], attachments.map((item) => `<tr><td>${item.url || item.filePath ? `<a href="${escapeHtml(item.url || item.filePath)}" target="_blank" rel="noopener">${escapeHtml(item.originalName || item.fileName)} <small>(Ø±Ø§Ø¨Ø· Ø¢Ù…Ù† Ù…Ø¤Ù‚Øª)</small></a>` : escapeHtml(item.originalName || item.fileName)}</td><td>${escapeHtml(item.mimeType || item.scope || "-")}</td><td>${Math.round(Number(item.sizeBytes || 0) / 1024)} KB</td><td>${date(item.createdAt)}</td></tr>`))}
       </article>
     </section>`,
-    "ملف الموظف",
-    "مركز موحد للبيانات الأساسية والحضور والطلبات.",
+    "Ù…Ù„Ù Ø§Ù„Ù…ÙˆØ¸Ù",
+    "Ù…Ø±ÙƒØ² Ù…ÙˆØ­Ø¯ Ù„Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ© ÙˆØ§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª.",
   );
   app.querySelector("[data-route=employees]")?.addEventListener("click", () => { location.hash = "employees"; });
   app.querySelector("#upload-employee-attachment")?.addEventListener("click", async () => {
     const file = app.querySelector("#employee-attachment")?.files?.[0];
-    if (!file) return setMessage("", "اختر ملفًا أولًا.");
+    if (!file) return setMessage("", "Ø§Ø®ØªØ± Ù…Ù„ÙÙ‹Ø§ Ø£ÙˆÙ„Ù‹Ø§.");
     await endpoints.uploadAttachment(file, { scope: "EMPLOYEE", entityId: employee.id, employeeId: employee.id });
-    setMessage("تم رفع المرفق.", "");
+    setMessage("ØªÙ… Ø±ÙØ¹ Ø§Ù„Ù…Ø±ÙÙ‚.", "");
     render();
   });
 }
@@ -1266,26 +1266,26 @@ async function renderUsers() {
   shell(
     `<section class="stack users-lite-page">
       <article class="panel">
-        <div class="panel-head"><div><h2>إدارة المستخدمين</h2><p>شاشة مبسطة مثل الموظفين: الاسم، البريد، الصورة، والموظف المرتبط فقط. الصلاحيات تُستمد تلقائيًا من ملف الموظف أو تبقى كما هي عند التعديل.</p></div><div class="toolbar"><button class="button ghost" data-autolink-users>ربط تلقائي حسب البريد</button><button class="button primary" data-new-user>إضافة مستخدم</button></div></div>
-        <form class="filters" id="user-filters"><input name="q" placeholder="بحث بالاسم أو البريد أو الموظف المرتبط" /></form>
+        <div class="panel-head"><div><h2>Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†</h2><p>Ø´Ø§Ø´Ø© Ù…Ø¨Ø³Ø·Ø© Ù…Ø«Ù„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†: Ø§Ù„Ø§Ø³Ù…ØŒ Ø§Ù„Ø¨Ø±ÙŠØ¯ØŒ Ø§Ù„ØµÙˆØ±Ø©ØŒ ÙˆØ§Ù„Ù…ÙˆØ¸Ù Ø§Ù„Ù…Ø±ØªØ¨Ø· ÙÙ‚Ø·. Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª ØªÙØ³ØªÙ…Ø¯ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ù…Ù† Ù…Ù„Ù Ø§Ù„Ù…ÙˆØ¸Ù Ø£Ùˆ ØªØ¨Ù‚Ù‰ ÙƒÙ…Ø§ Ù‡ÙŠ Ø¹Ù†Ø¯ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„.</p></div><div class="toolbar"><button class="button ghost" data-autolink-users>Ø±Ø¨Ø· ØªÙ„Ù‚Ø§Ø¦ÙŠ Ø­Ø³Ø¨ Ø§Ù„Ø¨Ø±ÙŠØ¯</button><button class="button primary" data-new-user>Ø¥Ø¶Ø§ÙØ© Ù…Ø³ØªØ®Ø¯Ù…</button></div></div>
+        <form class="filters" id="user-filters"><input name="q" placeholder="Ø¨Ø­Ø« Ø¨Ø§Ù„Ø§Ø³Ù… Ø£Ùˆ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø£Ùˆ Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„Ù…Ø±ØªØ¨Ø·" /></form>
         <div id="users-table"></div>
       </article>
       <article id="user-editor" class="panel hidden"></article>
     </section>`,
-    "المستخدمون",
-    "إدارة حسابات الدخول بشكل مبسط بدون فرع أو قسم أو كود أو دوام.",
+    "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙˆÙ†",
+    "Ø¥Ø¯Ø§Ø±Ø© Ø­Ø³Ø§Ø¨Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø´ÙƒÙ„ Ù…Ø¨Ø³Ø· Ø¨Ø¯ÙˆÙ† ÙØ±Ø¹ Ø£Ùˆ Ù‚Ø³Ù… Ø£Ùˆ ÙƒÙˆØ¯ Ø£Ùˆ Ø¯ÙˆØ§Ù….",
   );
   const draw = () => {
     const values = readForm(app.querySelector("#user-filters"));
     const q = (values.q || "").toLowerCase();
     const filtered = users.filter((user) => !q || [user.name, user.fullName, user.email, user.employee?.fullName].join(" ").toLowerCase().includes(q));
-    app.querySelector("#users-table").innerHTML = table(["المستخدم", "الموظف المرتبط", "آخر دخول", "الحالة", "إجراءات"], filtered.map((user) => `
+    app.querySelector("#users-table").innerHTML = table(["Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", "Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„Ù…Ø±ØªØ¨Ø·", "Ø¢Ø®Ø± Ø¯Ø®ÙˆÙ„", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], filtered.map((user) => `
       <tr>
-        <td class="person-cell">${avatar(userAvatarSubject(user), "tiny")}<span>${escapeHtml(user.name || user.fullName || "مستخدم")}<small>${escapeHtml(user.email)}</small></span></td>
-        <td>${escapeHtml(user.employee?.fullName || "غير مرتبط")}</td>
+        <td class="person-cell">${avatar(userAvatarSubject(user), "tiny")}<span>${escapeHtml(user.name || user.fullName || "Ù…Ø³ØªØ®Ø¯Ù…")}<small>${escapeHtml(user.email)}</small></span></td>
+        <td>${escapeHtml(user.employee?.fullName || "ØºÙŠØ± Ù…Ø±ØªØ¨Ø·")}</td>
         <td>${date(user.lastLoginAt)}</td>
         <td>${badge(user.status || "ACTIVE")} ${user.temporaryPassword ? badge("INVITED") : ""}</td>
-        <td><button class="button ghost" data-edit-user="${user.id}">تعديل</button><button class="button ghost" data-toggle-user="${user.id}">${user.status === "ACTIVE" ? "تعطيل" : "تنشيط"}</button></td>
+        <td><button class="button ghost" data-edit-user="${user.id}">ØªØ¹Ø¯ÙŠÙ„</button><button class="button ghost" data-toggle-user="${user.id}">${user.status === "ACTIVE" ? "ØªØ¹Ø·ÙŠÙ„" : "ØªÙ†Ø´ÙŠØ·"}</button></td>
       </tr>`));
     bindUserActions(ref, users);
   };
@@ -1294,10 +1294,10 @@ async function renderUsers() {
   app.querySelector("[data-autolink-users]").addEventListener("click", async () => {
     try {
       const result = await endpoints.autoLinkUsersByEmail();
-      setMessage(`تم الربط التلقائي: ${result.linked || 0} مستخدم/موظف.`, "");
+      setMessage(`ØªÙ… Ø§Ù„Ø±Ø¨Ø· Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ: ${result.linked || 0} Ù…Ø³ØªØ®Ø¯Ù…/Ù…ÙˆØ¸Ù.`, "");
       render();
     } catch (error) {
-      setMessage("", error.message || "تعذر الربط التلقائي.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ø§Ù„Ø±Ø¨Ø· Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ.");
       render();
     }
   });
@@ -1310,9 +1310,9 @@ function bindUserActions(ref, users = []) {
   }));
   app.querySelectorAll("[data-toggle-user]").forEach((button) => button.addEventListener("click", async () => {
     const user = users.find((item) => item.id === button.dataset.toggleUser);
-    if (!user) return setMessage("", "تعذر العثور على المستخدم المطلوب.");
+    if (!user) return setMessage("", "ØªØ¹Ø°Ø± Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ø§Ù„Ù…Ø·Ù„ÙˆØ¨.");
     await endpoints.setUserStatus(user.id, user.status === "ACTIVE" ? "DISABLED" : "ACTIVE");
-    setMessage("تم تحديث حالة المستخدم.", "");
+    setMessage("ØªÙ… ØªØ­Ø¯ÙŠØ« Ø­Ø§Ù„Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù….", "");
     render();
   }));
 }
@@ -1335,27 +1335,27 @@ function showUserEditor(ref, user = null) {
   const defaults = userDefaultsFromEmployee(ref, user);
   editor.classList.remove("hidden");
   editor.innerHTML = `
-    <div class="panel-head"><div><h2>${user ? "تعديل مستخدم" : "إضافة مستخدم"}</h2><p>لا تحتاج لاختيار فرع أو قسم أو دور يدويًا. اربط الحساب بالموظف وسيتم ضبط البيانات الأساسية تلقائيًا.</p></div><button class="button ghost" data-close-user>إغلاق</button></div>
+    <div class="panel-head"><div><h2>${user ? "ØªØ¹Ø¯ÙŠÙ„ Ù…Ø³ØªØ®Ø¯Ù…" : "Ø¥Ø¶Ø§ÙØ© Ù…Ø³ØªØ®Ø¯Ù…"}</h2><p>Ù„Ø§ ØªØ­ØªØ§Ø¬ Ù„Ø§Ø®ØªÙŠØ§Ø± ÙØ±Ø¹ Ø£Ùˆ Ù‚Ø³Ù… Ø£Ùˆ Ø¯ÙˆØ± ÙŠØ¯ÙˆÙŠÙ‹Ø§. Ø§Ø±Ø¨Ø· Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ø§Ù„Ù…ÙˆØ¸Ù ÙˆØ³ÙŠØªÙ… Ø¶Ø¨Ø· Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§.</p></div><button class="button ghost" data-close-user>Ø¥ØºÙ„Ø§Ù‚</button></div>
     <form id="user-form" class="editor-grid simplified-user-form" data-password-policy="none">
       <div class="photo-box user-avatar-editor">
-        <div id="user-avatar-preview">${avatar(userAvatarSubject(user || { name: "مستخدم جديد" }), "large")}</div>
-        <label>صورة المستخدم<input name="avatar" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
-        <small>الصورة اختيارية وتظهر في الشريط العلوي وجدول المستخدمين.</small>
+        <div id="user-avatar-preview">${avatar(userAvatarSubject(user || { name: "Ù…Ø³ØªØ®Ø¯Ù… Ø¬Ø¯ÙŠØ¯" }), "large")}</div>
+        <label>ØµÙˆØ±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…<input name="avatar" type="file" accept="image/png,image/jpeg,image/webp,image/gif" /></label>
+        <small>Ø§Ù„ØµÙˆØ±Ø© Ø§Ø®ØªÙŠØ§Ø±ÙŠØ© ÙˆØªØ¸Ù‡Ø± ÙÙŠ Ø§Ù„Ø´Ø±ÙŠØ· Ø§Ù„Ø¹Ù„ÙˆÙŠ ÙˆØ¬Ø¯ÙˆÙ„ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†.</small>
       </div>
-      <label>الاسم<input name="name" required value="${escapeHtml(user?.name || user?.fullName || "")}" /></label>
-      <label>البريد<input name="email" type="email" required value="${escapeHtml(user?.email || "")}" /></label>
-      <label>الموظف المرتبط<select name="employeeId">${optionList(ref.employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), user?.employeeId, "بدون")}</select></label>
-      <label>كلمة المرور المؤقتة<input name="password" value="" placeholder="${user ? "اتركه فارغًا للإبقاء عليها" : "اتركه فارغًا لاستخدام رقم هاتف الموظف"}" /></label>
+      <label>Ø§Ù„Ø§Ø³Ù…<input name="name" required value="${escapeHtml(user?.name || user?.fullName || "")}" /></label>
+      <label>Ø§Ù„Ø¨Ø±ÙŠØ¯<input name="email" type="email" required value="${escapeHtml(user?.email || "")}" /></label>
+      <label>Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„Ù…Ø±ØªØ¨Ø·<select name="employeeId">${optionList(ref.employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " â€” " + employee.jobTitle : ""}` })), user?.employeeId, "Ø¨Ø¯ÙˆÙ†")}</select></label>
+      <label>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ©<input name="password" value="" placeholder="${user ? "Ø§ØªØ±ÙƒÙ‡ ÙØ§Ø±ØºÙ‹Ø§ Ù„Ù„Ø¥Ø¨Ù‚Ø§Ø¡ Ø¹Ù„ÙŠÙ‡Ø§" : "Ø§ØªØ±ÙƒÙ‡ ÙØ§Ø±ØºÙ‹Ø§ Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø±Ù‚Ù… Ù‡Ø§ØªÙ Ø§Ù„Ù…ÙˆØ¸Ù"}" /></label>
       <input type="hidden" name="roleId" value="${escapeHtml(defaults.roleId)}" />
       <input type="hidden" name="branchId" value="${escapeHtml(defaults.branchId)}" />
       <input type="hidden" name="departmentId" value="${escapeHtml(defaults.departmentId)}" />
       <input type="hidden" name="governorateId" value="${escapeHtml(defaults.governorateId)}" />
       <input type="hidden" name="complexId" value="${escapeHtml(defaults.complexId)}" />
       <input type="hidden" name="status" value="${escapeHtml(defaults.status)}" />
-      <label class="check-row"><input type="checkbox" name="temporaryPassword" ${user?.temporaryPassword ?? true ? "checked" : ""} /> كلمة مرور مؤقتة</label>
-      <label class="check-row"><input type="checkbox" name="passkeyEnabled" ${user?.passkeyEnabled ? "checked" : ""} /> Passkey مفعلة</label>
-      <div class="message compact span-2">تم حذف حقول الفرع، القسم، المحافظة، المجمع، الدور، والكود من شاشة المستخدمين. يتم ضبطها داخليًا فقط لتوافق قاعدة البيانات.</div>
-      <div class="form-actions wide"><button class="button primary" type="submit">حفظ المستخدم</button></div>
+      <label class="check-row"><input type="checkbox" name="temporaryPassword" ${user?.temporaryPassword ?? true ? "checked" : ""} /> ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù…Ø¤Ù‚ØªØ©</label>
+      <label class="check-row"><input type="checkbox" name="passkeyEnabled" ${user?.passkeyEnabled ? "checked" : ""} /> Passkey Ù…ÙØ¹Ù„Ø©</label>
+      <div class="message compact span-2">ØªÙ… Ø­Ø°Ù Ø­Ù‚ÙˆÙ„ Ø§Ù„ÙØ±Ø¹ØŒ Ø§Ù„Ù‚Ø³Ù…ØŒ Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø©ØŒ Ø§Ù„Ù…Ø¬Ù…Ø¹ØŒ Ø§Ù„Ø¯ÙˆØ±ØŒ ÙˆØ§Ù„ÙƒÙˆØ¯ Ù…Ù† Ø´Ø§Ø´Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†. ÙŠØªÙ… Ø¶Ø¨Ø·Ù‡Ø§ Ø¯Ø§Ø®Ù„ÙŠÙ‹Ø§ ÙÙ‚Ø· Ù„ØªÙˆØ§ÙÙ‚ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.</div>
+      <div class="form-actions wide"><button class="button primary" type="submit">Ø­ÙØ¸ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…</button></div>
     </form>
   `;
   editor.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1376,9 +1376,9 @@ function showUserEditor(ref, user = null) {
       const file = avatarInput.files?.[0];
       if (!file) return;
       const url = await endpoints.uploadAvatar(file);
-      editor.querySelector("#user-avatar-preview").innerHTML = `<img class="avatar large" src="${escapeHtml(url)}" alt="صورة المستخدم" />`;
+      editor.querySelector("#user-avatar-preview").innerHTML = `<img class="avatar large" src="${escapeHtml(url)}" alt="ØµÙˆØ±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…" />`;
       avatarInput.dataset.uploadedUrl = url;
-      setMessage("تم تجهيز صورة المستخدم. اضغط حفظ المستخدم لتثبيتها.", "");
+      setMessage("ØªÙ… ØªØ¬Ù‡ÙŠØ² ØµÙˆØ±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…. Ø§Ø¶ØºØ· Ø­ÙØ¸ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ù„ØªØ«Ø¨ÙŠØªÙ‡Ø§.", "");
     } catch (error) {
       setMessage("", error.message);
     }
@@ -1394,7 +1394,7 @@ function showUserEditor(ref, user = null) {
       if (!values.password) delete values.password;
       if (user) await endpoints.updateUser(user.id, values);
       else await endpoints.createUser(values);
-      setMessage(user ? "تم تعديل المستخدم." : "تم إنشاء المستخدم.", "");
+      setMessage(user ? "ØªÙ… ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…." : "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù….", "");
       render();
     } catch (error) {
       setMessage("", error.message);
@@ -1405,11 +1405,11 @@ function showUserEditor(ref, user = null) {
 
 async function enableBrowserNotifications() {
   await enableWebPushSubscription(endpoints);
-  new Notification("تم تفعيل إشعارات النظام", { body: "سيتم إرسال التنبيهات الحقيقية عند ضبط VAPID و Edge Function." });
+  new Notification("ØªÙ… ØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù†Ø¸Ø§Ù…", { body: "Ø³ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠØ© Ø¹Ù†Ø¯ Ø¶Ø¨Ø· VAPID Ùˆ Edge Function." });
 }
 
 async function registerBrowserPasskey() {
-  if (!window.PublicKeyCredential || !navigator.credentials?.create) throw new Error("هذا المتصفح أو هذا البروتوكول لا يدعم WebAuthn. استخدم localhost أو HTTPS.");
+  if (!window.PublicKeyCredential || !navigator.credentials?.create) throw new Error("Ù‡Ø°Ø§ Ø§Ù„Ù…ØªØµÙØ­ Ø£Ùˆ Ù‡Ø°Ø§ Ø§Ù„Ø¨Ø±ÙˆØªÙˆÙƒÙˆÙ„ Ù„Ø§ ÙŠØ¯Ø¹Ù… WebAuthn. Ø§Ø³ØªØ®Ø¯Ù… localhost Ø£Ùˆ HTTPS.");
   const toBase64Url = (buffer) => btoa(String.fromCharCode(...new Uint8Array(buffer))).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
   const userName = state.user?.email || state.user?.fullName || "hr-user";
   const challenge = crypto.getRandomValues(new Uint8Array(32));
@@ -1417,7 +1417,7 @@ async function registerBrowserPasskey() {
   const credential = await navigator.credentials.create({
     publicKey: {
       challenge,
-      rp: { name: "نظام الحضور والانصراف" },
+      rp: { name: "Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù" },
       user: { id: userId, name: userName, displayName: state.user?.fullName || userName },
       pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
       authenticatorSelection: { userVerification: "required", residentKey: "required" },
@@ -1429,13 +1429,13 @@ async function registerBrowserPasskey() {
   const attestationObject = credential.response?.attestationObject ? toBase64Url(credential.response.attestationObject) : "";
   const clientDataJSON = credential.response?.clientDataJSON ? toBase64Url(credential.response.clientDataJSON) : "";
   const transports = typeof credential.response?.getTransports === "function" ? credential.response.getTransports() : [];
-  await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "مفتاح مرور لهذا الجهاز", platform: navigator.platform || "browser" });
+  await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "Ù…ÙØªØ§Ø­ Ù…Ø±ÙˆØ± Ù„Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø²", platform: navigator.platform || "browser" });
   return rawId;
 }
 
 async function requestBrowserPasskeyForPunch() {
   if (!window.PublicKeyCredential || !navigator.credentials?.get) {
-    throw new Error("بصمة الإصبع/Passkey غير مدعومة هنا. افتح النظام من موبايل يدعم البصمة أو من Chrome على localhost/HTTPS.");
+    throw new Error("Ø¨ØµÙ…Ø© Ø§Ù„Ø¥ØµØ¨Ø¹/Passkey ØºÙŠØ± Ù…Ø¯Ø¹ÙˆÙ…Ø© Ù‡Ù†Ø§. Ø§ÙØªØ­ Ø§Ù„Ù†Ø¸Ø§Ù… Ù…Ù† Ù…ÙˆØ¨Ø§ÙŠÙ„ ÙŠØ¯Ø¹Ù… Ø§Ù„Ø¨ØµÙ…Ø© Ø£Ùˆ Ù…Ù† Chrome Ø¹Ù„Ù‰ localhost/HTTPS.");
   }
   const challenge = crypto.getRandomValues(new Uint8Array(32));
   let credential;
@@ -1448,15 +1448,15 @@ async function requestBrowserPasskeyForPunch() {
       },
     });
   } catch (error) {
-    throw new Error("لم يتم تأكيد بصمة الإصبع أو تم إلغاء التحقق.");
+    throw new Error("Ù„Ù… ÙŠØªÙ… ØªØ£ÙƒÙŠØ¯ Ø¨ØµÙ…Ø© Ø§Ù„Ø¥ØµØ¨Ø¹ Ø£Ùˆ ØªÙ… Ø¥Ù„ØºØ§Ø¡ Ø§Ù„ØªØ­Ù‚Ù‚.");
   }
-  if (!credential?.rawId) throw new Error("لم يتم استلام تأكيد البصمة من الجهاز.");
+  if (!credential?.rawId) throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ø³ØªÙ„Ø§Ù… ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¨ØµÙ…Ø© Ù…Ù† Ø§Ù„Ø¬Ù‡Ø§Ø².");
   return btoa(String.fromCharCode(...new Uint8Array(credential.rawId))).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
 }
 
 function cleanAddressText(value = "") {
-  const text = String(value || "").replace(/https?:\/\/\S+/gi, "").replace(/Google Maps\s*[:：]?/gi, "").replace(/[—-]\s*$/g, "").trim();
-  return text || "مجمع منيل شيحة";
+  const text = String(value || "").replace(/https?:\/\/\S+/gi, "").replace(/Google Maps\s*[:ï¼š]?/gi, "").replace(/[â€”-]\s*$/g, "").trim();
+  return text || "Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©";
 }
 
 function mapsUrlForAddress(address = {}) {
@@ -1477,17 +1477,17 @@ async function renderEmployeePunch() {
   } catch (error) {
     shell(
       `<section class="panel empty-state-panel">
-        <h2>لا يمكن فتح بصمة الموظف لهذا الحساب</h2>
-        <p>${escapeHtml(error.message || "هذا الحساب غير مرتبط بملف موظف.")}</p>
-        <div class="message warning">اربط هذا المستخدم بموظف من صفحة المستخدمين، أو افتح صفحة الأشخاص والموظفين وأنشئ ملف موظف بنفس البريد الإلكتروني.</div>
+        <h2>Ù„Ø§ ÙŠÙ…ÙƒÙ† ÙØªØ­ Ø¨ØµÙ…Ø© Ø§Ù„Ù…ÙˆØ¸Ù Ù„Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨</h2>
+        <p>${escapeHtml(error.message || "Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…Ø±ØªØ¨Ø· Ø¨Ù…Ù„Ù Ù…ÙˆØ¸Ù.")}</p>
+        <div class="message warning">Ø§Ø±Ø¨Ø· Ù‡Ø°Ø§ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ø¨Ù…ÙˆØ¸Ù Ù…Ù† ØµÙØ­Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†ØŒ Ø£Ùˆ Ø§ÙØªØ­ ØµÙØ­Ø© Ø§Ù„Ø£Ø´Ø®Ø§Øµ ÙˆØ§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ£Ù†Ø´Ø¦ Ù…Ù„Ù Ù…ÙˆØ¸Ù Ø¨Ù†ÙØ³ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ.</div>
         <div class="toolbar spaced">
-          <button class="button primary" data-route="users">فتح المستخدمين</button>
-          <button class="button ghost" data-route="employees">فتح الموظفين</button>
-          <button class="button ghost" data-route="route-access">فحص الصلاحيات</button>
+          <button class="button primary" data-route="users">ÙØªØ­ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†</button>
+          <button class="button ghost" data-route="employees">ÙØªØ­ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</button>
+          <button class="button ghost" data-route="route-access">ÙØ­Øµ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª</button>
         </div>
       </section>`,
-      "بصمة الموظف",
-      "يلزم ربط الحساب بملف موظف قبل تسجيل الحضور والانصراف.",
+      "Ø¨ØµÙ…Ø© Ø§Ù„Ù…ÙˆØ¸Ù",
+      "ÙŠÙ„Ø²Ù… Ø±Ø¨Ø· Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ù…Ù„Ù Ù…ÙˆØ¸Ù Ù‚Ø¨Ù„ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù.",
     );
     return;
   }
@@ -1497,52 +1497,52 @@ async function renderEmployeePunch() {
   shell(
     `<section class="grid punch-page">
       <article class="panel span-6 punch-hero">
-        <div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(employee.fullName || state.user?.fullName || "الموظف")}</strong><small>${escapeHtml(employee.jobTitle || "")}</small></span></div>
+        <div class="person-cell large">${avatar(employee, "large")}<span><strong>${escapeHtml(employee.fullName || state.user?.fullName || "Ø§Ù„Ù…ÙˆØ¸Ù")}</strong><small>${escapeHtml(employee.jobTitle || "")}</small></span></div>
         <div class="address-card">
-          <h2>نطاق المجمع المعتمد للبصمة</h2>
-          <p>${escapeHtml(branch.name || "مجمع غير محدد")}</p>
-          <strong>${escapeHtml(cleanAddressText(address.address || branch.address || "مجمع منيل شيحة"))}</strong>
+          <h2>Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯ Ù„Ù„Ø¨ØµÙ…Ø©</h2>
+          <p>${escapeHtml(branch.name || "Ù…Ø¬Ù…Ø¹ ØºÙŠØ± Ù…Ø­Ø¯Ø¯")}</p>
+          <strong>${escapeHtml(cleanAddressText(address.address || branch.address || "Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©"))}</strong>
           <div class="meta-grid">
             <span>Latitude: ${escapeHtml(address.latitude ?? "-")}</span>
             <span>Longitude: ${escapeHtml(address.longitude ?? "-")}</span>
-            <span>النطاق: ${escapeHtml(address.radiusMeters || branch.radiusMeters || 300)} متر</span>
-            <span>أقصى دقة GPS: ${escapeHtml(address.maxAccuracyMeters || 500)} متر</span>
+            <span>Ø§Ù„Ù†Ø·Ø§Ù‚: ${escapeHtml(address.radiusMeters || branch.radiusMeters || 300)} Ù…ØªØ±</span>
+            <span>Ø£Ù‚ØµÙ‰ Ø¯Ù‚Ø© GPS: ${escapeHtml(address.maxAccuracyMeters || 500)} Ù…ØªØ±</span>
           </div>
-          ${mapsUrlForAddress(address) ? `<a class="button ghost map-open-btn" target="_blank" rel="noopener" href="${escapeHtml(mapsUrlForAddress(address))}">فتح المجمع على Google Maps</a>` : ""}
+          ${mapsUrlForAddress(address) ? `<a class="button ghost map-open-btn" target="_blank" rel="noopener" href="${escapeHtml(mapsUrlForAddress(address))}">ÙØªØ­ Ø§Ù„Ù…Ø¬Ù…Ø¹ Ø¹Ù„Ù‰ Google Maps</a>` : ""}
         </div>
-        <label>ملاحظات اختيارية<input id="self-punch-notes" placeholder="مثال: حضور من البوابة الرئيسية" /></label>
-        <div class="biometric-box"><strong>التحقق المطلوب: بصمة الإصبع / Passkey</strong><p>لا يتم استخدام صورة سيلفي. عند الضغط على حضور أو انصراف سيطلب المتصفح بصمة الجهاز أولًا، ثم يقرأ GPS ويحفظ الموقع مع البصمة.</p><button class="button ghost" type="button" data-register-passkey>تسجيل/تحديث بصمة الجهاز</button></div>
+        <label>Ù…Ù„Ø§Ø­Ø¸Ø§Øª Ø§Ø®ØªÙŠØ§Ø±ÙŠØ©<input id="self-punch-notes" placeholder="Ù…Ø«Ø§Ù„: Ø­Ø¶ÙˆØ± Ù…Ù† Ø§Ù„Ø¨ÙˆØ§Ø¨Ø© Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©" /></label>
+        <div class="biometric-box"><strong>Ø§Ù„ØªØ­Ù‚Ù‚ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨: Ø¨ØµÙ…Ø© Ø§Ù„Ø¥ØµØ¨Ø¹ / Passkey</strong><p>Ù„Ø§ ÙŠØªÙ… Ø§Ø³ØªØ®Ø¯Ø§Ù… ØµÙˆØ±Ø© Ø³ÙŠÙ„ÙÙŠ. Ø¹Ù†Ø¯ Ø§Ù„Ø¶ØºØ· Ø¹Ù„Ù‰ Ø­Ø¶ÙˆØ± Ø£Ùˆ Ø§Ù†ØµØ±Ø§Ù Ø³ÙŠØ·Ù„Ø¨ Ø§Ù„Ù…ØªØµÙØ­ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø£ÙˆÙ„Ù‹Ø§ØŒ Ø«Ù… ÙŠÙ‚Ø±Ø£ GPS ÙˆÙŠØ­ÙØ¸ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ø¹ Ø§Ù„Ø¨ØµÙ…Ø©.</p><button class="button ghost" type="button" data-register-passkey>ØªØ³Ø¬ÙŠÙ„/ØªØ­Ø¯ÙŠØ« Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø²</button></div>
         <div class="toolbar spaced punch-actions">
-          <button class="button ghost" data-test-location>اختبار موقعي</button>
-          <button class="button primary" data-self-punch="checkIn">بصمة حضور</button>
-          <button class="button" data-self-punch="checkOut">بصمة انصراف</button>
+          <button class="button ghost" data-test-location>Ø§Ø®ØªØ¨Ø§Ø± Ù…ÙˆÙ‚Ø¹ÙŠ</button>
+          <button class="button primary" data-self-punch="checkIn">Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ±</button>
+          <button class="button" data-self-punch="checkOut">Ø¨ØµÙ…Ø© Ø§Ù†ØµØ±Ø§Ù</button>
         </div>
-        <div id="self-punch-result" class="risk-box ${address.hasConfiguredAddress === false ? "" : "hidden"}">${address.hasConfiguredAddress === false ? "يجب ضبط إحداثيات المجمع قبل السماح بالبصمة." : ""}</div>
+        <div id="self-punch-result" class="risk-box ${address.hasConfiguredAddress === false ? "" : "hidden"}">${address.hasConfiguredAddress === false ? "ÙŠØ¬Ø¨ Ø¶Ø¨Ø· Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹ Ù‚Ø¨Ù„ Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ø¨ØµÙ…Ø©." : ""}</div>
       </article>
       <article class="panel span-6 latest-punches-panel">
-        <div class="panel-head"><div><h2>آخر بصماتي</h2><p>الحضور والانصراف لا يُحفظان إلا داخل نطاق المجمع، وأي محاولة مرفوضة تُسجل للمراجعة بالسبب والمسافة والدقة.</p></div></div>
-        ${table(["النوع", "الموقع", "المسافة", "الدقة", "الوقت"], employeeEvents.map((event) => `<tr><td>${badge(event.type)}</td><td>${badge(event.geofenceStatus || "unknown")}</td><td>${formatMeters(event.distanceFromBranchMeters)}</td><td>${formatMeters(event.accuracyMeters)}</td><td>${date(event.eventAt)}</td></tr>`))}
+        <div class="panel-head"><div><h2>Ø¢Ø®Ø± Ø¨ØµÙ…Ø§ØªÙŠ</h2><p>Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù Ù„Ø§ ÙŠÙØ­ÙØ¸Ø§Ù† Ø¥Ù„Ø§ Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹ØŒ ÙˆØ£ÙŠ Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±ÙÙˆØ¶Ø© ØªÙØ³Ø¬Ù„ Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø¨Ø§Ù„Ø³Ø¨Ø¨ ÙˆØ§Ù„Ù…Ø³Ø§ÙØ© ÙˆØ§Ù„Ø¯Ù‚Ø©.</p></div></div>
+        ${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ø§Ù„Ù…Ø³Ø§ÙØ©", "Ø§Ù„Ø¯Ù‚Ø©", "Ø§Ù„ÙˆÙ‚Øª"], employeeEvents.map((event) => `<tr><td>${badge(event.type)}</td><td>${badge(event.geofenceStatus || "unknown")}</td><td>${formatMeters(event.distanceFromBranchMeters)}</td><td>${formatMeters(event.accuracyMeters)}</td><td>${date(event.eventAt)}</td></tr>`))}
       </article>
       <article class="panel span-12 guidance-panel">
-        <h2>قواعد البصمة</h2>
-        <div class="steps"><span>1. افتح الصفحة من الموبايل أو جهاز يدعم Passkey.</span><span>2. اضغط تسجيل/تحديث بصمة الجهاز أول مرة فقط.</span><span>3. عند الحضور أو الانصراف أكّد ببصمة الإصبع.</span><span>4. اسمح للمتصفح بقراءة GPS.</span><span>5. طالما أنت داخل المجمع يتم حفظ البصمة حتى لو قبل أو بعد وقت الدوام الرسمي 10ص إلى 6م.</span></div>
+        <h2>Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø¨ØµÙ…Ø©</h2>
+        <div class="steps"><span>1. Ø§ÙØªØ­ Ø§Ù„ØµÙØ­Ø© Ù…Ù† Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ Ø£Ùˆ Ø¬Ù‡Ø§Ø² ÙŠØ¯Ø¹Ù… Passkey.</span><span>2. Ø§Ø¶ØºØ· ØªØ³Ø¬ÙŠÙ„/ØªØ­Ø¯ÙŠØ« Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø£ÙˆÙ„ Ù…Ø±Ø© ÙÙ‚Ø·.</span><span>3. Ø¹Ù†Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø£Ùˆ Ø§Ù„Ø§Ù†ØµØ±Ø§Ù Ø£ÙƒÙ‘Ø¯ Ø¨Ø¨ØµÙ…Ø© Ø§Ù„Ø¥ØµØ¨Ø¹.</span><span>4. Ø§Ø³Ù…Ø­ Ù„Ù„Ù…ØªØµÙØ­ Ø¨Ù‚Ø±Ø§Ø¡Ø© GPS.</span><span>5. Ø·Ø§Ù„Ù…Ø§ Ø£Ù†Øª Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø¬Ù…Ø¹ ÙŠØªÙ… Ø­ÙØ¸ Ø§Ù„Ø¨ØµÙ…Ø© Ø­ØªÙ‰ Ù„Ùˆ Ù‚Ø¨Ù„ Ø£Ùˆ Ø¨Ø¹Ø¯ ÙˆÙ‚Øª Ø§Ù„Ø¯ÙˆØ§Ù… Ø§Ù„Ø±Ø³Ù…ÙŠ 10Øµ Ø¥Ù„Ù‰ 6Ù….</span></div>
       </article>
     </section>`,
-    "بصمة الموظف",
-    "تسجيل حضور وانصراف ذاتي داخل نطاق المجمع فقط.",
+    "Ø¨ØµÙ…Ø© Ø§Ù„Ù…ÙˆØ¸Ù",
+    "ØªØ³Ø¬ÙŠÙ„ Ø­Ø¶ÙˆØ± ÙˆØ§Ù†ØµØ±Ø§Ù Ø°Ø§ØªÙŠ Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹ ÙÙ‚Ø·.",
   );
   const resultBox = app.querySelector("#self-punch-result");
   app.querySelector("[data-register-passkey]")?.addEventListener("click", async () => {
     try {
       await registerBrowserPasskey();
-      setMessage("تم تسجيل بصمة الجهاز/Passkey بنجاح.", "");
+      setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø²/Passkey Ø¨Ù†Ø¬Ø§Ø­.", "");
     } catch (error) {
       setMessage("", error.message);
     }
   });
   const showResult = (title, evaluation = {}, error = false) => {
     resultBox.classList.remove("hidden");
-    resultBox.innerHTML = `<strong>${escapeHtml(title)}</strong><div class="toolbar spaced">${badge(evaluation.geofenceStatus || evaluation.status || "unknown")}${evaluation.allowed || evaluation.canRecord ? badge("APPROVED") : badge("REJECTED")}</div><p>${escapeHtml(evaluation.message || evaluation.blockReason || "")}</p>${evaluation.distanceFromBranchMeters != null || evaluation.distanceMeters != null ? `<p>المسافة عن العنوان: ${escapeHtml(evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters)} متر.</p>` : ""}`;
+    resultBox.innerHTML = `<strong>${escapeHtml(title)}</strong><div class="toolbar spaced">${badge(evaluation.geofenceStatus || evaluation.status || "unknown")}${evaluation.allowed || evaluation.canRecord ? badge("APPROVED") : badge("REJECTED")}</div><p>${escapeHtml(evaluation.message || evaluation.blockReason || "")}</p>${evaluation.distanceFromBranchMeters != null || evaluation.distanceMeters != null ? `<p>Ø§Ù„Ù…Ø³Ø§ÙØ© Ø¹Ù† Ø§Ù„Ø¹Ù†ÙˆØ§Ù†: ${escapeHtml(evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters)} Ù…ØªØ±.</p>` : ""}`;
     resultBox.classList.toggle("danger-box", Boolean(error));
   };
   const logRejectedPunch = async (action, current = {}, evaluation = {}, reason = "") => {
@@ -1553,46 +1553,46 @@ async function renderEmployeePunch() {
         ...current,
         geofenceStatus: evaluation.geofenceStatus || "REJECTED",
         distanceFromBranchMeters: evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters ?? null,
-        blockReason: reason || evaluation.blockReason || evaluation.message || "تم رفض البصمة",
+        blockReason: reason || evaluation.blockReason || evaluation.message || "ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¨ØµÙ…Ø©",
         notes: app.querySelector("#self-punch-notes")?.value || "",
       });
     } catch (logError) {
-      console.warn("تعذر تسجيل محاولة البصمة المرفوضة", logError);
+      console.warn("ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ù…Ø­Ø§ÙˆÙ„Ø© Ø§Ù„Ø¨ØµÙ…Ø© Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©", logError);
     }
   };
   const readLocationAndEvaluate = async () => {
     resultBox.classList.remove("hidden");
-    resultBox.textContent = "جاري قراءة الموقع الحالي بدقة عالية...";
+    resultBox.textContent = "Ø¬Ø§Ø±ÙŠ Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ Ø¨Ø¯Ù‚Ø© Ø¹Ø§Ù„ÙŠØ©...";
     let current = await getBrowserLocation();
     if (current.accuracyMeters == null || Number(current.accuracyMeters) > Number(address.maxAccuracyMeters || 500)) {
-      resultBox.textContent = "دقة GPS ضعيفة، جاري إعادة المحاولة خلال ثوانٍ...";
+      resultBox.textContent = "Ø¯Ù‚Ø© GPS Ø¶Ø¹ÙŠÙØ©ØŒ Ø¬Ø§Ø±ÙŠ Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ø®Ù„Ø§Ù„ Ø«ÙˆØ§Ù†Ù...";
       await new Promise((resolve) => setTimeout(resolve, 1800));
       const retry = await getBrowserLocation();
       if ((Number(retry.accuracyMeters || 999999) < Number(current.accuracyMeters || 999999)) || !current.latitude) current = retry;
     }
     const evaluation = await endpoints.evaluateGeofence({ ...current, employeeId: employee.id });
-    showResult(evaluation.allowed || evaluation.canRecord ? "موقعك مقبول للبصمة" : "موقعك غير مقبول للبصمة", evaluation, !(evaluation.allowed || evaluation.canRecord));
+    showResult(evaluation.allowed || evaluation.canRecord ? "Ù…ÙˆÙ‚Ø¹Ùƒ Ù…Ù‚Ø¨ÙˆÙ„ Ù„Ù„Ø¨ØµÙ…Ø©" : "Ù…ÙˆÙ‚Ø¹Ùƒ ØºÙŠØ± Ù…Ù‚Ø¨ÙˆÙ„ Ù„Ù„Ø¨ØµÙ…Ø©", evaluation, !(evaluation.allowed || evaluation.canRecord));
     return { current, evaluation };
   };
   app.querySelector("[data-test-location]").addEventListener("click", () => readLocationAndEvaluate().catch((error) => showResult(error.message, { message: error.message }, true)));
   app.querySelectorAll("[data-self-punch]").forEach((button) => button.addEventListener("click", async () => {
     try {
-      showResult("جاري تأكيد بصمة الإصبع", { message: "استخدم بصمة الجهاز أو Passkey لإكمال التسجيل.", geofenceStatus: "biometric_pending", allowed: true }, false);
+      showResult("Ø¬Ø§Ø±ÙŠ ØªØ£ÙƒÙŠØ¯ Ø¨ØµÙ…Ø© Ø§Ù„Ø¥ØµØ¨Ø¹", { message: "Ø§Ø³ØªØ®Ø¯Ù… Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø£Ùˆ Passkey Ù„Ø¥ÙƒÙ…Ø§Ù„ Ø§Ù„ØªØ³Ø¬ÙŠÙ„.", geofenceStatus: "biometric_pending", allowed: true }, false);
       const passkeyCredentialId = await requestBrowserPasskeyForPunch();
       const { current, evaluation } = await readLocationAndEvaluate();
       if (!evaluation.allowed && !evaluation.canRecord) {
         await logRejectedPunch(button.dataset.selfPunch, current, evaluation);
-        setMessage("", evaluation.blockReason || evaluation.message || "تم رفض البصمة خارج نطاق المجمع.");
+        setMessage("", evaluation.blockReason || evaluation.message || "ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¨ØµÙ…Ø© Ø®Ø§Ø±Ø¬ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹.");
         return;
       }
       const body = { ...current, notes: app.querySelector("#self-punch-notes").value, verificationStatus: "verified", biometricMethod: "passkey", passkeyCredentialId };
       const response = button.dataset.selfPunch === "checkIn" ? await endpoints.selfCheckIn(body) : await endpoints.selfCheckOut(body);
-      showResult(button.dataset.selfPunch === "checkIn" ? "تم تسجيل بصمة الحضور" : "تم تسجيل بصمة الانصراف", response.evaluation || evaluation, false);
-      setMessage(button.dataset.selfPunch === "checkIn" ? "تم حفظ بصمة الحضور داخل نطاق المجمع." : "تم حفظ بصمة الانصراف داخل نطاق المجمع.", "");
+      showResult(button.dataset.selfPunch === "checkIn" ? "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø­Ø¶ÙˆØ±" : "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø§Ù†ØµØ±Ø§Ù", response.evaluation || evaluation, false);
+      setMessage(button.dataset.selfPunch === "checkIn" ? "ØªÙ… Ø­ÙØ¸ Ø¨ØµÙ…Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹." : "ØªÙ… Ø­ÙØ¸ Ø¨ØµÙ…Ø© Ø§Ù„Ø§Ù†ØµØ±Ø§Ù Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹.", "");
       await render();
     } catch (error) {
       await logRejectedPunch(button.dataset.selfPunch, {}, { message: error.message, geofenceStatus: "REJECTED" }, error.message);
-      showResult("تم رفض البصمة", { message: error.message, geofenceStatus: "REJECTED" }, true);
+      showResult("ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¨ØµÙ…Ø©", { message: error.message, geofenceStatus: "REJECTED" }, true);
       setMessage("", error.message);
     }
   }));
@@ -1602,58 +1602,58 @@ async function renderEmployeePunch() {
 async function renderAttendance() {
   const filters = attendanceFiltersFromRoute();
   const maxSafeLimit = 2000;
-  if (filters.limit > maxSafeLimit) setMessage("السجلات كثيرة جدًا؛ استخدم فترة أضيق أو حدًا أقل من 2000.", "");
+  if (filters.limit > maxSafeLimit) setMessage("Ø§Ù„Ø³Ø¬Ù„Ø§Øª ÙƒØ«ÙŠØ±Ø© Ø¬Ø¯Ù‹Ø§Ø› Ø§Ø³ØªØ®Ø¯Ù… ÙØªØ±Ø© Ø£Ø¶ÙŠÙ‚ Ø£Ùˆ Ø­Ø¯Ù‹Ø§ Ø£Ù‚Ù„ Ù…Ù† 2000.", "");
   const queryFilters = { ...filters, limit: Math.min(filters.limit + 1, maxSafeLimit) };
   const [employees, eventsPayload] = await Promise.all([endpoints.employees().then(unwrap), endpoints.attendanceEvents(queryFilters).then(unwrap)]);
   const events = filterAttendanceEvents(eventsPayload || [], filters);
   const visibleEvents = events.slice(0, filters.limit);
   const hasMore = events.length > filters.limit || (eventsPayload || []).length >= queryFilters.limit;
-  const employeeOptions = employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` }));
+  const employeeOptions = employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " â€” " + employee.jobTitle : ""}` }));
   const employeeSelect = optionList(employeeOptions);
-  const employeeFilterSelect = optionList(employeeOptions, filters.employeeId, "كل الموظفين");
+  const employeeFilterSelect = optionList(employeeOptions, filters.employeeId, "ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†");
   const typeFilterSelect = optionList([
-    { id: "CHECK_IN", name: "حضور" },
-    { id: "CHECK_OUT", name: "انصراف" },
-    { id: "MANUAL_ADJUSTMENT", name: "تعديل يدوي" },
-    { id: "PRESENT", name: "حاضر" },
-    { id: "LATE", name: "متأخر" },
-    { id: "MISSION", name: "مأمورية" },
-  ], filters.type, "كل الأنواع");
-  const reviewFilterSelect = optionList([{ id: "approved", name: "المعتمد فقط" }, { id: "review", name: "يحتاج مراجعة" }], filters.review, "كل حالات المراجعة");
+    { id: "CHECK_IN", name: "Ø­Ø¶ÙˆØ±" },
+    { id: "CHECK_OUT", name: "Ø§Ù†ØµØ±Ø§Ù" },
+    { id: "MANUAL_ADJUSTMENT", name: "ØªØ¹Ø¯ÙŠÙ„ ÙŠØ¯ÙˆÙŠ" },
+    { id: "PRESENT", name: "Ø­Ø§Ø¶Ø±" },
+    { id: "LATE", name: "Ù…ØªØ£Ø®Ø±" },
+    { id: "MISSION", name: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©" },
+  ], filters.type, "ÙƒÙ„ Ø§Ù„Ø£Ù†ÙˆØ§Ø¹");
+  const reviewFilterSelect = optionList([{ id: "approved", name: "Ø§Ù„Ù…Ø¹ØªÙ…Ø¯ ÙÙ‚Ø·" }, { id: "review", name: "ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©" }], filters.review, "ÙƒÙ„ Ø­Ø§Ù„Ø§Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©");
   shell(
     `<section class="grid">
       <article class="panel span-4">
-        <div class="panel-head"><div><h2>تسجيل سريع</h2><p>يسجل الحركة مع الموقع الجغرافي وحالة التحقق.</p></div></div>
-        <label>الموظف<select id="attendance-employee">${employeeSelect}</select></label>
-        <label>ملاحظات<input id="attendance-notes" placeholder="اختياري: سبب أو توضيح" /></label>
-        <label>حالة التحقق<select id="attendance-verification"><option value="verified">تم التحقق من الجهاز</option><option value="not_checked">بدون تحقق</option><option value="failed">فشل التحقق</option></select></label>
-        <div class="toolbar spaced"><button class="button primary" data-attendance="checkIn">حضور</button><button class="button" data-attendance="checkOut">انصراف</button></div>
+        <div class="panel-head"><div><h2>ØªØ³Ø¬ÙŠÙ„ Ø³Ø±ÙŠØ¹</h2><p>ÙŠØ³Ø¬Ù„ Ø§Ù„Ø­Ø±ÙƒØ© Ù…Ø¹ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø¬ØºØ±Ø§ÙÙŠ ÙˆØ­Ø§Ù„Ø© Ø§Ù„ØªØ­Ù‚Ù‚.</p></div></div>
+        <label>Ø§Ù„Ù…ÙˆØ¸Ù<select id="attendance-employee">${employeeSelect}</select></label>
+        <label>Ù…Ù„Ø§Ø­Ø¸Ø§Øª<input id="attendance-notes" placeholder="Ø§Ø®ØªÙŠØ§Ø±ÙŠ: Ø³Ø¨Ø¨ Ø£Ùˆ ØªÙˆØ¶ÙŠØ­" /></label>
+        <label>Ø­Ø§Ù„Ø© Ø§Ù„ØªØ­Ù‚Ù‚<select id="attendance-verification"><option value="verified">ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø¬Ù‡Ø§Ø²</option><option value="not_checked">Ø¨Ø¯ÙˆÙ† ØªØ­Ù‚Ù‚</option><option value="failed">ÙØ´Ù„ Ø§Ù„ØªØ­Ù‚Ù‚</option></select></label>
+        <div class="toolbar spaced"><button class="button primary" data-attendance="checkIn">Ø­Ø¶ÙˆØ±</button><button class="button" data-attendance="checkOut">Ø§Ù†ØµØ±Ø§Ù</button></div>
         <div id="attendance-result" class="risk-box hidden"></div>
       </article>
       <article class="panel span-8">
-        <div class="panel-head"><div><h2>سجل الحضور</h2><p>التحميل الافتراضي آخر 30 يوم لتقليل الحمل، ويمكن توسيع الفترة من الفلاتر.</p></div><div class="toolbar"><button class="button ghost" data-regenerate-attendance>إعادة حساب اليوميات</button><button class="button ghost" data-export-attendance>تصدير CSV</button></div></div>
+        <div class="panel-head"><div><h2>Ø³Ø¬Ù„ Ø§Ù„Ø­Ø¶ÙˆØ±</h2><p>Ø§Ù„ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ Ø¢Ø®Ø± 30 ÙŠÙˆÙ… Ù„ØªÙ‚Ù„ÙŠÙ„ Ø§Ù„Ø­Ù…Ù„ØŒ ÙˆÙŠÙ…ÙƒÙ† ØªÙˆØ³ÙŠØ¹ Ø§Ù„ÙØªØ±Ø© Ù…Ù† Ø§Ù„ÙÙ„Ø§ØªØ±.</p></div><div class="toolbar"><button class="button ghost" data-regenerate-attendance>Ø¥Ø¹Ø§Ø¯Ø© Ø­Ø³Ø§Ø¨ Ø§Ù„ÙŠÙˆÙ…ÙŠØ§Øª</button><button class="button ghost" data-export-attendance>ØªØµØ¯ÙŠØ± CSV</button></div></div>
         <form id="attendance-filters" class="filters attendance-filters">
-          <label>من<input name="from" type="date" value="${escapeHtml(filters.from)}" /></label>
-          <label>إلى<input name="to" type="date" value="${escapeHtml(filters.to)}" /></label>
-          <label>الموظف<select name="employeeId">${employeeFilterSelect}</select></label>
-          <label>نوع الحركة<select name="type">${typeFilterSelect}</select></label>
-          <label>المراجعة<select name="review">${reviewFilterSelect}</select></label>
-          <div class="form-actions"><button class="button primary" type="submit">تطبيق الفلتر</button><button class="button ghost" type="button" data-reset-attendance-filters>آخر 30 يوم</button></div>
+          <label>Ù…Ù†<input name="from" type="date" value="${escapeHtml(filters.from)}" /></label>
+          <label>Ø¥Ù„Ù‰<input name="to" type="date" value="${escapeHtml(filters.to)}" /></label>
+          <label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId">${employeeFilterSelect}</select></label>
+          <label>Ù†ÙˆØ¹ Ø§Ù„Ø­Ø±ÙƒØ©<select name="type">${typeFilterSelect}</select></label>
+          <label>Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©<select name="review">${reviewFilterSelect}</select></label>
+          <div class="form-actions"><button class="button primary" type="submit">ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„ÙÙ„ØªØ±</button><button class="button ghost" type="button" data-reset-attendance-filters>Ø¢Ø®Ø± 30 ÙŠÙˆÙ…</button></div>
         </form>
-        <div class="table-summary"><strong>يعرض ${escapeHtml(visibleEvents.length)} من ${escapeHtml(events.length)} حركة</strong><span>المدى: ${escapeHtml(filters.from)} إلى ${escapeHtml(filters.to)}</span></div>
-        ${table(["الموظف", "النوع", "الموقع", "المراجعة", "المخاطر", "سيلفي", "الوقت"], visibleEvents.map((event) => `<tr><td class="person-cell">${avatar(event.employee, "tiny")}<span>${escapeHtml(event.employee?.fullName || event.employeeId)}<small>${escapeHtml(event.notes || "")}</small></span></td><td>${badge(event.type)}</td><td>${badge(event.geofenceStatus || "unknown")}<small>${event.distanceFromBranchMeters != null ? `${event.distanceFromBranchMeters} متر` : ""}</small></td><td>${event.requiresReview ? badge("PENDING") : badge("APPROVED")}</td><td><strong>${escapeHtml(event.riskScore ?? 0)}%</strong> ${event.riskLevel ? badge(event.riskLevel) : ""}<br>${(event.riskFlags || []).length ? event.riskFlags.map((flag) => `<span class="status warning">${escapeHtml(flag)}</span>`).join(" ") : `<span class="status ACTIVE">آمن</span>`}</td><td>${event.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(event.selfieUrl)}">عرض</a>` : `<span class="status warning">لا يوجد</span>`}</td><td>${date(event.eventAt)}</td></tr>`), "attendance-table")}
-        ${hasMore ? `<div class="load-more-row"><button class="button ghost" data-attendance-more>عرض 500 حركة أخرى</button><small>استخدم فلاتر أضيق عند السجلات الكبيرة جدًا.</small></div>` : ""}
+        <div class="table-summary"><strong>ÙŠØ¹Ø±Ø¶ ${escapeHtml(visibleEvents.length)} Ù…Ù† ${escapeHtml(events.length)} Ø­Ø±ÙƒØ©</strong><span>Ø§Ù„Ù…Ø¯Ù‰: ${escapeHtml(filters.from)} Ø¥Ù„Ù‰ ${escapeHtml(filters.to)}</span></div>
+        ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©", "Ø§Ù„Ù…Ø®Ø§Ø·Ø±", "Ø³ÙŠÙ„ÙÙŠ", "Ø§Ù„ÙˆÙ‚Øª"], visibleEvents.map((event) => `<tr><td class="person-cell">${avatar(event.employee, "tiny")}<span>${escapeHtml(event.employee?.fullName || event.employeeId)}<small>${escapeHtml(event.notes || "")}</small></span></td><td>${badge(event.type)}</td><td>${badge(event.geofenceStatus || "unknown")}<small>${event.distanceFromBranchMeters != null ? `${event.distanceFromBranchMeters} Ù…ØªØ±` : ""}</small></td><td>${event.requiresReview ? badge("PENDING") : badge("APPROVED")}</td><td><strong>${escapeHtml(event.riskScore ?? 0)}%</strong> ${event.riskLevel ? badge(event.riskLevel) : ""}<br>${(event.riskFlags || []).length ? event.riskFlags.map((flag) => `<span class="status warning">${escapeHtml(flag)}</span>`).join(" ") : `<span class="status ACTIVE">Ø¢Ù…Ù†</span>`}</td><td>${event.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(event.selfieUrl)}">Ø¹Ø±Ø¶</a>` : `<span class="status warning">Ù„Ø§ ÙŠÙˆØ¬Ø¯</span>`}</td><td>${date(event.eventAt)}</td></tr>`), "attendance-table")}
+        ${hasMore ? `<div class="load-more-row"><button class="button ghost" data-attendance-more>Ø¹Ø±Ø¶ 500 Ø­Ø±ÙƒØ© Ø£Ø®Ø±Ù‰</button><small>Ø§Ø³ØªØ®Ø¯Ù… ÙÙ„Ø§ØªØ± Ø£Ø¶ÙŠÙ‚ Ø¹Ù†Ø¯ Ø§Ù„Ø³Ø¬Ù„Ø§Øª Ø§Ù„ÙƒØ¨ÙŠØ±Ø© Ø¬Ø¯Ù‹Ø§.</small></div>` : ""}
       </article>
       <article class="panel span-12">
-        <div class="panel-head"><div><h2>طلب تعديل حضور</h2><p>يتم حفظه في مركز الطلبات وسجل التدقيق</p></div></div>
-        ${simpleForm("adjust-form", [["employeeId", "الموظف", "select", employeeSelect], ["title", "نوع الطلب", "select", optionList([{ name: "نسيان بصمة حضور" }, { name: "نسيان بصمة انصراف" }, { name: "تعديل تأخير" }])], ["reason", "السبب", "textarea"]], "إرسال الطلب")}
+        <div class="panel-head"><div><h2>Ø·Ù„Ø¨ ØªØ¹Ø¯ÙŠÙ„ Ø­Ø¶ÙˆØ±</h2><p>ÙŠØªÙ… Ø­ÙØ¸Ù‡ ÙÙŠ Ù…Ø±ÙƒØ² Ø§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ³Ø¬Ù„ Ø§Ù„ØªØ¯Ù‚ÙŠÙ‚</p></div></div>
+        ${simpleForm("adjust-form", [["employeeId", "Ø§Ù„Ù…ÙˆØ¸Ù", "select", employeeSelect], ["title", "Ù†ÙˆØ¹ Ø§Ù„Ø·Ù„Ø¨", "select", optionList([{ name: "Ù†Ø³ÙŠØ§Ù† Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ±" }, { name: "Ù†Ø³ÙŠØ§Ù† Ø¨ØµÙ…Ø© Ø§Ù†ØµØ±Ø§Ù" }, { name: "ØªØ¹Ø¯ÙŠÙ„ ØªØ£Ø®ÙŠØ±" }])], ["reason", "Ø§Ù„Ø³Ø¨Ø¨", "textarea"]], "Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨")}
         <hr class="soft-separator" />
-        <h3>تعديل يدوي مباشر بصلاحية HR</h3>
-        <form id="manual-attendance-form" class="form-grid compact-form"><label>الموظف<select name="employeeId">${employeeSelect}</select></label><label>نوع الحركة<select name="type"><option value="CHECK_IN">حضور</option><option value="CHECK_OUT">انصراف</option><option value="MANUAL_ADJUSTMENT">تعديل يدوي</option></select></label><label>التاريخ والوقت<input type="datetime-local" name="eventAt" /></label><label>السبب<input name="reason" required /></label><div class="form-actions"><button class="button">حفظ تعديل يدوي</button></div></form>
+        <h3>ØªØ¹Ø¯ÙŠÙ„ ÙŠØ¯ÙˆÙŠ Ù…Ø¨Ø§Ø´Ø± Ø¨ØµÙ„Ø§Ø­ÙŠØ© HR</h3>
+        <form id="manual-attendance-form" class="form-grid compact-form"><label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId">${employeeSelect}</select></label><label>Ù†ÙˆØ¹ Ø§Ù„Ø­Ø±ÙƒØ©<select name="type"><option value="CHECK_IN">Ø­Ø¶ÙˆØ±</option><option value="CHECK_OUT">Ø§Ù†ØµØ±Ø§Ù</option><option value="MANUAL_ADJUSTMENT">ØªØ¹Ø¯ÙŠÙ„ ÙŠØ¯ÙˆÙŠ</option></select></label><label>Ø§Ù„ØªØ§Ø±ÙŠØ® ÙˆØ§Ù„ÙˆÙ‚Øª<input type="datetime-local" name="eventAt" /></label><label>Ø§Ù„Ø³Ø¨Ø¨<input name="reason" required /></label><div class="form-actions"><button class="button">Ø­ÙØ¸ ØªØ¹Ø¯ÙŠÙ„ ÙŠØ¯ÙˆÙŠ</button></div></form>
       </article>
     </section>`,
-    "الحضور",
-    "تسجيل ومراجعة أحداث الحضور مع تقييم الموقع والقواعد.",
+    "Ø§Ù„Ø­Ø¶ÙˆØ±",
+    "ØªØ³Ø¬ÙŠÙ„ ÙˆÙ…Ø±Ø§Ø¬Ø¹Ø© Ø£Ø­Ø¯Ø§Ø« Ø§Ù„Ø­Ø¶ÙˆØ± Ù…Ø¹ ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ§Ù„Ù‚ÙˆØ§Ø¹Ø¯.",
   );
   app.querySelector("#attendance-filters").addEventListener("submit", (event) => {
     event.preventDefault();
@@ -1667,18 +1667,18 @@ async function renderAttendance() {
     try {
       resultBox.classList.remove("hidden");
       resultBox.classList.remove("danger-box");
-      resultBox.textContent = "جاري قراءة الموقع وتقييم الحركة...";
+      resultBox.textContent = "Ø¬Ø§Ø±ÙŠ Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø­Ø±ÙƒØ©...";
       const location = await getBrowserLocation();
       const body = { employeeId: app.querySelector("#attendance-employee").value, notes: app.querySelector("#attendance-notes").value, verificationStatus: app.querySelector("#attendance-verification").value, ...location };
       const response = action === "checkIn" ? await endpoints.checkIn(body) : await endpoints.checkOut(body);
       const evaluation = response.evaluation || response.event?.evaluation || {};
-      resultBox.innerHTML = `<strong>${evaluation.requiresReview ? "الحركة تحتاج مراجعة" : "الحركة مقبولة داخل نطاق المجمع"}</strong><div class="toolbar spaced">${badge(evaluation.type || response.type)}${badge(evaluation.geofenceStatus || response.geofenceStatus)}${badge(evaluation.verificationStatus || response.verificationStatus)}</div><p>${evaluation.distanceFromBranchMeters != null || response.distanceFromBranchMeters != null ? `المسافة عن الفرع: ${escapeHtml(evaluation.distanceFromBranchMeters ?? response.distanceFromBranchMeters)} متر.` : "تم التحقق من نطاق المجمع."}</p>`;
-      setMessage(action === "checkIn" ? "تم تسجيل الحضور داخل نطاق المجمع." : "تم تسجيل الانصراف داخل نطاق المجمع.", "");
+      resultBox.innerHTML = `<strong>${evaluation.requiresReview ? "Ø§Ù„Ø­Ø±ÙƒØ© ØªØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©" : "Ø§Ù„Ø­Ø±ÙƒØ© Ù…Ù‚Ø¨ÙˆÙ„Ø© Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹"}</strong><div class="toolbar spaced">${badge(evaluation.type || response.type)}${badge(evaluation.geofenceStatus || response.geofenceStatus)}${badge(evaluation.verificationStatus || response.verificationStatus)}</div><p>${evaluation.distanceFromBranchMeters != null || response.distanceFromBranchMeters != null ? `Ø§Ù„Ù…Ø³Ø§ÙØ© Ø¹Ù† Ø§Ù„ÙØ±Ø¹: ${escapeHtml(evaluation.distanceFromBranchMeters ?? response.distanceFromBranchMeters)} Ù…ØªØ±.` : "ØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹."}</p>`;
+      setMessage(action === "checkIn" ? "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹." : "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø§Ù†ØµØ±Ø§Ù Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹.", "");
       await render();
     } catch (error) {
       resultBox.classList.remove("hidden");
       resultBox.classList.add("danger-box");
-      resultBox.innerHTML = `<strong>تم رفض البصمة</strong><p>${escapeHtml(error.message)}</p>`;
+      resultBox.innerHTML = `<strong>ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¨ØµÙ…Ø©</strong><p>${escapeHtml(error.message)}</p>`;
       setMessage("", error.message);
     }
   };
@@ -1688,22 +1688,22 @@ async function renderAttendance() {
   app.querySelector("#adjust-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     await endpoints.adjustAttendance(readForm(event.currentTarget));
-    setMessage("تم إرسال طلب تعديل الحضور.", "");
+    setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ±.", "");
     render();
   });
   app.querySelector("#manual-attendance-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     await endpoints.manualAttendance(readForm(event.currentTarget));
-    setMessage("تم حفظ التعديل اليدوي وإعادة حساب اليوميات.", "");
+    setMessage("ØªÙ… Ø­ÙØ¸ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„ÙŠØ¯ÙˆÙŠ ÙˆØ¥Ø¹Ø§Ø¯Ø© Ø­Ø³Ø§Ø¨ Ø§Ù„ÙŠÙˆÙ…ÙŠØ§Øª.", "");
     render();
   });
   app.querySelector("[data-regenerate-attendance]").addEventListener("click", async () => {
     const result = await endpoints.regenerateAttendance({});
-    setMessage(`تمت إعادة حساب ${result.generated || 0} سجل يومي.`, "");
+    setMessage(`ØªÙ…Øª Ø¥Ø¹Ø§Ø¯Ø© Ø­Ø³Ø§Ø¨ ${result.generated || 0} Ø³Ø¬Ù„ ÙŠÙˆÙ…ÙŠ.`, "");
     render();
   });
   app.querySelector("[data-export-attendance]").addEventListener("click", () => {
-    const rows = [["الموظف","النوع","الوقت","الموقع","المراجعة"], ...events.map((e) => [e.employee?.fullName || e.employeeId, statusLabel(e.type), e.eventAt, statusLabel(e.geofenceStatus), e.requiresReview ? "نعم" : "لا"])];
+    const rows = [["Ø§Ù„Ù…ÙˆØ¸Ù","Ø§Ù„Ù†ÙˆØ¹","Ø§Ù„ÙˆÙ‚Øª","Ø§Ù„Ù…ÙˆÙ‚Ø¹","Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©"], ...events.map((e) => [e.employee?.fullName || e.employeeId, statusLabel(e.type), e.eventAt, statusLabel(e.geofenceStatus), e.requiresReview ? "Ù†Ø¹Ù…" : "Ù„Ø§"])];
     downloadFile(`attendance-${filters.from || "all"}-${filters.to || "all"}.csv`, `\ufeff${toCsv(rows)}`, "text/csv;charset=utf-8");
   });
 }
@@ -1723,12 +1723,12 @@ async function renderAttendanceCalendar() {
   shell(
     `<section class="stack">
       <article class="panel">
-        <div class="panel-head"><div><h2>تقويم حضور ${escapeHtml(employee?.fullName || "")}</h2><p>آخر 31 يوم</p></div><select id="calendar-employee">${optionList(employees.map((e) => ({ id: e.id, name: `${e.fullName}${e.jobTitle ? " — " + e.jobTitle : ""}` })), employeeId)}</select></div>
-        <div class="calendar-grid">${days.map((day) => `<div class="calendar-day ${day.status}"><strong>${dateOnly(day.key)}</strong>${badge(day.status)}<small>${day.lateMinutes ? `${day.lateMinutes} دقيقة تأخير` : ""}</small></div>`).join("")}</div>
+        <div class="panel-head"><div><h2>ØªÙ‚ÙˆÙŠÙ… Ø­Ø¶ÙˆØ± ${escapeHtml(employee?.fullName || "")}</h2><p>Ø¢Ø®Ø± 31 ÙŠÙˆÙ…</p></div><select id="calendar-employee">${optionList(employees.map((e) => ({ id: e.id, name: `${e.fullName}${e.jobTitle ? " â€” " + e.jobTitle : ""}` })), employeeId)}</select></div>
+        <div class="calendar-grid">${days.map((day) => `<div class="calendar-day ${day.status}"><strong>${dateOnly(day.key)}</strong>${badge(day.status)}<small>${day.lateMinutes ? `${day.lateMinutes} Ø¯Ù‚ÙŠÙ‚Ø© ØªØ£Ø®ÙŠØ±` : ""}</small></div>`).join("")}</div>
       </article>
     </section>`,
-    "تقويم الحضور",
-    "رؤية شهرية سريعة لحضور كل موظف.",
+    "ØªÙ‚ÙˆÙŠÙ… Ø§Ù„Ø­Ø¶ÙˆØ±",
+    "Ø±Ø¤ÙŠØ© Ø´Ù‡Ø±ÙŠØ© Ø³Ø±ÙŠØ¹Ø© Ù„Ø­Ø¶ÙˆØ± ÙƒÙ„ Ù…ÙˆØ¸Ù.",
   );
   app.querySelector("#calendar-employee").addEventListener("change", (event) => {
     location.hash = `attendance-calendar?employeeId=${event.target.value}`;
@@ -1737,38 +1737,38 @@ async function renderAttendanceCalendar() {
 
 async function renderMissions() {
   const [employees, missions] = await Promise.all([endpoints.employees().then(unwrap), endpoints.missions().then(unwrap)]);
-  const employeeSelect = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })));
+  const employeeSelect = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " â€” " + employee.jobTitle : ""}` })));
   shell(
     `<section class="grid">
-      <article class="panel span-4"><h2>مأمورية جديدة</h2>${simpleForm("mission-form", [["employeeId", "الموظف", "select", employeeSelect], ["title", "العنوان"], ["destinationName", "الوجهة"], ["plannedStart", "البداية", "datetime-local"], ["plannedEnd", "النهاية", "datetime-local"]], "إنشاء")}</article>
-      <article class="panel span-8"><h2>المأموريات</h2>${table(["العنوان", "الموظف", "الوجهة", "الحالة", "إجراءات"], missions.map((mission) => `<tr><td>${escapeHtml(mission.title)}</td><td>${escapeHtml(mission.employee?.fullName || "-")}</td><td>${escapeHtml(mission.destinationName)}</td><td>${badge(mission.status)}</td><td><button class="button ghost" data-mission="${mission.id}" data-action-name="approve">اعتماد</button><button class="button ghost" data-mission="${mission.id}" data-action-name="complete">إكمال</button><button class="button danger ghost" data-mission="${mission.id}" data-action-name="reject">رفض</button></td></tr>`))}</article>
+      <article class="panel span-4"><h2>Ù…Ø£Ù…ÙˆØ±ÙŠØ© Ø¬Ø¯ÙŠØ¯Ø©</h2>${simpleForm("mission-form", [["employeeId", "Ø§Ù„Ù…ÙˆØ¸Ù", "select", employeeSelect], ["title", "Ø§Ù„Ø¹Ù†ÙˆØ§Ù†"], ["destinationName", "Ø§Ù„ÙˆØ¬Ù‡Ø©"], ["plannedStart", "Ø§Ù„Ø¨Ø¯Ø§ÙŠØ©", "datetime-local"], ["plannedEnd", "Ø§Ù„Ù†Ù‡Ø§ÙŠØ©", "datetime-local"]], "Ø¥Ù†Ø´Ø§Ø¡")}</article>
+      <article class="panel span-8"><h2>Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª</h2>${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„ÙˆØ¬Ù‡Ø©", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], missions.map((mission) => `<tr><td>${escapeHtml(mission.title)}</td><td>${escapeHtml(mission.employee?.fullName || "-")}</td><td>${escapeHtml(mission.destinationName)}</td><td>${badge(mission.status)}</td><td><button class="button ghost" data-mission="${mission.id}" data-action-name="approve">Ø§Ø¹ØªÙ…Ø§Ø¯</button><button class="button ghost" data-mission="${mission.id}" data-action-name="complete">Ø¥ÙƒÙ…Ø§Ù„</button><button class="button danger ghost" data-mission="${mission.id}" data-action-name="reject">Ø±ÙØ¶</button></td></tr>`))}</article>
     </section>`,
-    "المأموريات",
-    "إنشاء واعتماد وإكمال المأموريات مع Timeline داخلي.",
+    "Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª",
+    "Ø¥Ù†Ø´Ø§Ø¡ ÙˆØ§Ø¹ØªÙ…Ø§Ø¯ ÙˆØ¥ÙƒÙ…Ø§Ù„ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª Ù…Ø¹ Timeline Ø¯Ø§Ø®Ù„ÙŠ.",
   );
-  app.querySelector("#mission-form").addEventListener("submit", submitForm(endpoints.createMission, "تم إنشاء المأمورية."));
+  app.querySelector("#mission-form").addEventListener("submit", submitForm(endpoints.createMission, "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ©."));
   app.querySelectorAll("[data-mission]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.updateMission(button.dataset.mission, button.dataset.actionName);
-    setMessage("تم تحديث المأمورية.", "");
+    setMessage("ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ©.", "");
     render();
   }));
 }
 
 async function renderLeaves() {
   const [employees, leaves] = await Promise.all([endpoints.employees().then(unwrap), endpoints.leaves().then(unwrap)]);
-  const employeeSelect = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })));
+  const employeeSelect = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " â€” " + employee.jobTitle : ""}` })));
   shell(
     `<section class="grid">
-      <article class="panel span-4"><h2>طلب إجازة</h2>${simpleForm("leave-form", [["employeeId", "الموظف", "select", employeeSelect], ["leaveType", "نوع الإجازة", "select", optionList([{ name: "اعتيادية" }, { name: "مرضية" }, { name: "طارئة" }])], ["startDate", "من", "date"], ["endDate", "إلى", "date"], ["reason", "السبب"]], "إرسال")}</article>
-      <article class="panel span-8"><h2>طلبات الإجازة</h2>${table(["الموظف", "النوع", "من", "إلى", "الحالة", "إجراءات"], leaves.map((leave) => `<tr><td>${escapeHtml(leave.employee?.fullName || "-")}</td><td>${escapeHtml(leave.leaveType?.name)}</td><td>${dateOnly(leave.startDate)}</td><td>${dateOnly(leave.endDate)}</td><td>${badge(leave.status)}</td><td><button class="button ghost" data-leave="${leave.id}" data-action-name="approve">اعتماد</button><button class="button danger ghost" data-leave="${leave.id}" data-action-name="reject">رفض</button></td></tr>`))}</article>
+      <article class="panel span-4"><h2>Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø©</h2>${simpleForm("leave-form", [["employeeId", "Ø§Ù„Ù…ÙˆØ¸Ù", "select", employeeSelect], ["leaveType", "Ù†ÙˆØ¹ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©", "select", optionList([{ name: "Ø§Ø¹ØªÙŠØ§Ø¯ÙŠØ©" }, { name: "Ù…Ø±Ø¶ÙŠØ©" }, { name: "Ø·Ø§Ø±Ø¦Ø©" }])], ["startDate", "Ù…Ù†", "date"], ["endDate", "Ø¥Ù„Ù‰", "date"], ["reason", "Ø§Ù„Ø³Ø¨Ø¨"]], "Ø¥Ø±Ø³Ø§Ù„")}</article>
+      <article class="panel span-8"><h2>Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©</h2>${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ù…Ù†", "Ø¥Ù„Ù‰", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], leaves.map((leave) => `<tr><td>${escapeHtml(leave.employee?.fullName || "-")}</td><td>${escapeHtml(leave.leaveType?.name)}</td><td>${dateOnly(leave.startDate)}</td><td>${dateOnly(leave.endDate)}</td><td>${badge(leave.status)}</td><td><button class="button ghost" data-leave="${leave.id}" data-action-name="approve">Ø§Ø¹ØªÙ…Ø§Ø¯</button><button class="button danger ghost" data-leave="${leave.id}" data-action-name="reject">Ø±ÙØ¶</button></td></tr>`))}</article>
     </section>`,
-    "الإجازات",
-    "إرسال واعتماد ورفض طلبات الإجازة.",
+    "Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª",
+    "Ø¥Ø±Ø³Ø§Ù„ ÙˆØ§Ø¹ØªÙ…Ø§Ø¯ ÙˆØ±ÙØ¶ Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©.",
   );
-  app.querySelector("#leave-form").addEventListener("submit", submitForm(endpoints.createLeave, "تم إرسال طلب الإجازة."));
+  app.querySelector("#leave-form").addEventListener("submit", submitForm(endpoints.createLeave, "ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©."));
   app.querySelectorAll("[data-leave]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.updateLeave(button.dataset.leave, button.dataset.actionName);
-    setMessage("تم تحديث طلب الإجازة.", "");
+    setMessage("ØªÙ… ØªØ­Ø¯ÙŠØ« Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©.", "");
     render();
   }));
 }
@@ -1782,10 +1782,10 @@ async function renderRequests() {
   if (!rows) {
     const [leaves, missions, exceptions, locations] = await Promise.all([endpoints.leaves().then(unwrap), endpoints.missions().then(unwrap), endpoints.exceptions().then(unwrap), endpoints.locations().then(unwrap)]);
     rows = [
-      ...leaves.map((item) => ({ ...item, kind: "leave", kindLabel: "إجازة", label: item.leaveType?.name || "إجازة" })),
-      ...missions.map((item) => ({ ...item, kind: "mission", kindLabel: "مأمورية", label: item.title || "مأمورية" })),
-      ...exceptions.map((item) => ({ ...item, kind: "exception", kindLabel: "استثناء حضور", label: item.title || "استثناء حضور" })),
-      ...locations.filter((item) => item.purpose).map((item) => ({ ...item, kind: "location", kindLabel: "طلب موقع", label: item.purpose || "طلب موقع" })),
+      ...leaves.map((item) => ({ ...item, kind: "leave", kindLabel: "Ø¥Ø¬Ø§Ø²Ø©", label: item.leaveType?.name || "Ø¥Ø¬Ø§Ø²Ø©" })),
+      ...missions.map((item) => ({ ...item, kind: "mission", kindLabel: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", label: item.title || "Ù…Ø£Ù…ÙˆØ±ÙŠØ©" })),
+      ...exceptions.map((item) => ({ ...item, kind: "exception", kindLabel: "Ø§Ø³ØªØ«Ù†Ø§Ø¡ Ø­Ø¶ÙˆØ±", label: item.title || "Ø§Ø³ØªØ«Ù†Ø§Ø¡ Ø­Ø¶ÙˆØ±" })),
+      ...locations.filter((item) => item.purpose).map((item) => ({ ...item, kind: "location", kindLabel: "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹", label: item.purpose || "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹" })),
     ].sort((a, b) => new Date(b.createdAt || b.requestedAt || 0) - new Date(a.createdAt || a.requestedAt || 0));
     summary = { pending: rows.filter((i) => i.status === "PENDING").length, approved: rows.filter((i) => i.status === "APPROVED").length, rejected: rows.filter((i) => i.status === "REJECTED").length, stale: 0 };
   }
@@ -1793,13 +1793,13 @@ async function renderRequests() {
   shell(
     `<section class="grid request-center-page">
       <article class="panel span-12 accent-panel">
-        <div class="panel-head"><div><h2>مركز الطلبات والموافقات</h2><p>Workflow موحد للإجازات والمأموريات والاستثناءات وطلبات الموقع مع قرارات جماعية.</p></div><div class="toolbar"><button class="button ghost" data-route="leaves">الإجازات</button><button class="button ghost" data-route="missions">المأموريات</button></div></div>
-        <div class="mini-stats"><div><span>معلقة</span><strong>${escapeHtml(summary?.pending || 0)}</strong></div><div><span>متأخرة</span><strong>${escapeHtml(summary?.stale || 0)}</strong></div><div><span>معتمدة</span><strong>${escapeHtml(summary?.approved || 0)}</strong></div><div><span>مرفوضة</span><strong>${escapeHtml(summary?.rejected || 0)}</strong></div></div>
+        <div class="panel-head"><div><h2>Ù…Ø±ÙƒØ² Ø§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ§Ù„Ù…ÙˆØ§ÙÙ‚Ø§Øª</h2><p>Workflow Ù…ÙˆØ­Ø¯ Ù„Ù„Ø¥Ø¬Ø§Ø²Ø§Øª ÙˆØ§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª ÙˆØ§Ù„Ø§Ø³ØªØ«Ù†Ø§Ø¡Ø§Øª ÙˆØ·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ø¹ Ù‚Ø±Ø§Ø±Ø§Øª Ø¬Ù…Ø§Ø¹ÙŠØ©.</p></div><div class="toolbar"><button class="button ghost" data-route="leaves">Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª</button><button class="button ghost" data-route="missions">Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª</button></div></div>
+        <div class="mini-stats"><div><span>Ù…Ø¹Ù„Ù‚Ø©</span><strong>${escapeHtml(summary?.pending || 0)}</strong></div><div><span>Ù…ØªØ£Ø®Ø±Ø©</span><strong>${escapeHtml(summary?.stale || 0)}</strong></div><div><span>Ù…Ø¹ØªÙ…Ø¯Ø©</span><strong>${escapeHtml(summary?.approved || 0)}</strong></div><div><span>Ù…Ø±ÙÙˆØ¶Ø©</span><strong>${escapeHtml(summary?.rejected || 0)}</strong></div></div>
       </article>
       <article class="panel span-12">
         <form class="filters" id="request-filters">
-          <select name="status"><option value="">كل الحالات</option>${optionList([{ value: "PENDING", name: "قيد المراجعة" }, { value: "APPROVED", name: "معتمد" }, { value: "REJECTED", name: "مرفوض" }], filters.status)}</select>
-          <select name="kind"><option value="">كل الأنواع</option>${optionList([{ value: "leave", name: "إجازة" }, { value: "mission", name: "مأمورية" }, { value: "exception", name: "استثناء حضور" }, { value: "location", name: "طلب موقع" }], filters.kind)}</select>
+          <select name="status"><option value="">ÙƒÙ„ Ø§Ù„Ø­Ø§Ù„Ø§Øª</option>${optionList([{ value: "PENDING", name: "Ù‚ÙŠØ¯ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©" }, { value: "APPROVED", name: "Ù…Ø¹ØªÙ…Ø¯" }, { value: "REJECTED", name: "Ù…Ø±ÙÙˆØ¶" }], filters.status)}</select>
+          <select name="kind"><option value="">ÙƒÙ„ Ø§Ù„Ø£Ù†ÙˆØ§Ø¹</option>${optionList([{ value: "leave", name: "Ø¥Ø¬Ø§Ø²Ø©" }, { value: "mission", name: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©" }, { value: "exception", name: "Ø§Ø³ØªØ«Ù†Ø§Ø¡ Ø­Ø¶ÙˆØ±" }, { value: "location", name: "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹" }], filters.kind)}</select>
         </form>
         <div class="request-card-grid">
           ${rows.map((item) => `
@@ -1817,26 +1817,26 @@ async function renderRequests() {
               <div class="card-body">
                 <h3>${escapeHtml(item.label)}</h3>
                 <div class="request-meta">
-                   <span>تاريخ الطلب: ${escapeHtml(date(item.createdAt || item.requestedAt))}</span>
-                   ${item.workflow?.length ? `<div class="workflow-hint">آخر إجراء: ${escapeHtml(item.workflow[item.workflow.length-1].action)} — ${escapeHtml(date(item.workflow[item.workflow.length-1].at))}</div>` : ''}
+                   <span>ØªØ§Ø±ÙŠØ® Ø§Ù„Ø·Ù„Ø¨: ${escapeHtml(date(item.createdAt || item.requestedAt))}</span>
+                   ${item.workflow?.length ? `<div class="workflow-hint">Ø¢Ø®Ø± Ø¥Ø¬Ø±Ø§Ø¡: ${escapeHtml(item.workflow[item.workflow.length-1].action)} â€” ${escapeHtml(date(item.workflow[item.workflow.length-1].at))}</div>` : ''}
                 </div>
               </div>
               <div class="card-footer">
                 ${item.status === "PENDING" ? `
-                  <div class="selection-area"><input type="checkbox" data-select-request="${escapeHtml(item.kind + ':' + item.id)}" /><span>تحديد للجماعي</span></div>
+                  <div class="selection-area"><input type="checkbox" data-select-request="${escapeHtml(item.kind + ':' + item.id)}" /><span>ØªØ­Ø¯ÙŠØ¯ Ù„Ù„Ø¬Ù…Ø§Ø¹ÙŠ</span></div>
                   <div class="action-buttons">
-                    <button class="button primary" data-request="${escapeHtml(item.kind + ':' + item.id)}" data-action-name="approve">اعتماد</button>
-                    <button class="button danger ghost" data-request="${escapeHtml(item.kind + ':' + item.id)}" data-action-name="reject">رفض</button>
+                    <button class="button primary" data-request="${escapeHtml(item.kind + ':' + item.id)}" data-action-name="approve">Ø§Ø¹ØªÙ…Ø§Ø¯</button>
+                    <button class="button danger ghost" data-request="${escapeHtml(item.kind + ':' + item.id)}" data-action-name="reject">Ø±ÙØ¶</button>
                   </div>
-                ` : `<div class="decision-made">تمت المعالجة بنجاح</div>`}
+                ` : `<div class="decision-made">ØªÙ…Øª Ø§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø© Ø¨Ù†Ø¬Ø§Ø­</div>`}
               </div>
             </article>
-          `).join("") || `<div class="empty-state">لا توجد طلبات حالياً.</div>`}
+          `).join("") || `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª Ø­Ø§Ù„ÙŠØ§Ù‹.</div>`}
         </div>
       </article>
     </section>`,
-    "مركز الطلبات",
-    "مراجعة واعتماد ورفض كل الطلبات من مكان واحد.",
+    "Ù…Ø±ÙƒØ² Ø§Ù„Ø·Ù„Ø¨Ø§Øª",
+    "Ù…Ø±Ø§Ø¬Ø¹Ø© ÙˆØ§Ø¹ØªÙ…Ø§Ø¯ ÙˆØ±ÙØ¶ ÙƒÙ„ Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ù…Ù† Ù…ÙƒØ§Ù† ÙˆØ§Ø­Ø¯.",
   );
   app.querySelector("#request-filters")?.addEventListener("change", (event) => {
     const values = readForm(event.currentTarget);
@@ -1847,7 +1847,7 @@ async function renderRequests() {
   });
   const selected = new Set();
   const updateBulk = () => {
-    app.querySelector("#request-selected-count").textContent = selected.size ? `تم تحديد ${selected.size} طلب` : "لم يتم تحديد طلبات";
+    app.querySelector("#request-selected-count").textContent = selected.size ? `ØªÙ… ØªØ­Ø¯ÙŠØ¯ ${selected.size} Ø·Ù„Ø¨` : "Ù„Ù… ÙŠØªÙ… ØªØ­Ø¯ÙŠØ¯ Ø·Ù„Ø¨Ø§Øª";
     app.querySelectorAll("[data-bulk-request]").forEach((button) => { button.disabled = selected.size === 0; });
   };
   app.querySelectorAll("[data-select-request]").forEach((input) => input.addEventListener("change", () => { input.checked ? selected.add(input.dataset.selectRequest) : selected.delete(input.dataset.selectRequest); updateBulk(); }));
@@ -1858,9 +1858,9 @@ async function renderRequests() {
   });
   app.querySelectorAll("[data-bulk-request]").forEach((button) => button.addEventListener("click", async () => {
     const action = button.dataset.bulkRequest;
-    if (!await confirmAction({ title: action === "approve" ? "اعتماد جماعي" : "رفض جماعي", message: `سيتم ${action === "approve" ? "اعتماد" : "رفض"} ${selected.size} طلب.`, confirmLabel: action === "approve" ? "اعتماد" : "رفض", danger: action !== "approve" })) return;
+    if (!await confirmAction({ title: action === "approve" ? "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¬Ù…Ø§Ø¹ÙŠ" : "Ø±ÙØ¶ Ø¬Ù…Ø§Ø¹ÙŠ", message: `Ø³ÙŠØªÙ… ${action === "approve" ? "Ø§Ø¹ØªÙ…Ø§Ø¯" : "Ø±ÙØ¶"} ${selected.size} Ø·Ù„Ø¨.`, confirmLabel: action === "approve" ? "Ø§Ø¹ØªÙ…Ø§Ø¯" : "Ø±ÙØ¶", danger: action !== "approve" })) return;
     const result = endpoints.bulkRequestAction ? await endpoints.bulkRequestAction({ items: [...selected], action }) : { updated: 0 };
-    setMessage(`تم تحديث ${result.updated || 0} طلب.`, "");
+    setMessage(`ØªÙ… ØªØ­Ø¯ÙŠØ« ${result.updated || 0} Ø·Ù„Ø¨.`, "");
     render();
   }));
   app.querySelectorAll("[data-request]").forEach((button) => button.addEventListener("click", async () => {
@@ -1870,7 +1870,7 @@ async function renderRequests() {
     else if (kind === "mission") await endpoints.updateMission(id, action);
     else if (kind === "exception") await endpoints.updateException(id, action);
     else if (kind === "location") await endpoints.updateLocationRequest(id, { status: action === "reject" ? "REJECTED" : "APPROVED" });
-    setMessage("تم تحديث الطلب.", "");
+    setMessage("ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø·Ù„Ø¨.", "");
     render();
   }));
 }
@@ -1879,26 +1879,26 @@ async function renderRequests() {
 async function renderOrganization() {
   const ref = await referenceData();
   const config = [
-    ["governorates", "المحافظات", ref.governorates, [["code","الكود"], ["name","الاسم"]]],
-    ["complexes", "المجمعات", ref.complexes, [["code","الكود"], ["name","الاسم"], ["governorateId","المحافظة","select", optionList(ref.governorates)]]],
-    ["branches", "الفروع", ref.branches, [["code","الكود"], ["name","الاسم"], ["governorateId","المحافظة","select", optionList(ref.governorates)], ["complexId","المجمع","select", optionList(ref.complexes)], ["address","العنوان"], ["latitude","Lat","number"], ["longitude","Lng","number"], ["geofenceRadiusMeters","نطاق الحضور/متر","number"]]],
-    ["departments", "الأقسام", ref.departments, [["code","الكود"], ["name","الاسم"], ["branchId","الفرع","select", optionList(ref.branches)], ["managerEmployeeId","المدير","select", optionList(ref.employees.map((e) => ({ id: e.id, name: e.fullName })), "", "بدون")]]],
+    ["governorates", "Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø§Øª", ref.governorates, [["code","Ø§Ù„ÙƒÙˆØ¯"], ["name","Ø§Ù„Ø§Ø³Ù…"]]],
+    ["complexes", "Ø§Ù„Ù…Ø¬Ù…Ø¹Ø§Øª", ref.complexes, [["code","Ø§Ù„ÙƒÙˆØ¯"], ["name","Ø§Ù„Ø§Ø³Ù…"], ["governorateId","Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø©","select", optionList(ref.governorates)]]],
+    ["branches", "Ø§Ù„ÙØ±ÙˆØ¹", ref.branches, [["code","Ø§Ù„ÙƒÙˆØ¯"], ["name","Ø§Ù„Ø§Ø³Ù…"], ["governorateId","Ø§Ù„Ù…Ø­Ø§ÙØ¸Ø©","select", optionList(ref.governorates)], ["complexId","Ø§Ù„Ù…Ø¬Ù…Ø¹","select", optionList(ref.complexes)], ["address","Ø§Ù„Ø¹Ù†ÙˆØ§Ù†"], ["latitude","Lat","number"], ["longitude","Lng","number"], ["geofenceRadiusMeters","Ù†Ø·Ø§Ù‚ Ø§Ù„Ø­Ø¶ÙˆØ±/Ù…ØªØ±","number"]]],
+    ["departments", "Ø§Ù„Ø£Ù‚Ø³Ø§Ù…", ref.departments, [["code","Ø§Ù„ÙƒÙˆØ¯"], ["name","Ø§Ù„Ø§Ø³Ù…"], ["branchId","Ø§Ù„ÙØ±Ø¹","select", optionList(ref.branches)], ["managerEmployeeId","Ø§Ù„Ù…Ø¯ÙŠØ±","select", optionList(ref.employees.map((e) => ({ id: e.id, name: e.fullName })), "", "Ø¨Ø¯ÙˆÙ†")]]],
   ];
   shell(
     `<section class="grid">${config.map(([kind, title, items, fields]) => `
       <article class="panel span-6">
-        <div class="panel-head"><div><h2>${escapeHtml(title)}</h2><p>CRUD فعلي مع حذف منطقي</p></div></div>
+        <div class="panel-head"><div><h2>${escapeHtml(title)}</h2><p>CRUD ÙØ¹Ù„ÙŠ Ù…Ø¹ Ø­Ø°Ù Ù…Ù†Ø·Ù‚ÙŠ</p></div></div>
         ${simpleOrgForm(kind, fields)}
-        ${table(["الاسم", "الكود", "الحالة", "إجراءات"], items.map((item) => `<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.code || "-")}</td><td>${badge(item.active === false ? "INACTIVE" : "ACTIVE")}</td><td><button class="button ghost" data-edit-org="${kind}:${item.id}">تعديل</button><button class="button danger ghost" data-delete-org="${kind}:${item.id}">تعطيل</button></td></tr>`))}
+        ${table(["Ø§Ù„Ø§Ø³Ù…", "Ø§Ù„ÙƒÙˆØ¯", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], items.map((item) => `<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.code || "-")}</td><td>${badge(item.active === false ? "INACTIVE" : "ACTIVE")}</td><td><button class="button ghost" data-edit-org="${kind}:${item.id}">ØªØ¹Ø¯ÙŠÙ„</button><button class="button danger ghost" data-delete-org="${kind}:${item.id}">ØªØ¹Ø·ÙŠÙ„</button></td></tr>`))}
       </article>`).join("")}</section>`,
-    "الفروع والأقسام",
-    "إدارة الهيكل الإداري الأساسي: محافظات، مجمعات، فروع، أقسام.",
+    "Ø§Ù„ÙØ±ÙˆØ¹ ÙˆØ§Ù„Ø£Ù‚Ø³Ø§Ù…",
+    "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠ Ø§Ù„Ø£Ø³Ø§Ø³ÙŠ: Ù…Ø­Ø§ÙØ¸Ø§ØªØŒ Ù…Ø¬Ù…Ø¹Ø§ØªØŒ ÙØ±ÙˆØ¹ØŒ Ø£Ù‚Ø³Ø§Ù….",
   );
   config.forEach(([kind, _title, _items, fields]) => {
     app.querySelector(`#form-${kind}`).addEventListener("submit", async (event) => {
       event.preventDefault();
       await endpoints.saveOrg(kind, readForm(event.currentTarget));
-      setMessage("تم حفظ العنصر التنظيمي.", "");
+      setMessage("ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø¹Ù†ØµØ± Ø§Ù„ØªÙ†Ø¸ÙŠÙ…ÙŠ.", "");
       render();
     });
   });
@@ -1909,7 +1909,7 @@ async function renderOrganization() {
       if (current.latitude != null && form.elements.latitude) form.elements.latitude.value = current.latitude;
       if (current.longitude != null && form.elements.longitude) form.elements.longitude.value = current.longitude;
       if (form.elements.geofenceRadiusMeters && !form.elements.geofenceRadiusMeters.value) form.elements.geofenceRadiusMeters.value = 200;
-      setMessage("تم وضع موقعك الحالي كعنوان حضور للفرع. اضغط حفظ لتثبيته.", "");
+      setMessage("ØªÙ… ÙˆØ¶Ø¹ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ ÙƒØ¹Ù†ÙˆØ§Ù† Ø­Ø¶ÙˆØ± Ù„Ù„ÙØ±Ø¹. Ø§Ø¶ØºØ· Ø­ÙØ¸ Ù„ØªØ«Ø¨ÙŠØªÙ‡.", "");
     } catch (error) {
       setMessage("", error.message);
     }
@@ -1928,14 +1928,14 @@ async function renderOrganization() {
   app.querySelectorAll("[data-delete-org]").forEach((button) => button.addEventListener("click", async () => {
     const [kind, id] = button.dataset.deleteOrg.split(":");
     await endpoints.deleteOrg(kind, id);
-    setMessage("تم تعطيل العنصر تنظيميًا.", "");
+    setMessage("ØªÙ… ØªØ¹Ø·ÙŠÙ„ Ø§Ù„Ø¹Ù†ØµØ± ØªÙ†Ø¸ÙŠÙ…ÙŠÙ‹Ø§.", "");
     render();
   }));
 }
 
 function simpleOrgForm(kind, fields) {
-  const locationButton = kind === "branches" ? `<button class="button ghost" type="button" data-use-current-location="${kind}">استخدم موقعي الحالي كعنوان للفرع</button>` : "";
-  return `<form id="form-${kind}" class="form-grid compact-form"><input type="hidden" name="id" />${fields.map(([name, label, type = "text", opts = ""]) => `<label>${escapeHtml(label)}${type === "select" ? `<select name="${name}">${opts}</select>` : `<input name="${name}" type="${type}" step="any" />`}</label>`).join("")}<div class="form-actions">${locationButton}<button class="button primary" type="submit">حفظ</button></div></form>`;
+  const locationButton = kind === "branches" ? `<button class="button ghost" type="button" data-use-current-location="${kind}">Ø§Ø³ØªØ®Ø¯Ù… Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø­Ø§Ù„ÙŠ ÙƒØ¹Ù†ÙˆØ§Ù† Ù„Ù„ÙØ±Ø¹</button>` : "";
+  return `<form id="form-${kind}" class="form-grid compact-form"><input type="hidden" name="id" />${fields.map(([name, label, type = "text", opts = ""]) => `<label>${escapeHtml(label)}${type === "select" ? `<select name="${name}">${opts}</select>` : `<input name="${name}" type="${type}" step="any" />`}</label>`).join("")}<div class="form-actions">${locationButton}<button class="button primary" type="submit">Ø­ÙØ¸</button></div></form>`;
 }
 
 async function renderRoles() {
@@ -1944,23 +1944,23 @@ async function renderRoles() {
   shell(
     `<section class="grid">
       <article class="panel span-5">
-        <div class="panel-head"><div><h2>دور جديد / تعديل</h2><p>صلاحيات دقيقة قابلة للتخصيص</p></div></div>
+        <div class="panel-head"><div><h2>Ø¯ÙˆØ± Ø¬Ø¯ÙŠØ¯ / ØªØ¹Ø¯ÙŠÙ„</h2><p>ØµÙ„Ø§Ø­ÙŠØ§Øª Ø¯Ù‚ÙŠÙ‚Ø© Ù‚Ø§Ø¨Ù„Ø© Ù„Ù„ØªØ®ØµÙŠØµ</p></div></div>
         <form id="role-form" class="form-grid">
           <input type="hidden" name="id" />
-          <label>اسم الدور<input name="name" required /></label>
-          <label>الكود<input name="key" required /></label>
-          <label>الوصف<input name="description" /></label>
+          <label>Ø§Ø³Ù… Ø§Ù„Ø¯ÙˆØ±<input name="name" required /></label>
+          <label>Ø§Ù„ÙƒÙˆØ¯<input name="key" required /></label>
+          <label>Ø§Ù„ÙˆØµÙ<input name="description" /></label>
           <div class="permissions-list">${permissions.map((p) => `<label class="check-row"><input type="checkbox" name="perm" value="${escapeHtml(p.scope)}" /> ${escapeHtml(p.name)}</label>`).join("")}</div>
-          <div class="form-actions"><button class="button primary" type="submit">حفظ الدور</button></div>
+          <div class="form-actions"><button class="button primary" type="submit">Ø­ÙØ¸ Ø§Ù„Ø¯ÙˆØ±</button></div>
         </form>
       </article>
       <article class="panel span-7">
-        <h2>الأدوار الحالية</h2>
-        ${table(["الدور", "الكود", "عدد الصلاحيات", "إجراءات"], roles.map((role) => `<tr><td>${escapeHtml(role.name)}</td><td>${escapeHtml(role.key || role.slug)}</td><td>${escapeHtml(role.permissions?.length || 0)}</td><td><button class="button ghost" data-edit-role="${role.id}">تعديل</button></td></tr>`))}
+        <h2>Ø§Ù„Ø£Ø¯ÙˆØ§Ø± Ø§Ù„Ø­Ø§Ù„ÙŠØ©</h2>
+        ${table(["Ø§Ù„Ø¯ÙˆØ±", "Ø§Ù„ÙƒÙˆØ¯", "Ø¹Ø¯Ø¯ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], roles.map((role) => `<tr><td>${escapeHtml(role.name)}</td><td>${escapeHtml(role.key || role.slug)}</td><td>${escapeHtml(role.permissions?.length || 0)}</td><td><button class="button ghost" data-edit-role="${role.id}">ØªØ¹Ø¯ÙŠÙ„</button></td></tr>`))}
       </article>
     </section>`,
-    "الأدوار والصلاحيات",
-    "RBAC عملي لاستخدامه في تنظيم الوصول للنظام.",
+    "Ø§Ù„Ø£Ø¯ÙˆØ§Ø± ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª",
+    "RBAC Ø¹Ù…Ù„ÙŠ Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù…Ù‡ ÙÙŠ ØªÙ†Ø¸ÙŠÙ… Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ù†Ø¸Ø§Ù….",
   );
   app.querySelector("#role-form").addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1968,7 +1968,7 @@ async function renderRoles() {
     const values = readForm(form);
     values.permissions = [...form.querySelectorAll('[name="perm"]:checked')].map((input) => input.value);
     await endpoints.saveRole(values);
-    setMessage("تم حفظ الدور والصلاحيات.", "");
+    setMessage("ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø¯ÙˆØ± ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª.", "");
     render();
   });
   app.querySelectorAll("[data-edit-role]").forEach((button) => button.addEventListener("click", () => {
@@ -2012,7 +2012,7 @@ async function renderOrgChart() {
   const rows = active.map((employee) => [
     employee.fullName,
     employee.jobTitle || "-",
-    employee.manager?.fullName || byId.get(employee.managerEmployeeId)?.fullName || "مدير أعلى / لا يوجد",
+    employee.manager?.fullName || byId.get(employee.managerEmployeeId)?.fullName || "Ù…Ø¯ÙŠØ± Ø£Ø¹Ù„Ù‰ / Ù„Ø§ ÙŠÙˆØ¬Ø¯",
     childrenOf(employee.id).length,
     countDescendants(employee.id),
   ]);
@@ -2022,7 +2022,7 @@ async function renderOrgChart() {
       <div class="org-node enhanced">
         ${avatar(employee, "tiny")}
         <span><strong>${escapeHtml(employee.fullName)}</strong><small>${escapeHtml(employee.jobTitle || "")}</small></span>
-        <em>${children.length ? `${children.length} مباشر / ${countDescendants(employee.id)} إجمالي` : "بدون تابعين"}</em>
+        <em>${children.length ? `${children.length} Ù…Ø¨Ø§Ø´Ø± / ${countDescendants(employee.id)} Ø¥Ø¬Ù…Ø§Ù„ÙŠ` : "Ø¨Ø¯ÙˆÙ† ØªØ§Ø¨Ø¹ÙŠÙ†"}</em>
       </div>
       ${children.length ? `<div class="org-children">${children.map((child) => node(child, depth + 1)).join("")}</div>` : ""}
     </div>`;
@@ -2034,10 +2034,10 @@ async function renderOrgChart() {
     .filter((employee, index, self) => self.findIndex((item) => item.id === employee.id) === index)
     .sort((a, b) => String(a.fullName || "").localeCompare(String(b.fullName || ""), "ar"));
   const executive = active.find((employee) => roleSlugOf(employee) === "executive")
-    || active.find((employee) => normalizedName(employee).includes("محمد يوسف") || String(employee.jobTitle || "").includes("تنفيذي"))
+    || active.find((employee) => String(employee.jobTitle || "").includes("ØªÙ†ÙÙŠØ°ÙŠ"))
     || roots[0];
   const secretary = active.find((employee) => ["executive-secretary", "admin"].includes(roleSlugOf(employee)) && employee.id !== executive?.id)
-    || active.find((employee) => normalizedName(employee).includes("يحي") || normalizedName(employee).includes("يحيى"));
+    || active.find((employee) => String(employee.jobTitle || "").includes("Ø³ÙƒØ±ØªÙŠØ±"));
   const managerLike = active.filter((employee) => employee.id !== executive?.id && employee.id !== secretary?.id)
     .filter((employee) => childrenOf(employee.id).length || ["manager", "direct-manager", "operations-manager-1", "operations-manager-2", "hr-manager"].includes(roleSlugOf(employee)));
   const firstLine = sortPeople([
@@ -2051,15 +2051,15 @@ async function renderOrgChart() {
       <div class="org-feature-node ${depth === 0 ? "is-manager" : ""}">
         ${avatar(employee, "tiny")}
         <span><strong>${escapeHtml(employee.fullName)}</strong><small>${escapeHtml(employee.jobTitle || employee.role?.name || "")}</small></span>
-        <em>${children.length ? `${children.length} مباشر` : "تنفيذ"}</em>
+        <em>${children.length ? `${children.length} Ù…Ø¨Ø§Ø´Ø±` : "ØªÙ†ÙÙŠØ°"}</em>
       </div>
       ${children.length ? `<div class="org-feature-children">${children.map((child) => branchNode(child, depth + 1)).join("")}</div>` : ""}
     </div>`;
   };
   const featuredChart = executive ? `<div class="org-featured-chart">
     <div class="org-feature-top">
-      <div class="org-feature-node is-executive">${avatar(executive, "tiny")}<span><strong>${escapeHtml(executive.fullName)}</strong><small>${escapeHtml(executive.jobTitle || "المدير التنفيذي")}</small></span></div>
-      ${secretary ? `<div class="org-feature-node is-secretary">${avatar(secretary, "tiny")}<span><strong>${escapeHtml(secretary.fullName)}</strong><small>${escapeHtml(secretary.jobTitle || secretary.role?.name || "السكرتير التنفيذي")}</small></span></div>` : ""}
+      <div class="org-feature-node is-executive">${avatar(executive, "tiny")}<span><strong>${escapeHtml(executive.fullName)}</strong><small>${escapeHtml(executive.jobTitle || "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ")}</small></span></div>
+      ${secretary ? `<div class="org-feature-node is-secretary">${avatar(secretary, "tiny")}<span><strong>${escapeHtml(secretary.fullName)}</strong><small>${escapeHtml(secretary.jobTitle || secretary.role?.name || "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ")}</small></span></div>` : ""}
     </div>
     <div class="org-feature-line" aria-hidden="true"></div>
     <div class="org-feature-managers">${firstLine.length ? firstLine.map((employee) => branchNode(employee)).join("") : roots.filter((employee) => employee.id !== executive.id && employee.id !== secretary?.id).map((employee) => branchNode(employee)).join("")}</div>
@@ -2069,27 +2069,27 @@ async function renderOrgChart() {
     <section class="stack">
       <div class="metric-grid org-summary-grid">
         ${[
-          ["إجمالي الأفراد", active.length, "كل الملفات النشطة في الهيكل"],
-          ["مديرون لديهم فرق", managers.length, "لديهم موظف واحد على الأقل"],
-          ["تابعون مباشرة للمدير التنفيذي", directToExecutive, "المستوى الأول"],
-          ["أكبر عمق إداري", maxDepth + 1, "عدد المستويات من القمة"],
-          ["موظفون بلا تابعين", leaves.length, "أفراد تنفيذ"],
+          ["Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø£ÙØ±Ø§Ø¯", active.length, "ÙƒÙ„ Ø§Ù„Ù…Ù„ÙØ§Øª Ø§Ù„Ù†Ø´Ø·Ø© ÙÙŠ Ø§Ù„Ù‡ÙŠÙƒÙ„"],
+          ["Ù…Ø¯ÙŠØ±ÙˆÙ† Ù„Ø¯ÙŠÙ‡Ù… ÙØ±Ù‚", managers.length, "Ù„Ø¯ÙŠÙ‡Ù… Ù…ÙˆØ¸Ù ÙˆØ§Ø­Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„"],
+          ["ØªØ§Ø¨Ø¹ÙˆÙ† Ù…Ø¨Ø§Ø´Ø±Ø© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", directToExecutive, "Ø§Ù„Ù…Ø³ØªÙˆÙ‰ Ø§Ù„Ø£ÙˆÙ„"],
+          ["Ø£ÙƒØ¨Ø± Ø¹Ù…Ù‚ Ø¥Ø¯Ø§Ø±ÙŠ", maxDepth + 1, "Ø¹Ø¯Ø¯ Ø§Ù„Ù…Ø³ØªÙˆÙŠØ§Øª Ù…Ù† Ø§Ù„Ù‚Ù…Ø©"],
+          ["Ù…ÙˆØ¸ÙÙˆÙ† Ø¨Ù„Ø§ ØªØ§Ø¨Ø¹ÙŠÙ†", leaves.length, "Ø£ÙØ±Ø§Ø¯ ØªÙ†ÙÙŠØ°"],
         ].map(([label, value, helper]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>${escapeHtml(helper)}</small></article>`).join("")}
       </div>
       <section class="panel">
         <div class="panel-head">
-          <div><h2>الهيكل الوظيفي لجمعية خواطر أحلى شباب</h2><p>حسب المدير المباشر المسجل في ملفات الموظفين — يدعم أكثر من مستوى إداري.</p></div>
-          <div class="toolbar"><button class="button ghost" data-export-org>تصدير CSV</button><button class="button ghost" data-print-org>طباعة</button></div>
+          <div><h2>Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ Ù„Ø¬Ù…Ø¹ÙŠØ© Ø®ÙˆØ§Ø·Ø± Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨</h2><p>Ø­Ø³Ø¨ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ù…Ø³Ø¬Ù„ ÙÙŠ Ù…Ù„ÙØ§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† â€” ÙŠØ¯Ø¹Ù… Ø£ÙƒØ«Ø± Ù…Ù† Ù…Ø³ØªÙˆÙ‰ Ø¥Ø¯Ø§Ø±ÙŠ.</p></div>
+          <div class="toolbar"><button class="button ghost" data-export-org>ØªØµØ¯ÙŠØ± CSV</button><button class="button ghost" data-print-org>Ø·Ø¨Ø§Ø¹Ø©</button></div>
         </div>
         <div class="org-chart org-tree">${featuredChart || roots.map((employee) => node(employee)).join("")}${fallbackRoots.length && featuredChart ? `<div class="org-fallback-tree">${fallbackRoots.map((employee) => node(employee)).join("")}</div>` : ""}</div>
       </section>
       <section class="panel">
-        <div class="panel-head"><div><h2>جدول العلاقات الإدارية</h2><p>مراجعة سريعة لكل موظف ومديره وعدد التابعين.</p></div></div>
-        ${table(["الموظف", "الوظيفة", "المدير المباشر", "تابعون مباشرون", "إجمالي تحت الإدارة"], rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`))}
+        <div class="panel-head"><div><h2>Ø¬Ø¯ÙˆÙ„ Ø§Ù„Ø¹Ù„Ø§Ù‚Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©</h2><p>Ù…Ø±Ø§Ø¬Ø¹Ø© Ø³Ø±ÙŠØ¹Ø© Ù„ÙƒÙ„ Ù…ÙˆØ¸Ù ÙˆÙ…Ø¯ÙŠØ±Ù‡ ÙˆØ¹Ø¯Ø¯ Ø§Ù„ØªØ§Ø¨Ø¹ÙŠÙ†.</p></div></div>
+        ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„ÙˆØ¸ÙŠÙØ©", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", "ØªØ§Ø¨Ø¹ÙˆÙ† Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†", "Ø¥Ø¬Ù…Ø§Ù„ÙŠ ØªØ­Øª Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©"], rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`))}
       </section>
-    </section>`, "الهيكل الوظيفي", "عرض علاقات المديرين والفرق كما وصفتها.");
-  app.querySelector("[data-export-org]")?.addEventListener("click", () => downloadFile("org-hierarchy.csv", `\ufeff${toCsv([["الموظف", "الوظيفة", "المدير المباشر", "تابعون مباشرون", "إجمالي تحت الإدارة"], ...rows])}`, "text/csv;charset=utf-8"));
-  app.querySelector("[data-print-org]")?.addEventListener("click", () => printReport("الهيكل الوظيفي", ["الموظف", "الوظيفة", "المدير المباشر", "تابعون مباشرون", "إجمالي تحت الإدارة"], rows));
+    </section>`, "Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ", "Ø¹Ø±Ø¶ Ø¹Ù„Ø§Ù‚Ø§Øª Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ† ÙˆØ§Ù„ÙØ±Ù‚ ÙƒÙ…Ø§ ÙˆØµÙØªÙ‡Ø§.");
+  app.querySelector("[data-export-org]")?.addEventListener("click", () => downloadFile("org-hierarchy.csv", `\ufeff${toCsv([["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„ÙˆØ¸ÙŠÙØ©", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", "ØªØ§Ø¨Ø¹ÙˆÙ† Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†", "Ø¥Ø¬Ù…Ø§Ù„ÙŠ ØªØ­Øª Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©"], ...rows])}`, "text/csv;charset=utf-8"));
+  app.querySelector("[data-print-org]")?.addEventListener("click", () => printReport("Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ", ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„ÙˆØ¸ÙŠÙØ©", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", "ØªØ§Ø¨Ø¹ÙˆÙ† Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†", "Ø¥Ø¬Ù…Ø§Ù„ÙŠ ØªØ­Øª Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©"], rows));
 }
 
 async function renderLocations() {
@@ -2115,39 +2115,39 @@ async function renderLocations() {
       <button class="location-card-head" type="button" data-toggle-location-details="${escapeHtml(employee.id)}">
         ${avatar(employee, "medium")}
         <span><strong>${escapeHtml(employee.fullName || "-")}</strong><small>${escapeHtml(employee.jobTitle || employee.phone || "")}</small></span>
-        ${pending ? badge("طلب مفتوح") : badge(latest ? "آخر موقع موجود" : "لا يوجد موقع")}
+        ${pending ? badge("Ø·Ù„Ø¨ Ù…ÙØªÙˆØ­") : badge(latest ? "Ø¢Ø®Ø± Ù…ÙˆÙ‚Ø¹ Ù…ÙˆØ¬ÙˆØ¯" : "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆÙ‚Ø¹")}
       </button>
       <div class="location-card-actions">
-        <button class="button primary" type="button" data-request-live-location="${escapeHtml(employee.id)}">إشعار فتح الموقع وإرسال اللوكيشن</button>
-        ${employee.id === currentEmployeeId ? `<button class="button ghost" type="button" data-send-my-location>إرسال موقعي الآن</button>` : ""}
+        <button class="button primary" type="button" data-request-live-location="${escapeHtml(employee.id)}">Ø¥Ø´Ø¹Ø§Ø± ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù†</button>
+        ${employee.id === currentEmployeeId ? `<button class="button ghost" type="button" data-send-my-location>Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø¢Ù†</button>` : ""}
       </div>
       <div class="location-details hidden" id="location-details-${escapeHtml(employee.id)}">
         <div class="meta-grid">
-          <span>الاسم: ${escapeHtml(employee.fullName || "-")}</span>
-          <span>المسمى: ${escapeHtml(employee.jobTitle || "-")}</span>
-          <span>الهاتف: ${escapeHtml(employee.phone || "-")}</span>
-          <span>البريد: ${escapeHtml(employee.email || "-")}</span>
-          <span>المدير المباشر: ${escapeHtml(employee.manager?.fullName || "-")}</span>
-          <span>آخر تحديث: ${latest ? date(latest.date || latest.createdAt || latest.requestedAt) : "لا يوجد"}</span>
+          <span>Ø§Ù„Ø§Ø³Ù…: ${escapeHtml(employee.fullName || "-")}</span>
+          <span>Ø§Ù„Ù…Ø³Ù…Ù‰: ${escapeHtml(employee.jobTitle || "-")}</span>
+          <span>Ø§Ù„Ù‡Ø§ØªÙ: ${escapeHtml(employee.phone || "-")}</span>
+          <span>Ø§Ù„Ø¨Ø±ÙŠØ¯: ${escapeHtml(employee.email || "-")}</span>
+          <span>Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±: ${escapeHtml(employee.manager?.fullName || "-")}</span>
+          <span>Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ«: ${latest ? date(latest.date || latest.createdAt || latest.requestedAt) : "Ù„Ø§ ÙŠÙˆØ¬Ø¯"}</span>
         </div>
-        ${latest ? `<div class="map-line"><span>Lat: ${escapeHtml(latest.latitude)}</span><span>Lng: ${escapeHtml(latest.longitude)}</span><span>الدقة: ${escapeHtml(latest.accuracyMeters || "-")} متر</span><a class="button ghost" target="_blank" rel="noopener" href="https://maps.google.com/?q=${escapeHtml(latest.latitude)},${escapeHtml(latest.longitude)}">فتح على Google Maps</a></div>` : `<div class="empty-box">لم يرسل هذا الموظف موقعًا مباشرًا بعد.</div>`}
-        ${table(["النوع", "الحالة", "الوقت", "الموقع"], employeeEvents.map((item) => `<tr><td>${escapeHtml(item.latitude ? "موقع مباشر" : "طلب موقع")}</td><td>${badge(item.status || "ACTIVE")}</td><td>${date(item.date || item.createdAt || item.requestedAt)}</td><td>${item.latitude && item.longitude ? `${escapeHtml(item.latitude)}, ${escapeHtml(item.longitude)}` : "بانتظار الإرسال"}</td></tr>`))}
+        ${latest ? `<div class="map-line"><span>Lat: ${escapeHtml(latest.latitude)}</span><span>Lng: ${escapeHtml(latest.longitude)}</span><span>Ø§Ù„Ø¯Ù‚Ø©: ${escapeHtml(latest.accuracyMeters || "-")} Ù…ØªØ±</span><a class="button ghost" target="_blank" rel="noopener" href="https://maps.google.com/?q=${escapeHtml(latest.latitude)},${escapeHtml(latest.longitude)}">ÙØªØ­ Ø¹Ù„Ù‰ Google Maps</a></div>` : `<div class="empty-box">Ù„Ù… ÙŠØ±Ø³Ù„ Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¸Ù Ù…ÙˆÙ‚Ø¹Ù‹Ø§ Ù…Ø¨Ø§Ø´Ø±Ù‹Ø§ Ø¨Ø¹Ø¯.</div>`}
+        ${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ÙˆÙ‚Øª", "Ø§Ù„Ù…ÙˆÙ‚Ø¹"], employeeEvents.map((item) => `<tr><td>${escapeHtml(item.latitude ? "Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø±" : "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹")}</td><td>${badge(item.status || "ACTIVE")}</td><td>${date(item.date || item.createdAt || item.requestedAt)}</td><td>${item.latitude && item.longitude ? `${escapeHtml(item.latitude)}, ${escapeHtml(item.longitude)}` : "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ø¥Ø±Ø³Ø§Ù„"}</td></tr>`))}
       </div>
     </article>`;
   }).join("");
   shell(
     `<section class="grid locations-page">
       <article class="panel span-12 accent-panel">
-        <div class="panel-head"><div><h2>طلبات وسجل المواقع</h2><p>كل موظف يظهر باسمه وصورته. اضغط على الموظف لعرض التفاصيل وآخر المواقع.</p></div></div>
-        <div class="message compact">لا يتم طلب سبب أو غرض. الإجراء يرسل إشعارًا مباشرًا للموظف لفتح صفحة الموقع وإرسال اللوكيشن الحالي.</div>
-        ${currentEmployeeId ? `<div class="toolbar spaced"><button class="button primary" type="button" data-send-my-location>إرسال موقعي الحالي الآن</button></div>` : ""}
+        <div class="panel-head"><div><h2>Ø·Ù„Ø¨Ø§Øª ÙˆØ³Ø¬Ù„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹</h2><p>ÙƒÙ„ Ù…ÙˆØ¸Ù ÙŠØ¸Ù‡Ø± Ø¨Ø§Ø³Ù…Ù‡ ÙˆØµÙˆØ±ØªÙ‡. Ø§Ø¶ØºØ· Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆØ¸Ù Ù„Ø¹Ø±Ø¶ Ø§Ù„ØªÙØ§ØµÙŠÙ„ ÙˆØ¢Ø®Ø± Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹.</p></div></div>
+        <div class="message compact">Ù„Ø§ ÙŠØªÙ… Ø·Ù„Ø¨ Ø³Ø¨Ø¨ Ø£Ùˆ ØºØ±Ø¶. Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡ ÙŠØ±Ø³Ù„ Ø¥Ø´Ø¹Ø§Ø±Ù‹Ø§ Ù…Ø¨Ø§Ø´Ø±Ù‹Ø§ Ù„Ù„Ù…ÙˆØ¸Ù Ù„ÙØªØ­ ØµÙØ­Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ø­Ø§Ù„ÙŠ.</div>
+        ${currentEmployeeId ? `<div class="toolbar spaced"><button class="button primary" type="button" data-send-my-location>Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø­Ø§Ù„ÙŠ Ø§Ù„Ø¢Ù†</button></div>` : ""}
       </article>
       <article class="panel span-12">
-        <div class="employee-location-grid">${employeeCards || `<div class="empty-state">لا يوجد موظفون مسجلون.</div>`}</div>
+        <div class="employee-location-grid">${employeeCards || `<div class="empty-state">Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸ÙÙˆÙ† Ù…Ø³Ø¬Ù„ÙˆÙ†.</div>`}</div>
       </article>
     </section>`,
-    "طلبات وسجل المواقع",
-    "إشعار الموظفين لإرسال اللوكيشن المباشر ومراجعة سجل المواقع بدون سبب أو غرض.",
+    "Ø·Ù„Ø¨Ø§Øª ÙˆØ³Ø¬Ù„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹",
+    "Ø¥Ø´Ø¹Ø§Ø± Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ù„Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙˆÙ…Ø±Ø§Ø¬Ø¹Ø© Ø³Ø¬Ù„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹ Ø¨Ø¯ÙˆÙ† Ø³Ø¨Ø¨ Ø£Ùˆ ØºØ±Ø¶.",
   );
   app.querySelectorAll("[data-toggle-location-details]").forEach((button) => button.addEventListener("click", () => {
     const id = button.dataset.toggleLocationDetails;
@@ -2155,11 +2155,11 @@ async function renderLocations() {
   }));
   const sendMyLocation = async () => {
     const employeeId = state.user?.employeeId || state.user?.employee?.id;
-    if (!employeeId) throw new Error("هذا الحساب غير مربوط بملف موظف لإرسال الموقع.");
+    if (!employeeId) throw new Error("Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…Ø±Ø¨ÙˆØ· Ø¨Ù…Ù„Ù Ù…ÙˆØ¸Ù Ù„Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹.");
     const current = await getBrowserLocation();
-    if (!current.latitude || !current.longitude) throw new Error("تعذر قراءة الموقع الحالي. فعّل GPS ثم حاول مرة أخرى.");
+    if (!current.latitude || !current.longitude) throw new Error("ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ. ÙØ¹Ù‘Ù„ GPS Ø«Ù… Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.");
     await endpoints.recordLocation({ ...current, employeeId, source: "direct_live_location", status: "ACTIVE" });
-    setMessage("تم إرسال موقعك الحالي بنجاح.", "");
+    setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ Ø¨Ù†Ø¬Ø§Ø­.", "");
     render();
   };
   app.querySelectorAll("[data-send-my-location]").forEach((button) => button.addEventListener("click", () => sendMyLocation().catch((error) => setMessage("", error.message))));
@@ -2167,12 +2167,12 @@ async function renderLocations() {
     const employee = byEmployee.get(button.dataset.requestLiveLocation);
     await endpoints.createLocationRequest({
       employeeId: button.dataset.requestLiveLocation,
-      purpose: "فتح الموقع وإرسال اللوكيشن المباشر",
-      title: "فتح الموقع وإرسال اللوكيشن المباشر",
+      purpose: "ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±",
+      title: "ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±",
       requestReason: "",
       status: "PENDING",
     });
-    setMessage(`تم إرسال إشعار فتح الموقع وإرسال اللوكيشن إلى ${employee?.fullName || "الموظف"}.`, "");
+    setMessage(`تم إنشاء طلب الموقع، وقد لا يصل الإشعار الخارجي إذا كان غير مفعل.`, "");
     render();
   }));
 }
@@ -2193,8 +2193,8 @@ async function renderKpi() {
   const isHr = payload.accessMode === "hr";
   const isExecutive = payload.accessMode === "executive";
   const nextKpiStatus = isExecutive ? "EXECUTIVE_APPROVED" : isHr ? "HR_REVIEWED" : isTeam ? "MANAGER_APPROVED" : "SECRETARY_REVIEWED";
-  const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), isSelf ? payload.currentEmployeeId : "", isSelf ? "" : "اختر الموظف");
-  const managerOptions = optionList(ref.employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), state.user?.employeeId || "", "المدير المباشر من ملف الموظف");
+  const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " â€” " + employee.jobTitle : ""}` })), isSelf ? payload.currentEmployeeId : "", isSelf ? "" : "Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù");
+  const managerOptions = optionList(ref.employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " â€” " + employee.jobTitle : ""}` })), state.user?.employeeId || "", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ù…Ù† Ù…Ù„Ù Ø§Ù„Ù…ÙˆØ¸Ù");
   const metricCards = (payload.metrics || []).map((metric) => `<article class="metric span-3"><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.helper || "")}</small></article>`).join("");
   const progressCards = progressMetrics.map((metric) => `<article class="metric span-2"><span>${escapeHtml(metric.label)}</span><strong>${escapeHtml(metric.value)}</strong><small>${escapeHtml(metric.helper || "")}</small></article>`).join("");
   shell(
@@ -2202,49 +2202,49 @@ async function renderKpi() {
       <article class="panel span-12 accent-panel">
         <div class="panel-head">
           <div>
-            <h2>${isSelf ? "تقييمي الذاتي الشهري" : isHr ? "مراجعة HR لتقييمات KPI" : isTeam ? "تقييمات الفريق المباشر" : isExecutive ? "الاعتماد النهائي لتقييمات KPI" : "نموذج تقييم الأداء الشهري المعتمد"}</h2>
-            <p>${escapeHtml(policy.description || "يبدأ التقييم من يوم 20 وينتهي يوم 25 من نفس الشهر.")}</p>
+            <h2>${isSelf ? "ØªÙ‚ÙŠÙŠÙ…ÙŠ Ø§Ù„Ø°Ø§ØªÙŠ Ø§Ù„Ø´Ù‡Ø±ÙŠ" : isHr ? "Ù…Ø±Ø§Ø¬Ø¹Ø© HR Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª KPI" : isTeam ? "ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±" : isExecutive ? "Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª KPI" : "Ù†Ù…ÙˆØ°Ø¬ ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡ Ø§Ù„Ø´Ù‡Ø±ÙŠ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯"}</h2>
+            <p>${escapeHtml(policy.description || "ÙŠØ¨Ø¯Ø£ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ù…Ù† ÙŠÙˆÙ… 20 ÙˆÙŠÙ†ØªÙ‡ÙŠ ÙŠÙˆÙ… 25 Ù…Ù† Ù†ÙØ³ Ø§Ù„Ø´Ù‡Ø±.")}</p>
           </div>
-          ${payload.accessMode === "all" ? `<div class="toolbar"><button class="button primary" id="recompute-kpi">تجهيز تقييمات ناقصة</button><button class="button ghost" id="send-kpi-reminders">إرسال تذكيرات KPI</button><button class="button danger" id="close-kpi-cycle">إغلاق الدورة</button></div>` : isExecutive ? `<button class="button primary" id="close-kpi-cycle">إغلاق/اعتماد إغلاق الدورة</button>` : ""}
+          ${payload.accessMode === "all" ? `<div class="toolbar"><button class="button primary" id="recompute-kpi">ØªØ¬Ù‡ÙŠØ² ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ù†Ø§Ù‚ØµØ©</button><button class="button ghost" id="send-kpi-reminders">Ø¥Ø±Ø³Ø§Ù„ ØªØ°ÙƒÙŠØ±Ø§Øª KPI</button><button class="button danger" id="close-kpi-cycle">Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ø¯ÙˆØ±Ø©</button></div>` : isExecutive ? `<button class="button primary" id="close-kpi-cycle">Ø¥ØºÙ„Ø§Ù‚/Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ø¯ÙˆØ±Ø©</button>` : ""}
         </div>
         <div class="kpi-policy-strip">
-          <span>بداية التقييم: يوم ${escapeHtml(policy.evaluationStartDay || 20)}</span>
-          <span>نهاية التقييم: يوم ${escapeHtml(policy.evaluationEndDay || 25)}</span>
-          <span>آخر موعد للتسليم: يوم ${escapeHtml(policy.submissionDeadlineDay || 25)}</span>
-          <span>الحالة الحالية: ${escapeHtml(windowInfo.label || "-")}</span>
-          <span>${escapeHtml(windowInfo.message || "الموظف يرفع تقييمه للمدير المباشر ثم يعتمد المدير أو يعدل قبل التسليم")}</span>
+          <span>Ø¨Ø¯Ø§ÙŠØ© Ø§Ù„ØªÙ‚ÙŠÙŠÙ…: ÙŠÙˆÙ… ${escapeHtml(policy.evaluationStartDay || 20)}</span>
+          <span>Ù†Ù‡Ø§ÙŠØ© Ø§Ù„ØªÙ‚ÙŠÙŠÙ…: ÙŠÙˆÙ… ${escapeHtml(policy.evaluationEndDay || 25)}</span>
+          <span>Ø¢Ø®Ø± Ù…ÙˆØ¹Ø¯ Ù„Ù„ØªØ³Ù„ÙŠÙ…: ÙŠÙˆÙ… ${escapeHtml(policy.submissionDeadlineDay || 25)}</span>
+          <span>Ø§Ù„Ø­Ø§Ù„Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ©: ${escapeHtml(windowInfo.label || "-")}</span>
+          <span>${escapeHtml(windowInfo.message || "Ø§Ù„Ù…ÙˆØ¸Ù ÙŠØ±ÙØ¹ ØªÙ‚ÙŠÙŠÙ…Ù‡ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø«Ù… ÙŠØ¹ØªÙ…Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø£Ùˆ ÙŠØ¹Ø¯Ù„ Ù‚Ø¨Ù„ Ø§Ù„ØªØ³Ù„ÙŠÙ…")}</span>
         </div>
       </article>
       ${metricCards}
-      ${progressCards ? `<article class="panel span-12"><div class="panel-head"><div><h2>متابعة مراحل الاعتماد</h2><p>من الموظف حتى المدير التنفيذي</p></div></div><div class="grid nested-metrics">${progressCards}</div></article>` : ""}
+      ${progressCards ? `<article class="panel span-12"><div class="panel-head"><div><h2>Ù…ØªØ§Ø¨Ø¹Ø© Ù…Ø±Ø§Ø­Ù„ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯</h2><p>Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù Ø­ØªÙ‰ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ</p></div></div><div class="grid nested-metrics">${progressCards}</div></article>` : ""}
       <article class="panel span-5">
-        <h2>${isSelf ? "إرسال تقييمي لمديري المباشر" : "إدخال / تعديل تقييم"}</h2>
+        <h2>${isSelf ? "Ø¥Ø±Ø³Ø§Ù„ ØªÙ‚ÙŠÙŠÙ…ÙŠ Ù„Ù…Ø¯ÙŠØ±ÙŠ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±" : "Ø¥Ø¯Ø®Ø§Ù„ / ØªØ¹Ø¯ÙŠÙ„ ØªÙ‚ÙŠÙŠÙ…"}</h2>
         <form id="kpi-form" class="form-grid compact-form">
-          <label>الموظف<select name="employeeId" required ${isSelf ? "disabled" : ""}>${employeeOptions}</select></label>
+          <label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId" required ${isSelf ? "disabled" : ""}>${employeeOptions}</select></label>
           ${isSelf ? `<input type="hidden" name="employeeId" value="${escapeHtml(payload.currentEmployeeId || "")}" />` : ""}
-          <label>المدير المباشر<select name="managerEmployeeId" ${isSelf ? "disabled" : ""}>${managerOptions}</select></label>
+          <label>Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±<select name="managerEmployeeId" ${isSelf ? "disabled" : ""}>${managerOptions}</select></label>
           ${isSelf ? `<input type="hidden" name="managerEmployeeId" value="${escapeHtml(state.user?.employee?.managerEmployeeId || "")}" />` : ""}
-          <label>تاريخ الجلسة<input name="evaluationDate" type="date" value="${escapeHtml(cycle.startsOn || new Date().toISOString().slice(0, 10))}" required /></label>
-          <label>حالة التقييم<select name="status">${optionList(isSelf ? [{ value: "SELF_SUBMITTED", name: "رفع للمدير المباشر" }] : isHr ? [{ value: "HR_REVIEWED", name: "مراجعة HR مكتملة" }] : isTeam ? [{ value: "MANAGER_APPROVED", name: "اعتماد المدير المباشر" }] : isExecutive ? [{ value: "EXECUTIVE_APPROVED", name: "اعتماد المدير التنفيذي" }] : [{ value: "DRAFT", name: "مسودة" }, { value: "SELF_SUBMITTED", name: "استلام من الموظف" }, { value: "MANAGER_APPROVED", name: "اعتماد المدير" }, { value: "HR_REVIEWED", name: "مراجعة HR" }, { value: "SECRETARY_REVIEWED", name: "مراجعة السكرتير التنفيذي" }, { value: "EXECUTIVE_APPROVED", name: "اعتماد المدير التنفيذي" }], isSelf ? "SELF_SUBMITTED" : isHr ? "HR_REVIEWED" : isTeam ? "MANAGER_APPROVED" : "SECRETARY_REVIEWED")}</select></label>
-          ${!isHr ? `<label>تحقيق الأهداف / 40<input name="targetScore" type="number" min="0" max="40" step="0.5" value="0" /></label>
-          <label>الكفاءة في أداء المهام / 20<input name="efficiencyScore" type="number" min="0" max="20" step="0.5" value="0" /></label>
-          <label>حسن التعامل والسلوك / 5<input name="conductScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
-          <label>التبرعات والمبادرات / 5<input name="initiativesScore" type="number" min="0" max="5" step="0.5" value="0" /></label>` : ""}
-          ${(isHr || payload.accessMode === "all") ? `<label>الالتزام بمواعيد العمل حضورًا وانصرافًا / 20<input name="attendanceScore" type="number" min="0" max="20" step="0.5" placeholder="يحسب تلقائيًا إن تُرك فارغًا" /></label>
-          <label>الالتزام بالصلاة في المسجد / 5<input name="prayerScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
-          <label>حضور حلقة الشيخ وليد يوسف الأسبوعية لتدريس القرآن والتجويد / 5<input name="quranCircleScore" type="number" min="0" max="5" step="0.5" value="0" /></label>` : `<div class="notice span-2">خاص بـ HR — بنود HR فقط: الحضور والانصراف /20، الصلاة في المسجد /5، حضور حلقة الشيخ وليد يوسف الأسبوعية لتدريس القرآن والتجويد /5.</div>`}
-          <label class="span-2">${isSelf ? "ملاحظات الموظف" : "ملاحظات المدير"}<textarea name="${isSelf ? "employeeNotes" : "managerNotes"}" placeholder="${isSelf ? "اكتب ملخص تقييمك الذاتي وما تم الاتفاق عليه مع المدير" : "ملخص جلسة التقييم ونقاط التحسين"}"></textarea></label>
-          <label class="checkbox-row"><input name="meetingHeld" type="checkbox" checked /> تمت جلسة التقييم بين الموظف ومديره المباشر</label>
-          <div class="form-actions"><button class="button primary" type="submit" ${isSelf && windowInfo.isOpen === false ? "disabled" : ""}>${isSelf ? "رفع التقييم للمدير" : "حفظ / اعتماد التقييم"}</button></div>
+          <label>ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¬Ù„Ø³Ø©<input name="evaluationDate" type="date" value="${escapeHtml(cycle.startsOn || new Date().toISOString().slice(0, 10))}" required /></label>
+          <label>Ø­Ø§Ù„Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ…<select name="status">${optionList(isSelf ? [{ value: "SELF_SUBMITTED", name: "Ø±ÙØ¹ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±" }] : isHr ? [{ value: "HR_REVIEWED", name: "Ù…Ø±Ø§Ø¬Ø¹Ø© HR Ù…ÙƒØªÙ…Ù„Ø©" }] : isTeam ? [{ value: "MANAGER_APPROVED", name: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±" }] : isExecutive ? [{ value: "EXECUTIVE_APPROVED", name: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ" }] : [{ value: "DRAFT", name: "Ù…Ø³ÙˆØ¯Ø©" }, { value: "SELF_SUBMITTED", name: "Ø§Ø³ØªÙ„Ø§Ù… Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù" }, { value: "MANAGER_APPROVED", name: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ±" }, { value: "HR_REVIEWED", name: "Ù…Ø±Ø§Ø¬Ø¹Ø© HR" }, { value: "SECRETARY_REVIEWED", name: "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ" }, { value: "EXECUTIVE_APPROVED", name: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ" }], isSelf ? "SELF_SUBMITTED" : isHr ? "HR_REVIEWED" : isTeam ? "MANAGER_APPROVED" : "SECRETARY_REVIEWED")}</select></label>
+          ${!isHr ? `<label>ØªØ­Ù‚ÙŠÙ‚ Ø§Ù„Ø£Ù‡Ø¯Ø§Ù / 40<input name="targetScore" type="number" min="0" max="40" step="0.5" value="0" /></label>
+          <label>Ø§Ù„ÙƒÙØ§Ø¡Ø© ÙÙŠ Ø£Ø¯Ø§Ø¡ Ø§Ù„Ù…Ù‡Ø§Ù… / 20<input name="efficiencyScore" type="number" min="0" max="20" step="0.5" value="0" /></label>
+          <label>Ø­Ø³Ù† Ø§Ù„ØªØ¹Ø§Ù…Ù„ ÙˆØ§Ù„Ø³Ù„ÙˆÙƒ / 5<input name="conductScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
+          <label>Ø§Ù„ØªØ¨Ø±Ø¹Ø§Øª ÙˆØ§Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª / 5<input name="initiativesScore" type="number" min="0" max="5" step="0.5" value="0" /></label>` : ""}
+          ${(isHr || payload.accessMode === "all") ? `<label>Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨Ù…ÙˆØ§Ø¹ÙŠØ¯ Ø§Ù„Ø¹Ù…Ù„ Ø­Ø¶ÙˆØ±Ù‹Ø§ ÙˆØ§Ù†ØµØ±Ø§ÙÙ‹Ø§ / 20<input name="attendanceScore" type="number" min="0" max="20" step="0.5" placeholder="ÙŠØ­Ø³Ø¨ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ø¥Ù† ØªÙØ±Ùƒ ÙØ§Ø±ØºÙ‹Ø§" /></label>
+          <label>Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨Ø§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯ / 5<input name="prayerScore" type="number" min="0" max="5" step="0.5" value="0" /></label>
+          <label>Ø­Ø¶ÙˆØ± Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ ÙŠÙˆØ³Ù Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ÙŠØ© Ù„ØªØ¯Ø±ÙŠØ³ Ø§Ù„Ù‚Ø±Ø¢Ù† ÙˆØ§Ù„ØªØ¬ÙˆÙŠØ¯ / 5<input name="quranCircleScore" type="number" min="0" max="5" step="0.5" value="0" /></label>` : `<div class="notice span-2">Ø®Ø§Øµ Ø¨Ù€ HR â€” Ø¨Ù†ÙˆØ¯ HR ÙÙ‚Ø·: Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù /20ØŒ Ø§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯ /5ØŒ Ø­Ø¶ÙˆØ± Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ ÙŠÙˆØ³Ù Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ÙŠØ© Ù„ØªØ¯Ø±ÙŠØ³ Ø§Ù„Ù‚Ø±Ø¢Ù† ÙˆØ§Ù„ØªØ¬ÙˆÙŠØ¯ /5.</div>`}
+          <label class="span-2">${isSelf ? "Ù…Ù„Ø§Ø­Ø¸Ø§Øª Ø§Ù„Ù…ÙˆØ¸Ù" : "Ù…Ù„Ø§Ø­Ø¸Ø§Øª Ø§Ù„Ù…Ø¯ÙŠØ±"}<textarea name="${isSelf ? "employeeNotes" : "managerNotes"}" placeholder="${isSelf ? "Ø§ÙƒØªØ¨ Ù…Ù„Ø®Øµ ØªÙ‚ÙŠÙŠÙ…Ùƒ Ø§Ù„Ø°Ø§ØªÙŠ ÙˆÙ…Ø§ ØªÙ… Ø§Ù„Ø§ØªÙØ§Ù‚ Ø¹Ù„ÙŠÙ‡ Ù…Ø¹ Ø§Ù„Ù…Ø¯ÙŠØ±" : "Ù…Ù„Ø®Øµ Ø¬Ù„Ø³Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ÙˆÙ†Ù‚Ø§Ø· Ø§Ù„ØªØ­Ø³ÙŠÙ†"}"></textarea></label>
+          <label class="checkbox-row"><input name="meetingHeld" type="checkbox" checked /> ØªÙ…Øª Ø¬Ù„Ø³Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø¨ÙŠÙ† Ø§Ù„Ù…ÙˆØ¸Ù ÙˆÙ…Ø¯ÙŠØ±Ù‡ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</label>
+          <div class="form-actions"><button class="button primary" type="submit" ${isSelf && windowInfo.isOpen === false ? "disabled" : ""}>${isSelf ? "Ø±ÙØ¹ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ù„Ù„Ù…Ø¯ÙŠØ±" : "Ø­ÙØ¸ / Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…"}</button></div>
         </form>
       </article>
       <article class="panel span-7">
-        <div class="panel-head"><div><h2>معايير التقييم</h2><p>إجمالي النموذج 100 درجة</p></div><strong>${escapeHtml(cycle.name || "الدورة الحالية")}</strong></div>
-        ${table(["المعيار", "الدرجة", "النوع", "الوصف"], criteria.map((item) => `<tr><td><strong>${escapeHtml(item.name)}</strong></td><td>${escapeHtml(item.maxScore || item.weight || item.weightPercentage)} درجة</td><td>${escapeHtml(item.parentCode || item.scoringType || "-")}</td><td>${escapeHtml(item.description || "-")}</td></tr>`))}
+        <div class="panel-head"><div><h2>Ù…Ø¹Ø§ÙŠÙŠØ± Ø§Ù„ØªÙ‚ÙŠÙŠÙ…</h2><p>Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù†Ù…ÙˆØ°Ø¬ 100 Ø¯Ø±Ø¬Ø©</p></div><strong>${escapeHtml(cycle.name || "Ø§Ù„Ø¯ÙˆØ±Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ©")}</strong></div>
+        ${table(["Ø§Ù„Ù…Ø¹ÙŠØ§Ø±", "Ø§Ù„Ø¯Ø±Ø¬Ø©", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ÙˆØµÙ"], criteria.map((item) => `<tr><td><strong>${escapeHtml(item.name)}</strong></td><td>${escapeHtml(item.maxScore || item.weight || item.weightPercentage)} Ø¯Ø±Ø¬Ø©</td><td>${escapeHtml(item.parentCode || item.scoringType || "-")}</td><td>${escapeHtml(item.description || "-")}</td></tr>`))}
       </article>
       <article class="panel span-12">
-        <div class="panel-head"><div><h2>${isSelf ? "تقييمي الحالي" : "تقييمات الدورة الحالية"}</h2><p>آخر موعد لتسليم التقييمات يوم 25 من الشهر — الفترة الرسمية من يوم 20 إلى 25</p></div>${payload.accessMode !== "self" ? `<button class="button ghost" id="export-kpi-csv">تصدير CSV</button>` : ""}</div>
-        ${table(["الترتيب", "الموظف", "المدير", "الأهداف", "الكفاءة", "الحضور", "السلوكيات", "المبادرات", "الإجمالي", "التقدير", "الحالة", "إجراءات"], evaluations.map((item) => `<tr>
+        <div class="panel-head"><div><h2>${isSelf ? "ØªÙ‚ÙŠÙŠÙ…ÙŠ Ø§Ù„Ø­Ø§Ù„ÙŠ" : "ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„Ø¯ÙˆØ±Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ©"}</h2><p>Ø¢Ø®Ø± Ù…ÙˆØ¹Ø¯ Ù„ØªØ³Ù„ÙŠÙ… Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª ÙŠÙˆÙ… 25 Ù…Ù† Ø§Ù„Ø´Ù‡Ø± â€” Ø§Ù„ÙØªØ±Ø© Ø§Ù„Ø±Ø³Ù…ÙŠØ© Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ 25</p></div>${payload.accessMode !== "self" ? `<button class="button ghost" id="export-kpi-csv">ØªØµØ¯ÙŠØ± CSV</button>` : ""}</div>
+        ${table(["Ø§Ù„ØªØ±ØªÙŠØ¨", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø§Ù„Ø£Ù‡Ø¯Ø§Ù", "Ø§Ù„ÙƒÙØ§Ø¡Ø©", "Ø§Ù„Ø­Ø¶ÙˆØ±", "Ø§Ù„Ø³Ù„ÙˆÙƒÙŠØ§Øª", "Ø§Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª", "Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ", "Ø§Ù„ØªÙ‚Ø¯ÙŠØ±", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], evaluations.map((item) => `<tr>
           <td>${escapeHtml(item.rank || "-")}</td>
           <td>${escapeHtml(item.employee?.fullName || item.employeeId)}</td>
           <td>${escapeHtml(item.manager?.fullName || item.managerEmployeeId || "-")}</td>
@@ -2256,40 +2256,40 @@ async function renderKpi() {
           <td><strong>${escapeHtml(item.totalScore ?? "-")}/100</strong></td>
           <td>${escapeHtml(item.rating || item.grade || "-")}</td>
           <td>${badge(item.status || "DRAFT")}</td>
-          <td>${payload.accessMode === "self" ? "-" : `<button class="button ghost" data-kpi-action="approve" data-next-status="${escapeHtml(nextKpiStatus)}" data-id="${escapeHtml(item.id)}">${isExecutive ? "اعتماد نهائي" : "اعتماد وتسليم"}</button>`}</td>
+          <td>${payload.accessMode === "self" ? "-" : `<button class="button ghost" data-kpi-action="approve" data-next-status="${escapeHtml(nextKpiStatus)}" data-id="${escapeHtml(item.id)}">${isExecutive ? "Ø§Ø¹ØªÙ…Ø§Ø¯ Ù†Ù‡Ø§Ø¦ÙŠ" : "Ø§Ø¹ØªÙ…Ø§Ø¯ ÙˆØªØ³Ù„ÙŠÙ…"}</button>`}</td>
         </tr>`))}
       </article>
       <article class="panel span-12">
-        <h2>${isSelf ? "الخطوة التالية" : "موظفون لم يتم تقييمهم بعد"}</h2>
-        <div class="chips">${isSelf ? `<span class="chip">بعد رفع تقييمك، يظهر للمدير المباشر لاعتماده أو تعديله ثم تسليمه.</span>` : pendingEmployees.length ? pendingEmployees.map((employee) => `<span class="chip">${escapeHtml(employee.fullName)} - ${escapeHtml(employee.jobTitle || "")}</span>`).join("") : `<span class="chip success">لا توجد تقييمات ناقصة</span>`}</div>
+        <h2>${isSelf ? "Ø§Ù„Ø®Ø·ÙˆØ© Ø§Ù„ØªØ§Ù„ÙŠØ©" : "Ù…ÙˆØ¸ÙÙˆÙ† Ù„Ù… ÙŠØªÙ… ØªÙ‚ÙŠÙŠÙ…Ù‡Ù… Ø¨Ø¹Ø¯"}</h2>
+        <div class="chips">${isSelf ? `<span class="chip">Ø¨Ø¹Ø¯ Ø±ÙØ¹ ØªÙ‚ÙŠÙŠÙ…ÙƒØŒ ÙŠØ¸Ù‡Ø± Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ù„Ø§Ø¹ØªÙ…Ø§Ø¯Ù‡ Ø£Ùˆ ØªØ¹Ø¯ÙŠÙ„Ù‡ Ø«Ù… ØªØ³Ù„ÙŠÙ…Ù‡.</span>` : pendingEmployees.length ? pendingEmployees.map((employee) => `<span class="chip">${escapeHtml(employee.fullName)} - ${escapeHtml(employee.jobTitle || "")}</span>`).join("") : `<span class="chip success">Ù„Ø§ ØªÙˆØ¬Ø¯ ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ù†Ø§Ù‚ØµØ©</span>`}</div>
       </article>
     </section>`,
-    "مؤشرات وتقييم الأداء",
-    isSelf ? "الموظف يرى تقييمه فقط ويرفعه لمديره المباشر." : "نموذج KPI شهري يبدأ من يوم 20 إلى 25، مع فصل بنود HR عن بنود الموظف والمدير.",
+    "Ù…Ø¤Ø´Ø±Ø§Øª ÙˆØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡",
+    isSelf ? "Ø§Ù„Ù…ÙˆØ¸Ù ÙŠØ±Ù‰ ØªÙ‚ÙŠÙŠÙ…Ù‡ ÙÙ‚Ø· ÙˆÙŠØ±ÙØ¹Ù‡ Ù„Ù…Ø¯ÙŠØ±Ù‡ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±." : "Ù†Ù…ÙˆØ°Ø¬ KPI Ø´Ù‡Ø±ÙŠ ÙŠØ¨Ø¯Ø£ Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ 25ØŒ Ù…Ø¹ ÙØµÙ„ Ø¨Ù†ÙˆØ¯ HR Ø¹Ù† Ø¨Ù†ÙˆØ¯ Ø§Ù„Ù…ÙˆØ¸Ù ÙˆØ§Ù„Ù…Ø¯ÙŠØ±.",
   );
-  app.querySelector("#kpi-form").addEventListener("submit", submitForm(endpoints.saveKpiEvaluation, isSelf ? "تم رفع تقييمك للمدير المباشر." : "تم حفظ تقييم الأداء."));
+  app.querySelector("#kpi-form").addEventListener("submit", submitForm(endpoints.saveKpiEvaluation, isSelf ? "ØªÙ… Ø±ÙØ¹ ØªÙ‚ÙŠÙŠÙ…Ùƒ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±." : "ØªÙ… Ø­ÙØ¸ ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡."));
   app.querySelector("#recompute-kpi")?.addEventListener("click", async () => {
     const result = await endpoints.recomputeKpi({});
-    setMessage(`تم تجهيز ${result.recomputed || 0} تقييم ناقص.`, "");
+    setMessage(`ØªÙ… ØªØ¬Ù‡ÙŠØ² ${result.recomputed || 0} ØªÙ‚ÙŠÙŠÙ… Ù†Ø§Ù‚Øµ.`, "");
     render();
   });
   app.querySelector("#send-kpi-reminders")?.addEventListener("click", async () => {
     const result = await endpoints.sendKpiReminders();
-    setMessage(`تم إرسال ${result.sent || 0} تذكير KPI حسب المرحلة.`, "");
+    setMessage(`ØªÙ… Ø¥Ø±Ø³Ø§Ù„ ${result.sent || 0} ØªØ°ÙƒÙŠØ± KPI Ø­Ø³Ø¨ Ø§Ù„Ù…Ø±Ø­Ù„Ø©.`, "");
     render();
   });
   app.querySelector("#close-kpi-cycle")?.addEventListener("click", async () => {
     await endpoints.closeKpiCycle();
-    setMessage("تم إغلاق دورة KPI الحالية.", "");
+    setMessage("ØªÙ… Ø¥ØºÙ„Ø§Ù‚ Ø¯ÙˆØ±Ø© KPI Ø§Ù„Ø­Ø§Ù„ÙŠØ©.", "");
     render();
   });
   app.querySelectorAll("[data-kpi-action]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.updateKpiEvaluation(button.dataset.id, { status: button.dataset.nextStatus || nextKpiStatus });
-    setMessage("تم اعتماد التقييم وتسليمه.", "");
+    setMessage("ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ÙˆØªØ³Ù„ÙŠÙ…Ù‡.", "");
     render();
   }));
   app.querySelector("#export-kpi-csv")?.addEventListener("click", () => {
-    const rows = [["الموظف", "المدير", "الأهداف", "الكفاءة", "الحضور", "السلوكيات", "المبادرات", "الإجمالي", "الحالة"], ...evaluations.map((item) => [item.employee?.fullName || item.employeeId, item.manager?.fullName || "", item.targetScore, item.efficiencyScore, item.attendanceScore, Number(item.conductScore || 0) + Number(item.prayerScore || 0) + Number(item.quranCircleScore || 0), item.initiativesScore, item.totalScore, statusLabel(item.status)])];
+    const rows = [["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø§Ù„Ø£Ù‡Ø¯Ø§Ù", "Ø§Ù„ÙƒÙØ§Ø¡Ø©", "Ø§Ù„Ø­Ø¶ÙˆØ±", "Ø§Ù„Ø³Ù„ÙˆÙƒÙŠØ§Øª", "Ø§Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª", "Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ", "Ø§Ù„Ø­Ø§Ù„Ø©"], ...evaluations.map((item) => [item.employee?.fullName || item.employeeId, item.manager?.fullName || "", item.targetScore, item.efficiencyScore, item.attendanceScore, Number(item.conductScore || 0) + Number(item.prayerScore || 0) + Number(item.quranCircleScore || 0), item.initiativesScore, item.totalScore, statusLabel(item.status)])];
     downloadFile("monthly-kpi-evaluations.csv", `\ufeff${toCsv(rows)}`, "text/csv;charset=utf-8");
   });
 }
@@ -2299,40 +2299,40 @@ async function renderReports() {
   const jobs = payload.jobs || [];
   const schedules = payload.schedules || [];
   const templates = payload.templates || [
-    { key: "attendance", name: "الحضور والانصراف" },
-    { key: "employees", name: "بيانات الموظفين" },
-    { key: "requests", name: "الطلبات والموافقات" },
+    { key: "attendance", name: "Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù" },
+    { key: "employees", name: "Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†" },
+    { key: "requests", name: "Ø§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ§Ù„Ù…ÙˆØ§ÙÙ‚Ø§Øª" },
   ];
   shell(
     `<section class="grid reports-hub-page">
-      <article class="panel span-4"><h2>طلب تقرير</h2>${simpleForm("report-form", [["title", "العنوان"], ["reportKey", "النوع", "select", optionList(templates.map((item) => ({ value: item.key, name: item.name })))], ["format", "الصيغة", "select", optionList([{ name: "csv" }, { name: "excel" }, { name: "pdf" }, { name: "json" }])]], "إنشاء")}</article>
+      <article class="panel span-4"><h2>Ø·Ù„Ø¨ ØªÙ‚Ø±ÙŠØ±</h2>${simpleForm("report-form", [["title", "Ø§Ù„Ø¹Ù†ÙˆØ§Ù†"], ["reportKey", "Ø§Ù„Ù†ÙˆØ¹", "select", optionList(templates.map((item) => ({ value: item.key, name: item.name })))], ["format", "Ø§Ù„ØµÙŠØºØ©", "select", optionList([{ name: "csv" }, { name: "excel" }, { name: "pdf" }, { name: "json" }])]], "Ø¥Ù†Ø´Ø§Ø¡")}</article>
       <article class="panel span-8">
-        <div class="panel-head"><div><h2>مركز التصدير</h2><p>تصدير فوري CSV/Excel/PDF مع قالب الجمعية.</p></div></div>
+        <div class="panel-head"><div><h2>Ù…Ø±ÙƒØ² Ø§Ù„ØªØµØ¯ÙŠØ±</h2><p>ØªØµØ¯ÙŠØ± ÙÙˆØ±ÙŠ CSV/Excel/PDF Ù…Ø¹ Ù‚Ø§Ù„Ø¨ Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©.</p></div></div>
         <form id="quick-report-form" class="form-grid compact-form">
-          <label>نوع التقرير<select name="reportKey">${optionList(templates.map((item) => ({ value: item.key, name: item.name })))}</select></label>
-          <label>الفترة من<input name="from" type="date" /></label>
-          <label>إلى<input name="to" type="date" /></label>
-          <div class="form-actions"><button class="button ghost" type="button" data-export-format="csv">CSV</button><button class="button ghost" type="button" data-export-format="xls">Excel</button><button class="button primary" type="button" data-export-format="pdf">طباعة / PDF</button></div>
+          <label>Ù†ÙˆØ¹ Ø§Ù„ØªÙ‚Ø±ÙŠØ±<select name="reportKey">${optionList(templates.map((item) => ({ value: item.key, name: item.name })))}</select></label>
+          <label>Ø§Ù„ÙØªØ±Ø© Ù…Ù†<input name="from" type="date" /></label>
+          <label>Ø¥Ù„Ù‰<input name="to" type="date" /></label>
+          <div class="form-actions"><button class="button ghost" type="button" data-export-format="csv">CSV</button><button class="button ghost" type="button" data-export-format="xls">Excel</button><button class="button primary" type="button" data-export-format="pdf">Ø·Ø¨Ø§Ø¹Ø© / PDF</button></div>
         </form>
       </article>
       <article class="panel span-5">
-        <h2>جدولة التقارير</h2>
+        <h2>Ø¬Ø¯ÙˆÙ„Ø© Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±</h2>
         <form id="report-schedule-form" class="form-grid compact-form">
-          <label>اسم الجدولة<input name="title" value="تقرير شهري للإدارة" /></label>
-          <label>نوع التقرير<select name="reportKey">${optionList(templates.map((item) => ({ value: item.key, name: item.name })))}</select></label>
-          <label>التكرار<select name="frequency"><option value="weekly">أسبوعي</option><option value="monthly" selected>شهري</option></select></label>
-          <label>المستلمون<input name="recipients" placeholder="email@example.com" /></label>
-          <div class="form-actions"><button class="button primary">حفظ الجدولة</button></div>
+          <label>Ø§Ø³Ù… Ø§Ù„Ø¬Ø¯ÙˆÙ„Ø©<input name="title" value="ØªÙ‚Ø±ÙŠØ± Ø´Ù‡Ø±ÙŠ Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©" /></label>
+          <label>Ù†ÙˆØ¹ Ø§Ù„ØªÙ‚Ø±ÙŠØ±<select name="reportKey">${optionList(templates.map((item) => ({ value: item.key, name: item.name })))}</select></label>
+          <label>Ø§Ù„ØªÙƒØ±Ø§Ø±<select name="frequency"><option value="weekly">Ø£Ø³Ø¨ÙˆØ¹ÙŠ</option><option value="monthly" selected>Ø´Ù‡Ø±ÙŠ</option></select></label>
+          <label>Ø§Ù„Ù…Ø³ØªÙ„Ù…ÙˆÙ†<input name="recipients" placeholder="email@example.com" /></label>
+          <div class="form-actions"><button class="button primary">Ø­ÙØ¸ Ø§Ù„Ø¬Ø¯ÙˆÙ„Ø©</button></div>
         </form>
       </article>
-      <article class="panel span-7"><h2>الجداول المحفوظة</h2>${table(["الاسم", "النوع", "التكرار", "المستلمون", "التاريخ"], schedules.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.reportKey)}</td><td>${escapeHtml(item.frequency)}</td><td>${escapeHtml(item.recipients || "-")}</td><td>${date(item.createdAt)}</td></tr>`))}</article>
-      <article class="panel span-12"><div class="panel-head"><h2>التقارير المنشأة</h2><div class="toolbar"><button class="button ghost" id="export-system-json">Backup JSON</button></div></div>${table(["العنوان", "النوع", "الصيغة", "الحالة", "التاريخ"], jobs.map((job) => `<tr><td>${escapeHtml(job.title)}</td><td>${escapeHtml(job.reportKey)}</td><td>${escapeHtml(job.format)}</td><td>${badge(job.status)}</td><td>${date(job.createdAt)}</td></tr>`))}</article>
+      <article class="panel span-7"><h2>Ø§Ù„Ø¬Ø¯Ø§ÙˆÙ„ Ø§Ù„Ù…Ø­ÙÙˆØ¸Ø©</h2>${table(["Ø§Ù„Ø§Ø³Ù…", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ØªÙƒØ±Ø§Ø±", "Ø§Ù„Ù…Ø³ØªÙ„Ù…ÙˆÙ†", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], schedules.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.reportKey)}</td><td>${escapeHtml(item.frequency)}</td><td>${escapeHtml(item.recipients || "-")}</td><td>${date(item.createdAt)}</td></tr>`))}</article>
+      <article class="panel span-12"><div class="panel-head"><h2>Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ù…Ù†Ø´Ø£Ø©</h2><div class="toolbar"><button class="button ghost" id="export-system-json">Backup JSON</button></div></div>${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ØµÙŠØºØ©", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], jobs.map((job) => `<tr><td>${escapeHtml(job.title)}</td><td>${escapeHtml(job.reportKey)}</td><td>${escapeHtml(job.format)}</td><td>${badge(job.status)}</td><td>${date(job.createdAt)}</td></tr>`))}</article>
     </section>`,
-    "التقارير",
-    "إنشاء وتصدير وجدولة التقارير التشغيلية.",
+    "Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±",
+    "Ø¥Ù†Ø´Ø§Ø¡ ÙˆØªØµØ¯ÙŠØ± ÙˆØ¬Ø¯ÙˆÙ„Ø© Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ØªØ´ØºÙŠÙ„ÙŠØ©.",
   );
-  app.querySelector("#report-form").addEventListener("submit", submitForm(endpoints.createReport, "تم إنشاء التقرير."));
-  app.querySelector("#report-schedule-form")?.addEventListener("submit", submitForm(endpoints.saveReportSchedule, "تم حفظ جدولة التقرير."));
+  app.querySelector("#report-form").addEventListener("submit", submitForm(endpoints.createReport, "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„ØªÙ‚Ø±ÙŠØ±."));
+  app.querySelector("#report-schedule-form")?.addEventListener("submit", submitForm(endpoints.saveReportSchedule, "ØªÙ… Ø­ÙØ¸ Ø¬Ø¯ÙˆÙ„Ø© Ø§Ù„ØªÙ‚Ø±ÙŠØ±."));
   const exportQuick = async (format) => {
     const values = readForm(app.querySelector("#quick-report-form"));
     const report = await endpoints.exportReportData(values).then(unwrap);
@@ -2341,7 +2341,7 @@ async function renderReports() {
     const name = `${values.reportKey || "report"}-${new Date().toISOString().slice(0,10)}`;
     if (format === "csv") return downloadFile(`${name}.csv`, `\ufeff${toCsv([headers, ...rows])}`, "text/csv;charset=utf-8");
     if (format === "xls") return exportHtmlTable(`${name}.xls`, headers, rows);
-    return printBrandedReport(report.title || "تقرير", `<div class="summary"><div><span>عدد السجلات</span><strong>${rows.length}</strong></div><div><span>نوع التقرير</span><strong>${escapeHtml(values.reportKey || "attendance")}</strong></div></div>`, headers, rows);
+    return printBrandedReport(report.title || "ØªÙ‚Ø±ÙŠØ±", `<div class="summary"><div><span>Ø¹Ø¯Ø¯ Ø§Ù„Ø³Ø¬Ù„Ø§Øª</span><strong>${rows.length}</strong></div><div><span>Ù†ÙˆØ¹ Ø§Ù„ØªÙ‚Ø±ÙŠØ±</span><strong>${escapeHtml(values.reportKey || "attendance")}</strong></div></div>`, headers, rows);
   };
   app.querySelectorAll("[data-export-format]").forEach((button) => button.addEventListener("click", () => exportQuick(button.dataset.exportFormat)));
   app.querySelector("#export-system-json").addEventListener("click", async () => downloadFile("hr-backup.json", JSON.stringify(await endpoints.backup(), null, 2), "application/json;charset=utf-8"));
@@ -2352,11 +2352,11 @@ async function renderAudit() {
   const logs = await endpoints.auditLogs().then(unwrap);
   shell(
     `<section class="panel">
-      <div class="panel-head"><div><h2>سجل التدقيق</h2><p>كل العمليات المهمة تحفظ هنا للمراجعة</p></div><button class="button ghost" id="export-audit">تصدير</button></div>
-      ${table(["العملية", "الكيان", "المعرف", "المستخدم", "التاريخ"], logs.map((log) => `<tr><td>${escapeHtml(log.action)}</td><td>${escapeHtml(log.entityType)}</td><td>${escapeHtml(log.entityId)}</td><td>${escapeHtml(log.actor || log.actorUserId || "-")}</td><td>${date(log.createdAt)}</td></tr>`))}
+      <div class="panel-head"><div><h2>Ø³Ø¬Ù„ Ø§Ù„ØªØ¯Ù‚ÙŠÙ‚</h2><p>ÙƒÙ„ Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù…Ù‡Ù…Ø© ØªØ­ÙØ¸ Ù‡Ù†Ø§ Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©</p></div><button class="button ghost" id="export-audit">ØªØµØ¯ÙŠØ±</button></div>
+      ${table(["Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", "Ø§Ù„ÙƒÙŠØ§Ù†", "Ø§Ù„Ù…Ø¹Ø±Ù", "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], logs.map((log) => `<tr><td>${escapeHtml(log.action)}</td><td>${escapeHtml(log.entityType)}</td><td>${escapeHtml(log.entityId)}</td><td>${escapeHtml(log.actor || log.actorUserId || "-")}</td><td>${date(log.createdAt)}</td></tr>`))}
     </section>`,
-    "سجل التدقيق",
-    "Audit Log للعمليات المهمة.",
+    "Ø³Ø¬Ù„ Ø§Ù„ØªØ¯Ù‚ÙŠÙ‚",
+    "Audit Log Ù„Ù„Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù…Ù‡Ù…Ø©.",
   );
   app.querySelector("#export-audit").addEventListener("click", () => downloadFile("audit-log.csv", `\ufeff${toCsv([["action","entity","id","actor","date"], ...logs.map((l) => [l.action, l.entityType, l.entityId, l.actor, l.createdAt])])}`, "text/csv;charset=utf-8"));
 }
@@ -2367,32 +2367,32 @@ async function renderNotifications() {
   shell(
     `<section class="grid notifications-hub-page">
       <article class="panel span-5">
-        <div class="panel-head"><div><h2>قناة التواصل الداخلي</h2><p>إعلانات، تذكيرات، وتعليمات تصل للموظفين كتنبيه داخلي وWeb Push مع تنبيه صوتي داخل التطبيق عند فتحه.</p></div>${healthBadge(Boolean("Notification" in window), "Browser Push")}</div>
+        <div class="panel-head"><div><h2>Ù‚Ù†Ø§Ø© Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ</h2><p>Ø¥Ø¹Ù„Ø§Ù†Ø§ØªØŒ ØªØ°ÙƒÙŠØ±Ø§ØªØŒ ÙˆØªØ¹Ù„ÙŠÙ…Ø§Øª ØªØµÙ„ Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙƒØªÙ†Ø¨ÙŠÙ‡ Ø¯Ø§Ø®Ù„ÙŠ ÙˆWeb Push Ù…Ø¹ ØªÙ†Ø¨ÙŠÙ‡ ØµÙˆØªÙŠ Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¹Ù†Ø¯ ÙØªØ­Ù‡.</p></div>${healthBadge(Boolean("Notification" in window), "Browser Push")}</div>
         <form id="announcement-form" class="form-grid compact-form">
-          <label>نوع الرسالة<select name="type"><option value="ANNOUNCEMENT">إعلان إداري</option><option value="REMINDER">تذكير</option><option value="ACTION_REQUIRED">مطلوب إجراء</option><option value="DECISION">قرار إداري</option></select></label>
-          <label>العنوان<input name="title" value="تذكير إداري مهم" /></label>
-          <label>الجمهور<select name="audience"><option value="all">كل الموظفين</option>${optionList(ref.departments.map((d) => ({ value: d.id, name: `قسم: ${d.name}` })))}${optionList(ref.branches.map((b) => ({ value: b.id, name: `فرع: ${b.name}` })))}</select></label>
-          <label class="check-row"><input type="checkbox" name="playSound" checked /> تشغيل تنبيه صوتي داخل تطبيق الموظف عند وصول الرسالة</label>
-          <label class="span-2">المحتوى<textarea name="body" placeholder="اكتب نص الإعلان أو التذكير أو التعليمات"></textarea></label>
-          <div class="form-actions"><button class="button primary">إرسال عبر القناة الداخلية</button><button class="button ghost" type="button" id="enable-browser-notifications">تفعيل إشعارات المتصفح</button></div>
+          <label>Ù†ÙˆØ¹ Ø§Ù„Ø±Ø³Ø§Ù„Ø©<select name="type"><option value="ANNOUNCEMENT">Ø¥Ø¹Ù„Ø§Ù† Ø¥Ø¯Ø§Ø±ÙŠ</option><option value="REMINDER">ØªØ°ÙƒÙŠØ±</option><option value="ACTION_REQUIRED">Ù…Ø·Ù„ÙˆØ¨ Ø¥Ø¬Ø±Ø§Ø¡</option><option value="DECISION">Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ</option></select></label>
+          <label>Ø§Ù„Ø¹Ù†ÙˆØ§Ù†<input name="title" value="ØªØ°ÙƒÙŠØ± Ø¥Ø¯Ø§Ø±ÙŠ Ù…Ù‡Ù…" /></label>
+          <label>Ø§Ù„Ø¬Ù…Ù‡ÙˆØ±<select name="audience"><option value="all">ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</option>${optionList(ref.departments.map((d) => ({ value: d.id, name: `Ù‚Ø³Ù…: ${d.name}` })))}${optionList(ref.branches.map((b) => ({ value: b.id, name: `ÙØ±Ø¹: ${b.name}` })))}</select></label>
+          <label class="check-row"><input type="checkbox" name="playSound" checked /> ØªØ´ØºÙŠÙ„ ØªÙ†Ø¨ÙŠÙ‡ ØµÙˆØªÙŠ Ø¯Ø§Ø®Ù„ ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù Ø¹Ù†Ø¯ ÙˆØµÙˆÙ„ Ø§Ù„Ø±Ø³Ø§Ù„Ø©</label>
+          <label class="span-2">Ø§Ù„Ù…Ø­ØªÙˆÙ‰<textarea name="body" placeholder="Ø§ÙƒØªØ¨ Ù†Øµ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù† Ø£Ùˆ Ø§Ù„ØªØ°ÙƒÙŠØ± Ø£Ùˆ Ø§Ù„ØªØ¹Ù„ÙŠÙ…Ø§Øª"></textarea></label>
+          <div class="form-actions"><button class="button primary">Ø¥Ø±Ø³Ø§Ù„ Ø¹Ø¨Ø± Ø§Ù„Ù‚Ù†Ø§Ø© Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠØ©</button><button class="button ghost" type="button" id="enable-browser-notifications">ØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù…ØªØµÙØ­</button></div>
         </form>
       </article>
       <article class="panel span-7">
-        <div class="panel-head"><div><h2>صندوق الإشعارات</h2><p>${escapeHtml(unread)} إشعار غير مقروء</p></div></div>
-        ${table(["العنوان", "المحتوى", "الحالة", "التاريخ", "إجراءات"], items.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.body || "")}</td><td>${badge(item.isRead ? "READ" : "UNREAD")}</td><td>${date(item.createdAt)}</td><td>${item.isRead ? "" : `<button class="button ghost" data-read="${item.id}">تعليم كمقروء</button>`}</td></tr>`))}
+        <div class="panel-head"><div><h2>ØµÙ†Ø¯ÙˆÙ‚ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª</h2><p>${escapeHtml(unread)} Ø¥Ø´Ø¹Ø§Ø± ØºÙŠØ± Ù…Ù‚Ø±ÙˆØ¡</p></div></div>
+        ${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…Ø­ØªÙˆÙ‰", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], items.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.body || "")}</td><td>${badge(item.isRead ? "READ" : "UNREAD")}</td><td>${date(item.createdAt)}</td><td>${item.isRead ? "" : `<button class="button ghost" data-read="${item.id}">ØªØ¹Ù„ÙŠÙ… ÙƒÙ…Ù‚Ø±ÙˆØ¡</button>`}</td></tr>`))}
       </article>
     </section>`,
-    "الإشعارات",
-    "قناة التواصل الداخلي والإعلانات والتنبيهات الصوتية.",
+    "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª",
+    "Ù‚Ù†Ø§Ø© Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ ÙˆØ§Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„ØµÙˆØªÙŠØ©.",
   );
-  app.querySelector("#announcement-form")?.addEventListener("submit", submitForm(endpoints.createAnnouncement, "تم إرسال الإعلان للموظفين."));
+  app.querySelector("#announcement-form")?.addEventListener("submit", submitForm(endpoints.createAnnouncement, "ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù† Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ†."));
   app.querySelector("#enable-browser-notifications")?.addEventListener("click", async () => {
-    if (!("Notification" in window)) return setMessage("", "المتصفح لا يدعم إشعارات سطح المكتب.");
+    if (!("Notification" in window)) return setMessage("", "Ø§Ù„Ù…ØªØµÙØ­ Ù„Ø§ ÙŠØ¯Ø¹Ù… Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø³Ø·Ø­ Ø§Ù„Ù…ÙƒØªØ¨.");
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
       await enableBrowserNotifications();
-      setMessage("تم تفعيل اشتراك Web Push الحقيقي لهذا المتصفح.", "");
-    } else setMessage("", "لم يتم السماح بإشعارات المتصفح.");
+      setMessage("ØªÙ… ØªÙØ¹ÙŠÙ„ Ø§Ø´ØªØ±Ø§Ùƒ Web Push Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ Ù„Ù‡Ø°Ø§ Ø§Ù„Ù…ØªØµÙØ­.", "");
+    } else setMessage("", "Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù…ØªØµÙØ­.");
     render();
   });
   app.querySelectorAll("[data-read]").forEach((button) => button.addEventListener("click", async () => {
@@ -2409,29 +2409,29 @@ function renderRouteAccess() {
     const matched = hasFullAccess() ? ["*"] : scopes.filter((scope) => currentPermissions().has(scope));
     return `<tr>
       <td><strong>${escapeHtml(routeDisplayName(key))}</strong><small>${escapeHtml(key)}</small></td>
-      <td><div class="scope-list">${scopes.length ? scopes.map((scope) => `<span>${escapeHtml(scope)}</span>`).join("") : `<span>عام</span>`}</div></td>
-      <td><div class="scope-list matched">${matched.length ? matched.map((scope) => `<span>${escapeHtml(scope)}</span>`).join("") : `<span>لا يوجد تطابق</span>`}</div></td>
+      <td><div class="scope-list">${scopes.length ? scopes.map((scope) => `<span>${escapeHtml(scope)}</span>`).join("") : `<span>Ø¹Ø§Ù…</span>`}</div></td>
+      <td><div class="scope-list matched">${matched.length ? matched.map((scope) => `<span>${escapeHtml(scope)}</span>`).join("") : `<span>Ù„Ø§ ÙŠÙˆØ¬Ø¯ ØªØ·Ø§Ø¨Ù‚</span>`}</div></td>
       <td>${allowed ? badge("APPROVED") : badge("REJECTED")}</td>
     </tr>`;
   });
   shell(
     `<section class="grid">
       <article class="panel span-4">
-        <h2>ملخص دورك الحالي</h2>
+        <h2>Ù…Ù„Ø®Øµ Ø¯ÙˆØ±Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ</h2>
         <div class="meta-grid">
-          <span><strong>الدور</strong>${escapeHtml(roleLabel())}</span>
-          <span><strong>نوع الوصول</strong>${hasFullAccess() ? "صلاحيات كاملة" : "حسب الصلاحيات"}</span>
-          <span><strong>عدد الصلاحيات المقروءة</strong>${escapeHtml(permissions.length)}</span>
+          <span><strong>Ø§Ù„Ø¯ÙˆØ±</strong>${escapeHtml(roleLabel())}</span>
+          <span><strong>Ù†ÙˆØ¹ Ø§Ù„ÙˆØµÙˆÙ„</strong>${hasFullAccess() ? "ØµÙ„Ø§Ø­ÙŠØ§Øª ÙƒØ§Ù…Ù„Ø©" : "Ø­Ø³Ø¨ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª"}</span>
+          <span><strong>Ø¹Ø¯Ø¯ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ù…Ù‚Ø±ÙˆØ¡Ø©</strong>${escapeHtml(permissions.length)}</span>
         </div>
-        <div class="scope-list all-scopes">${permissions.length ? permissions.map((scope) => `<span>${escapeHtml(scope)}</span>`).join("") : `<span>لا توجد صلاحيات مباشرة؛ راجع ربط الدور بالملف.</span>`}</div>
+        <div class="scope-list all-scopes">${permissions.length ? permissions.map((scope) => `<span>${escapeHtml(scope)}</span>`).join("") : `<span>Ù„Ø§ ØªÙˆØ¬Ø¯ ØµÙ„Ø§Ø­ÙŠØ§Øª Ù…Ø¨Ø§Ø´Ø±Ø©Ø› Ø±Ø§Ø¬Ø¹ Ø±Ø¨Ø· Ø§Ù„Ø¯ÙˆØ± Ø¨Ø§Ù„Ù…Ù„Ù.</span>`}</div>
       </article>
       <article class="panel span-8">
-        <div class="panel-head"><div><h2>سبب ظهور أو اختفاء الصفحات</h2><p>هذه الصفحة تساعدك على معرفة الـ Route المطلوب والصلاحية التي تسمح بفتحه.</p></div></div>
-        ${table(["الصفحة", "الصلاحيات المطلوبة", "المتطابق مع حسابك", "الحالة"], rows, "route-access-table")}
+        <div class="panel-head"><div><h2>Ø³Ø¨Ø¨ Ø¸Ù‡ÙˆØ± Ø£Ùˆ Ø§Ø®ØªÙØ§Ø¡ Ø§Ù„ØµÙØ­Ø§Øª</h2><p>Ù‡Ø°Ù‡ Ø§Ù„ØµÙØ­Ø© ØªØ³Ø§Ø¹Ø¯Ùƒ Ø¹Ù„Ù‰ Ù…Ø¹Ø±ÙØ© Ø§Ù„Ù€ Route Ø§Ù„Ù…Ø·Ù„ÙˆØ¨ ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„ØªÙŠ ØªØ³Ù…Ø­ Ø¨ÙØªØ­Ù‡.</p></div></div>
+        ${table(["Ø§Ù„ØµÙØ­Ø©", "Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©", "Ø§Ù„Ù…ØªØ·Ø§Ø¨Ù‚ Ù…Ø¹ Ø­Ø³Ø§Ø¨Ùƒ", "Ø§Ù„Ø­Ø§Ù„Ø©"], rows, "route-access-table")}
       </article>
     </section>`,
-    "صلاحيات الواجهة",
-    "تشخيص واضح لمسارات النظام بناءً على الدور والصلاحيات الحالية.",
+    "ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„ÙˆØ§Ø¬Ù‡Ø©",
+    "ØªØ´Ø®ÙŠØµ ÙˆØ§Ø¶Ø­ Ù„Ù…Ø³Ø§Ø±Ø§Øª Ø§Ù„Ù†Ø¸Ø§Ù… Ø¨Ù†Ø§Ø¡Ù‹ Ø¹Ù„Ù‰ Ø§Ù„Ø¯ÙˆØ± ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ø­Ø§Ù„ÙŠØ©.",
   );
 }
 
@@ -2442,24 +2442,24 @@ async function renderSettings() {
     : Object.entries(settingsPayload || {}).map(([key, value]) => ({ key, value: typeof value === "object" ? JSON.stringify(value) : value }));
   shell(
     `<section class="grid">
-      <article class="panel span-6"><h2>حالة التشغيل السريعة</h2>${table(["البند", "القيمة"], [`<tr><td>التطبيق</td><td>${escapeHtml(health.app || health.mode || "HR")}</td></tr>`, `<tr><td>قاعدة البيانات</td><td>${escapeHtml(health.database?.mode || health.database || "-")} / متصلة</td></tr>`, `<tr><td>الجلسات</td><td>${health.authEnforced ? "مفعلة" : "اختيارية"}</td></tr>`, `<tr><td>الإصدار</td><td>${escapeHtml(health.version || "-")}</td></tr>`])}</article>
-      <article class="panel span-6 account-avatar-panel"><div class="panel-head"><div><h2>صورة حسابي</h2><p>تعديل Avatar المستخدم الحالي ويظهر في أعلى النظام وقائمة المستخدمين.</p></div>${avatar(userAvatarSubject(), "large")}</div><div class="toolbar spaced"><input type="file" id="current-user-avatar" accept="image/png,image/jpeg,image/webp,image/gif" /><button class="button primary" id="save-current-avatar" type="button">حفظ صورة الحساب</button></div></article>
-      <article class="panel span-6"><h2>تعديل الإعدادات</h2><form id="settings-form" class="form-grid">${settingsRows.map((item) => `<label>${escapeHtml(item.key)}<input name="${escapeHtml(item.key)}" value="${escapeHtml(item.value)}" /></label>`).join("")}<div class="form-actions"><button class="button primary">حفظ الإعدادات</button></div></form></article>
-      <article class="panel span-6"><h2>تغيير كلمة المرور</h2><form id="password-form" class="form-grid"><label>كلمة المرور الحالية<input type="password" name="currentPassword" required /></label><label>كلمة المرور الجديدة<input type="password" name="newPassword" minlength="8" required /></label><div class="form-actions"><button class="button primary">تغيير كلمة المرور</button></div></form></article>
-      <article class="panel span-6"><h2>اختبار GPS سريع</h2><p>اختبار مباشر من الإعدادات لمعرفة دقة الموقع والمسافة من المجمع.</p><button class="button ghost" type="button" data-settings-gps-test>اختبار GPS الآن</button><div id="settings-gps-result" class="risk-box hidden"></div></article>
-      <article class="panel span-12"><h2>سياسات الأمان المقترحة</h2>${table(["السياسة", "الحالة"], [["قفل الحساب بعد محاولات فاشلة", "مفعل عند تشغيل Backend"], ["تغيير كلمة المرور المؤقتة", "مدعوم عبر mustChangePassword"], ["سجل آخر IP وجهاز", "مدعوم في قاعدة البيانات"], ["Passkeys", "جاهز كنموذج بيانات وينتظر HTTPS/Domain"]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td>${escapeHtml(b)}</td></tr>`))}</article>
+      <article class="panel span-6"><h2>Ø­Ø§Ù„Ø© Ø§Ù„ØªØ´ØºÙŠÙ„ Ø§Ù„Ø³Ø±ÙŠØ¹Ø©</h2>${table(["Ø§Ù„Ø¨Ù†Ø¯", "Ø§Ù„Ù‚ÙŠÙ…Ø©"], [`<tr><td>Ø§Ù„ØªØ·Ø¨ÙŠÙ‚</td><td>${escapeHtml(health.app || health.mode || "HR")}</td></tr>`, `<tr><td>Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª</td><td>${escapeHtml(health.database?.mode || health.database || "-")} / Ù…ØªØµÙ„Ø©</td></tr>`, `<tr><td>Ø§Ù„Ø¬Ù„Ø³Ø§Øª</td><td>${health.authEnforced ? "Ù…ÙØ¹Ù„Ø©" : "Ø§Ø®ØªÙŠØ§Ø±ÙŠØ©"}</td></tr>`, `<tr><td>Ø§Ù„Ø¥ØµØ¯Ø§Ø±</td><td>${escapeHtml(health.version || "-")}</td></tr>`])}</article>
+      <article class="panel span-6 account-avatar-panel"><div class="panel-head"><div><h2>ØµÙˆØ±Ø© Ø­Ø³Ø§Ø¨ÙŠ</h2><p>ØªØ¹Ø¯ÙŠÙ„ Avatar Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ø§Ù„Ø­Ø§Ù„ÙŠ ÙˆÙŠØ¸Ù‡Ø± ÙÙŠ Ø£Ø¹Ù„Ù‰ Ø§Ù„Ù†Ø¸Ø§Ù… ÙˆÙ‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†.</p></div>${avatar(userAvatarSubject(), "large")}</div><div class="toolbar spaced"><input type="file" id="current-user-avatar" accept="image/png,image/jpeg,image/webp,image/gif" /><button class="button primary" id="save-current-avatar" type="button">Ø­ÙØ¸ ØµÙˆØ±Ø© Ø§Ù„Ø­Ø³Ø§Ø¨</button></div></article>
+      <article class="panel span-6"><h2>ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª</h2><form id="settings-form" class="form-grid">${settingsRows.map((item) => `<label>${escapeHtml(item.key)}<input name="${escapeHtml(item.key)}" value="${escapeHtml(item.value)}" /></label>`).join("")}<div class="form-actions"><button class="button primary">Ø­ÙØ¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª</button></div></form></article>
+      <article class="panel span-6"><h2>ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±</h2><form id="password-form" class="form-grid"><label>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø­Ø§Ù„ÙŠØ©<input type="password" name="currentPassword" required /></label><label>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©<input type="password" name="newPassword" minlength="8" required /></label><div class="form-actions"><button class="button primary">ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±</button></div></form></article>
+      <article class="panel span-6"><h2>Ø§Ø®ØªØ¨Ø§Ø± GPS Ø³Ø±ÙŠØ¹</h2><p>Ø§Ø®ØªØ¨Ø§Ø± Ù…Ø¨Ø§Ø´Ø± Ù…Ù† Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ù„Ù…Ø¹Ø±ÙØ© Ø¯Ù‚Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ§Ù„Ù…Ø³Ø§ÙØ© Ù…Ù† Ø§Ù„Ù…Ø¬Ù…Ø¹.</p><button class="button ghost" type="button" data-settings-gps-test>Ø§Ø®ØªØ¨Ø§Ø± GPS Ø§Ù„Ø¢Ù†</button><div id="settings-gps-result" class="risk-box hidden"></div></article>
+      <article class="panel span-12"><h2>Ø³ÙŠØ§Ø³Ø§Øª Ø§Ù„Ø£Ù…Ø§Ù† Ø§Ù„Ù…Ù‚ØªØ±Ø­Ø©</h2>${table(["Ø§Ù„Ø³ÙŠØ§Ø³Ø©", "Ø§Ù„Ø­Ø§Ù„Ø©"], [["Ù‚ÙÙ„ Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ø¹Ø¯ Ù…Ø­Ø§ÙˆÙ„Ø§Øª ÙØ§Ø´Ù„Ø©", "Ù…ÙØ¹Ù„ Ø¹Ù†Ø¯ ØªØ´ØºÙŠÙ„ Backend"], ["ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ©", "Ù…Ø¯Ø¹ÙˆÙ… Ø¹Ø¨Ø± mustChangePassword"], ["Ø³Ø¬Ù„ Ø¢Ø®Ø± IP ÙˆØ¬Ù‡Ø§Ø²", "Ù…Ø¯Ø¹ÙˆÙ… ÙÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª"], ["Passkeys", "Ø¬Ø§Ù‡Ø² ÙƒÙ†Ù…ÙˆØ°Ø¬ Ø¨ÙŠØ§Ù†Ø§Øª ÙˆÙŠÙ†ØªØ¸Ø± HTTPS/Domain"]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td>${escapeHtml(b)}</td></tr>`))}</article>
     </section>`,
-    "الإعدادات",
-    "إعدادات عامة قابلة للتعديل.",
+    "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª",
+    "Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø¹Ø§Ù…Ø© Ù‚Ø§Ø¨Ù„Ø© Ù„Ù„ØªØ¹Ø¯ÙŠÙ„.",
   );
   app.querySelector("#save-current-avatar")?.addEventListener("click", async () => {
     try {
       const file = app.querySelector("#current-user-avatar")?.files?.[0];
-      if (!file) return setMessage("", "اختر صورة أولًا.");
+      if (!file) return setMessage("", "Ø§Ø®ØªØ± ØµÙˆØ±Ø© Ø£ÙˆÙ„Ù‹Ø§.");
       const url = await endpoints.uploadAvatar(file);
       await endpoints.updateUser(state.user.id, { avatarUrl: url, name: state.user.name || state.user.fullName || state.user.email });
       state.user = { ...state.user, avatarUrl: url, photoUrl: url };
-      setMessage("تم تحديث صورة الحساب.", "");
+      setMessage("ØªÙ… ØªØ­Ø¯ÙŠØ« ØµÙˆØ±Ø© Ø§Ù„Ø­Ø³Ø§Ø¨.", "");
       render();
     } catch (error) {
       setMessage("", error.message);
@@ -2469,13 +2469,13 @@ async function renderSettings() {
   app.querySelector("[data-settings-gps-test]")?.addEventListener("click", async () => {
     const box = app.querySelector("#settings-gps-result");
     box.classList.remove("hidden", "danger-box");
-    box.textContent = "جاري اختبار GPS...";
+    box.textContent = "Ø¬Ø§Ø±ÙŠ Ø§Ø®ØªØ¨Ø§Ø± GPS...";
     try {
       const current = await getBrowserLocation();
       const evaluation = await endpoints.evaluateGeofence(current);
       const ok = evaluation.allowed || evaluation.canRecord;
       box.classList.toggle("danger-box", !ok);
-      box.innerHTML = `<strong>${ok ? "مقبول" : "غير مقبول"}</strong><p>${escapeHtml(evaluation.message || "")}</p><div class="meta-grid"><span>الدقة: ${formatMeters(current.accuracyMeters)}</span><span>المسافة: ${formatMeters(evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters)}</span></div>`;
+      box.innerHTML = `<strong>${ok ? "Ù…Ù‚Ø¨ÙˆÙ„" : "ØºÙŠØ± Ù…Ù‚Ø¨ÙˆÙ„"}</strong><p>${escapeHtml(evaluation.message || "")}</p><div class="meta-grid"><span>Ø§Ù„Ø¯Ù‚Ø©: ${formatMeters(current.accuracyMeters)}</span><span>Ø§Ù„Ù…Ø³Ø§ÙØ©: ${formatMeters(evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters)}</span></div>`;
     } catch (error) {
       box.classList.add("danger-box");
       box.textContent = error.message;
@@ -2484,14 +2484,14 @@ async function renderSettings() {
   app.querySelector("#settings-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     await endpoints.updateSettings(readForm(event.currentTarget));
-    setMessage("تم حفظ الإعدادات.", "");
+    setMessage("ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª.", "");
     render();
   });
   app.querySelector("#password-form").addEventListener("submit", async (event) => {
     event.preventDefault();
     await endpoints.changePassword(readForm(event.currentTarget));
     event.currentTarget.reset();
-    setMessage("تم تغيير كلمة المرور بنجاح.", "");
+    setMessage("ØªÙ… ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø¨Ù†Ø¬Ø§Ø­.", "");
     render();
   });
 }
@@ -2504,8 +2504,8 @@ async function renderComplexSettings() {
   const settingsRows = Array.isArray(settingsPayload) ? settingsPayload : [];
   const getSetting = (key, fallback) => settingsRows.find((item) => item.key === key)?.value ?? fallback;
   const current = {
-    name: address.branch?.name || address.name || getSetting("complex.name", "مجمع منيل شيحة"),
-    address: cleanAddressText(address.address || address.branch?.address || getSetting("complex.address", "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912")),
+    name: address.branch?.name || address.name || getSetting("complex.name", "Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©"),
+    address: cleanAddressText(address.address || address.branch?.address || getSetting("complex.address", "Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912")),
     latitude: address.latitude ?? getSetting("complex.latitude", "29.950738592862045"),
     longitude: address.longitude ?? getSetting("complex.longitude", "31.238094542328678"),
     radiusMeters: address.radiusMeters || getSetting("complex.radiusMeters", 300),
@@ -2514,41 +2514,41 @@ async function renderComplexSettings() {
   shell(
     `<section class="grid complex-settings-page">
       <article class="panel span-7">
-        <div class="panel-head"><div><h2>إعدادات المجمع الواحد</h2><p>بديل بسيط لصفحات الفروع والأقسام لأن النظام يعمل على مجمع واحد فقط.</p></div>${healthBadge(Boolean(current.latitude && current.longitude), current.latitude && current.longitude ? "إحداثيات موجودة" : "إحداثيات ناقصة")}</div>
+        <div class="panel-head"><div><h2>Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹ Ø§Ù„ÙˆØ§Ø­Ø¯</h2><p>Ø¨Ø¯ÙŠÙ„ Ø¨Ø³ÙŠØ· Ù„ØµÙØ­Ø§Øª Ø§Ù„ÙØ±ÙˆØ¹ ÙˆØ§Ù„Ø£Ù‚Ø³Ø§Ù… Ù„Ø£Ù† Ø§Ù„Ù†Ø¸Ø§Ù… ÙŠØ¹Ù…Ù„ Ø¹Ù„Ù‰ Ù…Ø¬Ù…Ø¹ ÙˆØ§Ø­Ø¯ ÙÙ‚Ø·.</p></div>${healthBadge(Boolean(current.latitude && current.longitude), current.latitude && current.longitude ? "Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ù…ÙˆØ¬ÙˆØ¯Ø©" : "Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ù†Ø§Ù‚ØµØ©")}</div>
         <form id="complex-settings-form" class="form-grid">
-          <label>اسم المجمع<input name="name" value="${escapeHtml(current.name)}" required /></label>
-          <label>وصف العنوان<input name="address" value="${escapeHtml(current.address)}" required /></label>
+          <label>Ø§Ø³Ù… Ø§Ù„Ù…Ø¬Ù…Ø¹<input name="name" value="${escapeHtml(current.name)}" required /></label>
+          <label>ÙˆØµÙ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†<input name="address" value="${escapeHtml(current.address)}" required /></label>
           <label>Latitude<input name="latitude" type="number" step="0.00000000000001" value="${escapeHtml(current.latitude)}" required /></label>
           <label>Longitude<input name="longitude" type="number" step="0.00000000000001" value="${escapeHtml(current.longitude)}" required /></label>
-          <label>نطاق البصمة بالمتر<input name="radiusMeters" type="number" min="50" max="2000" value="${escapeHtml(current.radiusMeters)}" required /></label>
-          <label>أقصى دقة GPS مقبولة<input name="maxAccuracyMeters" type="number" min="50" max="2000" value="${escapeHtml(current.maxAccuracyMeters)}" required /></label>
-          <div class="form-actions wide"><button class="button primary" type="submit">حفظ إعدادات المجمع</button><button class="button ghost" type="button" data-test-gps>اختبار GPS الآن</button></div>
+          <label>Ù†Ø·Ø§Ù‚ Ø§Ù„Ø¨ØµÙ…Ø© Ø¨Ø§Ù„Ù…ØªØ±<input name="radiusMeters" type="number" min="50" max="2000" value="${escapeHtml(current.radiusMeters)}" required /></label>
+          <label>Ø£Ù‚ØµÙ‰ Ø¯Ù‚Ø© GPS Ù…Ù‚Ø¨ÙˆÙ„Ø©<input name="maxAccuracyMeters" type="number" min="50" max="2000" value="${escapeHtml(current.maxAccuracyMeters)}" required /></label>
+          <div class="form-actions wide"><button class="button primary" type="submit">Ø­ÙØ¸ Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹</button><button class="button ghost" type="button" data-test-gps>Ø§Ø®ØªØ¨Ø§Ø± GPS Ø§Ù„Ø¢Ù†</button></div>
         </form>
       </article>
       <article class="panel span-5">
-        <h2>اختبار سريع للموقع</h2>
+        <h2>Ø§Ø®ØªØ¨Ø§Ø± Ø³Ø±ÙŠØ¹ Ù„Ù„Ù…ÙˆÙ‚Ø¹</h2>
         <div id="gps-test-result" class="risk-box hidden"></div>
         <div class="address-card compact-address-card">
           <strong>${escapeHtml(current.name)}</strong>
           <p>${escapeHtml(current.address)}</p>
-          <div class="meta-grid"><span>Lat: ${escapeHtml(current.latitude)}</span><span>Lng: ${escapeHtml(current.longitude)}</span><span>النطاق: ${escapeHtml(current.radiusMeters)} متر</span><span>الدقة: ${escapeHtml(current.maxAccuracyMeters)} متر</span></div>
-          <a class="button ghost map-open-btn" target="_blank" rel="noopener" href="https://maps.google.com/?q=${escapeHtml(current.latitude)},${escapeHtml(current.longitude)}">فتح على Google Maps</a>
+          <div class="meta-grid"><span>Lat: ${escapeHtml(current.latitude)}</span><span>Lng: ${escapeHtml(current.longitude)}</span><span>Ø§Ù„Ù†Ø·Ø§Ù‚: ${escapeHtml(current.radiusMeters)} Ù…ØªØ±</span><span>Ø§Ù„Ø¯Ù‚Ø©: ${escapeHtml(current.maxAccuracyMeters)} Ù…ØªØ±</span></div>
+          <a class="button ghost map-open-btn" target="_blank" rel="noopener" href="https://maps.google.com/?q=${escapeHtml(current.latitude)},${escapeHtml(current.longitude)}">ÙØªØ­ Ø¹Ù„Ù‰ Google Maps</a>
         </div>
       </article>
     </section>`,
-    "إعدادات المجمع",
-    "إحداثيات ونطاق البصمة للمجمع الواحد.",
+    "Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹",
+    "Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª ÙˆÙ†Ø·Ø§Ù‚ Ø§Ù„Ø¨ØµÙ…Ø© Ù„Ù„Ù…Ø¬Ù…Ø¹ Ø§Ù„ÙˆØ§Ø­Ø¯.",
   );
   const result = app.querySelector("#gps-test-result");
   const runGpsTest = async () => {
     result.classList.remove("hidden", "danger-box");
-    result.textContent = "جاري قراءة GPS وتقييمه على نطاق المجمع...";
+    result.textContent = "Ø¬Ø§Ø±ÙŠ Ù‚Ø±Ø§Ø¡Ø© GPS ÙˆØªÙ‚ÙŠÙŠÙ…Ù‡ Ø¹Ù„Ù‰ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹...";
     try {
       const currentLocation = await getBrowserLocation();
       const evaluation = await endpoints.evaluateGeofence(currentLocation);
       const ok = evaluation.allowed || evaluation.canRecord;
       result.classList.toggle("danger-box", !ok);
-      result.innerHTML = `<strong>${ok ? "الموقع مقبول" : "الموقع يحتاج مراجعة"}</strong><p>${escapeHtml(evaluation.message || "")}</p><div class="meta-grid"><span>دقة جهازك: ${formatMeters(currentLocation.accuracyMeters)}</span><span>المسافة: ${formatMeters(evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters)}</span><span>Lat: ${escapeHtml(currentLocation.latitude || "-")}</span><span>Lng: ${escapeHtml(currentLocation.longitude || "-")}</span></div>`;
+      result.innerHTML = `<strong>${ok ? "Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ù‚Ø¨ÙˆÙ„" : "Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©"}</strong><p>${escapeHtml(evaluation.message || "")}</p><div class="meta-grid"><span>Ø¯Ù‚Ø© Ø¬Ù‡Ø§Ø²Ùƒ: ${formatMeters(currentLocation.accuracyMeters)}</span><span>Ø§Ù„Ù…Ø³Ø§ÙØ©: ${formatMeters(evaluation.distanceFromBranchMeters ?? evaluation.distanceMeters)}</span><span>Lat: ${escapeHtml(currentLocation.latitude || "-")}</span><span>Lng: ${escapeHtml(currentLocation.longitude || "-")}</span></div>`;
     } catch (error) {
       result.classList.add("danger-box");
       result.textContent = error.message;
@@ -2559,7 +2559,7 @@ async function renderComplexSettings() {
     event.preventDefault();
     const values = readForm(event.currentTarget);
     await endpoints.updateComplexSettings(values);
-    setMessage("تم حفظ إعدادات المجمع ونطاق البصمة.", "");
+    setMessage("ØªÙ… Ø­ÙØ¸ Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹ ÙˆÙ†Ø·Ø§Ù‚ Ø§Ù„Ø¨ØµÙ…Ø©.", "");
     render();
   });
 }
@@ -2576,23 +2576,23 @@ async function renderSystemDiagnostics() {
   shell(
     `<section class="grid diagnostics-page">
       <article class="panel span-12 accent-panel">
-        <div class="panel-head"><div><h2>مركز اختبار النظام</h2><p>يفحص Supabase/Auth/Storage وربط المستخدمين بالموظفين وإعدادات البصمة من صفحة واحدة.</p></div><div class="toolbar"><button class="button ghost" data-run-autolink>ربط المستخدمين بالموظفين حسب البريد</button><button class="button primary" data-route="complex-settings">إعدادات المجمع</button></div></div>
+        <div class="panel-head"><div><h2>Ù…Ø±ÙƒØ² Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù†Ø¸Ø§Ù…</h2><p>ÙŠÙØ­Øµ Supabase/Auth/Storage ÙˆØ±Ø¨Ø· Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† Ø¨Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ø¨ØµÙ…Ø© Ù…Ù† ØµÙØ­Ø© ÙˆØ§Ø­Ø¯Ø©.</p></div><div class="toolbar"><button class="button ghost" data-run-autolink>Ø±Ø¨Ø· Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† Ø¨Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø­Ø³Ø¨ Ø§Ù„Ø¨Ø±ÙŠØ¯</button><button class="button primary" data-route="complex-settings">Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹</button></div></div>
       </article>
-      <article class="panel span-7"><h2>الفحوصات الأساسية</h2>${table(["الفحص", "الحالة", "التفاصيل"], (diag.checks || []).map((check) => `<tr><td>${escapeHtml(check.label)}</td><td>${healthBadge(check.ok, check.status || "")}</td><td>${escapeHtml(check.detail || "-")}</td></tr>`))}</article>
-      <article class="panel span-5"><h2>مؤشرات سريعة</h2>${table(["البند", "العدد"], [["المستخدمون", users.length], ["الموظفون", employees.length], ["مستخدمون غير مربوطين", unlinkedUsers.length], ["موظفون بلا حساب", unlinkedEmployees.length]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td>${escapeHtml(b)}</td></tr>`))}</article>
-      <article class="panel span-6"><h2>مستخدمون غير مربوطين</h2>${table(["المستخدم", "البريد"], unlinkedUsers.map((user) => `<tr><td>${escapeHtml(user.name || user.fullName || "-")}</td><td>${escapeHtml(user.email || "-")}</td></tr>`))}</article>
-      <article class="panel span-6"><h2>موظفون بلا حساب دخول</h2>${table(["الموظف", "البريد"], unlinkedEmployees.map((employee) => `<tr><td>${escapeHtml(employee.fullName || "-")}</td><td>${escapeHtml(employee.email || "-")}</td></tr>`))}</article>
+      <article class="panel span-7"><h2>Ø§Ù„ÙØ­ÙˆØµØ§Øª Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ©</h2>${table(["Ø§Ù„ÙØ­Øµ", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªÙØ§ØµÙŠÙ„"], (diag.checks || []).map((check) => `<tr><td>${escapeHtml(check.label)}</td><td>${healthBadge(check.ok, check.status || "")}</td><td>${escapeHtml(check.detail || "-")}</td></tr>`))}</article>
+      <article class="panel span-5"><h2>Ù…Ø¤Ø´Ø±Ø§Øª Ø³Ø±ÙŠØ¹Ø©</h2>${table(["Ø§Ù„Ø¨Ù†Ø¯", "Ø§Ù„Ø¹Ø¯Ø¯"], [["Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙˆÙ†", users.length], ["Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", employees.length], ["Ù…Ø³ØªØ®Ø¯Ù…ÙˆÙ† ØºÙŠØ± Ù…Ø±Ø¨ÙˆØ·ÙŠÙ†", unlinkedUsers.length], ["Ù…ÙˆØ¸ÙÙˆÙ† Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨", unlinkedEmployees.length]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td>${escapeHtml(b)}</td></tr>`))}</article>
+      <article class="panel span-6"><h2>Ù…Ø³ØªØ®Ø¯Ù…ÙˆÙ† ØºÙŠØ± Ù…Ø±Ø¨ÙˆØ·ÙŠÙ†</h2>${table(["Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", "Ø§Ù„Ø¨Ø±ÙŠØ¯"], unlinkedUsers.map((user) => `<tr><td>${escapeHtml(user.name || user.fullName || "-")}</td><td>${escapeHtml(user.email || "-")}</td></tr>`))}</article>
+      <article class="panel span-6"><h2>Ù…ÙˆØ¸ÙÙˆÙ† Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„</h2>${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø¨Ø±ÙŠØ¯"], unlinkedEmployees.map((employee) => `<tr><td>${escapeHtml(employee.fullName || "-")}</td><td>${escapeHtml(employee.email || "-")}</td></tr>`))}</article>
     </section>`,
-    "اختبار النظام",
-    "فحص جاهزية النظام قبل التجربة أو التسليم.",
+    "Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù†Ø¸Ø§Ù…",
+    "ÙØ­Øµ Ø¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„Ù†Ø¸Ø§Ù… Ù‚Ø¨Ù„ Ø§Ù„ØªØ¬Ø±Ø¨Ø© Ø£Ùˆ Ø§Ù„ØªØ³Ù„ÙŠÙ….",
   );
   app.querySelector("[data-run-autolink]")?.addEventListener("click", async () => {
     try {
       const result = await endpoints.autoLinkUsersByEmail();
-      setMessage(`تم الربط التلقائي: ${result.linked || 0} سجل.`, "");
+      setMessage(`ØªÙ… Ø§Ù„Ø±Ø¨Ø· Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ: ${result.linked || 0} Ø³Ø¬Ù„.`, "");
       render();
     } catch (error) {
-      setMessage("", error.message || "تعذر الربط التلقائي.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ø§Ù„Ø±Ø¨Ø· Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ.");
       render();
     }
   });
@@ -2603,13 +2603,13 @@ async function renderHealth() {
   const readiness = health.readiness || { score: 0, grade: "-", parts: [] };
   shell(
     `<section class="grid health-page">
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>مركز فحص النظام</h2><p>نتيجة الجاهزية العامة وفحوصات التشغيل قبل الاعتماد.</p></div><div class="score-ring"><strong>${escapeHtml(readiness.score || 0)}%</strong><span>${escapeHtml(readiness.grade || "-")}</span></div></div><div class="toolbar"><button class="button ghost" id="export-health-json">تصدير تقرير الفحص JSON</button><button class="button ghost" data-route="system-diagnostics">تشخيص أعمق</button></div></article>
-      <article class="panel span-5"><h2>ملخص الحالة</h2>${table(["البند", "القيمة"], Object.entries(health.counts || {}).map(([key, value]) => `<tr><td>${escapeHtml(key)}</td><td>${escapeHtml(value)}</td></tr>`))}</article>
-      <article class="panel span-7"><h2>الفحوصات</h2>${table(["الفحص", "الحالة", "التفاصيل"], (health.checks || []).map((check) => `<tr><td>${escapeHtml(check.label)}</td><td>${check.ok ? badge("APPROVED") : badge(check.status || "PENDING")}</td><td>${escapeHtml(check.detail || "-")}</td></tr>`))}</article>
-      <article class="panel span-12"><h2>خطة المعالجة السريعة</h2><div class="readiness-grid">${safeList(readiness.parts).filter((part) => !part.ok).map((part) => `<div class="readiness-item warn"><strong>${escapeHtml(part.label)}</strong><span>${escapeHtml(part.detail || "")}</span><small>ابدأ من صفحة ${part.key === "location" ? "إعدادات المجمع" : part.key === "linked" ? "المستخدمون" : part.key === "workflow" ? "مركز الطلبات" : "الإعدادات"}</small></div>`).join("") || `<div class="empty-state">لا توجد مشاكل ظاهرة في الفحص المحلي.</div>`}</div></article>
+      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>Ù…Ø±ÙƒØ² ÙØ­Øµ Ø§Ù„Ù†Ø¸Ø§Ù…</h2><p>Ù†ØªÙŠØ¬Ø© Ø§Ù„Ø¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„Ø¹Ø§Ù…Ø© ÙˆÙØ­ÙˆØµØ§Øª Ø§Ù„ØªØ´ØºÙŠÙ„ Ù‚Ø¨Ù„ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯.</p></div><div class="score-ring"><strong>${escapeHtml(readiness.score || 0)}%</strong><span>${escapeHtml(readiness.grade || "-")}</span></div></div><div class="toolbar"><button class="button ghost" id="export-health-json">ØªØµØ¯ÙŠØ± ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙØ­Øµ JSON</button><button class="button ghost" data-route="system-diagnostics">ØªØ´Ø®ÙŠØµ Ø£Ø¹Ù…Ù‚</button></div></article>
+      <article class="panel span-5"><h2>Ù…Ù„Ø®Øµ Ø§Ù„Ø­Ø§Ù„Ø©</h2>${table(["Ø§Ù„Ø¨Ù†Ø¯", "Ø§Ù„Ù‚ÙŠÙ…Ø©"], Object.entries(health.counts || {}).map(([key, value]) => `<tr><td>${escapeHtml(key)}</td><td>${escapeHtml(value)}</td></tr>`))}</article>
+      <article class="panel span-7"><h2>Ø§Ù„ÙØ­ÙˆØµØ§Øª</h2>${table(["Ø§Ù„ÙØ­Øµ", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªÙØ§ØµÙŠÙ„"], (health.checks || []).map((check) => `<tr><td>${escapeHtml(check.label)}</td><td>${check.ok ? badge("APPROVED") : badge(check.status || "PENDING")}</td><td>${escapeHtml(check.detail || "-")}</td></tr>`))}</article>
+      <article class="panel span-12"><h2>Ø®Ø·Ø© Ø§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø© Ø§Ù„Ø³Ø±ÙŠØ¹Ø©</h2><div class="readiness-grid">${safeList(readiness.parts).filter((part) => !part.ok).map((part) => `<div class="readiness-item warn"><strong>${escapeHtml(part.label)}</strong><span>${escapeHtml(part.detail || "")}</span><small>Ø§Ø¨Ø¯Ø£ Ù…Ù† ØµÙØ­Ø© ${part.key === "location" ? "Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹" : part.key === "linked" ? "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙˆÙ†" : part.key === "workflow" ? "Ù…Ø±ÙƒØ² Ø§Ù„Ø·Ù„Ø¨Ø§Øª" : "Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª"}</small></div>`).join("") || `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø´Ø§ÙƒÙ„ Ø¸Ø§Ù‡Ø±Ø© ÙÙŠ Ø§Ù„ÙØ­Øµ Ø§Ù„Ù…Ø­Ù„ÙŠ.</div>`}</div></article>
     </section>`,
-    "حالة النظام",
-    "System Health للتأكد من جاهزية التشغيل.",
+    "Ø­Ø§Ù„Ø© Ø§Ù„Ù†Ø¸Ø§Ù…",
+    "System Health Ù„Ù„ØªØ£ÙƒØ¯ Ù…Ù† Ø¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„ØªØ´ØºÙŠÙ„.",
   );
   app.querySelector("#export-health-json")?.addEventListener("click", () => downloadFile("system-health-report.json", JSON.stringify(health, null, 2), "application/json;charset=utf-8"));
 }
@@ -2619,30 +2619,30 @@ async function renderBackup() {
   const snapshots = backup.systemBackups || [];
   shell(
     `<section class="grid backup-page">
-      <article class="panel span-3"><h2>نسخة احتياطية</h2><p>تصدير كل بيانات النظام بصيغة JSON.</p><button class="button primary" id="download-backup">تحميل Backup</button></article>
-      <article class="panel span-3"><h2>Snapshot داخلي</h2><p>حفظ آخر 10 نسخ داخل التخزين المحلي للاختبار الداخلي فقط.</p><button class="button" id="save-snapshot">حفظ Snapshot</button></article>
-      <article class="panel span-3"><h2>استرجاع Backup</h2><input type="file" id="backup-file" accept="application/json" /><button class="button" id="restore-backup">استرجاع</button></article>
-      <article class="panel span-3"><h2>استيراد موظفين</h2><p>ارفع JSON Array للموظفين أو CSV بسيط.</p><input type="file" id="employees-import" accept=".json,.csv,text/csv,application/json" /><button class="button" id="import-employees">استيراد</button></article>
-      <article class="panel span-8"><h2>آخر Snapshots</h2>${table(["العنوان", "الموظفون", "المستخدمون", "الحضور", "التاريخ"], snapshots.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.counts?.employees || 0)}</td><td>${escapeHtml(item.counts?.users || 0)}</td><td>${escapeHtml(item.counts?.attendance || 0)}</td><td>${date(item.createdAt)}</td></tr>`))}</article>
-      <article class="panel span-4"><h2>إعادة ضبط</h2><p>ترجع البيانات الأولية للنسخة المحلية.</p><button class="button danger" id="reset-data">استرجاع البيانات الأولية</button></article>
+      <article class="panel span-3"><h2>Ù†Ø³Ø®Ø© Ø§Ø­ØªÙŠØ§Ø·ÙŠØ©</h2><p>ØªØµØ¯ÙŠØ± ÙƒÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù†Ø¸Ø§Ù… Ø¨ØµÙŠØºØ© JSON.</p><button class="button primary" id="download-backup">ØªØ­Ù…ÙŠÙ„ Backup</button></article>
+      <article class="panel span-3"><h2>Snapshot Ø¯Ø§Ø®Ù„ÙŠ</h2><p>Ø­ÙØ¸ Ø¢Ø®Ø± 10 Ù†Ø³Ø® Ø¯Ø§Ø®Ù„ Ø§Ù„ØªØ®Ø²ÙŠÙ† Ø§Ù„Ù…Ø­Ù„ÙŠ Ù„Ù„Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ ÙÙ‚Ø·.</p><button class="button" id="save-snapshot">Ø­ÙØ¸ Snapshot</button></article>
+      <article class="panel span-3"><h2>Ø§Ø³ØªØ±Ø¬Ø§Ø¹ Backup</h2><input type="file" id="backup-file" accept="application/json" /><button class="button" id="restore-backup">Ø§Ø³ØªØ±Ø¬Ø§Ø¹</button></article>
+      <article class="panel span-3"><h2>Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ù…ÙˆØ¸ÙÙŠÙ†</h2><p>Ø§Ø±ÙØ¹ JSON Array Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø£Ùˆ CSV Ø¨Ø³ÙŠØ·.</p><input type="file" id="employees-import" accept=".json,.csv,text/csv,application/json" /><button class="button" id="import-employees">Ø§Ø³ØªÙŠØ±Ø§Ø¯</button></article>
+      <article class="panel span-8"><h2>Ø¢Ø®Ø± Snapshots</h2>${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙˆÙ†", "Ø§Ù„Ø­Ø¶ÙˆØ±", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], snapshots.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.counts?.employees || 0)}</td><td>${escapeHtml(item.counts?.users || 0)}</td><td>${escapeHtml(item.counts?.attendance || 0)}</td><td>${date(item.createdAt)}</td></tr>`))}</article>
+      <article class="panel span-4"><h2>Ø¥Ø¹Ø§Ø¯Ø© Ø¶Ø¨Ø·</h2><p>ØªØ±Ø¬Ø¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£ÙˆÙ„ÙŠØ© Ù„Ù„Ù†Ø³Ø®Ø© Ø§Ù„Ù…Ø­Ù„ÙŠØ©.</p><button class="button danger" id="reset-data">Ø§Ø³ØªØ±Ø¬Ø§Ø¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£ÙˆÙ„ÙŠØ©</button></article>
     </section>`,
-    "نسخ واستيراد",
-    "Backup/Restore و Import للموظفين مع Snapshot داخلي.",
+    "Ù†Ø³Ø® ÙˆØ§Ø³ØªÙŠØ±Ø§Ø¯",
+    "Backup/Restore Ùˆ Import Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ù…Ø¹ Snapshot Ø¯Ø§Ø®Ù„ÙŠ.",
   );
   app.querySelector("#download-backup").addEventListener("click", async () => downloadFile("hr-system-backup.json", JSON.stringify(await endpoints.backup(), null, 2), "application/json;charset=utf-8"));
-  app.querySelector("#save-snapshot").addEventListener("click", async () => { await endpoints.saveBackupSnapshot({}); setMessage("تم حفظ Snapshot داخلي.", ""); render(); });
+  app.querySelector("#save-snapshot").addEventListener("click", async () => { await endpoints.saveBackupSnapshot({}); setMessage("ØªÙ… Ø­ÙØ¸ Snapshot Ø¯Ø§Ø®Ù„ÙŠ.", ""); render(); });
   app.querySelector("#restore-backup").addEventListener("click", async () => {
     const file = app.querySelector("#backup-file").files?.[0];
-    if (!file) return setMessage("", "اختر ملف Backup أولًا.");
+    if (!file) return setMessage("", "Ø§Ø®ØªØ± Ù…Ù„Ù Backup Ø£ÙˆÙ„Ù‹Ø§.");
     const db = JSON.parse(await file.text());
-    if (!db || typeof db !== "object" || !Array.isArray(db.employees)) return setMessage("", "ملف النسخة غير صالح أو لا يحتوي جدول الموظفين.");
+    if (!db || typeof db !== "object" || !Array.isArray(db.employees)) return setMessage("", "Ù…Ù„Ù Ø§Ù„Ù†Ø³Ø®Ø© ØºÙŠØ± ØµØ§Ù„Ø­ Ø£Ùˆ Ù„Ø§ ÙŠØ­ØªÙˆÙŠ Ø¬Ø¯ÙˆÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.");
     await endpoints.restoreBackup(db);
-    setMessage("تم استرجاع النسخة الاحتياطية.", "");
+    setMessage("ØªÙ… Ø§Ø³ØªØ±Ø¬Ø§Ø¹ Ø§Ù„Ù†Ø³Ø®Ø© Ø§Ù„Ø§Ø­ØªÙŠØ§Ø·ÙŠØ©.", "");
     render();
   });
   app.querySelector("#import-employees").addEventListener("click", async () => {
     const file = app.querySelector("#employees-import").files?.[0];
-    if (!file) return setMessage("", "اختر ملف الاستيراد أولًا.");
+    if (!file) return setMessage("", "Ø§Ø®ØªØ± Ù…Ù„Ù Ø§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ø£ÙˆÙ„Ù‹Ø§.");
     const text = await file.text();
     let rows;
     if (file.name.endsWith(".json")) rows = JSON.parse(text);
@@ -2652,13 +2652,13 @@ async function renderBackup() {
       rows = lines.map((line) => Object.fromEntries(line.split(",").map((cell, index) => [keys[index], cell.replaceAll('"', "").trim()])));
     }
     const result = await endpoints.importEmployees(rows);
-    setMessage(`تم استيراد ${result.created} موظف.`, "");
+    setMessage(`ØªÙ… Ø§Ø³ØªÙŠØ±Ø§Ø¯ ${result.created} Ù…ÙˆØ¸Ù.`, "");
     render();
   });
   app.querySelector("#reset-data").addEventListener("click", async () => {
-    if (!await confirmAction({ title: "إعادة ضبط البيانات", message: "سيتم حذف بيانات المتصفح المحلية واسترجاع البيانات الأولية.", confirmLabel: "إعادة الضبط", danger: true })) return;
+    if (!await confirmAction({ title: "Ø¥Ø¹Ø§Ø¯Ø© Ø¶Ø¨Ø· Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª", message: "Ø³ÙŠØªÙ… Ø­Ø°Ù Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ØªØµÙØ­ Ø§Ù„Ù…Ø­Ù„ÙŠØ© ÙˆØ§Ø³ØªØ±Ø¬Ø§Ø¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£ÙˆÙ„ÙŠØ©.", confirmLabel: "Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ø¶Ø¨Ø·", danger: true })) return;
     await endpoints.reset();
-    setMessage("تم استرجاع البيانات الأولية.", "");
+    setMessage("ØªÙ… Ø§Ø³ØªØ±Ø¬Ø§Ø¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø£ÙˆÙ„ÙŠØ©.", "");
     render();
   });
 }
@@ -2670,31 +2670,31 @@ async function renderPasswordVault() {
   shell(
     `<section class="grid">
       <article class="panel span-12 accent-panel">
-        <div class="panel-head"><div><h2>خزنة كلمات المرور المؤقتة</h2><p>مخصصة للتقني/الإدارة العليا. في Supabase الحقيقي لا يمكن قراءة كلمة المرور الأصلية بعد إنشائها؛ المتاح أمنيًا هو إصدار كلمة مؤقتة جديدة وإجبار الموظف على تغييرها.</p></div></div>
-        <div class="message warning">لا تشارك هذه البيانات إلا مع صاحب الحساب. الأفضل دائمًا استخدام إعادة تعيين كلمة مرور مؤقتة بدل الاحتفاظ بكلمات مرور دائمة.</div>
+        <div class="panel-head"><div><h2>Ø®Ø²Ù†Ø© ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ©</h2><p>Ù…Ø®ØµØµØ© Ù„Ù„ØªÙ‚Ù†ÙŠ/Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¹Ù„ÙŠØ§. ÙÙŠ Supabase Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ Ù„Ø§ ÙŠÙ…ÙƒÙ† Ù‚Ø±Ø§Ø¡Ø© ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø£ØµÙ„ÙŠØ© Ø¨Ø¹Ø¯ Ø¥Ù†Ø´Ø§Ø¦Ù‡Ø§Ø› Ø§Ù„Ù…ØªØ§Ø­ Ø£Ù…Ù†ÙŠÙ‹Ø§ Ù‡Ùˆ Ø¥ØµØ¯Ø§Ø± ÙƒÙ„Ù…Ø© Ù…Ø¤Ù‚ØªØ© Ø¬Ø¯ÙŠØ¯Ø© ÙˆØ¥Ø¬Ø¨Ø§Ø± Ø§Ù„Ù…ÙˆØ¸Ù Ø¹Ù„Ù‰ ØªØºÙŠÙŠØ±Ù‡Ø§.</p></div></div>
+        <div class="message warning">Ù„Ø§ ØªØ´Ø§Ø±Ùƒ Ù‡Ø°Ù‡ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø¥Ù„Ø§ Ù…Ø¹ ØµØ§Ø­Ø¨ Ø§Ù„Ø­Ø³Ø§Ø¨. Ø§Ù„Ø£ÙØ¶Ù„ Ø¯Ø§Ø¦Ù…Ù‹Ø§ Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù…Ø¤Ù‚ØªØ© Ø¨Ø¯Ù„ Ø§Ù„Ø§Ø­ØªÙØ§Ø¸ Ø¨ÙƒÙ„Ù…Ø§Øª Ù…Ø±ÙˆØ± Ø¯Ø§Ø¦Ù…Ø©.</div>
       </article>
       <article class="panel span-12">
-        ${table(["المستخدم", "البريد", "كلمة المرور المؤقتة", "الحالة", "إجراءات"], rows.map((user) => `<tr>
+        ${table(["Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", "Ø§Ù„Ø¨Ø±ÙŠØ¯", "ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ©", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], rows.map((user) => `<tr>
           <td class="person-cell">${avatar(user.employee || user, "tiny")}<span>${escapeHtml(user.name || user.fullName || "-")}<small>${escapeHtml(user.employee?.jobTitle || "")}</small></span></td>
           <td>${escapeHtml(user.email || "-")}</td>
-          <td><code class="password-chip">${escapeHtml(user.password || "غير متاحة")}</code></td>
+          <td><code class="password-chip">${escapeHtml(user.password || "ØºÙŠØ± Ù…ØªØ§Ø­Ø©")}</code></td>
           <td>${badge(user.mustChangePassword ? "INVITED" : user.status || "ACTIVE")}</td>
-          <td><button class="button ghost" data-copy-password="${escapeHtml(user.password || "")}">نسخ</button><button class="button danger ghost" data-reset-password="${escapeHtml(user.id)}">إصدار كلمة جديدة</button></td>
+          <td><button class="button ghost" data-copy-password="${escapeHtml(user.password || "")}">Ù†Ø³Ø®</button><button class="button danger ghost" data-reset-password="${escapeHtml(user.id)}">Ø¥ØµØ¯Ø§Ø± ÙƒÙ„Ù…Ø© Ø¬Ø¯ÙŠØ¯Ø©</button></td>
         </tr>`))}
       </article>
     </section>`,
-    "خزنة كلمات المرور",
-    "عرض كلمات المرور المؤقتة وإعادة تعيينها بشكل آمن."
+    "Ø®Ø²Ù†Ø© ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ±",
+    "Ø¹Ø±Ø¶ ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ© ÙˆØ¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ†Ù‡Ø§ Ø¨Ø´ÙƒÙ„ Ø¢Ù…Ù†."
   );
   app.querySelectorAll("[data-copy-password]").forEach((button) => button.addEventListener("click", async () => {
     await navigator.clipboard?.writeText(button.dataset.copyPassword || "");
-    setMessage("تم نسخ كلمة المرور المؤقتة.", "");
+    setMessage("ØªÙ… Ù†Ø³Ø® ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ©.", "");
     render();
   }));
   app.querySelectorAll("[data-reset-password]").forEach((button) => button.addEventListener("click", async () => {
-    if (!await confirmAction({ title: "إصدار كلمة مرور جديدة", message: "سيتم إنشاء كلمة مرور مؤقتة جديدة وإجبار الموظف على تغييرها بعد الدخول.", confirmLabel: "إصدار", danger: true })) return;
+    if (!await confirmAction({ title: "Ø¥ØµØ¯Ø§Ø± ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ø¬Ø¯ÙŠØ¯Ø©", message: "Ø³ÙŠØªÙ… Ø¥Ù†Ø´Ø§Ø¡ ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù…Ø¤Ù‚ØªØ© Ø¬Ø¯ÙŠØ¯Ø© ÙˆØ¥Ø¬Ø¨Ø§Ø± Ø§Ù„Ù…ÙˆØ¸Ù Ø¹Ù„Ù‰ ØªØºÙŠÙŠØ±Ù‡Ø§ Ø¨Ø¹Ø¯ Ø§Ù„Ø¯Ø®ÙˆÙ„.", confirmLabel: "Ø¥ØµØ¯Ø§Ø±", danger: true })) return;
     const result = await endpoints.resetUserPassword(button.dataset.resetPassword);
-    setMessage(`تم إصدار كلمة مؤقتة جديدة: ${result.temporaryPassword}`, "");
+    setMessage(`ØªÙ… Ø¥ØµØ¯Ø§Ø± ÙƒÙ„Ù…Ø© Ù…Ø¤Ù‚ØªØ© Ø¬Ø¯ÙŠØ¯Ø©: ${result.temporaryPassword}`, "");
     render();
   }));
 }
@@ -2705,46 +2705,46 @@ async function renderDisputes() {
   const ref = await referenceData();
   const employees = ref.employees || [];
   const cases = Array.isArray(payload) ? payload : (payload.cases || []);
-  const committee = Array.isArray(payload) ? { members: ["مدير مباشر ثالث", "مدير مباشر ثانٍ", "مدير مباشر أول", "السكرتير التنفيذي", "المدير التنفيذي"], mandate: "أي مشكلة تُرفع تلقائيًا إلى مدير مباشر ثالث ومدير مباشر ثانٍ ومدير مباشر أول والسكرتير التنفيذي والمدير التنفيذي، ثم يتم التنسيق والحل أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي." } : (payload.committee || {});
+  const committee = Array.isArray(payload) ? { members: ["Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«", "Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù†Ù", "Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø£ÙˆÙ„", "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ"], mandate: "Ø£ÙŠ Ù…Ø´ÙƒÙ„Ø© ØªÙØ±ÙØ¹ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ø¥Ù„Ù‰ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø« ÙˆÙ…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù†Ù ÙˆÙ…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø£ÙˆÙ„ ÙˆØ§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙˆØ§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØŒ Ø«Ù… ÙŠØªÙ… Ø§Ù„ØªÙ†Ø³ÙŠÙ‚ ÙˆØ§Ù„Ø­Ù„ Ø£Ùˆ Ø§Ù„ØªØµØ¹ÙŠØ¯ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ø¨Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ." } : (payload.committee || {});
   const currentEmployeeId = state.user?.employeeId || state.user?.employee?.id || "";
-  const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " — " + employee.jobTitle : ""}` })), currentEmployeeId, "اختر الموظف");
+  const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: `${employee.fullName}${employee.jobTitle ? " â€” " + employee.jobTitle : ""}` })), currentEmployeeId, "Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù");
   shell(
     `<section class="grid disputes-page">
       <article class="panel span-12 accent-panel">
-        <div class="panel-head"><div><h2>لجنة حل المشاكل والخلافات</h2><p>${escapeHtml(committee.mandate || "أي مشكلة تُرفع تلقائيًا إلى مدير مباشر ثالث ومدير مباشر ثانٍ ومدير مباشر أول والسكرتير التنفيذي والمدير التنفيذي، ثم يتم التنسيق والحل أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي.")}</p></div></div>
-        <div class="chips">${(committee.members || ["لجنة حل المشاكل والخلافات"]).map((member) => `<span class="chip">${escapeHtml(member)}</span>`).join("")}</div>
+        <div class="panel-head"><div><h2>Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª</h2><p>${escapeHtml(committee.mandate || "Ø£ÙŠ Ù…Ø´ÙƒÙ„Ø© ØªÙØ±ÙØ¹ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ø¥Ù„Ù‰ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø« ÙˆÙ…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù†Ù ÙˆÙ…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø£ÙˆÙ„ ÙˆØ§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙˆØ§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØŒ Ø«Ù… ÙŠØªÙ… Ø§Ù„ØªÙ†Ø³ÙŠÙ‚ ÙˆØ§Ù„Ø­Ù„ Ø£Ùˆ Ø§Ù„ØªØµØ¹ÙŠØ¯ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ø¨Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.")}</p></div></div>
+        <div class="chips">${(committee.members || ["Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª"]).map((member) => `<span class="chip">${escapeHtml(member)}</span>`).join("")}</div>
       </article>
       <article class="panel span-4">
-        <h2>طلب شكوى جديد</h2>
+        <h2>Ø·Ù„Ø¨ Ø´ÙƒÙˆÙ‰ Ø¬Ø¯ÙŠØ¯</h2>
         <form id="dispute-form" class="form-grid compact-form">
-          <label>عنوان الشكوى<input name="title" required placeholder="مثال: مشكلة إدارية أو خلاف عمل" /></label>
-          <label>صاحب الشكوى<select name="employeeId" required>${employeeOptions}</select></label>
+          <label>Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ø´ÙƒÙˆÙ‰<input name="title" required placeholder="Ù…Ø«Ø§Ù„: Ù…Ø´ÙƒÙ„Ø© Ø¥Ø¯Ø§Ø±ÙŠØ© Ø£Ùˆ Ø®Ù„Ø§Ù Ø¹Ù…Ù„" /></label>
+          <label>ØµØ§Ø­Ø¨ Ø§Ù„Ø´ÙƒÙˆÙ‰<select name="employeeId" required>${employeeOptions}</select></label>
           <input type="hidden" name="status" value="IN_REVIEW" />
           <input type="hidden" name="severity" value="MEDIUM" />
-          <label class="span-2">سبب الشكوى والتفاصيل<textarea name="description" required placeholder="اكتب السبب والتفاصيل التي تريد عرضها على اللجنة"></textarea></label>
-          <div class="form-actions"><button class="button primary" type="submit">رفع الشكوى للجنة</button></div>
+          <label class="span-2">Ø³Ø¨Ø¨ Ø§Ù„Ø´ÙƒÙˆÙ‰ ÙˆØ§Ù„ØªÙØ§ØµÙŠÙ„<textarea name="description" required placeholder="Ø§ÙƒØªØ¨ Ø§Ù„Ø³Ø¨Ø¨ ÙˆØ§Ù„ØªÙØ§ØµÙŠÙ„ Ø§Ù„ØªÙŠ ØªØ±ÙŠØ¯ Ø¹Ø±Ø¶Ù‡Ø§ Ø¹Ù„Ù‰ Ø§Ù„Ù„Ø¬Ù†Ø©"></textarea></label>
+          <div class="form-actions"><button class="button primary" type="submit">Ø±ÙØ¹ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ù„Ù„Ø¬Ù†Ø©</button></div>
         </form>
       </article>
       <article class="panel span-8">
-        <h2>سجل الشكاوى</h2>
-        ${table(["العنوان", "صاحب الشكوى", "الحالة", "قرار اللجنة", "إجراءات"], cases.map((item) => `<tr>
+        <h2>Ø³Ø¬Ù„ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰</h2>
+        ${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "ØµØ§Ø­Ø¨ Ø§Ù„Ø´ÙƒÙˆÙ‰", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ù‚Ø±Ø§Ø± Ø§Ù„Ù„Ø¬Ù†Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], cases.map((item) => `<tr>
           <td>${escapeHtml(item.title || "-")}</td>
           <td>${escapeHtml(item.employee?.fullName || employees.find((employee) => employee.id === item.employeeId)?.fullName || "-")}</td>
           <td>${badge(item.status || "IN_REVIEW")}</td>
-          <td>${escapeHtml(item.committeeDecision || item.resolution || "لم يصدر قرار بعد")}</td>
-          <td><button class="button ghost" data-dispute="${escapeHtml(item.id)}" data-status="RESOLVED">تم الحل</button><button class="button danger ghost" data-dispute="${escapeHtml(item.id)}" data-status="ESCALATED">رفع للإدارة</button></td>
+          <td>${escapeHtml(item.committeeDecision || item.resolution || "Ù„Ù… ÙŠØµØ¯Ø± Ù‚Ø±Ø§Ø± Ø¨Ø¹Ø¯")}</td>
+          <td><button class="button ghost" data-dispute="${escapeHtml(item.id)}" data-status="RESOLVED">ØªÙ… Ø§Ù„Ø­Ù„</button><button class="button danger ghost" data-dispute="${escapeHtml(item.id)}" data-status="ESCALATED">Ø±ÙØ¹ Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©</button></td>
         </tr>`))}
       </article>
     </section>`,
-    "الشكاوى وفض الخلافات",
-    "تسجيل شكوى بسبب واضح ثم إحالتها للجنة حل المشاكل والخلافات.",
+    "Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆÙØ¶ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª",
+    "ØªØ³Ø¬ÙŠÙ„ Ø´ÙƒÙˆÙ‰ Ø¨Ø³Ø¨Ø¨ ÙˆØ§Ø¶Ø­ Ø«Ù… Ø¥Ø­Ø§Ù„ØªÙ‡Ø§ Ù„Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª.",
   );
-  app.querySelector("#dispute-form").addEventListener("submit", submitForm(endpoints.createDispute, "تم رفع الشكوى إلى لجنة حل المشاكل والخلافات."));
+  app.querySelector("#dispute-form").addEventListener("submit", submitForm(endpoints.createDispute, "ØªÙ… Ø±ÙØ¹ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ø¥Ù„Ù‰ Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª."));
   app.querySelectorAll("[data-dispute]").forEach((button) => button.addEventListener("click", async () => {
     const status = button.dataset.status;
-    const committeeDecision = status === "RESOLVED" ? "تم حل الشكوى بواسطة لجنة حل المشاكل والخلافات." : "تم رفع الشكوى للإدارة لاستكمال القرار.";
+    const committeeDecision = status === "RESOLVED" ? "ØªÙ… Ø­Ù„ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ø¨ÙˆØ§Ø³Ø·Ø© Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª." : "ØªÙ… Ø±ÙØ¹ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ù„Ù„Ø¥Ø¯Ø§Ø±Ø© Ù„Ø§Ø³ØªÙƒÙ…Ø§Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±.";
     await endpoints.updateDispute(button.dataset.dispute, { status, committeeDecision, escalatedToExecutive: status === "ESCALATED" });
-    setMessage(status === "RESOLVED" ? "تم إغلاق الشكوى بقرار اللجنة." : "تم رفع الشكوى للإدارة.", "");
+    setMessage(status === "RESOLVED" ? "ØªÙ… Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ø¨Ù‚Ø±Ø§Ø± Ø§Ù„Ù„Ø¬Ù†Ø©." : "ØªÙ… Ø±ÙØ¹ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©.", "");
     render();
   }));
 }
@@ -2755,20 +2755,20 @@ async function renderRealtime() {
   const locations = snapshot.locations || [];
   shell(
     `<section class="grid">
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>لوحة مباشرة Real-time</h2><p>تعمل عبر Supabase Realtime عند تفعيل Supabase، ومع Live Server تستخدم Snapshot محلي.</p></div><strong id="live-state">${escapeHtml(snapshot.realtime?.transport || "snapshot")}</strong></div><div class="toolbar"><button class="button ghost" id="connect-live">اتصال Realtime</button><button class="button ghost" data-route="dashboard">الداشبورد</button></div></article>
-      <article class="panel span-7"><h2>خريطة حرارة الموظفين</h2><div class="heatmap-card">${(locations || []).map((loc, index) => `<span class="heat-dot" style="--x:${12 + (index * 17) % 76}%;--y:${18 + (index * 29) % 66}%" title="${escapeHtml(loc.employee?.fullName || loc.employeeId)}"></span>`).join("") || `<div class="empty-box">لا توجد مواقع حديثة بعد.</div>`}</div></article>
-      <article class="panel span-5"><h2>KPIs لحظية</h2>${table(["المؤشر", "القيمة"], [["الموظفون", data.cards?.employees ?? "-"], ["الحضور اليوم", data.cards?.presentToday ?? "-"], ["طلبات معلقة", data.cards?.pendingRequests ?? "-"], ["إجازات", data.cards?.leavesToday ?? "-"]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td><strong>${escapeHtml(b)}</strong></td></tr>`))}</article>
+      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>Ù„ÙˆØ­Ø© Ù…Ø¨Ø§Ø´Ø±Ø© Real-time</h2><p>ØªØ¹Ù…Ù„ Ø¹Ø¨Ø± Supabase Realtime Ø¹Ù†Ø¯ ØªÙØ¹ÙŠÙ„ SupabaseØŒ ÙˆÙ…Ø¹ Live Server ØªØ³ØªØ®Ø¯Ù… Snapshot Ù…Ø­Ù„ÙŠ.</p></div><strong id="live-state">${escapeHtml(snapshot.realtime?.transport || "snapshot")}</strong></div><div class="toolbar"><button class="button ghost" id="connect-live">Ø§ØªØµØ§Ù„ Realtime</button><button class="button ghost" data-route="dashboard">Ø§Ù„Ø¯Ø§Ø´Ø¨ÙˆØ±Ø¯</button></div></article>
+      <article class="panel span-7"><h2>Ø®Ø±ÙŠØ·Ø© Ø­Ø±Ø§Ø±Ø© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</h2><div class="heatmap-card">${(locations || []).map((loc, index) => `<span class="heat-dot" style="--x:${12 + (index * 17) % 76}%;--y:${18 + (index * 29) % 66}%" title="${escapeHtml(loc.employee?.fullName || loc.employeeId)}"></span>`).join("") || `<div class="empty-box">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…ÙˆØ§Ù‚Ø¹ Ø­Ø¯ÙŠØ«Ø© Ø¨Ø¹Ø¯.</div>`}</div></article>
+      <article class="panel span-5"><h2>KPIs Ù„Ø­Ø¸ÙŠØ©</h2>${table(["Ø§Ù„Ù…Ø¤Ø´Ø±", "Ø§Ù„Ù‚ÙŠÙ…Ø©"], [["Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", data.cards?.employees ?? "-"], ["Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…", data.cards?.presentToday ?? "-"], ["Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", data.cards?.pendingRequests ?? "-"], ["Ø¥Ø¬Ø§Ø²Ø§Øª", data.cards?.leavesToday ?? "-"]].map(([a,b]) => `<tr><td>${escapeHtml(a)}</td><td><strong>${escapeHtml(b)}</strong></td></tr>`))}</article>
     </section>`,
-    "لوحة Live",
-    "متابعة لحظية للحضور والمواقع والمؤشرات.",
+    "Ù„ÙˆØ­Ø© Live",
+    "Ù…ØªØ§Ø¨Ø¹Ø© Ù„Ø­Ø¸ÙŠØ© Ù„Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ù…ÙˆØ§Ù‚Ø¹ ÙˆØ§Ù„Ù…Ø¤Ø´Ø±Ø§Øª.",
   );
   app.querySelector("#connect-live")?.addEventListener("click", () => {
-    if (!("WebSocket" in window)) return setMessage("", "المتصفح لا يدعم WebSocket.");
+    if (!("WebSocket" in window)) return setMessage("", "Ø§Ù„Ù…ØªØµÙØ­ Ù„Ø§ ÙŠØ¯Ø¹Ù… WebSocket.");
     const protocol = location.protocol === "https:" ? "wss:" : "ws:";
     const ws = new WebSocket(`${protocol}//${location.host}/ws/live`);
-    ws.onopen = () => { app.querySelector("#live-state").textContent = "متصل"; setMessage("تم الاتصال باللوحة اللحظية.", ""); };
-    ws.onerror = () => setMessage("", "تعذر الاتصال اللحظي. تأكد من تفعيل Supabase Realtime أو تشغيل الخادم المحلي.");
-    ws.onmessage = (event) => { try { const msg = JSON.parse(event.data); if (msg.type === "dashboard.snapshot") app.querySelector("#live-state").textContent = `آخر تحديث ${new Date().toLocaleTimeString("ar-EG")}`; } catch {} };
+    ws.onopen = () => { app.querySelector("#live-state").textContent = "Ù…ØªØµÙ„"; setMessage("ØªÙ… Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ø§Ù„Ù„ÙˆØ­Ø© Ø§Ù„Ù„Ø­Ø¸ÙŠØ©.", ""); };
+    ws.onerror = () => setMessage("", "ØªØ¹Ø°Ø± Ø§Ù„Ø§ØªØµØ§Ù„ Ø§Ù„Ù„Ø­Ø¸ÙŠ. ØªØ£ÙƒØ¯ Ù…Ù† ØªÙØ¹ÙŠÙ„ Supabase Realtime Ø£Ùˆ ØªØ´ØºÙŠÙ„ Ø§Ù„Ø®Ø§Ø¯Ù… Ø§Ù„Ù…Ø­Ù„ÙŠ.");
+    ws.onmessage = (event) => { try { const msg = JSON.parse(event.data); if (msg.type === "dashboard.snapshot") app.querySelector("#live-state").textContent = `Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ« ${new Date().toLocaleTimeString("ar-EG")}`; } catch {} };
   });
 }
 
@@ -2776,7 +2776,7 @@ async function renderAdvancedReports() {
   const employees = await endpoints.employees().then(unwrap);
   const events = await endpoints.attendanceEvents().then(unwrap);
   const fields = ["employee", "type", "date", "source", "geofence", "notes"];
-  shell(`<section class="grid"><article class="panel span-4"><h2>منشئ التقارير</h2><p>اختر الحقول المطلوبة ثم صدّر التقرير.</p><form id="report-builder" class="form-grid">${fields.map((field) => `<label class="check-row"><input type="checkbox" name="fields" value="${field}" checked /> ${field}</label>`).join("")}<label>إرسال مجدول إلى<input name="email" type="email" placeholder="manager@example.com" /></label><div class="form-actions"><button class="button primary">تجهيز CSV</button></div></form></article><article class="panel span-8"><h2>تقارير الفروقات</h2>${table(["الموظف", "ساعات فعلية", "ساعات مخططة", "الفرق"], employees.map((employee) => { const empEvents = events.filter((e) => e.employeeId === employee.id); const actual = Math.round(empEvents.length * 4 * 10) / 10; const planned = 8; return `<tr><td>${escapeHtml(employee.fullName)}</td><td>${actual}</td><td>${planned}</td><td>${actual - planned}</td></tr>`; }))}</article></section>`, "منشئ التقارير", "تصدير ذكي CSV/Excel/PDF وجدولة بريدية مبدئية.");
+  shell(`<section class="grid"><article class="panel span-4"><h2>Ù…Ù†Ø´Ø¦ Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±</h2><p>Ø§Ø®ØªØ± Ø§Ù„Ø­Ù‚ÙˆÙ„ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø© Ø«Ù… ØµØ¯Ù‘Ø± Ø§Ù„ØªÙ‚Ø±ÙŠØ±.</p><form id="report-builder" class="form-grid">${fields.map((field) => `<label class="check-row"><input type="checkbox" name="fields" value="${field}" checked /> ${field}</label>`).join("")}<label>Ø¥Ø±Ø³Ø§Ù„ Ù…Ø¬Ø¯ÙˆÙ„ Ø¥Ù„Ù‰<input name="email" type="email" placeholder="manager@example.com" /></label><div class="form-actions"><button class="button primary">ØªØ¬Ù‡ÙŠØ² CSV</button></div></form></article><article class="panel span-8"><h2>ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙØ±ÙˆÙ‚Ø§Øª</h2>${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø³Ø§Ø¹Ø§Øª ÙØ¹Ù„ÙŠØ©", "Ø³Ø§Ø¹Ø§Øª Ù…Ø®Ø·Ø·Ø©", "Ø§Ù„ÙØ±Ù‚"], employees.map((employee) => { const empEvents = events.filter((e) => e.employeeId === employee.id); const actual = Math.round(empEvents.length * 4 * 10) / 10; const planned = 8; return `<tr><td>${escapeHtml(employee.fullName)}</td><td>${actual}</td><td>${planned}</td><td>${actual - planned}</td></tr>`; }))}</article></section>`, "Ù…Ù†Ø´Ø¦ Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±", "ØªØµØ¯ÙŠØ± Ø°ÙƒÙŠ CSV/Excel/PDF ÙˆØ¬Ø¯ÙˆÙ„Ø© Ø¨Ø±ÙŠØ¯ÙŠØ© Ù…Ø¨Ø¯Ø¦ÙŠØ©.");
   app.querySelector("#report-builder").addEventListener("submit", async (event) => {
     event.preventDefault();
     const selected = [...new FormData(event.currentTarget).getAll("fields")];
@@ -2788,46 +2788,46 @@ async function renderAdvancedReports() {
 async function renderAiAnalytics() {
   const payload = await endpoints.aiAnalytics();
   const rows = payload.rows || [];
-  shell(`<section class="grid"><article class="panel span-12 accent-panel"><h2>تحليلات AI</h2><p>${escapeHtml(payload.note || "تحليل تقديري يساعد الإدارة ولا يتخذ قرارات تلقائية.")}</p></article><article class="panel span-12">${table(["الموظف", "درجة خطر الغياب", "غياب", "تأخير بالدقائق", "ملاحظة"], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee, "tiny")}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td><strong>${escapeHtml(row.riskScore)}</strong></td><td>${escapeHtml(row.absences)}</td><td>${escapeHtml(row.lateMinutes)}</td><td>${escapeHtml(row.productivityHint)}</td></tr>`))}</article></section>`, "تحليلات الذكاء الاصطناعي", "توقعات غياب وإنتاجية مبنية على سجلات الحضور.");
+  shell(`<section class="grid"><article class="panel span-12 accent-panel"><h2>ØªØ­Ù„ÙŠÙ„Ø§Øª AI</h2><p>${escapeHtml(payload.note || "ØªØ­Ù„ÙŠÙ„ ØªÙ‚Ø¯ÙŠØ±ÙŠ ÙŠØ³Ø§Ø¹Ø¯ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ÙˆÙ„Ø§ ÙŠØªØ®Ø° Ù‚Ø±Ø§Ø±Ø§Øª ØªÙ„Ù‚Ø§Ø¦ÙŠØ©.")}</p></article><article class="panel span-12">${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø¯Ø±Ø¬Ø© Ø®Ø·Ø± Ø§Ù„ØºÙŠØ§Ø¨", "ØºÙŠØ§Ø¨", "ØªØ£Ø®ÙŠØ± Ø¨Ø§Ù„Ø¯Ù‚Ø§Ø¦Ù‚", "Ù…Ù„Ø§Ø­Ø¸Ø©"], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee, "tiny")}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td><strong>${escapeHtml(row.riskScore)}</strong></td><td>${escapeHtml(row.absences)}</td><td>${escapeHtml(row.lateMinutes)}</td><td>${escapeHtml(row.productivityHint)}</td></tr>`))}</article></section>`, "ØªØ­Ù„ÙŠÙ„Ø§Øª Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ", "ØªÙˆÙ‚Ø¹Ø§Øª ØºÙŠØ§Ø¨ ÙˆØ¥Ù†ØªØ§Ø¬ÙŠØ© Ù…Ø¨Ù†ÙŠØ© Ø¹Ù„Ù‰ Ø³Ø¬Ù„Ø§Øª Ø§Ù„Ø­Ø¶ÙˆØ±.");
 }
 
 async function renderIntegrations() {
   const items = await endpoints.integrations().then(unwrap);
-  shell(`<section class="grid"><article class="panel span-7"><h2>التكاملات</h2>${table(["التكامل", "المزوّد", "الحالة", "ملاحظات"], items.map((item) => `<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.provider)}</td><td>${badge(item.status)}</td><td>${escapeHtml(item.notes || "")}</td></tr>`))}</article><article class="panel span-5"><h2>WebAuthn / Passkeys</h2><p>يسمح باستخدام Touch ID / Face ID / Windows Hello / YubiKey على localhost أو HTTPS.</p><div class="toolbar"><button class="button primary" id="register-passkey">تسجيل Passkey لهذا الجهاز</button><button class="button ghost" id="enable-push">تفعيل إشعارات المتصفح</button></div><div class="message compact">التكاملات الخارجية والبوابات تحتاج API Key أو جهاز فعلي.</div></article></section>`, "التكاملات والبيومترية", "إعداد WebAuthn وPush والبوابات.");
-  app.querySelector("#register-passkey")?.addEventListener("click", async () => { try { await registerBrowserPasskey(); setMessage("تم تسجيل Passkey للجهاز الحالي.", ""); render(); } catch (error) { setMessage("", error.message); } });
-  app.querySelector("#enable-push")?.addEventListener("click", async () => { try { await enableBrowserNotifications(); setMessage("تم تفعيل الإشعارات.", ""); } catch (error) { setMessage("", error.message); } });
+  shell(`<section class="grid"><article class="panel span-7"><h2>Ø§Ù„ØªÙƒØ§Ù…Ù„Ø§Øª</h2>${table(["Ø§Ù„ØªÙƒØ§Ù…Ù„", "Ø§Ù„Ù…Ø²ÙˆÙ‘Ø¯", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"], items.map((item) => `<tr><td>${escapeHtml(item.name)}</td><td>${escapeHtml(item.provider)}</td><td>${badge(item.status)}</td><td>${escapeHtml(item.notes || "")}</td></tr>`))}</article><article class="panel span-5"><h2>WebAuthn / Passkeys</h2><p>ÙŠØ³Ù…Ø­ Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Touch ID / Face ID / Windows Hello / YubiKey Ø¹Ù„Ù‰ localhost Ø£Ùˆ HTTPS.</p><div class="toolbar"><button class="button primary" id="register-passkey">ØªØ³Ø¬ÙŠÙ„ Passkey Ù„Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø²</button><button class="button ghost" id="enable-push">ØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù…ØªØµÙØ­</button></div><div class="message compact">Ø§Ù„ØªÙƒØ§Ù…Ù„Ø§Øª Ø§Ù„Ø®Ø§Ø±Ø¬ÙŠØ© ÙˆØ§Ù„Ø¨ÙˆØ§Ø¨Ø§Øª ØªØ­ØªØ§Ø¬ API Key Ø£Ùˆ Ø¬Ù‡Ø§Ø² ÙØ¹Ù„ÙŠ.</div></article></section>`, "Ø§Ù„ØªÙƒØ§Ù…Ù„Ø§Øª ÙˆØ§Ù„Ø¨ÙŠÙˆÙ…ØªØ±ÙŠØ©", "Ø¥Ø¹Ø¯Ø§Ø¯ WebAuthn ÙˆPush ÙˆØ§Ù„Ø¨ÙˆØ§Ø¨Ø§Øª.");
+  app.querySelector("#register-passkey")?.addEventListener("click", async () => { try { await registerBrowserPasskey(); setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Passkey Ù„Ù„Ø¬Ù‡Ø§Ø² Ø§Ù„Ø­Ø§Ù„ÙŠ.", ""); render(); } catch (error) { setMessage("", error.message); } });
+  app.querySelector("#enable-push")?.addEventListener("click", async () => { try { await enableBrowserNotifications(); setMessage("ØªÙ… ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.", ""); } catch (error) { setMessage("", error.message); } });
 }
 
 async function renderAccessControl() {
   const [events, employees] = await Promise.all([endpoints.accessControlEvents().then(unwrap), endpoints.employees().then(unwrap)]);
   const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: employee.fullName })));
-  shell(`<section class="grid"><article class="panel span-4"><h2>محاكاة بوابة/باب ذكي</h2><form id="access-form" class="form-grid"><label>الموظف<select name="employeeId">${employeeOptions}</select></label><label>الجهاز<input name="deviceId" value="main-gate" /></label><label>الاتجاه<select name="direction"><option value="ENTRY">دخول</option><option value="EXIT">خروج</option></select></label><label>القرار<select name="decision"><option value="ALLOW">سماح</option><option value="DENY">رفض</option></select></label><label>السبب<input name="reason" value="تحقق مزدوج" /></label><div class="form-actions"><button class="button primary">تسجيل حدث</button></div></form></article><article class="panel span-8"><h2>سجل البوابات</h2>${table(["الموظف", "الجهاز", "الاتجاه", "القرار", "الوقت"], events.map((event) => `<tr><td>${escapeHtml(event.employee?.fullName || event.employeeId)}</td><td>${escapeHtml(event.deviceId)}</td><td>${badge(event.direction)}</td><td>${badge(event.decision)}</td><td>${date(event.date)}</td></tr>`))}</article></section>`, "تكامل الأجهزة والبوابات", "جاهز للربط مع Turnstiles أو Door API عند توفر الجهاز.");
-  app.querySelector("#access-form").addEventListener("submit", submitForm(endpoints.createAccessEvent, "تم تسجيل حدث البوابة."));
+  shell(`<section class="grid"><article class="panel span-4"><h2>Ù…Ø­Ø§ÙƒØ§Ø© Ø¨ÙˆØ§Ø¨Ø©/Ø¨Ø§Ø¨ Ø°ÙƒÙŠ</h2><form id="access-form" class="form-grid"><label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId">${employeeOptions}</select></label><label>Ø§Ù„Ø¬Ù‡Ø§Ø²<input name="deviceId" value="main-gate" /></label><label>Ø§Ù„Ø§ØªØ¬Ø§Ù‡<select name="direction"><option value="ENTRY">Ø¯Ø®ÙˆÙ„</option><option value="EXIT">Ø®Ø±ÙˆØ¬</option></select></label><label>Ø§Ù„Ù‚Ø±Ø§Ø±<select name="decision"><option value="ALLOW">Ø³Ù…Ø§Ø­</option><option value="DENY">Ø±ÙØ¶</option></select></label><label>Ø§Ù„Ø³Ø¨Ø¨<input name="reason" value="ØªØ­Ù‚Ù‚ Ù…Ø²Ø¯ÙˆØ¬" /></label><div class="form-actions"><button class="button primary">ØªØ³Ø¬ÙŠÙ„ Ø­Ø¯Ø«</button></div></form></article><article class="panel span-8"><h2>Ø³Ø¬Ù„ Ø§Ù„Ø¨ÙˆØ§Ø¨Ø§Øª</h2>${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø¬Ù‡Ø§Ø²", "Ø§Ù„Ø§ØªØ¬Ø§Ù‡", "Ø§Ù„Ù‚Ø±Ø§Ø±", "Ø§Ù„ÙˆÙ‚Øª"], events.map((event) => `<tr><td>${escapeHtml(event.employee?.fullName || event.employeeId)}</td><td>${escapeHtml(event.deviceId)}</td><td>${badge(event.direction)}</td><td>${badge(event.decision)}</td><td>${date(event.date)}</td></tr>`))}</article></section>`, "ØªÙƒØ§Ù…Ù„ Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© ÙˆØ§Ù„Ø¨ÙˆØ§Ø¨Ø§Øª", "Ø¬Ø§Ù‡Ø² Ù„Ù„Ø±Ø¨Ø· Ù…Ø¹ Turnstiles Ø£Ùˆ Door API Ø¹Ù†Ø¯ ØªÙˆÙØ± Ø§Ù„Ø¬Ù‡Ø§Ø².");
+  app.querySelector("#access-form").addEventListener("submit", submitForm(endpoints.createAccessEvent, "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø­Ø¯Ø« Ø§Ù„Ø¨ÙˆØ§Ø¨Ø©."));
 }
 
 async function renderOfflineSync() {
   const rows = await endpoints.offlineQueue().then(unwrap).catch(() => []);
-  shell(`<section class="grid"><article class="panel span-5"><h2>Offline-first</h2><p>عند فشل الشبكة يتم حفظ الطلبات غير GET في قائمة محلية ثم مزامنتها عند عودة الاتصال.</p><div class="toolbar"><button class="button primary" id="sync-offline">مزامنة الآن</button><button class="button ghost" id="register-bg-sync">تفعيل Background Sync</button></div></article><article class="panel span-7"><h2>قائمة الانتظار</h2>${table(["المسار", "النوع", "الحالة", "التاريخ"], rows.map((row) => `<tr><td>${escapeHtml(row.path)}</td><td>${escapeHtml(row.method)}</td><td>${badge(row.status)}</td><td>${date(row.createdAt)}</td></tr>`))}</article></section>`, "المزامنة دون اتصال", "IndexedDB/Queue-ready مع Background Sync عبر Service Worker عند دعم المتصفح.");
-  app.querySelector("#sync-offline")?.addEventListener("click", async () => { const result = await endpoints.syncOfflineQueue(); setMessage(`تمت مزامنة ${result.synced || 0} طلب.`, ""); render(); });
-  app.querySelector("#register-bg-sync")?.addEventListener("click", async () => { try { const reg = await navigator.serviceWorker.ready; await reg.sync?.register?.("hr-offline-sync"); setMessage("تم تفعيل Background Sync إن كان المتصفح يدعمه.", ""); } catch (error) { setMessage("", "المتصفح لا يدعم Background Sync أو لم يتم تسجيل Service Worker."); } });
+  shell(`<section class="grid"><article class="panel span-5"><h2>Offline-first</h2><p>Ø¹Ù†Ø¯ ÙØ´Ù„ Ø§Ù„Ø´Ø¨ÙƒØ© ÙŠØªÙ… Ø­ÙØ¸ Ø§Ù„Ø·Ù„Ø¨Ø§Øª ØºÙŠØ± GET ÙÙŠ Ù‚Ø§Ø¦Ù…Ø© Ù…Ø­Ù„ÙŠØ© Ø«Ù… Ù…Ø²Ø§Ù…Ù†ØªÙ‡Ø§ Ø¹Ù†Ø¯ Ø¹ÙˆØ¯Ø© Ø§Ù„Ø§ØªØµØ§Ù„.</p><div class="toolbar"><button class="button primary" id="sync-offline">Ù…Ø²Ø§Ù…Ù†Ø© Ø§Ù„Ø¢Ù†</button><button class="button ghost" id="register-bg-sync">ØªÙØ¹ÙŠÙ„ Background Sync</button></div></article><article class="panel span-7"><h2>Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ø§Ù†ØªØ¸Ø§Ø±</h2>${table(["Ø§Ù„Ù…Ø³Ø§Ø±", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], rows.map((row) => `<tr><td>${escapeHtml(row.path)}</td><td>${escapeHtml(row.method)}</td><td>${badge(row.status)}</td><td>${date(row.createdAt)}</td></tr>`))}</article></section>`, "Ø§Ù„Ù…Ø²Ø§Ù…Ù†Ø© Ø¯ÙˆÙ† Ø§ØªØµØ§Ù„", "IndexedDB/Queue-ready Ù…Ø¹ Background Sync Ø¹Ø¨Ø± Service Worker Ø¹Ù†Ø¯ Ø¯Ø¹Ù… Ø§Ù„Ù…ØªØµÙØ­.");
+  app.querySelector("#sync-offline")?.addEventListener("click", async () => { const result = await endpoints.syncOfflineQueue(); setMessage(`ØªÙ…Øª Ù…Ø²Ø§Ù…Ù†Ø© ${result.synced || 0} Ø·Ù„Ø¨.`, ""); render(); });
+  app.querySelector("#register-bg-sync")?.addEventListener("click", async () => { try { const reg = await navigator.serviceWorker.ready; await reg.sync?.register?.("hr-offline-sync"); setMessage("ØªÙ… ØªÙØ¹ÙŠÙ„ Background Sync Ø¥Ù† ÙƒØ§Ù† Ø§Ù„Ù…ØªØµÙØ­ ÙŠØ¯Ø¹Ù…Ù‡.", ""); } catch (error) { setMessage("", "Ø§Ù„Ù…ØªØµÙØ­ Ù„Ø§ ÙŠØ¯Ø¹Ù… Background Sync Ø£Ùˆ Ù„Ù… ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Service Worker."); } });
 }
 
 async function renderManagementStructure() {
   const data = await endpoints.managementStructure().then(unwrap);
   const employees = data.employees || [];
   const managers = data.managerOptions || [];
-  const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: employee.fullName })), "", "اختر موظفًا");
-  const managerOptions = optionList(managers.map((employee) => ({ id: employee.id, name: employee.fullName })), "", "بدون مدير مباشر");
+  const employeeOptions = optionList(employees.map((employee) => ({ id: employee.id, name: employee.fullName })), "", "Ø§Ø®ØªØ± Ù…ÙˆØ¸ÙÙ‹Ø§");
+  const managerOptions = optionList(managers.map((employee) => ({ id: employee.id, name: employee.fullName })), "", "Ø¨Ø¯ÙˆÙ† Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±");
   const levelRows = (data.levels || []).flatMap((level) => (level.people || []).map((person) => `<tr><td>${escapeHtml(level.label)}</td><td class="person-cell">${avatar(person, "tiny")}<span><strong>${escapeHtml(person.fullName || "-")}</strong><small>${escapeHtml(person.jobTitle || "")}</small></span></td><td>${escapeHtml(person.manager?.fullName || "-")}</td><td>${escapeHtml(person.teamCount || 0)}</td><td>${badge(person.role?.slug || person.role?.key || person.roleId || "-")}</td></tr>`));
-  const teamRows = (data.managerTeams || []).map((row) => `<tr><td class="person-cell">${avatar(row.manager, "tiny")}<span><strong>${escapeHtml(row.manager?.fullName || "-")}</strong><small>${escapeHtml(row.manager?.jobTitle || "")}</small></span></td><td>${escapeHtml(row.teamCount || 0)}</td><td>${escapeHtml(row.activeCount || 0)}</td><td>${escapeHtml(row.pendingKpi || 0)}</td><td>${escapeHtml(row.pendingRequests || 0)}</td><td><button class="button ghost" data-route="team-dashboard?managerId=${escapeHtml(row.manager?.id || "")}">فتح الفريق</button></td></tr>`);
+  const teamRows = (data.managerTeams || []).map((row) => `<tr><td class="person-cell">${avatar(row.manager, "tiny")}<span><strong>${escapeHtml(row.manager?.fullName || "-")}</strong><small>${escapeHtml(row.manager?.jobTitle || "")}</small></span></td><td>${escapeHtml(row.teamCount || 0)}</td><td>${escapeHtml(row.activeCount || 0)}</td><td>${escapeHtml(row.pendingKpi || 0)}</td><td>${escapeHtml(row.pendingRequests || 0)}</td><td><button class="button ghost" data-route="team-dashboard?managerId=${escapeHtml(row.manager?.id || "")}">ÙØªØ­ Ø§Ù„ÙØ±ÙŠÙ‚</button></td></tr>`);
   shell(`<section class="stack management-structure-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>هيكل الإدارة والفرق</h2><p>تحديد المدير المباشر لكل موظف؛ ويعتمد عليه ظهور الفريق، KPI، الطلبات، والتصعيد.</p></div><button class="button ghost" data-export-structure>تصدير الهيكل CSV</button></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || "")}</small></div>`).join("")}</div></article>
-    <article class="panel"><h2>تغيير المدير المباشر</h2><form id="assign-manager-form" class="form-grid compact-form"><label>الموظف<select name="employeeId" required>${employeeOptions}</select></label><label>المدير المباشر<select name="managerEmployeeId">${managerOptions}</select></label><label class="span-2">ملاحظة النقل<input name="note" placeholder="سبب النقل أو قرار الإدارة" /></label><div class="form-actions"><button class="button primary">حفظ النقل</button></div></form></article>
-    <article class="panel"><h2>الصف الإداري</h2>${table(["المستوى", "الشخص", "المدير الأعلى", "حجم الفريق", "الدور"], levelRows)}</article>
-    <article class="panel"><h2>الفرق حسب المدير</h2>${table(["المدير", "إجمالي الفريق", "نشط", "KPI معلق", "طلبات معلقة", "إجراء"], teamRows)}</article>
-  </section>`, "هيكل الإدارة", "تنظيم المديرين والفرق.");
-  app.querySelector('#assign-manager-form')?.addEventListener('submit', submitForm((values) => endpoints.assignManager(values), 'تم تحديث المدير المباشر.'));
-  app.querySelector('[data-export-structure]')?.addEventListener('click', () => downloadFile('management-structure.csv', `\ufeff${toCsv([["المستوى","الشخص","المدير","حجم الفريق"], ...(data.levels || []).flatMap((level) => (level.people || []).map((person) => [level.label, person.fullName, person.manager?.fullName || '-', person.teamCount || 0]))])}`, 'text/csv;charset=utf-8'));
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ÙˆØ§Ù„ÙØ±Ù‚</h2><p>ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ù„ÙƒÙ„ Ù…ÙˆØ¸ÙØ› ÙˆÙŠØ¹ØªÙ…Ø¯ Ø¹Ù„ÙŠÙ‡ Ø¸Ù‡ÙˆØ± Ø§Ù„ÙØ±ÙŠÙ‚ØŒ KPIØŒ Ø§Ù„Ø·Ù„Ø¨Ø§ØªØŒ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯.</p></div><button class="button ghost" data-export-structure>ØªØµØ¯ÙŠØ± Ø§Ù„Ù‡ÙŠÙƒÙ„ CSV</button></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || "")}</small></div>`).join("")}</div></article>
+    <article class="panel"><h2>ØªØºÙŠÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</h2><form id="assign-manager-form" class="form-grid compact-form"><label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId" required>${employeeOptions}</select></label><label>Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±<select name="managerEmployeeId">${managerOptions}</select></label><label class="span-2">Ù…Ù„Ø§Ø­Ø¸Ø© Ø§Ù„Ù†Ù‚Ù„<input name="note" placeholder="Ø³Ø¨Ø¨ Ø§Ù„Ù†Ù‚Ù„ Ø£Ùˆ Ù‚Ø±Ø§Ø± Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©" /></label><div class="form-actions"><button class="button primary">Ø­ÙØ¸ Ø§Ù„Ù†Ù‚Ù„</button></div></form></article>
+    <article class="panel"><h2>Ø§Ù„ØµÙ Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠ</h2>${table(["Ø§Ù„Ù…Ø³ØªÙˆÙ‰", "Ø§Ù„Ø´Ø®Øµ", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ø£Ø¹Ù„Ù‰", "Ø­Ø¬Ù… Ø§Ù„ÙØ±ÙŠÙ‚", "Ø§Ù„Ø¯ÙˆØ±"], levelRows)}</article>
+    <article class="panel"><h2>Ø§Ù„ÙØ±Ù‚ Ø­Ø³Ø¨ Ø§Ù„Ù…Ø¯ÙŠØ±</h2>${table(["Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„ÙØ±ÙŠÙ‚", "Ù†Ø´Ø·", "KPI Ù…Ø¹Ù„Ù‚", "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", "Ø¥Ø¬Ø±Ø§Ø¡"], teamRows)}</article>
+  </section>`, "Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©", "ØªÙ†Ø¸ÙŠÙ… Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ† ÙˆØ§Ù„ÙØ±Ù‚.");
+  app.querySelector('#assign-manager-form')?.addEventListener('submit', submitForm((values) => endpoints.assignManager(values), 'ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.'));
+  app.querySelector('[data-export-structure]')?.addEventListener('click', () => downloadFile('management-structure.csv', `\ufeff${toCsv([["Ø§Ù„Ù…Ø³ØªÙˆÙ‰","Ø§Ù„Ø´Ø®Øµ","Ø§Ù„Ù…Ø¯ÙŠØ±","Ø­Ø¬Ù… Ø§Ù„ÙØ±ÙŠÙ‚"], ...(data.levels || []).flatMap((level) => (level.people || []).map((person) => [level.label, person.fullName, person.manager?.fullName || '-', person.teamCount || 0]))])}`, 'text/csv;charset=utf-8'));
 }
 
 async function renderTeamDashboard() {
@@ -2835,65 +2835,65 @@ async function renderTeamDashboard() {
   const data = await endpoints.teamDashboard({ managerId }).then(unwrap);
   const rows = data.team || [];
   shell(`<section class="stack team-dashboard-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>فريق المدير المباشر</h2><p>${escapeHtml(data.manager?.fullName || 'فريقي')} — متابعة يومية للانضباط، الطلبات، وKPI.</p></div><div class="toolbar"><button class="button primary" data-remind-team>إرسال تذكير للفريق</button><button class="button ghost" data-export-team>تصدير CSV</button></div></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || '')}</small></div>`).join('')}</div></article>
-    <article class="panel"><h2>أعضاء الفريق</h2>${table(['الموظف','حالة اليوم','آخر بصمة','KPI','طلبات','إجراء'], rows.map((item) => `<tr><td class="person-cell">${avatar(item,'tiny')}<span><strong>${escapeHtml(item.fullName)}</strong><small>${escapeHtml(item.jobTitle || '')}</small></span></td><td>${badge(item.todayStatus || 'ABSENT')}</td><td>${date(item.lastEventAt)}</td><td>${badge(item.kpiStatus || 'DRAFT')}</td><td>${escapeHtml(item.pendingItems || 0)}</td><td><button class="button ghost" data-route="employee-archive?id=${escapeHtml(item.id)}">أرشيف</button><button class="button ghost" data-route="kpi?employeeId=${escapeHtml(item.id)}">KPI</button></td></tr>`))}</article>
-    <article class="panel"><h2>طلبات ومهام الفريق</h2>${table(['النوع','الموظف','الحالة','العنوان','التاريخ'], (data.pending || []).map((item) => `<tr><td>${escapeHtml(item.kindLabel || item.kind)}</td><td>${escapeHtml(item.employee?.fullName || '-')}</td><td>${badge(item.status)}</td><td>${escapeHtml(item.label || item.title || '-')}</td><td>${date(item.createdAt || item.createdSort)}</td></tr>`))}</article>
-  </section>`, "فريق المدير", "لوحة تشغيل يومية للمدير المباشر.");
-  app.querySelector('[data-export-team]')?.addEventListener('click', () => downloadFile('team-dashboard.csv', `\ufeff${toCsv([['الموظف','الوظيفة','حالة اليوم','آخر بصمة','KPI','طلبات'], ...rows.map((r) => [r.fullName, r.jobTitle || '', statusLabel(r.todayStatus), date(r.lastEventAt), statusLabel(r.kpiStatus), r.pendingItems || 0])])}`, 'text/csv;charset=utf-8'));
-  app.querySelector('[data-remind-team]')?.addEventListener('click', async () => { const result = await endpoints.sendTeamReminder({ managerId }); setMessage(`تم إرسال ${result.sent || 0} تذكير للفريق.`, ''); renderTeamDashboard(); });
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</h2><p>${escapeHtml(data.manager?.fullName || 'ÙØ±ÙŠÙ‚ÙŠ')} â€” Ù…ØªØ§Ø¨Ø¹Ø© ÙŠÙˆÙ…ÙŠØ© Ù„Ù„Ø§Ù†Ø¶Ø¨Ø§Ø·ØŒ Ø§Ù„Ø·Ù„Ø¨Ø§ØªØŒ ÙˆKPI.</p></div><div class="toolbar"><button class="button primary" data-remind-team>Ø¥Ø±Ø³Ø§Ù„ ØªØ°ÙƒÙŠØ± Ù„Ù„ÙØ±ÙŠÙ‚</button><button class="button ghost" data-export-team>ØªØµØ¯ÙŠØ± CSV</button></div></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || '')}</small></div>`).join('')}</div></article>
+    <article class="panel"><h2>Ø£Ø¹Ø¶Ø§Ø¡ Ø§Ù„ÙØ±ÙŠÙ‚</h2>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø­Ø§Ù„Ø© Ø§Ù„ÙŠÙˆÙ…','Ø¢Ø®Ø± Ø¨ØµÙ…Ø©','KPI','Ø·Ù„Ø¨Ø§Øª','Ø¥Ø¬Ø±Ø§Ø¡'], rows.map((item) => `<tr><td class="person-cell">${avatar(item,'tiny')}<span><strong>${escapeHtml(item.fullName)}</strong><small>${escapeHtml(item.jobTitle || '')}</small></span></td><td>${badge(item.todayStatus || 'ABSENT')}</td><td>${date(item.lastEventAt)}</td><td>${badge(item.kpiStatus || 'DRAFT')}</td><td>${escapeHtml(item.pendingItems || 0)}</td><td><button class="button ghost" data-route="employee-archive?id=${escapeHtml(item.id)}">Ø£Ø±Ø´ÙŠÙ</button><button class="button ghost" data-route="kpi?employeeId=${escapeHtml(item.id)}">KPI</button></td></tr>`))}</article>
+    <article class="panel"><h2>Ø·Ù„Ø¨Ø§Øª ÙˆÙ…Ù‡Ø§Ù… Ø§Ù„ÙØ±ÙŠÙ‚</h2>${table(['Ø§Ù„Ù†ÙˆØ¹','Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø§Ù„Ø©','Ø§Ù„Ø¹Ù†ÙˆØ§Ù†','Ø§Ù„ØªØ§Ø±ÙŠØ®'], (data.pending || []).map((item) => `<tr><td>${escapeHtml(item.kindLabel || item.kind)}</td><td>${escapeHtml(item.employee?.fullName || '-')}</td><td>${badge(item.status)}</td><td>${escapeHtml(item.label || item.title || '-')}</td><td>${date(item.createdAt || item.createdSort)}</td></tr>`))}</article>
+  </section>`, "ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ±", "Ù„ÙˆØ­Ø© ØªØ´ØºÙŠÙ„ ÙŠÙˆÙ…ÙŠØ© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.");
+  app.querySelector('[data-export-team]')?.addEventListener('click', () => downloadFile('team-dashboard.csv', `\ufeff${toCsv([['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„ÙˆØ¸ÙŠÙØ©','Ø­Ø§Ù„Ø© Ø§Ù„ÙŠÙˆÙ…','Ø¢Ø®Ø± Ø¨ØµÙ…Ø©','KPI','Ø·Ù„Ø¨Ø§Øª'], ...rows.map((r) => [r.fullName, r.jobTitle || '', statusLabel(r.todayStatus), date(r.lastEventAt), statusLabel(r.kpiStatus), r.pendingItems || 0])])}`, 'text/csv;charset=utf-8'));
+  app.querySelector('[data-remind-team]')?.addEventListener('click', async () => { const result = await endpoints.sendTeamReminder({ managerId }); setMessage(`ØªÙ… Ø¥Ø±Ø³Ø§Ù„ ${result.sent || 0} ØªØ°ÙƒÙŠØ± Ù„Ù„ÙØ±ÙŠÙ‚.`, ''); renderTeamDashboard(); });
 }
 
 async function renderHrOperations() {
   const data = await endpoints.hrOperations().then(unwrap);
   shell(`<section class="stack hr-ops-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>عمليات الموارد البشرية</h2><p>صفحة HR مستقلة: حضور، KPI، ملفات، بيانات ناقصة، وشكاوى بدون أدوات تقنية كاملة.</p></div><div class="toolbar"><button class="button ghost" data-export-hr>تصدير تقرير HR</button><button class="button primary" data-route="kpi">مراجعة KPI</button></div></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || '')}</small></div>`).join('')}</div></article>
-    <article class="panel"><h2>حضور وانصراف يحتاج مراجعة</h2>${table(['الموظف','الحالة','التفاصيل','التاريخ','إجراء'], (data.attendanceIssues || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || row.employeeName || '-')}</td><td>${badge(row.status || row.smartStatus || 'REVIEW')}</td><td>${escapeHtml(row.recommendation || row.title || row.notes || '-')}</td><td>${date(row.date || row.eventAt || row.createdAt)}</td><td><button class="button ghost" data-route="attendance-review">مراجعة</button></td></tr>`))}</article>
-    <article class="panel"><h2>KPI بانتظار HR</h2>${table(['الموظف','المدير','الحضور','الصلاة','الحلقة','الحالة'], (data.kpiForHr || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || '-')}</td><td>${escapeHtml(row.manager?.fullName || '-')}</td><td>${escapeHtml(row.attendanceScore || 0)}/20</td><td>${escapeHtml(row.prayerScore || 0)}/5</td><td>${escapeHtml(row.quranCircleScore || 0)}/5</td><td>${badge(row.status || 'MANAGER_APPROVED')}</td></tr>`))}</article>
-    <article class="panel"><h2>بيانات ناقصة أو تحتاج استكمال</h2>${table(['الموظف','المشكلة','إجراء'], (data.dataIssues || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || '-')}</td><td>${escapeHtml(row.issue)}</td><td><button class="button ghost" data-route="employee-profile?id=${escapeHtml(row.employee?.id || row.employeeId || '')}">فتح الملف</button></td></tr>`))}</article>
-  </section>`, "عمليات HR", "مركز الموارد البشرية اليومي.");
-  app.querySelector('[data-export-hr]')?.addEventListener('click', () => downloadFile('hr-operations.csv', `\ufeff${toCsv([['المؤشر','القيمة'], ...(data.metrics || []).map((m) => [m.label, m.value])])}`, 'text/csv;charset=utf-8'));
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©</h2><p>ØµÙØ­Ø© HR Ù…Ø³ØªÙ‚Ù„Ø©: Ø­Ø¶ÙˆØ±ØŒ KPIØŒ Ù…Ù„ÙØ§ØªØŒ Ø¨ÙŠØ§Ù†Ø§Øª Ù†Ø§Ù‚ØµØ©ØŒ ÙˆØ´ÙƒØ§ÙˆÙ‰ Ø¨Ø¯ÙˆÙ† Ø£Ø¯ÙˆØ§Øª ØªÙ‚Ù†ÙŠØ© ÙƒØ§Ù…Ù„Ø©.</p></div><div class="toolbar"><button class="button ghost" data-export-hr>ØªØµØ¯ÙŠØ± ØªÙ‚Ø±ÙŠØ± HR</button><button class="button primary" data-route="kpi">Ù…Ø±Ø§Ø¬Ø¹Ø© KPI</button></div></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || '')}</small></div>`).join('')}</div></article>
+    <article class="panel"><h2>Ø­Ø¶ÙˆØ± ÙˆØ§Ù†ØµØ±Ø§Ù ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©</h2>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø§Ù„Ø©','Ø§Ù„ØªÙØ§ØµÙŠÙ„','Ø§Ù„ØªØ§Ø±ÙŠØ®','Ø¥Ø¬Ø±Ø§Ø¡'], (data.attendanceIssues || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || row.employeeName || '-')}</td><td>${badge(row.status || row.smartStatus || 'REVIEW')}</td><td>${escapeHtml(row.recommendation || row.title || row.notes || '-')}</td><td>${date(row.date || row.eventAt || row.createdAt)}</td><td><button class="button ghost" data-route="attendance-review">Ù…Ø±Ø§Ø¬Ø¹Ø©</button></td></tr>`))}</article>
+    <article class="panel"><h2>KPI Ø¨Ø§Ù†ØªØ¸Ø§Ø± HR</h2>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ù…Ø¯ÙŠØ±','Ø§Ù„Ø­Ø¶ÙˆØ±','Ø§Ù„ØµÙ„Ø§Ø©','Ø§Ù„Ø­Ù„Ù‚Ø©','Ø§Ù„Ø­Ø§Ù„Ø©'], (data.kpiForHr || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || '-')}</td><td>${escapeHtml(row.manager?.fullName || '-')}</td><td>${escapeHtml(row.attendanceScore || 0)}/20</td><td>${escapeHtml(row.prayerScore || 0)}/5</td><td>${escapeHtml(row.quranCircleScore || 0)}/5</td><td>${badge(row.status || 'MANAGER_APPROVED')}</td></tr>`))}</article>
+    <article class="panel"><h2>Ø¨ÙŠØ§Ù†Ø§Øª Ù†Ø§Ù‚ØµØ© Ø£Ùˆ ØªØ­ØªØ§Ø¬ Ø§Ø³ØªÙƒÙ…Ø§Ù„</h2>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ù…Ø´ÙƒÙ„Ø©','Ø¥Ø¬Ø±Ø§Ø¡'], (data.dataIssues || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || '-')}</td><td>${escapeHtml(row.issue)}</td><td><button class="button ghost" data-route="employee-profile?id=${escapeHtml(row.employee?.id || row.employeeId || '')}">ÙØªØ­ Ø§Ù„Ù…Ù„Ù</button></td></tr>`))}</article>
+  </section>`, "Ø¹Ù…Ù„ÙŠØ§Øª HR", "Ù…Ø±ÙƒØ² Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ© Ø§Ù„ÙŠÙˆÙ…ÙŠ.");
+  app.querySelector('[data-export-hr]')?.addEventListener('click', () => downloadFile('hr-operations.csv', `\ufeff${toCsv([['Ø§Ù„Ù…Ø¤Ø´Ø±','Ø§Ù„Ù‚ÙŠÙ…Ø©'], ...(data.metrics || []).map((m) => [m.label, m.value])])}`, 'text/csv;charset=utf-8'));
 }
 
 async function renderDisputeWorkflow() {
   const data = await endpoints.disputeWorkflow().then(unwrap);
   const cases = data.cases || [];
   shell(`<section class="stack dispute-workflow-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>مسار الشكاوى وحل المشكلات</h2><p>المسار الرسمي: الموظف ← المدير المباشر ← لجنة حل المشكلات ← السكرتير التنفيذي ← المدير التنفيذي عند التصعيد.</p></div><button class="button ghost" data-export-disputes>تصدير الشكاوى CSV</button></div><div class="workflow-steps">${(data.workflowSteps || []).map((step, index) => `<div class="workflow-step"><strong>${index + 1}</strong><span>${escapeHtml(step)}</span></div>`).join('')}</div></article>
-    <article class="panel"><h2>أعضاء اللجنة</h2><div class="committee-grid">${(data.committeeMembers || []).map((member) => `<div class="mini-card person-cell">${avatar(member,'small')}<span><strong>${escapeHtml(member.fullName || '-')}</strong><small>${escapeHtml(member.jobTitle || '')}</small></span></div>`).join('')}</div></article>
-    <article class="panel"><h2>الشكاوى حسب المرحلة</h2>${table(['العنوان','صاحب الشكوى','المرحلة','الأولوية','قرار/ملاحظة','إجراءات'], cases.map((item) => `<tr><td><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description || '')}</small></td><td>${escapeHtml(item.employee?.fullName || '-')}</td><td>${badge(item.status || 'OPEN')}</td><td>${badge(item.priority || 'MEDIUM')}</td><td>${escapeHtml(item.committeeDecision || item.resolution || '-')}</td><td><button class="button primary" data-dispute-stage="${escapeHtml(item.id)}" data-status="COMMITTEE_REVIEW">لجنة</button><button class="button ghost" data-dispute-stage="${escapeHtml(item.id)}" data-status="ESCALATED">تصعيد</button><button class="button ghost" data-dispute-stage="${escapeHtml(item.id)}" data-status="RESOLVED">حل</button></td></tr>`))}</article>
-  </section>`, "مسار الشكاوى", "Workflow واضح للتصعيد والقرارات.");
-  app.querySelectorAll('[data-dispute-stage]').forEach((button) => button.addEventListener('click', async () => { const note = await askText({ title: 'ملاحظة القرار', message: 'اكتب ملخص القرار أو سبب التصعيد.', defaultValue: button.dataset.status === 'ESCALATED' ? 'يحتاج قرار المدير التنفيذي' : 'تمت المراجعة', confirmLabel: 'حفظ' }); if (note === null) return; await endpoints.advanceDispute(button.dataset.disputeStage, { status: button.dataset.status, note }); setMessage('تم تحديث مسار الشكوى.', ''); renderDisputeWorkflow(); }));
-  app.querySelector('[data-export-disputes]')?.addEventListener('click', () => downloadFile('dispute-workflow.csv', `\ufeff${toCsv([['العنوان','الموظف','الحالة','الأولوية','القرار'], ...cases.map((c) => [c.title, c.employee?.fullName || '', statusLabel(c.status), statusLabel(c.priority), c.committeeDecision || c.resolution || ''])])}`, 'text/csv;charset=utf-8'));
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>Ù…Ø³Ø§Ø± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ­Ù„ Ø§Ù„Ù…Ø´ÙƒÙ„Ø§Øª</h2><p>Ø§Ù„Ù…Ø³Ø§Ø± Ø§Ù„Ø±Ø³Ù…ÙŠ: Ø§Ù„Ù…ÙˆØ¸Ù â† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± â† Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´ÙƒÙ„Ø§Øª â† Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ â† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ù†Ø¯ Ø§Ù„ØªØµØ¹ÙŠØ¯.</p></div><button class="button ghost" data-export-disputes>ØªØµØ¯ÙŠØ± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ CSV</button></div><div class="workflow-steps">${(data.workflowSteps || []).map((step, index) => `<div class="workflow-step"><strong>${index + 1}</strong><span>${escapeHtml(step)}</span></div>`).join('')}</div></article>
+    <article class="panel"><h2>Ø£Ø¹Ø¶Ø§Ø¡ Ø§Ù„Ù„Ø¬Ù†Ø©</h2><div class="committee-grid">${(data.committeeMembers || []).map((member) => `<div class="mini-card person-cell">${avatar(member,'small')}<span><strong>${escapeHtml(member.fullName || '-')}</strong><small>${escapeHtml(member.jobTitle || '')}</small></span></div>`).join('')}</div></article>
+    <article class="panel"><h2>Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø­Ø³Ø¨ Ø§Ù„Ù…Ø±Ø­Ù„Ø©</h2>${table(['Ø§Ù„Ø¹Ù†ÙˆØ§Ù†','ØµØ§Ø­Ø¨ Ø§Ù„Ø´ÙƒÙˆÙ‰','Ø§Ù„Ù…Ø±Ø­Ù„Ø©','Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©','Ù‚Ø±Ø§Ø±/Ù…Ù„Ø§Ø­Ø¸Ø©','Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª'], cases.map((item) => `<tr><td><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(item.description || '')}</small></td><td>${escapeHtml(item.employee?.fullName || '-')}</td><td>${badge(item.status || 'OPEN')}</td><td>${badge(item.priority || 'MEDIUM')}</td><td>${escapeHtml(item.committeeDecision || item.resolution || '-')}</td><td><button class="button primary" data-dispute-stage="${escapeHtml(item.id)}" data-status="COMMITTEE_REVIEW">Ù„Ø¬Ù†Ø©</button><button class="button ghost" data-dispute-stage="${escapeHtml(item.id)}" data-status="ESCALATED">ØªØµØ¹ÙŠØ¯</button><button class="button ghost" data-dispute-stage="${escapeHtml(item.id)}" data-status="RESOLVED">Ø­Ù„</button></td></tr>`))}</article>
+  </section>`, "Ù…Ø³Ø§Ø± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰", "Workflow ÙˆØ§Ø¶Ø­ Ù„Ù„ØªØµØ¹ÙŠØ¯ ÙˆØ§Ù„Ù‚Ø±Ø§Ø±Ø§Øª.");
+  app.querySelectorAll('[data-dispute-stage]').forEach((button) => button.addEventListener('click', async () => { const note = await askText({ title: 'Ù…Ù„Ø§Ø­Ø¸Ø© Ø§Ù„Ù‚Ø±Ø§Ø±', message: 'Ø§ÙƒØªØ¨ Ù…Ù„Ø®Øµ Ø§Ù„Ù‚Ø±Ø§Ø± Ø£Ùˆ Ø³Ø¨Ø¨ Ø§Ù„ØªØµØ¹ÙŠØ¯.', defaultValue: button.dataset.status === 'ESCALATED' ? 'ÙŠØ­ØªØ§Ø¬ Ù‚Ø±Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ' : 'ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©', confirmLabel: 'Ø­ÙØ¸' }); if (note === null) return; await endpoints.advanceDispute(button.dataset.disputeStage, { status: button.dataset.status, note }); setMessage('ØªÙ… ØªØ­Ø¯ÙŠØ« Ù…Ø³Ø§Ø± Ø§Ù„Ø´ÙƒÙˆÙ‰.', ''); renderDisputeWorkflow(); }));
+  app.querySelector('[data-export-disputes]')?.addEventListener('click', () => downloadFile('dispute-workflow.csv', `\ufeff${toCsv([['Ø§Ù„Ø¹Ù†ÙˆØ§Ù†','Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø§Ù„Ø©','Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©','Ø§Ù„Ù‚Ø±Ø§Ø±'], ...cases.map((c) => [c.title, c.employee?.fullName || '', statusLabel(c.status), statusLabel(c.priority), c.committeeDecision || c.resolution || ''])])}`, 'text/csv;charset=utf-8'));
 }
 
 async function renderReportCenter() {
   const data = await endpoints.reportCenter().then(unwrap);
   const rows = data.rows || [];
-  const headers = ['التقرير','النطاق','عدد السجلات','آخر تحديث','إجراءات'];
+  const headers = ['Ø§Ù„ØªÙ‚Ø±ÙŠØ±','Ø§Ù„Ù†Ø·Ø§Ù‚','Ø¹Ø¯Ø¯ Ø§Ù„Ø³Ø¬Ù„Ø§Øª','Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ«','Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª'];
   shell(`<section class="stack report-center-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>مركز التقارير والتصدير</h2><p>تصدير تقارير الإدارة، HR، الحضور، KPI، الفرق، والشكاوى بصيغ CSV/Excel أو فتح تقرير قابل للحفظ PDF.</p></div></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || '')}</small></div>`).join('')}</div></article>
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>Ù…Ø±ÙƒØ² Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± ÙˆØ§Ù„ØªØµØ¯ÙŠØ±</h2><p>ØªØµØ¯ÙŠØ± ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©ØŒ HRØŒ Ø§Ù„Ø­Ø¶ÙˆØ±ØŒ KPIØŒ Ø§Ù„ÙØ±Ù‚ØŒ ÙˆØ§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø¨ØµÙŠØº CSV/Excel Ø£Ùˆ ÙØªØ­ ØªÙ‚Ø±ÙŠØ± Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø­ÙØ¸ PDF.</p></div></div><div class="mini-stats">${(data.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || '')}</small></div>`).join('')}</div></article>
     <article class="panel">${table(headers, rows.map((row) => `<tr><td><strong>${escapeHtml(row.title)}</strong><small>${escapeHtml(row.description || '')}</small></td><td>${escapeHtml(row.scope || '-')}</td><td>${escapeHtml(row.count || 0)}</td><td>${date(row.updatedAt || row.generatedAt)}</td><td><button class="button ghost" data-export-report="${escapeHtml(row.key)}" data-format="csv">CSV</button><button class="button ghost" data-export-report="${escapeHtml(row.key)}" data-format="xls">Excel</button><button class="button primary" data-export-report="${escapeHtml(row.key)}" data-format="pdf">PDF</button></td></tr>`))}</article>
-  </section>`, "مركز التقارير", "تصدير وتجهيز تقارير للإدارة.");
+  </section>`, "Ù…Ø±ÙƒØ² Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±", "ØªØµØ¯ÙŠØ± ÙˆØªØ¬Ù‡ÙŠØ² ØªÙ‚Ø§Ø±ÙŠØ± Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©.");
   app.querySelectorAll('[data-export-report]').forEach((button) => button.addEventListener('click', async () => { const result = await endpoints.exportManagementReport({ key: button.dataset.exportReport, format: button.dataset.format }).then(unwrap); if (button.dataset.format === 'pdf') printBrandedReport(result.title, result.summaryHtml || '', result.headers || [], result.rows || []); else if (button.dataset.format === 'xls') exportHtmlTable(`${result.fileName || button.dataset.exportReport}.xls`, result.headers || [], result.rows || []); else downloadFile(`${result.fileName || button.dataset.exportReport}.csv`, `\ufeff${toCsv([result.headers || [], ...(result.rows || [])])}`, 'text/csv;charset=utf-8'); }));
 }
 
 async function renderManagerDashboard() {
   const data = await endpoints.managerDashboard().then(unwrap);
   const team = data.team || [];
-  const rows = team.map((item) => `<tr><td><div class="person-cell">${avatar(item, "small")}<span><strong>${escapeHtml(item.fullName)}</strong><small>${escapeHtml(item.jobTitle || "")}</small></span></div></td><td>${badge(item.todayStatus || "ABSENT")}</td><td>${date(item.lastEventAt)}</td><td>${escapeHtml(item.pendingItems || 0)}</td><td><button class="button ghost" data-profile="${escapeHtml(item.id)}">فتح الملف</button></td></tr>`);
+  const rows = team.map((item) => `<tr><td><div class="person-cell">${avatar(item, "small")}<span><strong>${escapeHtml(item.fullName)}</strong><small>${escapeHtml(item.jobTitle || "")}</small></span></div></td><td>${badge(item.todayStatus || "ABSENT")}</td><td>${date(item.lastEventAt)}</td><td>${escapeHtml(item.pendingItems || 0)}</td><td><button class="button ghost" data-profile="${escapeHtml(item.id)}">ÙØªØ­ Ø§Ù„Ù…Ù„Ù</button></td></tr>`);
   shell(
     `<section class="grid manager-dashboard-page">
-      <article class="panel span-12"><div class="panel-head"><div><h2>لوحة المدير المباشر</h2><p>متابعة الفريق، الحضور، الطلبات، والتنبيهات من مكان واحد.</p></div><div class="toolbar"><button class="button primary" data-generate-attendance-alerts>تنبيه المتأخرين عن البصمة</button><button class="button ghost" data-route="monthly-report">تقرير شهري</button></div></div><div class="metric-grid">${(data.metrics || []).map((m) => `<div class="metric-card"><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || "")}</small></div>`).join("")}</div></article>
-      <article class="panel span-8"><h2>فريقي اليوم</h2>${table(["الموظف", "الحالة", "آخر بصمة", "طلبات معلقة", "إجراءات"], rows)}</article>
-      <article class="panel span-4"><h2>المهام العاجلة</h2><div class="stack-list">${(data.actions || []).map((a) => `<div class="task-card"><strong>${escapeHtml(a.title)}</strong><p>${escapeHtml(a.body || "")}</p>${badge(a.status || "INFO")}</div>`).join("") || `<div class="empty-state">لا توجد مهام عاجلة الآن.</div>`}</div></article>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</h2><p>Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ÙØ±ÙŠÙ‚ØŒ Ø§Ù„Ø­Ø¶ÙˆØ±ØŒ Ø§Ù„Ø·Ù„Ø¨Ø§ØªØŒ ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ù…Ù† Ù…ÙƒØ§Ù† ÙˆØ§Ø­Ø¯.</p></div><div class="toolbar"><button class="button primary" data-generate-attendance-alerts>ØªÙ†Ø¨ÙŠÙ‡ Ø§Ù„Ù…ØªØ£Ø®Ø±ÙŠÙ† Ø¹Ù† Ø§Ù„Ø¨ØµÙ…Ø©</button><button class="button ghost" data-route="monthly-report">ØªÙ‚Ø±ÙŠØ± Ø´Ù‡Ø±ÙŠ</button></div></div><div class="metric-grid">${(data.metrics || []).map((m) => `<div class="metric-card"><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || "")}</small></div>`).join("")}</div></article>
+      <article class="panel span-8"><h2>ÙØ±ÙŠÙ‚ÙŠ Ø§Ù„ÙŠÙˆÙ…</h2>${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¢Ø®Ø± Ø¨ØµÙ…Ø©", "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], rows)}</article>
+      <article class="panel span-4"><h2>Ø§Ù„Ù…Ù‡Ø§Ù… Ø§Ù„Ø¹Ø§Ø¬Ù„Ø©</h2><div class="stack-list">${(data.actions || []).map((a) => `<div class="task-card"><strong>${escapeHtml(a.title)}</strong><p>${escapeHtml(a.body || "")}</p>${badge(a.status || "INFO")}</div>`).join("") || `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù‡Ø§Ù… Ø¹Ø§Ø¬Ù„Ø© Ø§Ù„Ø¢Ù†.</div>`}</div></article>
     </section>`,
-    "لوحة المدير المباشر",
-    "رؤية مختصرة للفريق والحضور والتنبيهات.",
+    "Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±",
+    "Ø±Ø¤ÙŠØ© Ù…Ø®ØªØµØ±Ø© Ù„Ù„ÙØ±ÙŠÙ‚ ÙˆØ§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª.",
   );
   app.querySelectorAll("[data-profile]").forEach((button) => button.addEventListener("click", () => { location.hash = `employee-profile?id=${button.dataset.profile}`; }));
   app.querySelector("[data-generate-attendance-alerts]")?.addEventListener("click", async () => {
     const result = await endpoints.generateAttendanceAlerts();
-    setMessage(`تم إنشاء ${result.created || 0} إشعار، وتم إرسال ${result.pushed || result.attempted || 0} Push للموبايلات المشتركة.`, "");
+    setMessage(`ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ ${result.created || 0} Ø¥Ø´Ø¹Ø§Ø±ØŒ ÙˆØªÙ… Ø¥Ø±Ø³Ø§Ù„ ${result.pushed || result.attempted || 0} Push Ù„Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„Ø§Øª Ø§Ù„Ù…Ø´ØªØ±ÙƒØ©.`, "");
     render();
   });
 }
@@ -2902,18 +2902,18 @@ async function renderAttendanceReview() {
   const rows = await endpoints.rejectedPunches().then(unwrap);
   shell(
     `<section class="panel attendance-review-page">
-      <div class="panel-head"><div><h2>مراجعة البصمات المرفوضة</h2><p>أي محاولة مرفوضة بسبب الموقع أو الدقة أو فشل البصمة تظهر هنا لاعتمادها يدويًا أو تثبيت رفضها.</p></div><button class="button ghost" data-route="attendance">كل الحضور</button></div>
-      ${table(["الموظف", "النوع", "السبب", "المخاطر", "سيلفي", "المسافة", "الدقة", "التاريخ", "الإجراء"], rows.map((event) => `<tr><td>${escapeHtml(event.employee?.fullName || event.employeeId || "-")}</td><td>${badge(event.type)}</td><td>${escapeHtml(event.notes || event.blockReason || "-")}</td><td><strong>${escapeHtml(event.riskScore ?? 0)}%</strong> ${event.riskLevel ? badge(event.riskLevel) : ""}<br>${(event.riskFlags || []).map((flag) => `<span class="status warning">${escapeHtml(flag)}</span>`).join(" ") || "-"}</td><td>${event.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(event.selfieUrl)}">عرض السيلفي</a>` : `<span class="status warning">لا يوجد</span>`}</td><td>${formatMeters(event.distanceFromBranchMeters)}</td><td>${formatMeters(event.accuracyMeters)}</td><td>${date(event.eventAt)}</td><td><div class="toolbar"><button class="button primary" data-review-punch="approve" data-id="${escapeHtml(event.id)}" data-check-id="${escapeHtml(event.identityCheckId || '')}">اعتماد</button><button class="button danger" data-review-punch="reject" data-id="${escapeHtml(event.id)}" data-check-id="${escapeHtml(event.identityCheckId || '')}">رفض نهائي</button></div></td></tr>`))}
+      <div class="panel-head"><div><h2>Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©</h2><p>Ø£ÙŠ Ù…Ø­Ø§ÙˆÙ„Ø© Ù…Ø±ÙÙˆØ¶Ø© Ø¨Ø³Ø¨Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø£Ùˆ Ø§Ù„Ø¯Ù‚Ø© Ø£Ùˆ ÙØ´Ù„ Ø§Ù„Ø¨ØµÙ…Ø© ØªØ¸Ù‡Ø± Ù‡Ù†Ø§ Ù„Ø§Ø¹ØªÙ…Ø§Ø¯Ù‡Ø§ ÙŠØ¯ÙˆÙŠÙ‹Ø§ Ø£Ùˆ ØªØ«Ø¨ÙŠØª Ø±ÙØ¶Ù‡Ø§.</p></div><button class="button ghost" data-route="attendance">ÙƒÙ„ Ø§Ù„Ø­Ø¶ÙˆØ±</button></div>
+      ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø³Ø¨Ø¨", "Ø§Ù„Ù…Ø®Ø§Ø·Ø±", "Ø³ÙŠÙ„ÙÙŠ", "Ø§Ù„Ù…Ø³Ø§ÙØ©", "Ø§Ù„Ø¯Ù‚Ø©", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡"], rows.map((event) => `<tr><td>${escapeHtml(event.employee?.fullName || event.employeeId || "-")}</td><td>${badge(event.type)}</td><td>${escapeHtml(event.notes || event.blockReason || "-")}</td><td><strong>${escapeHtml(event.riskScore ?? 0)}%</strong> ${event.riskLevel ? badge(event.riskLevel) : ""}<br>${(event.riskFlags || []).map((flag) => `<span class="status warning">${escapeHtml(flag)}</span>`).join(" ") || "-"}</td><td>${event.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(event.selfieUrl)}">Ø¹Ø±Ø¶ Ø§Ù„Ø³ÙŠÙ„ÙÙŠ</a>` : `<span class="status warning">Ù„Ø§ ÙŠÙˆØ¬Ø¯</span>`}</td><td>${formatMeters(event.distanceFromBranchMeters)}</td><td>${formatMeters(event.accuracyMeters)}</td><td>${date(event.eventAt)}</td><td><div class="toolbar"><button class="button primary" data-review-punch="approve" data-id="${escapeHtml(event.id)}" data-check-id="${escapeHtml(event.identityCheckId || '')}">Ø§Ø¹ØªÙ…Ø§Ø¯</button><button class="button danger" data-review-punch="reject" data-id="${escapeHtml(event.id)}" data-check-id="${escapeHtml(event.identityCheckId || '')}">Ø±ÙØ¶ Ù†Ù‡Ø§Ø¦ÙŠ</button></div></td></tr>`))}
     </section>`,
-    "مراجعة البصمات",
-    "اعتماد أو رفض محاولات البصمة المرفوضة.",
+    "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª",
+    "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø£Ùˆ Ø±ÙØ¶ Ù…Ø­Ø§ÙˆÙ„Ø§Øª Ø§Ù„Ø¨ØµÙ…Ø© Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©.",
   );
   app.querySelectorAll("[data-review-punch]").forEach((button) => button.addEventListener("click", async () => {
     const action = button.dataset.reviewPunch;
-    const ok = await confirmAction({ title: action === "approve" ? "اعتماد محاولة البصمة" : "رفض محاولة البصمة", message: action === "approve" ? "سيتم اعتماد المحاولة يدويًا وإزالة علامة المراجعة." : "سيتم تثبيت الرفض وإغلاق المراجعة.", confirmLabel: action === "approve" ? "اعتماد" : "رفض نهائي", danger: action !== "approve" });
+    const ok = await confirmAction({ title: action === "approve" ? "Ø§Ø¹ØªÙ…Ø§Ø¯ Ù…Ø­Ø§ÙˆÙ„Ø© Ø§Ù„Ø¨ØµÙ…Ø©" : "Ø±ÙØ¶ Ù…Ø­Ø§ÙˆÙ„Ø© Ø§Ù„Ø¨ØµÙ…Ø©", message: action === "approve" ? "Ø³ÙŠØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© ÙŠØ¯ÙˆÙŠÙ‹Ø§ ÙˆØ¥Ø²Ø§Ù„Ø© Ø¹Ù„Ø§Ù…Ø© Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©." : "Ø³ÙŠØªÙ… ØªØ«Ø¨ÙŠØª Ø§Ù„Ø±ÙØ¶ ÙˆØ¥ØºÙ„Ø§Ù‚ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©.", confirmLabel: action === "approve" ? "Ø§Ø¹ØªÙ…Ø§Ø¯" : "Ø±ÙØ¶ Ù†Ù‡Ø§Ø¦ÙŠ", danger: action !== "approve" });
     if (!ok) return;
     await endpoints.reviewRejectedPunch(button.dataset.id, action, button.dataset.checkId || "");
-    setMessage(action === "approve" ? "تم اعتماد البصمة يدويًا." : "تم تثبيت رفض البصمة.", "");
+    setMessage(action === "approve" ? "ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¨ØµÙ…Ø© ÙŠØ¯ÙˆÙŠÙ‹Ø§." : "ØªÙ… ØªØ«Ø¨ÙŠØª Ø±ÙØ¶ Ø§Ù„Ø¨ØµÙ…Ø©.", "");
     render();
   }));
 }
@@ -2922,13 +2922,13 @@ async function renderEmployeeQr() {
   shell(`
     <section class="grid qr-page">
       <article class="panel span-12">
-        <div class="panel-kicker">QR متوقف</div>
-        <h2>تم إيقاف QR البصمة بالكامل</h2>
-        <p>تم حذف QR من مسار البصمة ومنع إنشاء QR الفرع في هذه النسخة. البصمة تعتمد الآن على Passkey + GPS عالي الدقة + سيلفي + مراجعة HR عند الشك.</p>
-        <div class="message warning">لا يوجد مسح QR ولا إنشاء QR ولا اعتماد على أي خدمة QR خارجية.</div>
+        <div class="panel-kicker">QR Ù…ØªÙˆÙ‚Ù</div>
+        <h2>ØªÙ… Ø¥ÙŠÙ‚Ø§Ù QR Ø§Ù„Ø¨ØµÙ…Ø© Ø¨Ø§Ù„ÙƒØ§Ù…Ù„</h2>
+        <p>ØªÙ… Ø­Ø°Ù QR Ù…Ù† Ù…Ø³Ø§Ø± Ø§Ù„Ø¨ØµÙ…Ø© ÙˆÙ…Ù†Ø¹ Ø¥Ù†Ø´Ø§Ø¡ QR Ø§Ù„ÙØ±Ø¹ ÙÙŠ Ù‡Ø°Ù‡ Ø§Ù„Ù†Ø³Ø®Ø©. Ø§Ù„Ø¨ØµÙ…Ø© ØªØ¹ØªÙ…Ø¯ Ø§Ù„Ø¢Ù† Ø¹Ù„Ù‰ Passkey + GPS Ø¹Ø§Ù„ÙŠ Ø§Ù„Ø¯Ù‚Ø© + Ø³ÙŠÙ„ÙÙŠ + Ù…Ø±Ø§Ø¬Ø¹Ø© HR Ø¹Ù†Ø¯ Ø§Ù„Ø´Ùƒ.</p>
+        <div class="message warning">Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…Ø³Ø­ QR ÙˆÙ„Ø§ Ø¥Ù†Ø´Ø§Ø¡ QR ÙˆÙ„Ø§ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù„Ù‰ Ø£ÙŠ Ø®Ø¯Ù…Ø© QR Ø®Ø§Ø±Ø¬ÙŠØ©.</div>
       </article>
     </section>
-  `, "QR متوقف", "تم إيقاف QR من التشغيل والواجهة.");
+  `, "QR Ù…ØªÙˆÙ‚Ù", "ØªÙ… Ø¥ÙŠÙ‚Ø§Ù QR Ù…Ù† Ø§Ù„ØªØ´ØºÙŠÙ„ ÙˆØ§Ù„ÙˆØ§Ø¬Ù‡Ø©.");
 }
 
 
@@ -2941,22 +2941,22 @@ async function renderTrustedDevices() {
   const byEmployee = new Map(employees.map((e) => [e.id, e]));
   shell(
     `<section class="grid devices-page">
-      <article class="panel span-12"><div class="panel-head"><div><h2>طلبات اعتماد الأجهزة الجديدة</h2><p>أي جهاز جديد أو غير معتمد يتحول إلى هذه القائمة قبل اعتماد بصمته تلقائيًا.</p></div></div>
-      ${table(["الموظف", "الجهاز", "الحالة", "السيلفي", "الموقع", "التاريخ", "إجراء"], (requests || []).map((r) => { const employee = byEmployee.get(r.employeeId) || {}; return `<tr><td>${escapeHtml(employee.fullName || r.employeeName || r.employeeId || "-")}</td><td><strong>${escapeHtml(r.deviceName || "جهاز متصفح")}</strong><br><small>${escapeHtml(String(r.deviceFingerprintHash || "").slice(0,16))}</small></td><td>${badge(r.status || "PENDING")}</td><td>${r.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(r.selfieUrl)}">عرض</a>` : "-"}</td><td>${r.latitude ? `<a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${escapeHtml(r.latitude)},${escapeHtml(r.longitude)}">خريطة</a>` : "-"}</td><td>${date(r.createdAt)}</td><td><div class="toolbar"><button class="button primary" data-device-review="APPROVED" data-request-id="${escapeHtml(r.id)}">اعتماد</button><button class="button danger" data-device-review="REJECTED" data-request-id="${escapeHtml(r.id)}">رفض</button></div></td></tr>`; }))}</article>
-      <article class="panel span-12"><div class="panel-head"><div><h2>الأجهزة المعتمدة</h2><p>قائمة Passkeys والأجهزة التي يستخدمها الموظفون في بصمة الحضور.</p></div><button class="button ghost" data-route="employee-punch">تسجيل بصمة جهاز</button></div>
-      ${table(["الموظف", "الجهاز", "المنصة", "الحالة", "آخر استخدام", "إجراءات"], devices.map((d) => { const employee = d.employee || byEmployee.get(d.employeeId) || employees.find((e) => e.userId === d.userId) || {}; return `<tr><td>${escapeHtml(employee.fullName || d.employeeId || d.userId || "-")}</td><td>${escapeHtml(d.label || d.deviceLabel || "مفتاح مرور")}</td><td>${escapeHtml(d.platform || d.userAgent || "-")}</td><td>${badge(d.approvalStatus || d.status || (d.trusted === false ? "DEVICE_DISABLED" : "DEVICE_TRUSTED"))}</td><td>${date(d.lastUsedAt)}</td><td><div class="toolbar"><button class="button ghost" data-device-action="trust" data-id="${escapeHtml(d.id)}">اعتماد</button><button class="button danger" data-device-action="disable" data-id="${escapeHtml(d.id)}">تعطيل</button></div></td></tr>`; }))}</article>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ø·Ù„Ø¨Ø§Øª Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©</h2><p>Ø£ÙŠ Ø¬Ù‡Ø§Ø² Ø¬Ø¯ÙŠØ¯ Ø£Ùˆ ØºÙŠØ± Ù…Ø¹ØªÙ…Ø¯ ÙŠØªØ­ÙˆÙ„ Ø¥Ù„Ù‰ Ù‡Ø°Ù‡ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ù‚Ø¨Ù„ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¨ØµÙ…ØªÙ‡ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§.</p></div></div>
+      ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø¬Ù‡Ø§Ø²", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø³ÙŠÙ„ÙÙŠ", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø¥Ø¬Ø±Ø§Ø¡"], (requests || []).map((r) => { const employee = byEmployee.get(r.employeeId) || {}; return `<tr><td>${escapeHtml(employee.fullName || r.employeeName || r.employeeId || "-")}</td><td><strong>${escapeHtml(r.deviceName || "Ø¬Ù‡Ø§Ø² Ù…ØªØµÙØ­")}</strong><br><small>${escapeHtml(String(r.deviceFingerprintHash || "").slice(0,16))}</small></td><td>${badge(r.status || "PENDING")}</td><td>${r.selfieUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(r.selfieUrl)}">Ø¹Ø±Ø¶</a>` : "-"}</td><td>${r.latitude ? `<a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${escapeHtml(r.latitude)},${escapeHtml(r.longitude)}">Ø®Ø±ÙŠØ·Ø©</a>` : "-"}</td><td>${date(r.createdAt)}</td><td><div class="toolbar"><button class="button primary" data-device-review="APPROVED" data-request-id="${escapeHtml(r.id)}">Ø§Ø¹ØªÙ…Ø§Ø¯</button><button class="button danger" data-device-review="REJECTED" data-request-id="${escapeHtml(r.id)}">Ø±ÙØ¶</button></div></td></tr>`; }))}</article>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©</h2><p>Ù‚Ø§Ø¦Ù…Ø© Passkeys ÙˆØ§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„ØªÙŠ ÙŠØ³ØªØ®Ø¯Ù…Ù‡Ø§ Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ† ÙÙŠ Ø¨ØµÙ…Ø© Ø§Ù„Ø­Ø¶ÙˆØ±.</p></div><button class="button ghost" data-route="employee-punch">ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø¬Ù‡Ø§Ø²</button></div>
+      ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø¬Ù‡Ø§Ø²", "Ø§Ù„Ù…Ù†ØµØ©", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¢Ø®Ø± Ø§Ø³ØªØ®Ø¯Ø§Ù…", "Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª"], devices.map((d) => { const employee = d.employee || byEmployee.get(d.employeeId) || employees.find((e) => e.userId === d.userId) || {}; return `<tr><td>${escapeHtml(employee.fullName || d.employeeId || d.userId || "-")}</td><td>${escapeHtml(d.label || d.deviceLabel || "Ù…ÙØªØ§Ø­ Ù…Ø±ÙˆØ±")}</td><td>${escapeHtml(d.platform || d.userAgent || "-")}</td><td>${badge(d.approvalStatus || d.status || (d.trusted === false ? "DEVICE_DISABLED" : "DEVICE_TRUSTED"))}</td><td>${date(d.lastUsedAt)}</td><td><div class="toolbar"><button class="button ghost" data-device-action="trust" data-id="${escapeHtml(d.id)}">Ø§Ø¹ØªÙ…Ø§Ø¯</button><button class="button danger" data-device-action="disable" data-id="${escapeHtml(d.id)}">ØªØ¹Ø·ÙŠÙ„</button></div></td></tr>`; }))}</article>
     </section>`,
-    "الأجهزة المعتمدة",
-    "إدارة مفاتيح المرور والأجهزة الموثوقة.",
+    "Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©",
+    "Ø¥Ø¯Ø§Ø±Ø© Ù…ÙØ§ØªÙŠØ­ Ø§Ù„Ù…Ø±ÙˆØ± ÙˆØ§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…ÙˆØ«ÙˆÙ‚Ø©.",
   );
   app.querySelectorAll("[data-device-review]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.reviewTrustedDeviceApproval({ requestId: button.dataset.requestId, decision: button.dataset.deviceReview });
-    setMessage(button.dataset.deviceReview === "APPROVED" ? "تم اعتماد الجهاز." : "تم رفض الجهاز.", "");
+    setMessage(button.dataset.deviceReview === "APPROVED" ? "ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¬Ù‡Ø§Ø²." : "ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø¬Ù‡Ø§Ø².", "");
     renderTrustedDevices();
   }));
   app.querySelectorAll("[data-device-action]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.updateTrustedDevice(button.dataset.id, { action: button.dataset.deviceAction });
-    setMessage(button.dataset.deviceAction === "trust" ? "تم اعتماد الجهاز." : "تم تعطيل الجهاز.", "");
+    setMessage(button.dataset.deviceAction === "trust" ? "ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¬Ù‡Ø§Ø²." : "ØªÙ… ØªØ¹Ø·ÙŠÙ„ Ø§Ù„Ø¬Ù‡Ø§Ø².", "");
     render();
   }));
 }
@@ -2968,28 +2968,28 @@ async function renderMonthlyReport() {
   const rows = report.rows || [];
   shell(
     `<section class="grid monthly-report-page">
-      <article class="panel span-12"><div class="panel-head"><div><h2>التقرير الشهري</h2><p>تقرير حضور وانصراف قابل للطباعة PDF بتصميم الجمعية.</p></div><div class="toolbar"><input id="report-month" type="month" value="${escapeHtml(month)}" /><button class="button primary" id="print-monthly-report">طباعة / PDF</button><button class="button ghost" id="export-monthly-csv">CSV</button></div></div><div class="metric-grid">${(report.metrics || []).map((m) => `<div class="metric-card"><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || "")}</small></div>`).join("")}</div></article>
-      <article class="panel span-12">${table(["الموظف", "حضور", "انصراف", "مرفوض", "تأخير", "آخر بصمة"], rows.map((r) => `<tr><td>${escapeHtml(r.employeeName)}</td><td>${escapeHtml(r.checkIns)}</td><td>${escapeHtml(r.checkOuts)}</td><td>${escapeHtml(r.rejected)}</td><td>${escapeHtml(r.lateMinutes)} دقيقة</td><td>${date(r.lastEventAt)}</td></tr>`))}</article>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠ</h2><p>ØªÙ‚Ø±ÙŠØ± Ø­Ø¶ÙˆØ± ÙˆØ§Ù†ØµØ±Ø§Ù Ù‚Ø§Ø¨Ù„ Ù„Ù„Ø·Ø¨Ø§Ø¹Ø© PDF Ø¨ØªØµÙ…ÙŠÙ… Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©.</p></div><div class="toolbar"><input id="report-month" type="month" value="${escapeHtml(month)}" /><button class="button primary" id="print-monthly-report">Ø·Ø¨Ø§Ø¹Ø© / PDF</button><button class="button ghost" id="export-monthly-csv">CSV</button></div></div><div class="metric-grid">${(report.metrics || []).map((m) => `<div class="metric-card"><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || "")}</small></div>`).join("")}</div></article>
+      <article class="panel span-12">${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø­Ø¶ÙˆØ±", "Ø§Ù†ØµØ±Ø§Ù", "Ù…Ø±ÙÙˆØ¶", "ØªØ£Ø®ÙŠØ±", "Ø¢Ø®Ø± Ø¨ØµÙ…Ø©"], rows.map((r) => `<tr><td>${escapeHtml(r.employeeName)}</td><td>${escapeHtml(r.checkIns)}</td><td>${escapeHtml(r.checkOuts)}</td><td>${escapeHtml(r.rejected)}</td><td>${escapeHtml(r.lateMinutes)} Ø¯Ù‚ÙŠÙ‚Ø©</td><td>${date(r.lastEventAt)}</td></tr>`))}</article>
     </section>`,
-    "تقرير شهري",
-    "ملخص شهري للحضور والانصراف.",
+    "ØªÙ‚Ø±ÙŠØ± Ø´Ù‡Ø±ÙŠ",
+    "Ù…Ù„Ø®Øµ Ø´Ù‡Ø±ÙŠ Ù„Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù.",
   );
   app.querySelector("#report-month")?.addEventListener("change", (event) => { location.hash = `monthly-report?month=${event.target.value}`; });
-  const headers = ["الموظف", "حضور", "انصراف", "مرفوض", "تأخير", "آخر بصمة"];
-  const tableRows = rows.map((r) => [r.employeeName, r.checkIns, r.checkOuts, r.rejected, `${r.lateMinutes} دقيقة`, r.lastEventAt || "-"]);
+  const headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø­Ø¶ÙˆØ±", "Ø§Ù†ØµØ±Ø§Ù", "Ù…Ø±ÙÙˆØ¶", "ØªØ£Ø®ÙŠØ±", "Ø¢Ø®Ø± Ø¨ØµÙ…Ø©"];
+  const tableRows = rows.map((r) => [r.employeeName, r.checkIns, r.checkOuts, r.rejected, `${r.lateMinutes} Ø¯Ù‚ÙŠÙ‚Ø©`, r.lastEventAt || "-"]);
   app.querySelector("#export-monthly-csv")?.addEventListener("click", () => downloadFile(`monthly-attendance-${month}.csv`, `\ufeff${toCsv([headers, ...tableRows])}`, "text/csv;charset=utf-8"));
   app.querySelector("#print-monthly-report")?.addEventListener("click", () => {
     const summary = `<div class="summary">${(report.metrics || []).map((m) => `<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper || "")}</small></div>`).join("")}</div>`;
-    printBrandedReport(`تقرير الحضور الشهري ${month}`, summary, headers, tableRows);
+    printBrandedReport(`ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø´Ù‡Ø±ÙŠ ${month}`, summary, headers, tableRows);
   });
 }
 
 async function renderSecurityLog() {
   const logs = await endpoints.securityLog().then(unwrap);
   shell(
-    `<section class="panel security-log-page"><div class="panel-head"><div><h2>سجل الأمان</h2><p>محاولات الدخول الفاشلة، تسجيل الدخول، طلبات نسيت كلمة السر، وتغيير كلمة المرور.</p></div><button class="button ghost" id="export-security-log">تصدير</button></div>${table(["العملية", "المستخدم", "الكيان", "التاريخ", "التفاصيل"], logs.map((log) => `<tr><td>${escapeHtml(log.action)}</td><td>${escapeHtml(log.actor || log.actorUserId || "-")}</td><td>${escapeHtml(log.entityType || "-")}</td><td>${date(log.createdAt)}</td><td><small>${escapeHtml(JSON.stringify(log.metadata || log.afterData || {}))}</small></td></tr>`))}</section>`,
-    "سجل الأمان",
-    "مراقبة الدخول وكلمات المرور.",
+    `<section class="panel security-log-page"><div class="panel-head"><div><h2>Ø³Ø¬Ù„ Ø§Ù„Ø£Ù…Ø§Ù†</h2><p>Ù…Ø­Ø§ÙˆÙ„Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø§Ù„ÙØ§Ø´Ù„Ø©ØŒ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ØŒ Ø·Ù„Ø¨Ø§Øª Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ø³Ø±ØŒ ÙˆØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.</p></div><button class="button ghost" id="export-security-log">ØªØµØ¯ÙŠØ±</button></div>${table(["Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", "Ø§Ù„ÙƒÙŠØ§Ù†", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø§Ù„ØªÙØ§ØµÙŠÙ„"], logs.map((log) => `<tr><td>${escapeHtml(log.action)}</td><td>${escapeHtml(log.actor || log.actorUserId || "-")}</td><td>${escapeHtml(log.entityType || "-")}</td><td>${date(log.createdAt)}</td><td><small>${escapeHtml(JSON.stringify(log.metadata || log.afterData || {}))}</small></td></tr>`))}</section>`,
+    "Ø³Ø¬Ù„ Ø§Ù„Ø£Ù…Ø§Ù†",
+    "Ù…Ø±Ø§Ù‚Ø¨Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„ ÙˆÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ±.",
   );
   app.querySelector("#export-security-log")?.addEventListener("click", () => downloadFile("security-log.csv", `\ufeff${toCsv([["action","actor","entity","date"], ...logs.map((l) => [l.action, l.actor || l.actorUserId || "", l.entityType || "", l.createdAt || ""])])}`, "text/csv;charset=utf-8"));
 }
@@ -3001,24 +3001,24 @@ async function renderExecutiveReport() {
   shell(
     `<section class="grid executive-report-page">
       <article class="panel span-12 accent-panel">
-        <div class="panel-head"><div><h2>التقرير التنفيذي المختصر للمدير التنفيذي</h2><p>ملخص واحد يجمع الحضور والطلبات والمشاكل والمهام والمستندات التي تحتاج قرارًا.</p></div><div class="score-ring"><strong>${escapeHtml(data.readiness?.score || 0)}%</strong><span>${escapeHtml(data.readiness?.grade || "-")}</span></div></div>
+        <div class="panel-head"><div><h2>Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø§Ù„Ù…Ø®ØªØµØ± Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ</h2><p>Ù…Ù„Ø®Øµ ÙˆØ§Ø­Ø¯ ÙŠØ¬Ù…Ø¹ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ù…Ù‡Ø§Ù… ÙˆØ§Ù„Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„ØªÙŠ ØªØ­ØªØ§Ø¬ Ù‚Ø±Ø§Ø±Ù‹Ø§.</p></div><div class="score-ring"><strong>${escapeHtml(data.readiness?.score || 0)}%</strong><span>${escapeHtml(data.readiness?.grade || "-")}</span></div></div>
       </article>
       ${[
-        ["الموظفون", cards.employees],
-        ["النشطون", cards.activeEmployees],
-        ["حضور اليوم", cards.presentToday],
-        ["طلبات معلقة", cards.pendingRequests],
-        ["مشاكل مفتوحة", cards.openDisputes],
-        ["مهام متأخرة", cards.overdueTasks],
-        ["مستندات قرب الانتهاء", cards.expiringDocuments],
-      ].map(([label, value]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value ?? 0)}</strong><small>مؤشر تنفيذي مباشر</small></article>`).join("")}
-      <article class="panel span-6"><div class="panel-head"><div><h2>أداء المديرين</h2><p>عدد الفريق والمهام والطلبات المفتوحة.</p></div></div>${table(["المدير", "الفريق", "طلبات معلقة", "مهام مفتوحة"], safeList(data.managerPerformance).map((row) => `<tr><td>${escapeHtml(row.manager?.fullName || "-")}</td><td>${escapeHtml(row.teamCount || 0)}</td><td>${escapeHtml(row.pendingRequests || 0)}</td><td>${escapeHtml(row.openTasks || 0)}</td></tr>`))}</article>
-      <article class="panel span-6"><div class="panel-head"><div><h2>مشاكل تحتاج متابعة</h2><p>قضايا لجنة حل الخلافات غير المغلقة.</p></div><button class="button ghost" data-route="disputes">فتح اللجنة</button></div>${table(["العنوان", "الموظف", "الأولوية", "الحالة"], safeList(data.openDisputes).map((item) => `<tr><td>${escapeHtml(item.title || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.priority || "-")}</td><td>${badge(item.status || "-")}</td></tr>`))}</article>
-      <article class="panel span-6"><div class="panel-head"><div><h2>مهام متأخرة</h2><p>المهام التي تجاوزت تاريخ الاستحقاق.</p></div><button class="button ghost" data-route="tasks">فتح المهام</button></div>${table(["المهمة", "الموظف", "الأولوية", "الاستحقاق"], safeList(data.overdueTasks).map((item) => `<tr><td>${escapeHtml(item.title || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.priority || "-")}</td><td>${escapeHtml(item.dueDate || "-")}</td></tr>`))}</article>
-      <article class="panel span-6"><div class="panel-head"><div><h2>مستندات قرب الانتهاء</h2><p>تنبيهات قبل انتهاء المستندات.</p></div><button class="button ghost" data-route="documents">فتح المستندات</button></div>${table(["المستند", "الموظف", "النوع", "ينتهي في"], safeList(data.documentsExpiring).map((item) => `<tr><td>${escapeHtml(item.title || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${escapeHtml(item.documentType || "-")}</td><td>${escapeHtml(item.expiresOn || "-")}</td></tr>`))}</article>
+        ["Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", cards.employees],
+        ["Ø§Ù„Ù†Ø´Ø·ÙˆÙ†", cards.activeEmployees],
+        ["Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…", cards.presentToday],
+        ["Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", cards.pendingRequests],
+        ["Ù…Ø´Ø§ÙƒÙ„ Ù…ÙØªÙˆØ­Ø©", cards.openDisputes],
+        ["Ù…Ù‡Ø§Ù… Ù…ØªØ£Ø®Ø±Ø©", cards.overdueTasks],
+        ["Ù…Ø³ØªÙ†Ø¯Ø§Øª Ù‚Ø±Ø¨ Ø§Ù„Ø§Ù†ØªÙ‡Ø§Ø¡", cards.expiringDocuments],
+      ].map(([label, value]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value ?? 0)}</strong><small>Ù…Ø¤Ø´Ø± ØªÙ†ÙÙŠØ°ÙŠ Ù…Ø¨Ø§Ø´Ø±</small></article>`).join("")}
+      <article class="panel span-6"><div class="panel-head"><div><h2>Ø£Ø¯Ø§Ø¡ Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†</h2><p>Ø¹Ø¯Ø¯ Ø§Ù„ÙØ±ÙŠÙ‚ ÙˆØ§Ù„Ù…Ù‡Ø§Ù… ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ÙØªÙˆØ­Ø©.</p></div></div>${table(["Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø§Ù„ÙØ±ÙŠÙ‚", "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", "Ù…Ù‡Ø§Ù… Ù…ÙØªÙˆØ­Ø©"], safeList(data.managerPerformance).map((row) => `<tr><td>${escapeHtml(row.manager?.fullName || "-")}</td><td>${escapeHtml(row.teamCount || 0)}</td><td>${escapeHtml(row.pendingRequests || 0)}</td><td>${escapeHtml(row.openTasks || 0)}</td></tr>`))}</article>
+      <article class="panel span-6"><div class="panel-head"><div><h2>Ù…Ø´Ø§ÙƒÙ„ ØªØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©</h2><p>Ù‚Ø¶Ø§ÙŠØ§ Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª ØºÙŠØ± Ø§Ù„Ù…ØºÙ„Ù‚Ø©.</p></div><button class="button ghost" data-route="disputes">ÙØªØ­ Ø§Ù„Ù„Ø¬Ù†Ø©</button></div>${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø§Ù„Ø­Ø§Ù„Ø©"], safeList(data.openDisputes).map((item) => `<tr><td>${escapeHtml(item.title || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.priority || "-")}</td><td>${badge(item.status || "-")}</td></tr>`))}</article>
+      <article class="panel span-6"><div class="panel-head"><div><h2>Ù…Ù‡Ø§Ù… Ù…ØªØ£Ø®Ø±Ø©</h2><p>Ø§Ù„Ù…Ù‡Ø§Ù… Ø§Ù„ØªÙŠ ØªØ¬Ø§ÙˆØ²Øª ØªØ§Ø±ÙŠØ® Ø§Ù„Ø§Ø³ØªØ­Ù‚Ø§Ù‚.</p></div><button class="button ghost" data-route="tasks">ÙØªØ­ Ø§Ù„Ù…Ù‡Ø§Ù…</button></div>${table(["Ø§Ù„Ù…Ù‡Ù…Ø©", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø§Ù„Ø§Ø³ØªØ­Ù‚Ø§Ù‚"], safeList(data.overdueTasks).map((item) => `<tr><td>${escapeHtml(item.title || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.priority || "-")}</td><td>${escapeHtml(item.dueDate || "-")}</td></tr>`))}</article>
+      <article class="panel span-6"><div class="panel-head"><div><h2>Ù…Ø³ØªÙ†Ø¯Ø§Øª Ù‚Ø±Ø¨ Ø§Ù„Ø§Ù†ØªÙ‡Ø§Ø¡</h2><p>ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ù‚Ø¨Ù„ Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„Ù…Ø³ØªÙ†Ø¯Ø§Øª.</p></div><button class="button ghost" data-route="documents">ÙØªØ­ Ø§Ù„Ù…Ø³ØªÙ†Ø¯Ø§Øª</button></div>${table(["Ø§Ù„Ù…Ø³ØªÙ†Ø¯", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "ÙŠÙ†ØªÙ‡ÙŠ ÙÙŠ"], safeList(data.documentsExpiring).map((item) => `<tr><td>${escapeHtml(item.title || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${escapeHtml(item.documentType || "-")}</td><td>${escapeHtml(item.expiresOn || "-")}</td></tr>`))}</article>
     </section>`,
-    "التقرير التنفيذي",
-    "صفحة خاصة بالمدير التنفيذي والسكرتير التنفيذي.",
+    "Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ",
+    "ØµÙØ­Ø© Ø®Ø§ØµØ© Ø¨Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙˆØ§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.",
   );
 }
 
@@ -3026,69 +3026,69 @@ async function renderLeaveBalances() {
   const [balances, employees] = await Promise.all([endpoints.leaveBalances().then(unwrap), endpoints.employees().then(unwrap)]);
   shell(
     `<section class="grid">
-      <article class="panel span-12"><div class="panel-head"><div><h2>أرصدة الإجازات</h2><p>إدارة الرصيد السنوي والعارض والمرضي، مع احتساب المستخدم والمتبقي.</p></div></div>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ø£Ø±ØµØ¯Ø© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª</h2><p>Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø±ØµÙŠØ¯ Ø§Ù„Ø³Ù†ÙˆÙŠ ÙˆØ§Ù„Ø¹Ø§Ø±Ø¶ ÙˆØ§Ù„Ù…Ø±Ø¶ÙŠØŒ Ù…Ø¹ Ø§Ø­ØªØ³Ø§Ø¨ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ÙˆØ§Ù„Ù…ØªØ¨Ù‚ÙŠ.</p></div></div>
         <form id="leave-balance-form" class="form-grid compact-form">
-          <label>الموظف<select name="employeeId" required>${optionList(employees, "", "اختر الموظف")}</select></label>
-          <label>سنوي<input name="annualTotal" type="number" value="21" min="0" required /></label>
-          <label>عارض<input name="casualTotal" type="number" value="7" min="0" required /></label>
-          <label>مرضي<input name="sickTotal" type="number" value="15" min="0" required /></label>
-          <label>مستخدم<input name="usedDays" type="number" value="0" min="0" required /></label>
-          <label>ملاحظات<input name="notes" placeholder="اختياري" /></label>
-          <div class="form-actions"><button class="button primary" type="submit">حفظ الرصيد</button></div>
+          <label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId" required>${optionList(employees, "", "Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù")}</select></label>
+          <label>Ø³Ù†ÙˆÙŠ<input name="annualTotal" type="number" value="21" min="0" required /></label>
+          <label>Ø¹Ø§Ø±Ø¶<input name="casualTotal" type="number" value="7" min="0" required /></label>
+          <label>Ù…Ø±Ø¶ÙŠ<input name="sickTotal" type="number" value="15" min="0" required /></label>
+          <label>Ù…Ø³ØªØ®Ø¯Ù…<input name="usedDays" type="number" value="0" min="0" required /></label>
+          <label>Ù…Ù„Ø§Ø­Ø¸Ø§Øª<input name="notes" placeholder="Ø§Ø®ØªÙŠØ§Ø±ÙŠ" /></label>
+          <div class="form-actions"><button class="button primary" type="submit">Ø­ÙØ¸ Ø§Ù„Ø±ØµÙŠØ¯</button></div>
         </form>
-        ${table(["الموظف", "سنوي", "عارض", "مرضي", "مستخدم", "متبقي", "آخر تحديث"], balances.map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || row.employeeId)}</td><td>${escapeHtml(row.annualTotal)}</td><td>${escapeHtml(row.casualTotal)}</td><td>${escapeHtml(row.sickTotal)}</td><td>${escapeHtml(row.usedDays)}</td><td>${escapeHtml(row.remainingDays)}</td><td>${date(row.updatedAt)}</td></tr>`))}
+        ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø³Ù†ÙˆÙŠ", "Ø¹Ø§Ø±Ø¶", "Ù…Ø±Ø¶ÙŠ", "Ù…Ø³ØªØ®Ø¯Ù…", "Ù…ØªØ¨Ù‚ÙŠ", "Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ«"], balances.map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || row.employeeId)}</td><td>${escapeHtml(row.annualTotal)}</td><td>${escapeHtml(row.casualTotal)}</td><td>${escapeHtml(row.sickTotal)}</td><td>${escapeHtml(row.usedDays)}</td><td>${escapeHtml(row.remainingDays)}</td><td>${date(row.updatedAt)}</td></tr>`))}
       </article>
     </section>`,
-    "أرصدة الإجازات",
-    "تحويل الإجازات إلى رصيد واضح قبل الموافقات.",
+    "Ø£Ø±ØµØ¯Ø© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª",
+    "ØªØ­ÙˆÙŠÙ„ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª Ø¥Ù„Ù‰ Ø±ØµÙŠØ¯ ÙˆØ§Ø¶Ø­ Ù‚Ø¨Ù„ Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø§Øª.",
   );
-  app.querySelector("#leave-balance-form")?.addEventListener("submit", submitForm(async (values) => endpoints.saveLeaveBalance(values.employeeId, values), "تم حفظ رصيد الإجازة."));
+  app.querySelector("#leave-balance-form")?.addEventListener("submit", submitForm(async (values) => endpoints.saveLeaveBalance(values.employeeId, values), "ØªÙ… Ø­ÙØ¸ Ø±ØµÙŠØ¯ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©."));
 }
 
 async function renderTasks() {
   const [tasks, employees] = await Promise.all([endpoints.tasks().then(unwrap), endpoints.employees().then(unwrap)]);
   shell(
     `<section class="grid">
-      <article class="panel span-12"><div class="panel-head"><div><h2>المهام الداخلية</h2><p>تكليف ومتابعة مهام الموظفين والمديرين بدل المتابعة الشفوية.</p></div></div>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ø§Ù„Ù…Ù‡Ø§Ù… Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠØ©</h2><p>ØªÙƒÙ„ÙŠÙ ÙˆÙ…ØªØ§Ø¨Ø¹Ø© Ù…Ù‡Ø§Ù… Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ† Ø¨Ø¯Ù„ Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ø´ÙÙˆÙŠØ©.</p></div></div>
         <form id="task-form" class="form-grid compact-form">
-          <label>الموظف<select name="employeeId" required>${optionList(employees, "", "اختر الموظف")}</select></label>
-          <label>عنوان المهمة<input name="title" required /></label>
-          <label>الأولوية<select name="priority"><option value="LOW">منخفضة</option><option value="MEDIUM" selected>متوسطة</option><option value="HIGH">عالية</option></select></label>
-          <label>تاريخ الاستحقاق<input name="dueDate" type="date" /></label>
-          <label class="span-2">التفاصيل<textarea name="description"></textarea></label>
-          <div class="form-actions"><button class="button primary" type="submit">إنشاء مهمة</button></div>
+          <label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId" required>${optionList(employees, "", "Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù")}</select></label>
+          <label>Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ù‡Ù…Ø©<input name="title" required /></label>
+          <label>Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©<select name="priority"><option value="LOW">Ù…Ù†Ø®ÙØ¶Ø©</option><option value="MEDIUM" selected>Ù…ØªÙˆØ³Ø·Ø©</option><option value="HIGH">Ø¹Ø§Ù„ÙŠØ©</option></select></label>
+          <label>ØªØ§Ø±ÙŠØ® Ø§Ù„Ø§Ø³ØªØ­Ù‚Ø§Ù‚<input name="dueDate" type="date" /></label>
+          <label class="span-2">Ø§Ù„ØªÙØ§ØµÙŠÙ„<textarea name="description"></textarea></label>
+          <div class="form-actions"><button class="button primary" type="submit">Ø¥Ù†Ø´Ø§Ø¡ Ù…Ù‡Ù…Ø©</button></div>
         </form>
-        ${table(["المهمة", "الموظف", "الأولوية", "الحالة", "الاستحقاق", "إجراء"], tasks.map((task) => `<tr><td>${escapeHtml(task.title)}</td><td>${escapeHtml(task.employee?.fullName || "-")}</td><td>${badge(task.priority)}</td><td>${badge(task.status)}</td><td>${escapeHtml(task.dueDate || "-")}</td><td><button class="button ghost small" data-task-done="${escapeHtml(task.id)}">تم الإنجاز</button></td></tr>`))}
+        ${table(["Ø§Ù„Ù…Ù‡Ù…Ø©", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø§Ø³ØªØ­Ù‚Ø§Ù‚", "Ø¥Ø¬Ø±Ø§Ø¡"], tasks.map((task) => `<tr><td>${escapeHtml(task.title)}</td><td>${escapeHtml(task.employee?.fullName || "-")}</td><td>${badge(task.priority)}</td><td>${badge(task.status)}</td><td>${escapeHtml(task.dueDate || "-")}</td><td><button class="button ghost small" data-task-done="${escapeHtml(task.id)}">ØªÙ… Ø§Ù„Ø¥Ù†Ø¬Ø§Ø²</button></td></tr>`))}
       </article>
     </section>`,
-    "المهام",
-    "نظام مهام داخلي مرتبط بالموظفين.",
+    "Ø§Ù„Ù…Ù‡Ø§Ù…",
+    "Ù†Ø¸Ø§Ù… Ù…Ù‡Ø§Ù… Ø¯Ø§Ø®Ù„ÙŠ Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.",
   );
-  app.querySelector("#task-form")?.addEventListener("submit", submitForm((values) => endpoints.createTask(values), "تم إنشاء المهمة وإرسال إشعار للموظف."));
-  app.querySelectorAll("[data-task-done]").forEach((btn) => btn.addEventListener("click", async () => { await endpoints.updateTask(btn.dataset.taskDone, { status: "DONE" }); setMessage("تم إغلاق المهمة.", ""); renderTasks(); }));
+  app.querySelector("#task-form")?.addEventListener("submit", submitForm((values) => endpoints.createTask(values), "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ù…Ù‡Ù…Ø© ÙˆØ¥Ø±Ø³Ø§Ù„ Ø¥Ø´Ø¹Ø§Ø± Ù„Ù„Ù…ÙˆØ¸Ù."));
+  app.querySelectorAll("[data-task-done]").forEach((btn) => btn.addEventListener("click", async () => { await endpoints.updateTask(btn.dataset.taskDone, { status: "DONE" }); setMessage("ØªÙ… Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„Ù…Ù‡Ù…Ø©.", ""); renderTasks(); }));
 }
 
 async function renderDocuments() {
   const [docs, employees] = await Promise.all([endpoints.employeeDocuments().then(unwrap), endpoints.employees().then(unwrap)]);
   shell(
     `<section class="grid">
-      <article class="panel span-12"><div class="panel-head"><div><h2>مستندات الموظفين</h2><p>أرشفة المستندات ومتابعة تاريخ انتهاء البطاقة/العقد/أي ملف مهم.</p></div></div>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</h2><p>Ø£Ø±Ø´ÙØ© Ø§Ù„Ù…Ø³ØªÙ†Ø¯Ø§Øª ÙˆÙ…ØªØ§Ø¨Ø¹Ø© ØªØ§Ø±ÙŠØ® Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„Ø¨Ø·Ø§Ù‚Ø©/Ø§Ù„Ø¹Ù‚Ø¯/Ø£ÙŠ Ù…Ù„Ù Ù…Ù‡Ù….</p></div></div>
         <form id="doc-form" class="form-grid compact-form">
-          <label>الموظف<select name="employeeId" required>${optionList(employees, "", "اختر الموظف")}</select></label>
-          <label>اسم المستند<input name="title" required /></label>
-          <label>النوع<select name="documentType"><option value="ID_CARD">بطاقة</option><option value="CONTRACT">عقد</option><option value="MEDICAL">طبي</option><option value="OTHER">أخرى</option></select></label>
-          <label>ينتهي في<input name="expiresOn" type="date" /></label>
-          <label>رابط الملف<input name="fileUrl" placeholder="رابط خاص أو Signed URL" /></label>
-          <label>ملاحظات<input name="notes" /></label>
-          <div class="form-actions"><button class="button primary" type="submit">إضافة مستند</button></div>
+          <label>Ø§Ù„Ù…ÙˆØ¸Ù<select name="employeeId" required>${optionList(employees, "", "Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù")}</select></label>
+          <label>Ø§Ø³Ù… Ø§Ù„Ù…Ø³ØªÙ†Ø¯<input name="title" required /></label>
+          <label>Ø§Ù„Ù†ÙˆØ¹<select name="documentType"><option value="ID_CARD">Ø¨Ø·Ø§Ù‚Ø©</option><option value="CONTRACT">Ø¹Ù‚Ø¯</option><option value="MEDICAL">Ø·Ø¨ÙŠ</option><option value="OTHER">Ø£Ø®Ø±Ù‰</option></select></label>
+          <label>ÙŠÙ†ØªÙ‡ÙŠ ÙÙŠ<input name="expiresOn" type="date" /></label>
+          <label>Ø±Ø§Ø¨Ø· Ø§Ù„Ù…Ù„Ù<input name="fileUrl" placeholder="Ø±Ø§Ø¨Ø· Ø®Ø§Øµ Ø£Ùˆ Signed URL" /></label>
+          <label>Ù…Ù„Ø§Ø­Ø¸Ø§Øª<input name="notes" /></label>
+          <div class="form-actions"><button class="button primary" type="submit">Ø¥Ø¶Ø§ÙØ© Ù…Ø³ØªÙ†Ø¯</button></div>
         </form>
-        ${table(["المستند", "الموظف", "النوع", "الحالة", "ينتهي في", "ملاحظات"], docs.map((doc) => `<tr><td>${doc.fileUrl ? `<a href="${escapeHtml(doc.fileUrl)}" target="_blank" rel="noopener">${escapeHtml(doc.title)}</a>` : escapeHtml(doc.title)}</td><td>${escapeHtml(doc.employee?.fullName || "-")}</td><td>${escapeHtml(doc.documentType || "-")}</td><td>${badge(doc.status || "ACTIVE")}</td><td>${escapeHtml(doc.expiresOn || "-")}</td><td>${escapeHtml(doc.notes || "")}</td></tr>`))}
+        ${table(["Ø§Ù„Ù…Ø³ØªÙ†Ø¯", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø­Ø§Ù„Ø©", "ÙŠÙ†ØªÙ‡ÙŠ ÙÙŠ", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"], docs.map((doc) => `<tr><td>${doc.fileUrl ? `<a href="${escapeHtml(doc.fileUrl)}" target="_blank" rel="noopener">${escapeHtml(doc.title)}</a>` : escapeHtml(doc.title)}</td><td>${escapeHtml(doc.employee?.fullName || "-")}</td><td>${escapeHtml(doc.documentType || "-")}</td><td>${badge(doc.status || "ACTIVE")}</td><td>${escapeHtml(doc.expiresOn || "-")}</td><td>${escapeHtml(doc.notes || "")}</td></tr>`))}
       </article>
     </section>`,
-    "مستندات الموظفين",
-    "أرشيف منظم مع تنبيهات انتهاء الصلاحية.",
+    "Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†",
+    "Ø£Ø±Ø´ÙŠÙ Ù…Ù†Ø¸Ù… Ù…Ø¹ ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ©.",
   );
-  app.querySelector("#doc-form")?.addEventListener("submit", submitForm((values) => endpoints.createEmployeeDocument(values), "تم حفظ المستند."));
+  app.querySelector("#doc-form")?.addEventListener("submit", submitForm((values) => endpoints.createEmployeeDocument(values), "ØªÙ… Ø­ÙØ¸ Ø§Ù„Ù…Ø³ØªÙ†Ø¯."));
 }
 
 async function renderPermissionMatrix() {
@@ -3098,16 +3098,16 @@ async function renderPermissionMatrix() {
   const firstRole = roles[0] || {};
   shell(
     `<section class="grid">
-      <article class="panel span-12"><div class="panel-head"><div><h2>مصفوفة الصلاحيات</h2><p>تحكم تفصيلي في صلاحيات كل دور داخل النظام.</p></div></div>
+      <article class="panel span-12"><div class="panel-head"><div><h2>Ù…ØµÙÙˆÙØ© Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª</h2><p>ØªØ­ÙƒÙ… ØªÙØµÙŠÙ„ÙŠ ÙÙŠ ØµÙ„Ø§Ø­ÙŠØ§Øª ÙƒÙ„ Ø¯ÙˆØ± Ø¯Ø§Ø®Ù„ Ø§Ù„Ù†Ø¸Ø§Ù….</p></div></div>
         <form id="matrix-form" class="matrix-form">
-          <label>الدور<select name="roleId" id="matrix-role">${optionList(roles, firstRole.id, "اختر الدور")}</select></label>
+          <label>Ø§Ù„Ø¯ÙˆØ±<select name="roleId" id="matrix-role">${optionList(roles, firstRole.id, "Ø§Ø®ØªØ± Ø§Ù„Ø¯ÙˆØ±")}</select></label>
           <div class="permission-grid">${permissions.map((perm) => `<label class="permission-check"><input type="checkbox" name="permissions" value="${escapeHtml(perm.scope)}" ${safeList(firstRole.permissions).includes(perm.scope) ? "checked" : ""}/><span><strong>${escapeHtml(perm.name || perm.scope)}</strong><small>${escapeHtml(perm.scope)}</small></span></label>`).join("")}</div>
-          <div class="form-actions"><button class="button primary" type="submit">حفظ الصلاحيات</button></div>
+          <div class="form-actions"><button class="button primary" type="submit">Ø­ÙØ¸ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª</button></div>
         </form>
       </article>
     </section>`,
-    "مصفوفة الصلاحيات",
-    "إدارة صلاحيات الأدوار بطريقة واضحة.",
+    "Ù…ØµÙÙˆÙØ© Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª",
+    "Ø¥Ø¯Ø§Ø±Ø© ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ø£Ø¯ÙˆØ§Ø± Ø¨Ø·Ø±ÙŠÙ‚Ø© ÙˆØ§Ø¶Ø­Ø©.",
   );
   const applyRoleChecks = () => {
     const role = roles.find((item) => item.id === app.querySelector("#matrix-role")?.value) || {};
@@ -3119,14 +3119,14 @@ async function renderPermissionMatrix() {
     const roleId = app.querySelector("#matrix-role").value;
     const permissions = [...app.querySelectorAll('input[name="permissions"]:checked')].map((input) => input.value);
     await endpoints.savePermissionMatrix({ roleId, permissions });
-    setMessage("تم حفظ مصفوفة الصلاحيات.", "");
+    setMessage("ØªÙ… Ø­ÙØ¸ Ù…ØµÙÙˆÙØ© Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª.", "");
     renderPermissionMatrix();
   });
 }
 
 
 async function renderQualityCenter() {
-  const data = await endpoints.qualityCenter().then(unwrap).catch(() => ({ readiness: { score: 0, grade: "غير متاح", issues: [] }, policy: {}, maintenanceRuns: [], escalations: [] }));
+  const data = await endpoints.qualityCenter().then(unwrap).catch(() => ({ readiness: { score: 0, grade: "ØºÙŠØ± Ù…ØªØ§Ø­", issues: [] }, policy: {}, maintenanceRuns: [], escalations: [] }));
   const readiness = data.readiness || {};
   const issues = readiness.issues || [];
   const policy = data.policy || {};
@@ -3134,25 +3134,25 @@ async function renderQualityCenter() {
     `<section class="grid quality-center-page">
       <article class="panel span-12 accent-panel">
         <div class="panel-head">
-          <div><h2>مركز الجودة والإصلاح التلقائي</h2><p>يفحص الترابط بين الموظفين والمستخدمين، الهيكل الإداري، الطلبات المتأخرة، السياسات، والمستندات.</p></div>
-          <div class="toolbar"><button class="button primary" id="run-maintenance">تشغيل إصلاح شامل الآن</button><button class="button ghost" id="export-quality-report">تصدير تقرير JSON</button></div>
+          <div><h2>Ù…Ø±ÙƒØ² Ø§Ù„Ø¬ÙˆØ¯Ø© ÙˆØ§Ù„Ø¥ØµÙ„Ø§Ø­ Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ</h2><p>ÙŠÙØ­Øµ Ø§Ù„ØªØ±Ø§Ø¨Ø· Ø¨ÙŠÙ† Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†ØŒ Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØŒ Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ØªØ£Ø®Ø±Ø©ØŒ Ø§Ù„Ø³ÙŠØ§Ø³Ø§ØªØŒ ÙˆØ§Ù„Ù…Ø³ØªÙ†Ø¯Ø§Øª.</p></div>
+          <div class="toolbar"><button class="button primary" id="run-maintenance">ØªØ´ØºÙŠÙ„ Ø¥ØµÙ„Ø§Ø­ Ø´Ø§Ù…Ù„ Ø§Ù„Ø¢Ù†</button><button class="button ghost" id="export-quality-report">ØªØµØ¯ÙŠØ± ØªÙ‚Ø±ÙŠØ± JSON</button></div>
         </div>
       </article>
-      <article class="panel span-3"><span class="panel-kicker">جاهزية النظام</span><strong class="big-number">${escapeHtml(readiness.score ?? 0)}%</strong><p>${escapeHtml(readiness.grade || "-")}</p></article>
-      <article class="panel span-3"><span class="panel-kicker">مشاكل عالية</span><strong class="big-number">${issues.filter((item) => item.severity === "HIGH").length}</strong><p>تحتاج إصلاح فوري</p></article>
-      <article class="panel span-3"><span class="panel-kicker">طلبات متأخرة</span><strong class="big-number">${escapeHtml(readiness.staleWorkflow || 0)}</strong><p>SLA أكثر من 48 ساعة</p></article>
-      <article class="panel span-3"><span class="panel-kicker">توقيع السياسات</span><strong class="big-number">${escapeHtml(policy.percent ?? 100)}%</strong><p>${escapeHtml(policy.signed || 0)} من ${escapeHtml(policy.totalRequired || 0)}</p></article>
-      <article class="panel span-8"><h2>المشاكل المكتشفة</h2>${table(["الخطورة", "المجال", "المشكلة", "التفاصيل"], issues.map((item) => `<tr><td>${badge(item.severity)}</td><td>${escapeHtml(item.area)}</td><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.detail || "-")}</td></tr>`))}</article>
-      <article class="panel span-4"><h2>آخر عمليات الصيانة</h2>${table(["قبل", "بعد", "إصلاحات", "تصعيد"], (data.maintenanceRuns || []).slice(0, 8).map((run) => `<tr><td>${escapeHtml(run.beforeScore ?? "-")}</td><td>${escapeHtml(run.afterScore ?? "-")}</td><td>${escapeHtml(run.repair?.fixed ?? 0)}</td><td>${escapeHtml(run.workflow?.escalated ?? 0)}</td></tr>`))}</article>
-      <article class="panel span-12"><h2>التصعيدات المفتوحة</h2>${table(["النوع", "الموظف", "السبب", "الحالة", "التاريخ"], (data.escalations || []).slice(0, 50).map((item) => `<tr><td>${escapeHtml(item.sourceKind)}</td><td>${escapeHtml(item.employeeId)}</td><td>${escapeHtml(item.reason)}</td><td>${badge(item.status)}</td><td>${date(item.createdAt)}</td></tr>`))}</article>
+      <article class="panel span-3"><span class="panel-kicker">Ø¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„Ù†Ø¸Ø§Ù…</span><strong class="big-number">${escapeHtml(readiness.score ?? 0)}%</strong><p>${escapeHtml(readiness.grade || "-")}</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ù…Ø´Ø§ÙƒÙ„ Ø¹Ø§Ù„ÙŠØ©</span><strong class="big-number">${issues.filter((item) => item.severity === "HIGH").length}</strong><p>ØªØ­ØªØ§Ø¬ Ø¥ØµÙ„Ø§Ø­ ÙÙˆØ±ÙŠ</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø·Ù„Ø¨Ø§Øª Ù…ØªØ£Ø®Ø±Ø©</span><strong class="big-number">${escapeHtml(readiness.staleWorkflow || 0)}</strong><p>SLA Ø£ÙƒØ«Ø± Ù…Ù† 48 Ø³Ø§Ø¹Ø©</p></article>
+      <article class="panel span-3"><span class="panel-kicker">ØªÙˆÙ‚ÙŠØ¹ Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª</span><strong class="big-number">${escapeHtml(policy.percent ?? 100)}%</strong><p>${escapeHtml(policy.signed || 0)} Ù…Ù† ${escapeHtml(policy.totalRequired || 0)}</p></article>
+      <article class="panel span-8"><h2>Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ Ø§Ù„Ù…ÙƒØªØ´ÙØ©</h2>${table(["Ø§Ù„Ø®Ø·ÙˆØ±Ø©", "Ø§Ù„Ù…Ø¬Ø§Ù„", "Ø§Ù„Ù…Ø´ÙƒÙ„Ø©", "Ø§Ù„ØªÙØ§ØµÙŠÙ„"], issues.map((item) => `<tr><td>${badge(item.severity)}</td><td>${escapeHtml(item.area)}</td><td>${escapeHtml(item.title)}</td><td>${escapeHtml(item.detail || "-")}</td></tr>`))}</article>
+      <article class="panel span-4"><h2>Ø¢Ø®Ø± Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„ØµÙŠØ§Ù†Ø©</h2>${table(["Ù‚Ø¨Ù„", "Ø¨Ø¹Ø¯", "Ø¥ØµÙ„Ø§Ø­Ø§Øª", "ØªØµØ¹ÙŠØ¯"], (data.maintenanceRuns || []).slice(0, 8).map((run) => `<tr><td>${escapeHtml(run.beforeScore ?? "-")}</td><td>${escapeHtml(run.afterScore ?? "-")}</td><td>${escapeHtml(run.repair?.fixed ?? 0)}</td><td>${escapeHtml(run.workflow?.escalated ?? 0)}</td></tr>`))}</article>
+      <article class="panel span-12"><h2>Ø§Ù„ØªØµØ¹ÙŠØ¯Ø§Øª Ø§Ù„Ù…ÙØªÙˆØ­Ø©</h2>${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø³Ø¨Ø¨", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], (data.escalations || []).slice(0, 50).map((item) => `<tr><td>${escapeHtml(item.sourceKind)}</td><td>${escapeHtml(item.employeeId)}</td><td>${escapeHtml(item.reason)}</td><td>${badge(item.status)}</td><td>${date(item.createdAt)}</td></tr>`))}</article>
     </section>`,
-    "مركز الجودة والإصلاح",
-    "تشغيل صيانة ذكية وفحص جاهزية النظام.",
+    "Ù…Ø±ÙƒØ² Ø§Ù„Ø¬ÙˆØ¯Ø© ÙˆØ§Ù„Ø¥ØµÙ„Ø§Ø­",
+    "ØªØ´ØºÙŠÙ„ ØµÙŠØ§Ù†Ø© Ø°ÙƒÙŠØ© ÙˆÙØ­Øµ Ø¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„Ù†Ø¸Ø§Ù….",
   );
   app.querySelector("#run-maintenance")?.addEventListener("click", async () => {
-    if (!await confirmAction({ title: "تشغيل الإصلاح الشامل", message: "سيتم إصلاح الروابط الناقصة وإنشاء حسابات مؤقتة للموظفين بلا حساب وتصعيد الطلبات المتأخرة.", confirmLabel: "تشغيل الآن" })) return;
+    if (!await confirmAction({ title: "ØªØ´ØºÙŠÙ„ Ø§Ù„Ø¥ØµÙ„Ø§Ø­ Ø§Ù„Ø´Ø§Ù…Ù„", message: "Ø³ÙŠØªÙ… Ø¥ØµÙ„Ø§Ø­ Ø§Ù„Ø±ÙˆØ§Ø¨Ø· Ø§Ù„Ù†Ø§Ù‚ØµØ© ÙˆØ¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨Ø§Øª Ù…Ø¤Ù‚ØªØ© Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨ ÙˆØªØµØ¹ÙŠØ¯ Ø§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ØªØ£Ø®Ø±Ø©.", confirmLabel: "ØªØ´ØºÙŠÙ„ Ø§Ù„Ø¢Ù†" })) return;
     const result = await endpoints.runMaintenance({ thresholdHours: 48 }).then(unwrap);
-    setMessage(`تم التشغيل: ${result.run?.repair?.fixed || 0} إصلاحات، ${result.run?.workflow?.escalated || 0} تصعيدات.`, "");
+    setMessage(`ØªÙ… Ø§Ù„ØªØ´ØºÙŠÙ„: ${result.run?.repair?.fixed || 0} Ø¥ØµÙ„Ø§Ø­Ø§ØªØŒ ${result.run?.workflow?.escalated || 0} ØªØµØ¹ÙŠØ¯Ø§Øª.`, "");
     renderQualityCenter();
   });
   app.querySelector("#export-quality-report")?.addEventListener("click", () => downloadFile("quality-center-report.json", JSON.stringify(data, null, 2), "application/json;charset=utf-8"));
@@ -3163,29 +3163,29 @@ async function renderPolicies() {
   const policies = data.policies || [];
   shell(
     `<section class="grid policies-page">
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>السياسات والتوقيعات</h2><p>إدارة سياسات الجمعية وإثبات قراءة الموظفين لها.</p></div></div></article>
-      <article class="panel span-3"><span class="panel-kicker">السياسات</span><strong class="big-number">${escapeHtml(data.summary?.policies || policies.length)}</strong><p>فعالة ومؤرشفة</p></article>
-      <article class="panel span-3"><span class="panel-kicker">التوقيعات</span><strong class="big-number">${escapeHtml(data.summary?.signed || 0)}</strong><p>تمت القراءة</p></article>
-      <article class="panel span-3"><span class="panel-kicker">المتبقي</span><strong class="big-number">${escapeHtml(data.summary?.missing || 0)}</strong><p>تحتاج متابعة</p></article>
-      <article class="panel span-3"><span class="panel-kicker">النسبة</span><strong class="big-number">${escapeHtml(data.summary?.percent ?? 100)}%</strong><p>اكتمال الالتزام</p></article>
+      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª ÙˆØ§Ù„ØªÙˆÙ‚ÙŠØ¹Ø§Øª</h2><p>Ø¥Ø¯Ø§Ø±Ø© Ø³ÙŠØ§Ø³Ø§Øª Ø§Ù„Ø¬Ù…Ø¹ÙŠØ© ÙˆØ¥Ø«Ø¨Ø§Øª Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ù„Ù‡Ø§.</p></div></div></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª</span><strong class="big-number">${escapeHtml(data.summary?.policies || policies.length)}</strong><p>ÙØ¹Ø§Ù„Ø© ÙˆÙ…Ø¤Ø±Ø´ÙØ©</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø§Ù„ØªÙˆÙ‚ÙŠØ¹Ø§Øª</span><strong class="big-number">${escapeHtml(data.summary?.signed || 0)}</strong><p>ØªÙ…Øª Ø§Ù„Ù‚Ø±Ø§Ø¡Ø©</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ</span><strong class="big-number">${escapeHtml(data.summary?.missing || 0)}</strong><p>ØªØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø§Ù„Ù†Ø³Ø¨Ø©</span><strong class="big-number">${escapeHtml(data.summary?.percent ?? 100)}%</strong><p>Ø§ÙƒØªÙ…Ø§Ù„ Ø§Ù„Ø§Ù„ØªØ²Ø§Ù…</p></article>
       <article class="panel span-5">
-        <h2>سياسة جديدة</h2>
+        <h2>Ø³ÙŠØ§Ø³Ø© Ø¬Ø¯ÙŠØ¯Ø©</h2>
         <form id="policy-form" class="form-grid compact-form">
-          <label>العنوان<input name="title" required placeholder="مثال: سياسة الحضور" /></label>
-          <label>التصنيف<select name="category"><option value="ATTENDANCE">الحضور</option><option value="SECURITY">الأمان</option><option value="DISPUTES">الخلافات</option><option value="GENERAL">عام</option></select></label>
-          <label>الإصدار<input name="version" value="1.0" /></label>
-          <label>الحالة<select name="status"><option value="ACTIVE">فعالة</option><option value="DRAFT">مسودة</option><option value="ARCHIVED">أرشيف</option></select></label>
-          <label class="span-2">النص<textarea name="body" rows="6" required></textarea></label>
-          <label class="checkbox-line span-2"><input type="checkbox" name="requiresAcknowledgement" checked /> تحتاج توقيع/قراءة من الموظفين</label>
-          <div class="form-actions"><button class="button primary">حفظ السياسة</button></div>
+          <label>Ø§Ù„Ø¹Ù†ÙˆØ§Ù†<input name="title" required placeholder="Ù…Ø«Ø§Ù„: Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø­Ø¶ÙˆØ±" /></label>
+          <label>Ø§Ù„ØªØµÙ†ÙŠÙ<select name="category"><option value="ATTENDANCE">Ø§Ù„Ø­Ø¶ÙˆØ±</option><option value="SECURITY">Ø§Ù„Ø£Ù…Ø§Ù†</option><option value="DISPUTES">Ø§Ù„Ø®Ù„Ø§ÙØ§Øª</option><option value="GENERAL">Ø¹Ø§Ù…</option></select></label>
+          <label>Ø§Ù„Ø¥ØµØ¯Ø§Ø±<input name="version" value="1.0" /></label>
+          <label>Ø§Ù„Ø­Ø§Ù„Ø©<select name="status"><option value="ACTIVE">ÙØ¹Ø§Ù„Ø©</option><option value="DRAFT">Ù…Ø³ÙˆØ¯Ø©</option><option value="ARCHIVED">Ø£Ø±Ø´ÙŠÙ</option></select></label>
+          <label class="span-2">Ø§Ù„Ù†Øµ<textarea name="body" rows="6" required></textarea></label>
+          <label class="checkbox-line span-2"><input type="checkbox" name="requiresAcknowledgement" checked /> ØªØ­ØªØ§Ø¬ ØªÙˆÙ‚ÙŠØ¹/Ù‚Ø±Ø§Ø¡Ø© Ù…Ù† Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</label>
+          <div class="form-actions"><button class="button primary">Ø­ÙØ¸ Ø§Ù„Ø³ÙŠØ§Ø³Ø©</button></div>
         </form>
       </article>
-      <article class="panel span-7"><h2>السياسات الحالية</h2>${table(["العنوان", "التصنيف", "الإصدار", "الحالة", "التوقيع"], policies.map((policy) => `<tr><td>${escapeHtml(policy.title)}</td><td>${escapeHtml(policy.category || "-")}</td><td>${escapeHtml(policy.version || "-")}</td><td>${badge(policy.status)}</td><td>${policy.requiresAcknowledgement === false ? "غير مطلوب" : "مطلوب"}</td></tr>`))}</article>
+      <article class="panel span-7"><h2>Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª Ø§Ù„Ø­Ø§Ù„ÙŠØ©</h2>${table(["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„ØªØµÙ†ÙŠÙ", "Ø§Ù„Ø¥ØµØ¯Ø§Ø±", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªÙˆÙ‚ÙŠØ¹"], policies.map((policy) => `<tr><td>${escapeHtml(policy.title)}</td><td>${escapeHtml(policy.category || "-")}</td><td>${escapeHtml(policy.version || "-")}</td><td>${badge(policy.status)}</td><td>${policy.requiresAcknowledgement === false ? "ØºÙŠØ± Ù…Ø·Ù„ÙˆØ¨" : "Ù…Ø·Ù„ÙˆØ¨"}</td></tr>`))}</article>
     </section>`,
-    "السياسات والتوقيعات",
-    "مركز الالتزام الداخلي."
+    "Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª ÙˆØ§Ù„ØªÙˆÙ‚ÙŠØ¹Ø§Øª",
+    "Ù…Ø±ÙƒØ² Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ."
   );
-  app.querySelector("#policy-form")?.addEventListener("submit", submitForm(endpoints.savePolicy, "تم حفظ السياسة وإخطار الموظفين."));
+  app.querySelector("#policy-form")?.addEventListener("submit", submitForm(endpoints.savePolicy, "ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø³ÙŠØ§Ø³Ø© ÙˆØ¥Ø®Ø·Ø§Ø± Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†."));
 }
 
 async function renderControlRoom() {
@@ -3193,24 +3193,24 @@ async function renderControlRoom() {
   const cards = data.cards || {};
   shell(
     `<section class="grid control-room-page">
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>غرفة التحكم والتنبيهات الذكية</h2><p>لوحة واحدة تعرض أخطر ما يحتاج قرارًا الآن: SLA، جودة البيانات، المهام، التقارير اليومية والتنبيهات.</p></div><div class="toolbar"><button class="button primary" id="run-smart-audit">تحديث التحليل الذكي</button><button class="button ghost" id="export-control-room">تصدير JSON</button></div></div></article>
-      <article class="panel span-2"><span class="panel-kicker">جاهزية</span><strong class="big-number">${escapeHtml(cards.readiness ?? 0)}%</strong><p>${escapeHtml(data.readiness?.grade || "-")}</p></article>
-      <article class="panel span-2"><span class="panel-kicker">تنبيهات مفتوحة</span><strong class="big-number">${escapeHtml(cards.openAlerts ?? 0)}</strong><p>تحتاج متابعة</p></article>
-      <article class="panel span-2"><span class="panel-kicker">خطيرة</span><strong class="big-number">${escapeHtml(cards.highAlerts ?? 0)}</strong><p>أولوية عالية</p></article>
-      <article class="panel span-2"><span class="panel-kicker">طلبات متأخرة</span><strong class="big-number">${escapeHtml(cards.staleRequests ?? 0)}</strong><p>أكثر من 48 ساعة</p></article>
-      <article class="panel span-2"><span class="panel-kicker">مهام مفتوحة</span><strong class="big-number">${escapeHtml(cards.openTasks ?? 0)}</strong><p>قيد التنفيذ</p></article>
-      <article class="panel span-2"><span class="panel-kicker">تقارير اليوم</span><strong class="big-number">${escapeHtml(cards.todayReports ?? 0)}</strong><p>${escapeHtml(cards.pendingReports ?? 0)} للمراجعة</p></article>
-      <article class="panel span-7"><h2>التنبيهات الذكية</h2>${table(["الخطورة", "العنوان", "التفاصيل", "المسار", "إجراء"], (data.alerts || []).slice(0, 60).map((alert) => `<tr><td>${badge(alert.severity)}</td><td>${escapeHtml(alert.title)}</td><td>${escapeHtml(alert.body || "-")}</td><td><button class="button ghost small" data-route="${escapeHtml(alert.route || "quality-center")}">فتح</button></td><td>${alert.status === "OPEN" ? `<button class="button small" data-resolve-alert="${escapeHtml(alert.id)}">إغلاق</button>` : badge(alert.status)}</td></tr>`))}</article>
-      <article class="panel span-5"><h2>طلبات متأخرة</h2>${table(["النوع", "الموظف", "العمر", "الحالة"], (data.staleRequests || []).map((item) => `<tr><td>${escapeHtml(item.kindLabel || item.kind)}</td><td>${escapeHtml(item.employee?.fullName || item.employeeId || "-")}</td><td>${escapeHtml(item.ageHours || "48+")} ساعة</td><td>${badge(item.status)}</td></tr>`))}</article>
-      <article class="panel span-6"><h2>مهام مفتوحة</h2>${table(["المهمة", "الموظف", "الأولوية", "التاريخ"], (data.openTasks || []).slice(0, 30).map((task) => `<tr><td>${escapeHtml(task.title)}</td><td>${escapeHtml(task.employee?.fullName || "-")}</td><td>${badge(task.priority)}</td><td>${escapeHtml(task.dueDate || "-")}</td></tr>`))}</article>
-      <article class="panel span-6"><h2>آخر التقارير اليومية</h2>${table(["الموظف", "اليوم", "الحالة", "العوائق"], (data.dailyReports || []).slice(0, 30).map((report) => `<tr><td>${escapeHtml(report.employee?.fullName || "-")}</td><td>${escapeHtml(report.reportDate || "-")}</td><td>${badge(report.status)}</td><td>${escapeHtml(report.blockers || "-")}</td></tr>`))}</article>
+      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ… ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©</h2><p>Ù„ÙˆØ­Ø© ÙˆØ§Ø­Ø¯Ø© ØªØ¹Ø±Ø¶ Ø£Ø®Ø·Ø± Ù…Ø§ ÙŠØ­ØªØ§Ø¬ Ù‚Ø±Ø§Ø±Ù‹Ø§ Ø§Ù„Ø¢Ù†: SLAØŒ Ø¬ÙˆØ¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§ØªØŒ Ø§Ù„Ù…Ù‡Ø§Ù…ØŒ Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ© ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª.</p></div><div class="toolbar"><button class="button primary" id="run-smart-audit">ØªØ­Ø¯ÙŠØ« Ø§Ù„ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø°ÙƒÙŠ</button><button class="button ghost" id="export-control-room">ØªØµØ¯ÙŠØ± JSON</button></div></div></article>
+      <article class="panel span-2"><span class="panel-kicker">Ø¬Ø§Ù‡Ø²ÙŠØ©</span><strong class="big-number">${escapeHtml(cards.readiness ?? 0)}%</strong><p>${escapeHtml(data.readiness?.grade || "-")}</p></article>
+      <article class="panel span-2"><span class="panel-kicker">ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ù…ÙØªÙˆØ­Ø©</span><strong class="big-number">${escapeHtml(cards.openAlerts ?? 0)}</strong><p>ØªØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©</p></article>
+      <article class="panel span-2"><span class="panel-kicker">Ø®Ø·ÙŠØ±Ø©</span><strong class="big-number">${escapeHtml(cards.highAlerts ?? 0)}</strong><p>Ø£ÙˆÙ„ÙˆÙŠØ© Ø¹Ø§Ù„ÙŠØ©</p></article>
+      <article class="panel span-2"><span class="panel-kicker">Ø·Ù„Ø¨Ø§Øª Ù…ØªØ£Ø®Ø±Ø©</span><strong class="big-number">${escapeHtml(cards.staleRequests ?? 0)}</strong><p>Ø£ÙƒØ«Ø± Ù…Ù† 48 Ø³Ø§Ø¹Ø©</p></article>
+      <article class="panel span-2"><span class="panel-kicker">Ù…Ù‡Ø§Ù… Ù…ÙØªÙˆØ­Ø©</span><strong class="big-number">${escapeHtml(cards.openTasks ?? 0)}</strong><p>Ù‚ÙŠØ¯ Ø§Ù„ØªÙ†ÙÙŠØ°</p></article>
+      <article class="panel span-2"><span class="panel-kicker">ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…</span><strong class="big-number">${escapeHtml(cards.todayReports ?? 0)}</strong><p>${escapeHtml(cards.pendingReports ?? 0)} Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©</p></article>
+      <article class="panel span-7"><h2>Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©</h2>${table(["Ø§Ù„Ø®Ø·ÙˆØ±Ø©", "Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„ØªÙØ§ØµÙŠÙ„", "Ø§Ù„Ù…Ø³Ø§Ø±", "Ø¥Ø¬Ø±Ø§Ø¡"], (data.alerts || []).slice(0, 60).map((alert) => `<tr><td>${badge(alert.severity)}</td><td>${escapeHtml(alert.title)}</td><td>${escapeHtml(alert.body || "-")}</td><td><button class="button ghost small" data-route="${escapeHtml(alert.route || "quality-center")}">ÙØªØ­</button></td><td>${alert.status === "OPEN" ? `<button class="button small" data-resolve-alert="${escapeHtml(alert.id)}">Ø¥ØºÙ„Ø§Ù‚</button>` : badge(alert.status)}</td></tr>`))}</article>
+      <article class="panel span-5"><h2>Ø·Ù„Ø¨Ø§Øª Ù…ØªØ£Ø®Ø±Ø©</h2>${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø¹Ù…Ø±", "Ø§Ù„Ø­Ø§Ù„Ø©"], (data.staleRequests || []).map((item) => `<tr><td>${escapeHtml(item.kindLabel || item.kind)}</td><td>${escapeHtml(item.employee?.fullName || item.employeeId || "-")}</td><td>${escapeHtml(item.ageHours || "48+")} Ø³Ø§Ø¹Ø©</td><td>${badge(item.status)}</td></tr>`))}</article>
+      <article class="panel span-6"><h2>Ù…Ù‡Ø§Ù… Ù…ÙØªÙˆØ­Ø©</h2>${table(["Ø§Ù„Ù…Ù‡Ù…Ø©", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], (data.openTasks || []).slice(0, 30).map((task) => `<tr><td>${escapeHtml(task.title)}</td><td>${escapeHtml(task.employee?.fullName || "-")}</td><td>${badge(task.priority)}</td><td>${escapeHtml(task.dueDate || "-")}</td></tr>`))}</article>
+      <article class="panel span-6"><h2>Ø¢Ø®Ø± Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©</h2>${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„ÙŠÙˆÙ…", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø¹ÙˆØ§Ø¦Ù‚"], (data.dailyReports || []).slice(0, 30).map((report) => `<tr><td>${escapeHtml(report.employee?.fullName || "-")}</td><td>${escapeHtml(report.reportDate || "-")}</td><td>${badge(report.status)}</td><td>${escapeHtml(report.blockers || "-")}</td></tr>`))}</article>
     </section>`,
-    "غرفة التحكم",
-    "تنبيهات ذكية ومتابعة فورية لأخطر نقاط التشغيل.",
+    "ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ…",
+    "ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø°ÙƒÙŠØ© ÙˆÙ…ØªØ§Ø¨Ø¹Ø© ÙÙˆØ±ÙŠØ© Ù„Ø£Ø®Ø·Ø± Ù†Ù‚Ø§Ø· Ø§Ù„ØªØ´ØºÙŠÙ„.",
   );
-  app.querySelector("#run-smart-audit")?.addEventListener("click", async () => { await endpoints.runSmartAudit(); setMessage("تم تحديث التنبيهات الذكية.", ""); renderControlRoom(); });
+  app.querySelector("#run-smart-audit")?.addEventListener("click", async () => { await endpoints.runSmartAudit(); setMessage("ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©.", ""); renderControlRoom(); });
   app.querySelector("#export-control-room")?.addEventListener("click", () => downloadFile("control-room.json", JSON.stringify(data, null, 2), "application/json;charset=utf-8"));
-  app.querySelectorAll("[data-resolve-alert]").forEach((button) => button.addEventListener("click", async () => { await endpoints.resolveSmartAlert(button.dataset.resolveAlert, { note: "تم الإغلاق من غرفة التحكم" }); setMessage("تم إغلاق التنبيه.", ""); renderControlRoom(); }));
+  app.querySelectorAll("[data-resolve-alert]").forEach((button) => button.addEventListener("click", async () => { await endpoints.resolveSmartAlert(button.dataset.resolveAlert, { note: "ØªÙ… Ø§Ù„Ø¥ØºÙ„Ø§Ù‚ Ù…Ù† ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ…" }); setMessage("ØªÙ… Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡.", ""); renderControlRoom(); }));
 }
 
 async function renderDataCenter() {
@@ -3218,13 +3218,13 @@ async function renderDataCenter() {
   const counts = data.counts || {};
   shell(
     `<section class="grid data-center-page">
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>مركز البيانات والاستيراد الآمن</h2><p>تصدير نسخة كاملة، اختبار ملف استيراد قبل تطبيقه، وحفظ Snapshot قبل أي عملية حساسة.</p></div><div class="toolbar"><button class="button primary" id="download-full-backup">تنزيل Backup كامل</button></div></div></article>
-      ${["employees","users","attendance","requests","documents","dailyReports","audits"].map((key) => `<article class="panel span-2"><span class="panel-kicker">${escapeHtml(key)}</span><strong class="big-number">${escapeHtml(counts[key] ?? 0)}</strong><p>سجل</p></article>`).join("")}
-      <article class="panel span-6"><h2>اختبار ملف استيراد JSON</h2><p>ضع محتوى النسخة هنا أولًا، وسيخبرك النظام بالمشاكل قبل التطبيق.</p><form id="validate-import-form" class="form-grid compact-form"><label class="span-2">JSON<textarea name="payload" rows="10" placeholder='{ "employees": [], "users": [] }'></textarea></label><div class="form-actions"><button class="button ghost" name="mode" value="validate">فحص فقط</button><button class="button danger" name="mode" value="import">استيراد بعد الفحص</button></div></form><div id="import-result" class="message"></div></article>
-      <article class="panel span-6"><h2>آخر عمليات الاستيراد والنسخ</h2>${table(["النوع", "العدد", "التاريخ"], [...(data.importBatches || []).map((row) => ({ type: "استيراد", count: row.employees || row.employeesCount || 0, date: row.createdAt })), ...(data.backups || []).map((row) => ({ type: row.title || "Backup", count: "-", date: row.createdAt }))].slice(0, 20).map((row) => `<tr><td>${escapeHtml(row.type)}</td><td>${escapeHtml(row.count)}</td><td>${date(row.date)}</td></tr>`))}</article>
+      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>Ù…Ø±ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆØ§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ø§Ù„Ø¢Ù…Ù†</h2><p>ØªØµØ¯ÙŠØ± Ù†Ø³Ø®Ø© ÙƒØ§Ù…Ù„Ø©ØŒ Ø§Ø®ØªØ¨Ø§Ø± Ù…Ù„Ù Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ù‚Ø¨Ù„ ØªØ·Ø¨ÙŠÙ‚Ù‡ØŒ ÙˆØ­ÙØ¸ Snapshot Ù‚Ø¨Ù„ Ø£ÙŠ Ø¹Ù…Ù„ÙŠØ© Ø­Ø³Ø§Ø³Ø©.</p></div><div class="toolbar"><button class="button primary" id="download-full-backup">ØªÙ†Ø²ÙŠÙ„ Backup ÙƒØ§Ù…Ù„</button></div></div></article>
+      ${["employees","users","attendance","requests","documents","dailyReports","audits"].map((key) => `<article class="panel span-2"><span class="panel-kicker">${escapeHtml(key)}</span><strong class="big-number">${escapeHtml(counts[key] ?? 0)}</strong><p>Ø³Ø¬Ù„</p></article>`).join("")}
+      <article class="panel span-6"><h2>Ø§Ø®ØªØ¨Ø§Ø± Ù…Ù„Ù Ø§Ø³ØªÙŠØ±Ø§Ø¯ JSON</h2><p>Ø¶Ø¹ Ù…Ø­ØªÙˆÙ‰ Ø§Ù„Ù†Ø³Ø®Ø© Ù‡Ù†Ø§ Ø£ÙˆÙ„Ù‹Ø§ØŒ ÙˆØ³ÙŠØ®Ø¨Ø±Ùƒ Ø§Ù„Ù†Ø¸Ø§Ù… Ø¨Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ Ù‚Ø¨Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚.</p><form id="validate-import-form" class="form-grid compact-form"><label class="span-2">JSON<textarea name="payload" rows="10" placeholder='{ "employees": [], "users": [] }'></textarea></label><div class="form-actions"><button class="button ghost" name="mode" value="validate">ÙØ­Øµ ÙÙ‚Ø·</button><button class="button danger" name="mode" value="import">Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ø¨Ø¹Ø¯ Ø§Ù„ÙØ­Øµ</button></div></form><div id="import-result" class="message"></div></article>
+      <article class="panel span-6"><h2>Ø¢Ø®Ø± Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯ ÙˆØ§Ù„Ù†Ø³Ø®</h2>${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø¹Ø¯Ø¯", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], [...(data.importBatches || []).map((row) => ({ type: "Ø§Ø³ØªÙŠØ±Ø§Ø¯", count: row.employees || row.employeesCount || 0, date: row.createdAt })), ...(data.backups || []).map((row) => ({ type: row.title || "Backup", count: "-", date: row.createdAt }))].slice(0, 20).map((row) => `<tr><td>${escapeHtml(row.type)}</td><td>${escapeHtml(row.count)}</td><td>${date(row.date)}</td></tr>`))}</article>
     </section>`,
-    "مركز البيانات",
-    "أدوات أمان للتصدير والاستيراد وفحص البيانات.",
+    "Ù…Ø±ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª",
+    "Ø£Ø¯ÙˆØ§Øª Ø£Ù…Ø§Ù† Ù„Ù„ØªØµØ¯ÙŠØ± ÙˆØ§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯ ÙˆÙØ­Øµ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.",
   );
   app.querySelector("#download-full-backup")?.addEventListener("click", async () => { const backup = await endpoints.exportFullBackup().then(unwrap); downloadFile(`ahla-shabab-backup-${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(backup, null, 2), "application/json;charset=utf-8"); });
   app.querySelector("#validate-import-form")?.addEventListener("submit", async (event) => {
@@ -3235,12 +3235,12 @@ async function renderDataCenter() {
       const payload = JSON.parse(new FormData(event.currentTarget).get("payload") || "{}");
       const validation = await endpoints.validateImportBackup(payload).then(unwrap);
       if (mode === "import") {
-        if (!await confirmAction({ title: "استيراد بيانات", message: "سيتم حفظ Backup قبل الاستيراد ثم تطبيق البيانات الجديدة على الوضع المحلي.", confirmLabel: "استيراد" })) return;
+        if (!await confirmAction({ title: "Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª", message: "Ø³ÙŠØªÙ… Ø­ÙØ¸ Backup Ù‚Ø¨Ù„ Ø§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ø«Ù… ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ø¹Ù„Ù‰ Ø§Ù„ÙˆØ¶Ø¹ Ø§Ù„Ù…Ø­Ù„ÙŠ.", confirmLabel: "Ø§Ø³ØªÙŠØ±Ø§Ø¯" })) return;
         const result = await endpoints.importBackup(payload).then(unwrap);
-        box.className = "message success"; box.textContent = `تم الاستيراد: ${result.counts?.employees || 0} موظف.`;
+        box.className = "message success"; box.textContent = `ØªÙ… Ø§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯: ${result.counts?.employees || 0} Ù…ÙˆØ¸Ù.`;
       } else {
         box.className = validation.ok ? "message success" : "message error";
-        box.textContent = `${validation.ok ? "صالح" : "به أخطاء"}: ${[...(validation.issues || []), ...(validation.warnings || [])].join(" — ") || "لا توجد مشاكل ظاهرة."}`;
+        box.textContent = `${validation.ok ? "ØµØ§Ù„Ø­" : "Ø¨Ù‡ Ø£Ø®Ø·Ø§Ø¡"}: ${[...(validation.issues || []), ...(validation.warnings || [])].join(" â€” ") || "Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø´Ø§ÙƒÙ„ Ø¸Ø§Ù‡Ø±Ø©."}`;
       }
     } catch (error) { box.className = "message error"; box.textContent = error.message; }
   });
@@ -3250,18 +3250,18 @@ async function renderDailyReports() {
   const reports = await endpoints.dailyReports().then(unwrap).catch(() => []);
   shell(
     `<section class="grid daily-reports-page">
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>التقارير اليومية للموظفين</h2><p>متابعة إنجازات اليوم والعوائق وخطة الغد لكل موظف ومدير.</p></div><div class="toolbar"><button class="button ghost" id="export-daily-reports">تصدير CSV</button></div></div></article>
-      <article class="panel span-3"><span class="panel-kicker">الإجمالي</span><strong class="big-number">${reports.length}</strong><p>تقرير</p></article>
-      <article class="panel span-3"><span class="panel-kicker">للمراجعة</span><strong class="big-number">${reports.filter((r) => r.status === "SUBMITTED").length}</strong><p>تحتاج مدير</p></article>
-      <article class="panel span-3"><span class="panel-kicker">بها عوائق</span><strong class="big-number">${reports.filter((r) => r.blockers).length}</strong><p>تحتاج دعم</p></article>
-      <article class="panel span-3"><span class="panel-kicker">اليوم</span><strong class="big-number">${reports.filter((r) => r.reportDate === new Date().toISOString().slice(0,10)).length}</strong><p>تم الإرسال</p></article>
-      <article class="panel span-12">${table(["الموظف", "اليوم", "الإنجاز", "العوائق", "خطة الغد", "الحالة", "إجراء"], reports.map((report) => `<tr><td>${escapeHtml(report.employee?.fullName || "-")}</td><td>${escapeHtml(report.reportDate || "-")}</td><td>${escapeHtml(report.achievements || "-")}</td><td>${escapeHtml(report.blockers || "-")}</td><td>${escapeHtml(report.tomorrowPlan || "-")}</td><td>${badge(report.status)}</td><td>${report.status === "SUBMITTED" ? `<button class="button small" data-review-report="${escapeHtml(report.id)}">مراجعة</button>` : "-"}</td></tr>`))}</article>
+      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ© Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ†</h2><p>Ù…ØªØ§Ø¨Ø¹Ø© Ø¥Ù†Ø¬Ø§Ø²Ø§Øª Ø§Ù„ÙŠÙˆÙ… ÙˆØ§Ù„Ø¹ÙˆØ§Ø¦Ù‚ ÙˆØ®Ø·Ø© Ø§Ù„ØºØ¯ Ù„ÙƒÙ„ Ù…ÙˆØ¸Ù ÙˆÙ…Ø¯ÙŠØ±.</p></div><div class="toolbar"><button class="button ghost" id="export-daily-reports">ØªØµØ¯ÙŠØ± CSV</button></div></div></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ</span><strong class="big-number">${reports.length}</strong><p>ØªÙ‚Ø±ÙŠØ±</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©</span><strong class="big-number">${reports.filter((r) => r.status === "SUBMITTED").length}</strong><p>ØªØ­ØªØ§Ø¬ Ù…Ø¯ÙŠØ±</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø¨Ù‡Ø§ Ø¹ÙˆØ§Ø¦Ù‚</span><strong class="big-number">${reports.filter((r) => r.blockers).length}</strong><p>ØªØ­ØªØ§Ø¬ Ø¯Ø¹Ù…</p></article>
+      <article class="panel span-3"><span class="panel-kicker">Ø§Ù„ÙŠÙˆÙ…</span><strong class="big-number">${reports.filter((r) => r.reportDate === new Date().toISOString().slice(0,10)).length}</strong><p>ØªÙ… Ø§Ù„Ø¥Ø±Ø³Ø§Ù„</p></article>
+      <article class="panel span-12">${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„ÙŠÙˆÙ…", "Ø§Ù„Ø¥Ù†Ø¬Ø§Ø²", "Ø§Ù„Ø¹ÙˆØ§Ø¦Ù‚", "Ø®Ø·Ø© Ø§Ù„ØºØ¯", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¥Ø¬Ø±Ø§Ø¡"], reports.map((report) => `<tr><td>${escapeHtml(report.employee?.fullName || "-")}</td><td>${escapeHtml(report.reportDate || "-")}</td><td>${escapeHtml(report.achievements || "-")}</td><td>${escapeHtml(report.blockers || "-")}</td><td>${escapeHtml(report.tomorrowPlan || "-")}</td><td>${badge(report.status)}</td><td>${report.status === "SUBMITTED" ? `<button class="button small" data-review-report="${escapeHtml(report.id)}">Ù…Ø±Ø§Ø¬Ø¹Ø©</button>` : "-"}</td></tr>`))}</article>
     </section>`,
-    "التقارير اليومية",
-    "إدارة تقارير إنجاز الموظفين اليومية.",
+    "Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©",
+    "Ø¥Ø¯Ø§Ø±Ø© ØªÙ‚Ø§Ø±ÙŠØ± Ø¥Ù†Ø¬Ø§Ø² Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„ÙŠÙˆÙ…ÙŠØ©.",
   );
-  app.querySelector("#export-daily-reports")?.addEventListener("click", () => downloadFile("daily-reports.csv", `\ufeff${toCsv([["الموظف","اليوم","الإنجاز","العوائق","خطة الغد","الحالة"], ...reports.map((r) => [r.employee?.fullName || "", r.reportDate || "", r.achievements || "", r.blockers || "", r.tomorrowPlan || "", r.status || ""])])}`, "text/csv;charset=utf-8"));
-  app.querySelectorAll("[data-review-report]").forEach((button) => button.addEventListener("click", async () => { const comment = await askText({ title: "تعليق المراجعة", message: "اكتب تعليق المراجعة للتقرير اليومي.", defaultValue: "تمت المراجعة", confirmLabel: "حفظ المراجعة" }); if (comment === null) return; await endpoints.reviewDailyReport(button.dataset.reviewReport, { managerComment: comment }); setMessage("تمت مراجعة التقرير.", ""); renderDailyReports(); }));
+  app.querySelector("#export-daily-reports")?.addEventListener("click", () => downloadFile("daily-reports.csv", `\ufeff${toCsv([["Ø§Ù„Ù…ÙˆØ¸Ù","Ø§Ù„ÙŠÙˆÙ…","Ø§Ù„Ø¥Ù†Ø¬Ø§Ø²","Ø§Ù„Ø¹ÙˆØ§Ø¦Ù‚","Ø®Ø·Ø© Ø§Ù„ØºØ¯","Ø§Ù„Ø­Ø§Ù„Ø©"], ...reports.map((r) => [r.employee?.fullName || "", r.reportDate || "", r.achievements || "", r.blockers || "", r.tomorrowPlan || "", r.status || ""])])}`, "text/csv;charset=utf-8"));
+  app.querySelectorAll("[data-review-report]").forEach((button) => button.addEventListener("click", async () => { const comment = await askText({ title: "ØªØ¹Ù„ÙŠÙ‚ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©", message: "Ø§ÙƒØªØ¨ ØªØ¹Ù„ÙŠÙ‚ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ù„Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ.", defaultValue: "ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©", confirmLabel: "Ø­ÙØ¸ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©" }); if (comment === null) return; await endpoints.reviewDailyReport(button.dataset.reviewReport, { managerComment: comment }); setMessage("ØªÙ…Øª Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ‚Ø±ÙŠØ±.", ""); renderDailyReports(); }));
 }
 
 async function renderExecutiveMobile() {
@@ -3276,8 +3276,8 @@ async function renderExecutiveMobile() {
       <section class="grid executive-mobile-view">
         <article class="panel span-12">
           <div class="panel-head">
-            <div><h2>متابعة تنفيذية — ${escapeHtml(employee.fullName || "موظف")}</h2><p>صفحة موبايل مختصرة للمدير التنفيذي: حالة اليوم، الحضور، الانصراف، الإجازة، والموقع الأخير.</p></div>
-            <div class="toolbar"><button class="button ghost" data-route="executive-mobile">كل الموظفين</button><button class="button primary" data-request-live="${escapeHtml(employee.id || employeeId)}">طلب الموقع المباشر الآن</button></div>
+            <div><h2>Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© â€” ${escapeHtml(employee.fullName || "Ù…ÙˆØ¸Ù")}</h2><p>ØµÙØ­Ø© Ù…ÙˆØ¨Ø§ÙŠÙ„ Ù…Ø®ØªØµØ±Ø© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ: Ø­Ø§Ù„Ø© Ø§Ù„ÙŠÙˆÙ…ØŒ Ø§Ù„Ø­Ø¶ÙˆØ±ØŒ Ø§Ù„Ø§Ù†ØµØ±Ø§ÙØŒ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©ØŒ ÙˆØ§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø£Ø®ÙŠØ±.</p></div>
+            <div class="toolbar"><button class="button ghost" data-route="executive-mobile">ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</button><button class="button primary" data-request-live="${escapeHtml(employee.id || employeeId)}">Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø¢Ù†</button></div>
           </div>
           <div class="executive-detail-header">
             <div class="detail-avatar-side">
@@ -3286,30 +3286,30 @@ async function renderExecutiveMobile() {
             </div>
             <div class="detail-info-side">
               <h2 class="detail-name">${escapeHtml(employee.fullName || "-")}</h2>
-              <div class="detail-job-title">${escapeHtml(employee.jobTitle || "موظف")}</div>
+              <div class="detail-job-title">${escapeHtml(employee.jobTitle || "Ù…ÙˆØ¸Ù")}</div>
               <div class="detail-meta-tags">
-                ${today.status === 'LEAVE' ? '<span class="tag warning">في إجازة رسمية</span>' : ''}
-                ${today.checkInAt ? `<span class="tag success">حضر الساعة ${escapeHtml(date(today.checkInAt).split(' ').pop())}</span>` : '<span class="tag danger">لم يحضر بعد</span>'}
+                ${today.status === 'LEAVE' ? '<span class="tag warning">ÙÙŠ Ø¥Ø¬Ø§Ø²Ø© Ø±Ø³Ù…ÙŠØ©</span>' : ''}
+                ${today.checkInAt ? `<span class="tag success">Ø­Ø¶Ø± Ø§Ù„Ø³Ø§Ø¹Ø© ${escapeHtml(date(today.checkInAt).split(' ').pop())}</span>` : '<span class="tag danger">Ù„Ù… ÙŠØ­Ø¶Ø± Ø¨Ø¹Ø¯</span>'}
               </div>
             </div>
           </div>
           <div class="metric-grid">
-            <article class="metric"><span>حالة اليوم</span><strong>${escapeHtml(statusLabel(today.status))}</strong><small>${escapeHtml(today.day || "")}</small></article>
-            <article class="metric"><span>وقت الحضور</span><strong>${escapeHtml(date(today.checkInAt))}</strong><small>أول بصمة حضور</small></article>
-            <article class="metric"><span>وقت الانصراف</span><strong>${escapeHtml(date(today.checkOutAt))}</strong><small>آخر بصمة انصراف</small></article>
-            <article class="metric"><span>آخر موقع</span><strong>${loc.latitude && loc.longitude ? formatMeters(loc.accuracyMeters) : "لا يوجد"}</strong><small>${escapeHtml(date(loc.capturedAt || loc.respondedAt || loc.date))}</small></article>
+            <article class="metric"><span>Ø­Ø§Ù„Ø© Ø§Ù„ÙŠÙˆÙ…</span><strong>${escapeHtml(statusLabel(today.status))}</strong><small>${escapeHtml(today.day || "")}</small></article>
+            <article class="metric"><span>ÙˆÙ‚Øª Ø§Ù„Ø­Ø¶ÙˆØ±</span><strong>${escapeHtml(date(today.checkInAt))}</strong><small>Ø£ÙˆÙ„ Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ±</small></article>
+            <article class="metric"><span>ÙˆÙ‚Øª Ø§Ù„Ø§Ù†ØµØ±Ø§Ù</span><strong>${escapeHtml(date(today.checkOutAt))}</strong><small>Ø¢Ø®Ø± Ø¨ØµÙ…Ø© Ø§Ù†ØµØ±Ø§Ù</small></article>
+            <article class="metric"><span>Ø¢Ø®Ø± Ù…ÙˆÙ‚Ø¹</span><strong>${loc.latitude && loc.longitude ? formatMeters(loc.accuracyMeters) : "Ù„Ø§ ÙŠÙˆØ¬Ø¯"}</strong><small>${escapeHtml(date(loc.capturedAt || loc.respondedAt || loc.date))}</small></article>
           </div>
-          ${loc.latitude && loc.longitude ? `<div class="message"><strong>آخر موقع:</strong> ${escapeHtml(loc.latitude)}, ${escapeHtml(loc.longitude)} — <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${escapeHtml(loc.latitude)},${escapeHtml(loc.longitude)}">فتح على الخريطة</a></div>` : `<div class="message warning">لا يوجد موقع مباشر/بصمة GPS محفوظة لهذا الموظف حتى الآن.</div>`}
+          ${loc.latitude && loc.longitude ? `<div class="message"><strong>Ø¢Ø®Ø± Ù…ÙˆÙ‚Ø¹:</strong> ${escapeHtml(loc.latitude)}, ${escapeHtml(loc.longitude)} â€” <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${escapeHtml(loc.latitude)},${escapeHtml(loc.longitude)}">ÙØªØ­ Ø¹Ù„Ù‰ Ø§Ù„Ø®Ø±ÙŠØ·Ø©</a></div>` : `<div class="message warning">Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø±/Ø¨ØµÙ…Ø© GPS Ù…Ø­ÙÙˆØ¸Ø© Ù„Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¸Ù Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†.</div>`}
         </article>
-        <article class="panel span-6"><h3>آخر 7 أيام حضور</h3>${table(["النوع", "الوقت", "الحالة", "ملاحظات"], (detail.attendance || []).slice(0, 12).map((row) => `<tr><td>${escapeHtml(statusLabel(row.type || row.action))}</td><td>${escapeHtml(date(row.eventAt || row.createdAt))}</td><td>${badge(row.geofenceStatus || row.status || "")}</td><td>${escapeHtml(row.notes || row.source || "")}</td></tr>`))}</article>
-        <article class="panel span-6"><h3>الإجازات والمأموريات</h3>${table(["النوع", "الفترة", "الحالة"], [...(detail.leaves || []).map((row) => [row.leaveType?.name || row.leaveType || "إجازة", `${row.startDate || "-"} → ${row.endDate || "-"}`, row.status]), ...(detail.missions || []).map((row) => [row.destinationName || row.title || "مأمورية", `${row.plannedStart || "-"} → ${row.plannedEnd || "-"}`, row.status])].slice(0, 12).map((row) => `<tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${badge(row[2])}</td></tr>`))}</article>
-        <article class="panel span-12"><h3>طلبات الموقع المباشر</h3>${table(["الوقت", "الحالة", "السبب", "الرد"], (detail.liveRequests || []).map((row) => `<tr><td>${escapeHtml(date(row.createdAt))}</td><td>${badge(row.status)}</td><td>${escapeHtml(row.reason || "")}</td><td>${escapeHtml(date(row.respondedAt))}</td></tr>`))}</article>
+        <article class="panel span-6"><h3>Ø¢Ø®Ø± 7 Ø£ÙŠØ§Ù… Ø­Ø¶ÙˆØ±</h3>${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ÙˆÙ‚Øª", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"], (detail.attendance || []).slice(0, 12).map((row) => `<tr><td>${escapeHtml(statusLabel(row.type || row.action))}</td><td>${escapeHtml(date(row.eventAt || row.createdAt))}</td><td>${badge(row.geofenceStatus || row.status || "")}</td><td>${escapeHtml(row.notes || row.source || "")}</td></tr>`))}</article>
+        <article class="panel span-6"><h3>Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª ÙˆØ§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª</h3>${table(["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ÙØªØ±Ø©", "Ø§Ù„Ø­Ø§Ù„Ø©"], [...(detail.leaves || []).map((row) => [row.leaveType?.name || row.leaveType || "Ø¥Ø¬Ø§Ø²Ø©", `${row.startDate || "-"} â†’ ${row.endDate || "-"}`, row.status]), ...(detail.missions || []).map((row) => [row.destinationName || row.title || "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", `${row.plannedStart || "-"} â†’ ${row.plannedEnd || "-"}`, row.status])].slice(0, 12).map((row) => `<tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${badge(row[2])}</td></tr>`))}</article>
+        <article class="panel span-12"><h3>Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</h3>${table(["Ø§Ù„ÙˆÙ‚Øª", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø³Ø¨Ø¨", "Ø§Ù„Ø±Ø¯"], (detail.liveRequests || []).map((row) => `<tr><td>${escapeHtml(date(row.createdAt))}</td><td>${badge(row.status)}</td><td>${escapeHtml(row.reason || "")}</td><td>${escapeHtml(date(row.respondedAt))}</td></tr>`))}</article>
       </section>
-    `, "المتابعة التنفيذية", "تفاصيل موظف من شاشة المدير التنفيذي.");
+    `, "Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©", "ØªÙØ§ØµÙŠÙ„ Ù…ÙˆØ¸Ù Ù…Ù† Ø´Ø§Ø´Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.");
     app.querySelector("[data-request-live]")?.addEventListener("click", async (event) => {
-      const reason = await askText({ title: "طلب الموقع المباشر", message: "اكتب سبب طلب الموقع حتى يظهر للموظف بوضوح.", defaultValue: "متابعة تنفيذية مباشرة", confirmLabel: "إرسال الطلب", required: true });
+      const reason = await askText({ title: "Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", message: "Ø§ÙƒØªØ¨ Ø³Ø¨Ø¨ Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø­ØªÙ‰ ÙŠØ¸Ù‡Ø± Ù„Ù„Ù…ÙˆØ¸Ù Ø¨ÙˆØ¶ÙˆØ­.", defaultValue: "Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ø¨Ø§Ø´Ø±Ø©", confirmLabel: "Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨", required: true });
       if (!reason) return;
-      try { await endpoints.requestLiveLocation(event.currentTarget.dataset.requestLive, { reason }); setMessage("تم إرسال إشعار طلب الموقع للموظف.", ""); location.hash = `executive-mobile?employeeId=${encodeURIComponent(event.currentTarget.dataset.requestLive)}`; render(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); render(); }
+      try { await endpoints.requestLiveLocation(event.currentTarget.dataset.requestLive, { reason }); setMessage("تم إنشاء طلب الموقع، وقد لا يصل الإشعار الخارجي إذا كان غير مفعل.", ""); location.hash = `executive-mobile?employeeId=${encodeURIComponent(event.currentTarget.dataset.requestLive)}`; render(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); render(); }
     });
     return;
   }
@@ -3319,11 +3319,11 @@ async function renderExecutiveMobile() {
   shell(`
     <section class="grid executive-mobile-view">
       <article class="panel span-12">
-        <div class="panel-head"><div><h2>المتابعة التنفيذية للموبايل</h2><p>صفحة خاصة للمدير التنفيذي تعرض كل الموظفين وحالة اليوم وطلب الموقع المباشر عند الحاجة.</p></div><div class="toolbar"><button class="button ghost" data-action="refresh">تحديث</button></div></div>
+        <div class="panel-head"><div><h2>Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ© Ù„Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„</h2><p>ØµÙØ­Ø© Ø®Ø§ØµØ© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ØªØ¹Ø±Ø¶ ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ­Ø§Ù„Ø© Ø§Ù„ÙŠÙˆÙ… ÙˆØ·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø¹Ù†Ø¯ Ø§Ù„Ø­Ø§Ø¬Ø©.</p></div><div class="toolbar"><button class="button ghost" data-action="refresh">ØªØ­Ø¯ÙŠØ«</button></div></div>
         <div class="metric-grid">
-          ${[["إجمالي", data.counts?.total], ["حاضر", data.counts?.present], ["متأخر", data.counts?.late], ["غائب", data.counts?.absent], ["إجازة", data.counts?.onLeave], ["مواقع معلقة", data.counts?.pendingLiveLocations]].map(([label, value]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value ?? 0)}</strong><small>اليوم</small></article>`).join("")}
+          ${[["Ø¥Ø¬Ù…Ø§Ù„ÙŠ", data.counts?.total], ["Ø­Ø§Ø¶Ø±", data.counts?.present], ["Ù…ØªØ£Ø®Ø±", data.counts?.late], ["ØºØ§Ø¦Ø¨", data.counts?.absent], ["Ø¥Ø¬Ø§Ø²Ø©", data.counts?.onLeave], ["Ù…ÙˆØ§Ù‚Ø¹ Ù…Ø¹Ù„Ù‚Ø©", data.counts?.pendingLiveLocations]].map(([label, value]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value ?? 0)}</strong><small>Ø§Ù„ÙŠÙˆÙ…</small></article>`).join("")}
         </div>
-        <form class="toolbar" id="exec-search"><input name="q" placeholder="بحث باسم الموظف أو الهاتف" value="${escapeHtml(q)}" /><button class="button ghost" type="submit">بحث</button></form>
+        <form class="toolbar" id="exec-search"><input name="q" placeholder="Ø¨Ø­Ø« Ø¨Ø§Ø³Ù… Ø§Ù„Ù…ÙˆØ¸Ù Ø£Ùˆ Ø§Ù„Ù‡Ø§ØªÙ" value="${escapeHtml(q)}" /><button class="button ghost" type="submit">Ø¨Ø­Ø«</button></form>
       </article>
       <article class="panel span-12"><div class="employee-card-grid">
         ${employees.map((employee) => `
@@ -3334,23 +3334,35 @@ async function renderExecutiveMobile() {
             </div>
             <div class="card-info-box">
               <strong class="emp-name">${escapeHtml(employee.fullName || "-")}</strong>
-              <div class="emp-job-title">${escapeHtml(employee.jobTitle || "موظف")}</div>
+              <div class="emp-job-title">${escapeHtml(employee.jobTitle || "Ù…ÙˆØ¸Ù")}</div>
             </div>
             <div class="card-actions-row">
-              <button class="button primary" data-request-live="${escapeHtml(employee.id)}">ارسال موقع</button>
-              <button class="button ghost" data-view-exec="${escapeHtml(employee.id)}">التفاصيل</button>
+              <button class="button primary" data-request-live="${escapeHtml(employee.id)}">Ø§Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹</button>
+              <button class="button ghost" data-view-exec="${escapeHtml(employee.id)}">Ø§Ù„ØªÙØ§ØµÙŠÙ„</button>
             </div>
           </article>
-        `).join("") || `<div class="empty">لا توجد نتائج.</div>`}
+        `).join("") || `<div class="empty">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù†ØªØ§Ø¦Ø¬.</div>`}
       </div></article>
     </section>
-  `, "المتابعة التنفيذية", "كل الموظفين في شاشة موبايل تنفيذية.");
+  `, "Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©", "ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙÙŠ Ø´Ø§Ø´Ø© Ù…ÙˆØ¨Ø§ÙŠÙ„ ØªÙ†ÙÙŠØ°ÙŠØ©.");
   app.querySelector("#exec-search")?.addEventListener("submit", (event) => { event.preventDefault(); const values = readForm(event.currentTarget, { passwordPolicy: "none" }); location.hash = `executive-mobile?q=${encodeURIComponent(values.q || "")}`; });
   app.querySelectorAll("[data-view-exec]").forEach((button) => button.addEventListener("click", () => { location.hash = `executive-mobile?employeeId=${encodeURIComponent(button.dataset.viewExec)}`; }));
   app.querySelectorAll("[data-request-live]").forEach((button) => button.addEventListener("click", async () => {
-    const reason = await askText({ title: "طلب الموقع المباشر", message: "اكتب سبب طلب الموقع حتى يظهر للموظف بوضوح.", defaultValue: "متابعة تنفيذية مباشرة", confirmLabel: "إرسال الطلب", required: true });
-      if (!reason) return;
-    try { await endpoints.requestLiveLocation(button.dataset.requestLive, { reason }); setMessage("تم إرسال طلب الموقع للموظف.", ""); renderExecutiveMobile(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); renderExecutiveMobile(); }
+    if (button.disabled) return;
+    const reason = await askText({ title: "Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", message: "Ø§ÙƒØªØ¨ Ø³Ø¨Ø¨ Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø­ØªÙ‰ ÙŠØ¸Ù‡Ø± Ù„Ù„Ù…ÙˆØ¸Ù Ø¨ÙˆØ¶ÙˆØ­.", defaultValue: "Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ø¨Ø§Ø´Ø±Ø©", confirmLabel: "Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨", required: true });
+    if (!reason) return;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø¥Ø±Ø³Ø§Ù„...";
+    try {
+      await endpoints.requestLiveLocation(button.dataset.requestLive, { reason });
+      setMessage("تم إنشاء طلب الموقع، وقد لا يصل الإشعار الخارجي إذا كان غير مفعل.", "");
+      renderExecutiveMobile();
+    } catch (error) {
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹.");
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }));
 }
 
@@ -3361,39 +3373,39 @@ async function renderSensitiveApprovals() {
   shell(
     `<section class="grid approvals-page">
       <article class="panel span-12">
-        <div class="panel-head"><div><h2>مركز الاعتمادات الحساسة</h2><p>أي حذف أو تعطيل حساس يتحول إلى طلب اعتماد تنفيذي بدل التنفيذ المباشر، لحماية بيانات الموظفين ومنع الأخطاء.</p></div><div class="toolbar"><button class="button ghost" data-action="refresh">تحديث</button></div></div>
+        <div class="panel-head"><div><h2>Ù…Ø±ÙƒØ² Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯Ø§Øª Ø§Ù„Ø­Ø³Ø§Ø³Ø©</h2><p>Ø£ÙŠ Ø­Ø°Ù Ø£Ùˆ ØªØ¹Ø·ÙŠÙ„ Ø­Ø³Ø§Ø³ ÙŠØªØ­ÙˆÙ„ Ø¥Ù„Ù‰ Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ ØªÙ†ÙÙŠØ°ÙŠ Ø¨Ø¯Ù„ Ø§Ù„ØªÙ†ÙÙŠØ° Ø§Ù„Ù…Ø¨Ø§Ø´Ø±ØŒ Ù„Ø­Ù…Ø§ÙŠØ© Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆÙ…Ù†Ø¹ Ø§Ù„Ø£Ø®Ø·Ø§Ø¡.</p></div><div class="toolbar"><button class="button ghost" data-action="refresh">ØªØ­Ø¯ÙŠØ«</button></div></div>
         <div class="metric-grid">
-          ${[["إجمالي", counts.total || 0], ["معلق", counts.PENDING || 0], ["منفذ", counts.EXECUTED || 0], ["مرفوض", counts.REJECTED || 0]].map(([label, value]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>اعتمادات</small></article>`).join("")}
+          ${[["Ø¥Ø¬Ù…Ø§Ù„ÙŠ", counts.total || 0], ["Ù…Ø¹Ù„Ù‚", counts.PENDING || 0], ["Ù…Ù†ÙØ°", counts.EXECUTED || 0], ["Ù…Ø±ÙÙˆØ¶", counts.REJECTED || 0]].map(([label, value]) => `<article class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong><small>Ø§Ø¹ØªÙ…Ø§Ø¯Ø§Øª</small></article>`).join("")}
         </div>
       </article>
       <article class="panel span-12">
-        ${table(["الطلب", "المستهدف", "الطالب", "الحالة", "الوقت", "إجراء"], rows.map((row) => `
+        ${table(["Ø§Ù„Ø·Ù„Ø¨", "Ø§Ù„Ù…Ø³ØªÙ‡Ø¯Ù", "Ø§Ù„Ø·Ø§Ù„Ø¨", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ÙˆÙ‚Øª", "Ø¥Ø¬Ø±Ø§Ø¡"], rows.map((row) => `
           <tr>
             <td><strong>${escapeHtml(row.title || row.actionType)}</strong><small>${escapeHtml(row.summary || "")}</small></td>
             <td>${escapeHtml(row.employee?.fullName || row.targetId || "-")}</td>
             <td>${escapeHtml(row.requestedByName || "-")}</td>
             <td>${badge(row.status || "PENDING")}</td>
             <td>${escapeHtml(date(row.createdAt || row.requestedAt))}</td>
-            <td>${row.status === "PENDING" ? `<button class="button primary" data-approve-sensitive="${escapeHtml(row.id)}">اعتماد وتنفيذ</button><button class="button danger" data-reject-sensitive="${escapeHtml(row.id)}">رفض</button>` : `<small>${escapeHtml(row.decisionNote || row.executedAt || "تمت المراجعة")}</small>`}</td>
+            <td>${row.status === "PENDING" ? `<button class="button primary" data-approve-sensitive="${escapeHtml(row.id)}">Ø§Ø¹ØªÙ…Ø§Ø¯ ÙˆØªÙ†ÙÙŠØ°</button><button class="button danger" data-reject-sensitive="${escapeHtml(row.id)}">Ø±ÙØ¶</button>` : `<small>${escapeHtml(row.decisionNote || row.executedAt || "ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©")}</small>`}</td>
           </tr>`))}
       </article>
     </section>`,
-    "اعتمادات حساسة",
-    "اعتماد العمليات التي قد تؤثر على بيانات الموظفين أو الحسابات.",
+    "Ø§Ø¹ØªÙ…Ø§Ø¯Ø§Øª Ø­Ø³Ø§Ø³Ø©",
+    "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„ØªÙŠ Ù‚Ø¯ ØªØ¤Ø«Ø± Ø¹Ù„Ù‰ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø£Ùˆ Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª.",
   );
   app.querySelectorAll("[data-approve-sensitive]").forEach((button) => button.addEventListener("click", async () => {
-    const note = await askText({ title: "ملاحظة الاعتماد", message: "اكتب ملاحظة الاعتماد والتنفيذ.", defaultValue: "معتمد من الإدارة التنفيذية", confirmLabel: "اعتماد وتنفيذ" }) || "معتمد";
-    try { await endpoints.decideSensitiveApproval(button.dataset.approveSensitive, { decision: "approve", note, execute: true }); setMessage("تم اعتماد وتنفيذ الطلب.", ""); renderSensitiveApprovals(); } catch (error) { setMessage("", error.message || "تعذر تنفيذ الاعتماد."); renderSensitiveApprovals(); }
+    const note = await askText({ title: "Ù…Ù„Ø§Ø­Ø¸Ø© Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯", message: "Ø§ÙƒØªØ¨ Ù…Ù„Ø§Ø­Ø¸Ø© Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ ÙˆØ§Ù„ØªÙ†ÙÙŠØ°.", defaultValue: "Ù…Ø¹ØªÙ…Ø¯ Ù…Ù† Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©", confirmLabel: "Ø§Ø¹ØªÙ…Ø§Ø¯ ÙˆØªÙ†ÙÙŠØ°" }) || "Ù…Ø¹ØªÙ…Ø¯";
+    try { await endpoints.decideSensitiveApproval(button.dataset.approveSensitive, { decision: "approve", note, execute: true }); setMessage("ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ ÙˆØªÙ†ÙÙŠØ° Ø§Ù„Ø·Ù„Ø¨.", ""); renderSensitiveApprovals(); } catch (error) { setMessage("", error.message || "ØªØ¹Ø°Ø± ØªÙ†ÙÙŠØ° Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯."); renderSensitiveApprovals(); }
   }));
   app.querySelectorAll("[data-reject-sensitive]").forEach((button) => button.addEventListener("click", async () => {
-    const note = await askText({ title: "سبب الرفض", message: "اكتب سبب رفض الطلب الحساس.", defaultValue: "غير مناسب للتنفيذ", confirmLabel: "رفض الطلب" }) || "مرفوض";
-    try { await endpoints.decideSensitiveApproval(button.dataset.rejectSensitive, { decision: "reject", note, execute: false }); setMessage("تم رفض الطلب.", ""); renderSensitiveApprovals(); } catch (error) { setMessage("", error.message || "تعذر رفض الطلب."); renderSensitiveApprovals(); }
+    const note = await askText({ title: "Ø³Ø¨Ø¨ Ø§Ù„Ø±ÙØ¶", message: "Ø§ÙƒØªØ¨ Ø³Ø¨Ø¨ Ø±ÙØ¶ Ø§Ù„Ø·Ù„Ø¨ Ø§Ù„Ø­Ø³Ø§Ø³.", defaultValue: "ØºÙŠØ± Ù…Ù†Ø§Ø³Ø¨ Ù„Ù„ØªÙ†ÙÙŠØ°", confirmLabel: "Ø±ÙØ¶ Ø§Ù„Ø·Ù„Ø¨" }) || "Ù…Ø±ÙÙˆØ¶";
+    try { await endpoints.decideSensitiveApproval(button.dataset.rejectSensitive, { decision: "reject", note, execute: false }); setMessage("ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø·Ù„Ø¨.", ""); renderSensitiveApprovals(); } catch (error) { setMessage("", error.message || "ØªØ¹Ø°Ø± Ø±ÙØ¶ Ø§Ù„Ø·Ù„Ø¨."); renderSensitiveApprovals(); }
   }));
 }
 
 async function renderGeneric(title, description, loader) {
   const rows = unwrap(await loader());
-  shell(`<section class="grid"><article class="panel"><h2>${escapeHtml(title)}</h2>${table(["المعرف", "العنوان/الاسم", "الموظف", "الحالة", "التاريخ"], rows.map((item) => `<tr><td>${escapeHtml(item.id || "-")}</td><td>${escapeHtml(item.title || item.name || item.fullName || item.key || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.status || item.type || "-")}</td><td>${date(item.createdAt || item.updatedAt || item.date)}</td></tr>`))}</article></section>`, title, description);
+  shell(`<section class="grid"><article class="panel"><h2>${escapeHtml(title)}</h2>${table(["Ø§Ù„Ù…Ø¹Ø±Ù", "Ø§Ù„Ø¹Ù†ÙˆØ§Ù†/Ø§Ù„Ø§Ø³Ù…", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ØªØ§Ø±ÙŠØ®"], rows.map((item) => `<tr><td>${escapeHtml(item.id || "-")}</td><td>${escapeHtml(item.title || item.name || item.fullName || item.key || "-")}</td><td>${escapeHtml(item.employee?.fullName || "-")}</td><td>${badge(item.status || item.type || "-")}</td><td>${date(item.createdAt || item.updatedAt || item.date)}</td></tr>`))}</article></section>`, title, description);
 }
 
 function submitForm(handler, successMessage) {
@@ -3416,20 +3428,20 @@ async function attendanceExportRows() {
 }
 
 async function exportAttendanceCsv() {
-  const headers = ["الموظف", "النوع", "التاريخ", "المصدر", "الموقع", "ملاحظات"];
+  const headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø§Ù„Ù…ØµØ¯Ø±", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"];
   downloadFile("attendance-report.csv", `\ufeff${toCsv([headers, ...(await attendanceExportRows())])}`, "text/csv;charset=utf-8");
 }
 
 async function exportAttendanceExcel() {
-  exportHtmlTable("attendance-report.xls", ["الموظف", "النوع", "التاريخ", "المصدر", "الموقع", "ملاحظات"], await attendanceExportRows());
+  exportHtmlTable("attendance-report.xls", ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø§Ù„Ù…ØµØ¯Ø±", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"], await attendanceExportRows());
 }
 
 async function printAttendanceReport() {
-  printReport("تقرير الحضور والانصراف", ["الموظف", "النوع", "التاريخ", "المصدر", "الموقع", "ملاحظات"], await attendanceExportRows());
+  printReport("ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø§Ù„Ù…ØµØ¯Ø±", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"], await attendanceExportRows());
 }
 
 function smartStatusLabel(value = "") {
-  const map = { PRESENT: "حاضر", LATE: "متأخر", ABSENT_TEMP: "غائب مؤقتًا", ABSENT: "غائب", EARLY_EXIT: "خروج مبكر", MISSING_CHECKOUT: "نسيان انصراف", REVIEW: "مراجعة", ON_LEAVE: "إجازة", ON_MISSION: "مأمورية", ABSENT_PENDING: "لم يحضر بعد" };
+  const map = { PRESENT: "Ø­Ø§Ø¶Ø±", LATE: "Ù…ØªØ£Ø®Ø±", ABSENT_TEMP: "ØºØ§Ø¦Ø¨ Ù…Ø¤Ù‚ØªÙ‹Ø§", ABSENT: "ØºØ§Ø¦Ø¨", EARLY_EXIT: "Ø®Ø±ÙˆØ¬ Ù…Ø¨ÙƒØ±", MISSING_CHECKOUT: "Ù†Ø³ÙŠØ§Ù† Ø§Ù†ØµØ±Ø§Ù", REVIEW: "Ù…Ø±Ø§Ø¬Ø¹Ø©", ON_LEAVE: "Ø¥Ø¬Ø§Ø²Ø©", ON_MISSION: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", ABSENT_PENDING: "Ù„Ù… ÙŠØ­Ø¶Ø± Ø¨Ø¹Ø¯" };
   return map[value] || statusLabel(value);
 }
 
@@ -3443,43 +3455,43 @@ async function renderSmartAttendance() {
   shell(`
     <section class="stack">
       <article class="panel accent-panel">
-        <div class="panel-head"><div><h2>قواعد الحضور الذكية</h2><p>تحديد التأخير والغياب المؤقت والخروج المبكر ونسيان الانصراف وتكرار البصمات المشبوهة.</p></div><button class="button primary" data-run-smart-attendance>تشغيل التحليل الآن</button></div>
+        <div class="panel-head"><div><h2>Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠØ©</h2><p>ØªØ­Ø¯ÙŠØ¯ Ø§Ù„ØªØ£Ø®ÙŠØ± ÙˆØ§Ù„ØºÙŠØ§Ø¨ Ø§Ù„Ù…Ø¤Ù‚Øª ÙˆØ§Ù„Ø®Ø±ÙˆØ¬ Ø§Ù„Ù…Ø¨ÙƒØ± ÙˆÙ†Ø³ÙŠØ§Ù† Ø§Ù„Ø§Ù†ØµØ±Ø§Ù ÙˆØªÙƒØ±Ø§Ø± Ø§Ù„Ø¨ØµÙ…Ø§Øª Ø§Ù„Ù…Ø´Ø¨ÙˆÙ‡Ø©.</p></div><button class="button primary" data-run-smart-attendance>ØªØ´ØºÙŠÙ„ Ø§Ù„ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø¢Ù†</button></div>
         <form class="form-grid" id="smart-rules-form">
-          <label>بداية الدوام<input type="time" name="shiftStart" value="${escapeHtml(rules.shiftStart || '10:00')}" /></label>
-          <label>اعتبار غياب مؤقت بعد<input type="time" name="absentAfter" value="${escapeHtml(rules.absentAfter || '11:00')}" /></label>
-          <label>الخروج المبكر قبل<input type="time" name="earlyExitBefore" value="${escapeHtml(rules.earlyExitBefore || '17:00')}" /></label>
-          <label>نهاية الدوام<input type="time" name="shiftEnd" value="${escapeHtml(rules.shiftEnd || '18:00')}" /></label>
-          <label>نافذة التكرار المشبوه بالدقائق<input type="number" min="1" name="duplicateWindowMinutes" value="${escapeHtml(rules.duplicateWindowMinutes || 10)}" /></label>
-          <label>تقرير آخر اليوم في<input type="time" name="endOfDayReportAt" value="${escapeHtml(rules.endOfDayReportAt || '19:00')}" /></label>
-          <label class="check-row"><input type="checkbox" name="notifyManagerOnAbsence" ${rules.notifyManagerOnAbsence !== false ? 'checked' : ''} /> إخطار المدير عند الغياب/المشكلة</label>
-          <button class="button primary" type="submit">حفظ القواعد</button>
+          <label>Ø¨Ø¯Ø§ÙŠØ© Ø§Ù„Ø¯ÙˆØ§Ù…<input type="time" name="shiftStart" value="${escapeHtml(rules.shiftStart || '10:00')}" /></label>
+          <label>Ø§Ø¹ØªØ¨Ø§Ø± ØºÙŠØ§Ø¨ Ù…Ø¤Ù‚Øª Ø¨Ø¹Ø¯<input type="time" name="absentAfter" value="${escapeHtml(rules.absentAfter || '11:00')}" /></label>
+          <label>Ø§Ù„Ø®Ø±ÙˆØ¬ Ø§Ù„Ù…Ø¨ÙƒØ± Ù‚Ø¨Ù„<input type="time" name="earlyExitBefore" value="${escapeHtml(rules.earlyExitBefore || '17:00')}" /></label>
+          <label>Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø¯ÙˆØ§Ù…<input type="time" name="shiftEnd" value="${escapeHtml(rules.shiftEnd || '18:00')}" /></label>
+          <label>Ù†Ø§ÙØ°Ø© Ø§Ù„ØªÙƒØ±Ø§Ø± Ø§Ù„Ù…Ø´Ø¨ÙˆÙ‡ Ø¨Ø§Ù„Ø¯Ù‚Ø§Ø¦Ù‚<input type="number" min="1" name="duplicateWindowMinutes" value="${escapeHtml(rules.duplicateWindowMinutes || 10)}" /></label>
+          <label>ØªÙ‚Ø±ÙŠØ± Ø¢Ø®Ø± Ø§Ù„ÙŠÙˆÙ… ÙÙŠ<input type="time" name="endOfDayReportAt" value="${escapeHtml(rules.endOfDayReportAt || '19:00')}" /></label>
+          <label class="check-row"><input type="checkbox" name="notifyManagerOnAbsence" ${rules.notifyManagerOnAbsence !== false ? 'checked' : ''} /> Ø¥Ø®Ø·Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ± Ø¹Ù†Ø¯ Ø§Ù„ØºÙŠØ§Ø¨/Ø§Ù„Ù…Ø´ÙƒÙ„Ø©</label>
+          <button class="button primary" type="submit">Ø­ÙØ¸ Ø§Ù„Ù‚ÙˆØ§Ø¹Ø¯</button>
         </form>
       </article>
       <article class="panel">
-        <div class="panel-head"><div><h2>تحليل اليوم</h2><p>آخر تشغيل: ${escapeHtml(date(runData.run?.createdAt || new Date().toISOString()))}</p></div><button class="button ghost" data-generate-eod>تقرير تلقائي آخر اليوم</button></div>
+        <div class="panel-head"><div><h2>ØªØ­Ù„ÙŠÙ„ Ø§Ù„ÙŠÙˆÙ…</h2><p>Ø¢Ø®Ø± ØªØ´ØºÙŠÙ„: ${escapeHtml(date(runData.run?.createdAt || new Date().toISOString()))}</p></div><button class="button ghost" data-generate-eod>ØªÙ‚Ø±ÙŠØ± ØªÙ„Ù‚Ø§Ø¦ÙŠ Ø¢Ø®Ø± Ø§Ù„ÙŠÙˆÙ…</button></div>
         <div class="mini-stats">${Object.entries(runData.counts || {}).map(([k,v]) => `<div><span>${escapeHtml(smartStatusLabel(k))}</span><strong>${escapeHtml(v)}</strong></div>`).join('')}</div>
-        ${table(["الموظف", "الحالة", "حضور", "انصراف", "ملاحظات"], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee, 'tiny')}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td>${badge(smartStatusLabel(row.status))}</td><td>${date(row.firstCheckInAt)}</td><td>${date(row.lastCheckOutAt)}</td><td>${escapeHtml(row.recommendation || '')}<br><small>${escapeHtml((row.flags || []).join(' / '))}</small></td></tr>`))}
+        ${table(["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø­Ø¶ÙˆØ±", "Ø§Ù†ØµØ±Ø§Ù", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee, 'tiny')}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td>${badge(smartStatusLabel(row.status))}</td><td>${date(row.firstCheckInAt)}</td><td>${date(row.lastCheckOutAt)}</td><td>${escapeHtml(row.recommendation || '')}<br><small>${escapeHtml((row.flags || []).join(' / '))}</small></td></tr>`))}
       </article>
     </section>`,
-    "قواعد الحضور الذكية",
-    "تشغيل تلقائي ومنطقي لكل حالات الحضور غير الطبيعية.",
+    "Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠØ©",
+    "ØªØ´ØºÙŠÙ„ ØªÙ„Ù‚Ø§Ø¦ÙŠ ÙˆÙ…Ù†Ø·Ù‚ÙŠ Ù„ÙƒÙ„ Ø­Ø§Ù„Ø§Øª Ø§Ù„Ø­Ø¶ÙˆØ± ØºÙŠØ± Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠØ©.",
   );
   app.querySelector('#smart-rules-form')?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
     values.notifyManagerOnAbsence = Boolean(event.currentTarget.querySelector('[name="notifyManagerOnAbsence"]')?.checked);
     await endpoints.saveSmartAttendanceRules(values);
-    setMessage('تم حفظ قواعد الحضور الذكية.', '');
+    setMessage('ØªÙ… Ø­ÙØ¸ Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠØ©.', '');
     renderSmartAttendance();
   });
   app.querySelector('[data-run-smart-attendance]')?.addEventListener('click', async () => {
     await endpoints.runSmartAttendance({ date: todayIso() });
-    setMessage('تم تشغيل تحليل الحضور الذكي وإرسال التنبيهات اللازمة.', '');
+    setMessage('ØªÙ… ØªØ´ØºÙŠÙ„ ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ù„Ø§Ø²Ù…Ø©.', '');
     renderSmartAttendance();
   });
   app.querySelector('[data-generate-eod]')?.addEventListener('click', async () => {
     const report = unwrap(await endpoints.endOfDayReport({ date: todayIso() }));
-    setMessage(`تم إنشاء تقرير آخر اليوم: ${report.title}`, '');
+    setMessage(`ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ ØªÙ‚Ø±ÙŠØ± Ø¢Ø®Ø± Ø§Ù„ÙŠÙˆÙ…: ${report.title}`, '');
     renderSmartAttendance();
   });
 }
@@ -3487,19 +3499,19 @@ async function renderSmartAttendance() {
 async function renderExecutivePdfReports() {
   shell(`
     <section class="grid">
-      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>تقارير تنفيذية PDF للمدير التنفيذي</h2><p>تصدير تقرير اليوم أو الأسبوع أو الشهر بصيغة قابلة للطباعة PDF من المتصفح.</p></div></div>
-        <div class="quick-action-grid"><button class="button primary" data-exec-report="daily">تقرير اليوم</button><button class="button ghost" data-exec-report="weekly">تقرير الأسبوع</button><button class="button ghost" data-exec-report="monthly">تقرير الشهر</button></div>
+      <article class="panel span-12 accent-panel"><div class="panel-head"><div><h2>ØªÙ‚Ø§Ø±ÙŠØ± ØªÙ†ÙÙŠØ°ÙŠØ© PDF Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ</h2><p>ØªØµØ¯ÙŠØ± ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ… Ø£Ùˆ Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ Ø£Ùˆ Ø§Ù„Ø´Ù‡Ø± Ø¨ØµÙŠØºØ© Ù‚Ø§Ø¨Ù„Ø© Ù„Ù„Ø·Ø¨Ø§Ø¹Ø© PDF Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­.</p></div></div>
+        <div class="quick-action-grid"><button class="button primary" data-exec-report="daily">ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…</button><button class="button ghost" data-exec-report="weekly">ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹</button><button class="button ghost" data-exec-report="monthly">ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±</button></div>
       </article>
-      <article class="panel span-12"><h2>محتوى التقرير</h2><p>يشمل الحضور، الغياب، التأخير، الإجازات، المأموريات، المشاكل المفتوحة، والتنبيهات الذكية.</p></article>
+      <article class="panel span-12"><h2>Ù…Ø­ØªÙˆÙ‰ Ø§Ù„ØªÙ‚Ø±ÙŠØ±</h2><p>ÙŠØ´Ù…Ù„ Ø§Ù„Ø­Ø¶ÙˆØ±ØŒ Ø§Ù„ØºÙŠØ§Ø¨ØŒ Ø§Ù„ØªØ£Ø®ÙŠØ±ØŒ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§ØªØŒ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§ØªØŒ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ Ø§Ù„Ù…ÙØªÙˆØ­Ø©ØŒ ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©.</p></article>
     </section>
-  `, "تقارير المدير التنفيذي PDF", "طباعة وحفظ تقارير تنفيذية للمدير التنفيذي.");
+  `, "ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ PDF", "Ø·Ø¨Ø§Ø¹Ø© ÙˆØ­ÙØ¸ ØªÙ‚Ø§Ø±ÙŠØ± ØªÙ†ÙÙŠØ°ÙŠØ© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.");
   app.querySelectorAll('[data-exec-report]').forEach((button) => button.addEventListener('click', async () => {
     const period = button.dataset.execReport;
     const data = unwrap(await endpoints.executivePdfReportData({ period }));
-    const title = period === 'daily' ? 'تقرير اليوم التنفيذي' : period === 'weekly' ? 'تقرير الأسبوع التنفيذي' : 'تقرير الشهر التنفيذي';
+    const title = period === 'daily' ? 'ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ… Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ' : period === 'weekly' ? 'ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ' : 'ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ';
     const report = data.report || {};
-    const summary = `<div class="summary"><div><span>الموظفون</span><strong>${report.totals?.employees || 0}</strong></div><div><span>حاضر</span><strong>${report.totals?.present || 0}</strong></div><div><span>غائب</span><strong>${report.totals?.absent || 0}</strong></div><div><span>يحتاج مراجعة</span><strong>${report.totals?.review || 0}</strong></div></div>`;
-    printBrandedReport(title, summary, ["الموظف", "الحالة", "حضور", "انصراف", "توصية"], (report.rows || []).map((row) => [row.employeeName, smartStatusLabel(row.status), date(row.firstCheckInAt), date(row.lastCheckOutAt), row.recommendation || '']));
+    const summary = `<div class="summary"><div><span>Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†</span><strong>${report.totals?.employees || 0}</strong></div><div><span>Ø­Ø§Ø¶Ø±</span><strong>${report.totals?.present || 0}</strong></div><div><span>ØºØ§Ø¦Ø¨</span><strong>${report.totals?.absent || 0}</strong></div><div><span>ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©</span><strong>${report.totals?.review || 0}</strong></div></div>`;
+    printBrandedReport(title, summary, ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø­Ø¶ÙˆØ±", "Ø§Ù†ØµØ±Ø§Ù", "ØªÙˆØµÙŠØ©"], (report.rows || []).map((row) => [row.employeeName, smartStatusLabel(row.status), date(row.firstCheckInAt), date(row.lastCheckOutAt), row.recommendation || '']));
   }));
 }
 
@@ -3510,16 +3522,16 @@ async function renderEmployeeArchive() {
   const archive = selectedId ? await endpoints.employeeArchive(selectedId).then(unwrap).catch((error) => ({ error: error.message })) : null;
   shell(`
     <section class="stack">
-      <article class="panel"><div class="panel-head"><div><h2>أرشيف الموظف الكامل</h2><p>ملف HR متكامل: بيانات، حضور، إجازات، مهام، مستندات، مشاكل، تقييمات وسجل تدقيق.</p></div><button class="button ghost" data-print-archive>طباعة ملف الموظف PDF</button></div>
-        <form class="filters" id="archive-filter"><select name="employeeId">${optionList(employees.map((e) => ({ id: e.id, name: e.fullName })), selectedId, 'اختر موظف')}</select><button class="button primary">فتح الأرشيف</button></form>
+      <article class="panel"><div class="panel-head"><div><h2>Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„ÙƒØ§Ù…Ù„</h2><p>Ù…Ù„Ù HR Ù…ØªÙƒØ§Ù…Ù„: Ø¨ÙŠØ§Ù†Ø§ØªØŒ Ø­Ø¶ÙˆØ±ØŒ Ø¥Ø¬Ø§Ø²Ø§ØªØŒ Ù…Ù‡Ø§Ù…ØŒ Ù…Ø³ØªÙ†Ø¯Ø§ØªØŒ Ù…Ø´Ø§ÙƒÙ„ØŒ ØªÙ‚ÙŠÙŠÙ…Ø§Øª ÙˆØ³Ø¬Ù„ ØªØ¯Ù‚ÙŠÙ‚.</p></div><button class="button ghost" data-print-archive>Ø·Ø¨Ø§Ø¹Ø© Ù…Ù„Ù Ø§Ù„Ù…ÙˆØ¸Ù PDF</button></div>
+        <form class="filters" id="archive-filter"><select name="employeeId">${optionList(employees.map((e) => ({ id: e.id, name: e.fullName })), selectedId, 'Ø§Ø®ØªØ± Ù…ÙˆØ¸Ù')}</select><button class="button primary">ÙØªØ­ Ø§Ù„Ø£Ø±Ø´ÙŠÙ</button></form>
       </article>
       ${archive?.error ? `<article class="panel"><div class="message error">${escapeHtml(archive.error)}</div></article>` : archive ? `
-      <article class="panel profile-card"><div class="person-cell large">${avatar(archive.employee, 'large')}<span><strong>${escapeHtml(archive.employee?.fullName || '')}</strong><small>${escapeHtml(archive.employee?.jobTitle || '')}</small></span></div><div class="mini-stats"><div><span>بصمات</span><strong>${archive.summary?.attendanceEvents || 0}</strong></div><div><span>غياب</span><strong>${archive.summary?.absences || 0}</strong></div><div><span>تأخير بالدقائق</span><strong>${archive.summary?.lateMinutes || 0}</strong></div><div><span>مهام مفتوحة</span><strong>${archive.summary?.openTasks || 0}</strong></div></div></article>
-      <article class="panel"><h2>الحضور اليومي</h2>${table(['اليوم','الحالة','حضور','انصراف','ملاحظات'], (archive.daily || []).slice(0,30).map((row) => `<tr><td>${escapeHtml(row.date)}</td><td>${badge(smartStatusLabel(row.smartStatus || row.status))}</td><td>${date(row.firstCheckInAt)}</td><td>${date(row.lastCheckOutAt)}</td><td>${escapeHtml(row.recommendation || '')}</td></tr>`))}</article>
-      <article class="panel"><h2>الطلبات والمستندات</h2>${table(['النوع','العنوان','الحالة','التاريخ'], [...(archive.leaves||[]).map(i=>['إجازة', i.leaveType || i.reason || '-', i.status, i.createdAt || i.startDate]), ...(archive.missions||[]).map(i=>['مأمورية', i.title || i.destinationName || '-', i.status, i.createdAt || i.plannedStart]), ...(archive.documents||[]).map(i=>['مستند', i.title || i.fileName || '-', i.status, i.expiresOn])].map((row)=>`<tr>${row.map((c)=>`<td>${escapeHtml(c || '-')}</td>`).join('')}</tr>`))}</article>
-      <article class="panel"><h2>التقييمات</h2>${table(['الشهر/الدورة','الحضور','الإجمالي','الحالة'], (archive.kpi || []).slice(0,20).map((row) => `<tr><td>${escapeHtml(row.month || row.cycleId || '-')}</td><td>${escapeHtml(row.attendanceScore || 0)}</td><td>${escapeHtml(row.totalScore || 0)}</td><td>${badge(row.status || 'DRAFT')}</td></tr>`))}</article>` : `<article class="panel"><div class="empty-state">اختر موظفًا لعرض الأرشيف.</div></article>`}
+      <article class="panel profile-card"><div class="person-cell large">${avatar(archive.employee, 'large')}<span><strong>${escapeHtml(archive.employee?.fullName || '')}</strong><small>${escapeHtml(archive.employee?.jobTitle || '')}</small></span></div><div class="mini-stats"><div><span>Ø¨ØµÙ…Ø§Øª</span><strong>${archive.summary?.attendanceEvents || 0}</strong></div><div><span>ØºÙŠØ§Ø¨</span><strong>${archive.summary?.absences || 0}</strong></div><div><span>ØªØ£Ø®ÙŠØ± Ø¨Ø§Ù„Ø¯Ù‚Ø§Ø¦Ù‚</span><strong>${archive.summary?.lateMinutes || 0}</strong></div><div><span>Ù…Ù‡Ø§Ù… Ù…ÙØªÙˆØ­Ø©</span><strong>${archive.summary?.openTasks || 0}</strong></div></div></article>
+      <article class="panel"><h2>Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ</h2>${table(['Ø§Ù„ÙŠÙˆÙ…','Ø§Ù„Ø­Ø§Ù„Ø©','Ø­Ø¶ÙˆØ±','Ø§Ù†ØµØ±Ø§Ù','Ù…Ù„Ø§Ø­Ø¸Ø§Øª'], (archive.daily || []).slice(0,30).map((row) => `<tr><td>${escapeHtml(row.date)}</td><td>${badge(smartStatusLabel(row.smartStatus || row.status))}</td><td>${date(row.firstCheckInAt)}</td><td>${date(row.lastCheckOutAt)}</td><td>${escapeHtml(row.recommendation || '')}</td></tr>`))}</article>
+      <article class="panel"><h2>Ø§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ§Ù„Ù…Ø³ØªÙ†Ø¯Ø§Øª</h2>${table(['Ø§Ù„Ù†ÙˆØ¹','Ø§Ù„Ø¹Ù†ÙˆØ§Ù†','Ø§Ù„Ø­Ø§Ù„Ø©','Ø§Ù„ØªØ§Ø±ÙŠØ®'], [...(archive.leaves||[]).map(i=>['Ø¥Ø¬Ø§Ø²Ø©', i.leaveType || i.reason || '-', i.status, i.createdAt || i.startDate]), ...(archive.missions||[]).map(i=>['Ù…Ø£Ù…ÙˆØ±ÙŠØ©', i.title || i.destinationName || '-', i.status, i.createdAt || i.plannedStart]), ...(archive.documents||[]).map(i=>['Ù…Ø³ØªÙ†Ø¯', i.title || i.fileName || '-', i.status, i.expiresOn])].map((row)=>`<tr>${row.map((c)=>`<td>${escapeHtml(c || '-')}</td>`).join('')}</tr>`))}</article>
+      <article class="panel"><h2>Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª</h2>${table(['Ø§Ù„Ø´Ù‡Ø±/Ø§Ù„Ø¯ÙˆØ±Ø©','Ø§Ù„Ø­Ø¶ÙˆØ±','Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ','Ø§Ù„Ø­Ø§Ù„Ø©'], (archive.kpi || []).slice(0,20).map((row) => `<tr><td>${escapeHtml(row.month || row.cycleId || '-')}</td><td>${escapeHtml(row.attendanceScore || 0)}</td><td>${escapeHtml(row.totalScore || 0)}</td><td>${badge(row.status || 'DRAFT')}</td></tr>`))}</article>` : `<article class="panel"><div class="empty-state">Ø§Ø®ØªØ± Ù…ÙˆØ¸ÙÙ‹Ø§ Ù„Ø¹Ø±Ø¶ Ø§Ù„Ø£Ø±Ø´ÙŠÙ.</div></article>`}
     </section>
-  `, "أرشيف موظف", "ملف شامل لكل موظف.");
+  `, "Ø£Ø±Ø´ÙŠÙ Ù…ÙˆØ¸Ù", "Ù…Ù„Ù Ø´Ø§Ù…Ù„ Ù„ÙƒÙ„ Ù…ÙˆØ¸Ù.");
   app.querySelector('#archive-filter')?.addEventListener('submit', (event) => { event.preventDefault(); const values = readForm(event.currentTarget); location.hash = `employee-archive?id=${encodeURIComponent(values.employeeId)}`; });
   app.querySelector('[data-print-archive]')?.addEventListener('click', () => window.print());
 }
@@ -3527,22 +3539,22 @@ async function renderEmployeeArchive() {
 async function renderSmartAlerts() {
   const data = await endpoints.smartAdminAlerts().then(unwrap).catch(() => ({ alerts: [] }));
   const alerts = data.alerts || [];
-  shell(`<section class="panel"><div class="panel-head"><div><h2>التنبيهات الذكية للإدارة</h2><p>تنبيهات تلقائية عن الغياب، التأخير، نسيان الانصراف، المستندات، والطلبات المتأخرة.</p></div><button class="button primary" data-refresh-smart-alerts>تحديث التنبيهات</button></div>${table(['العنوان','الخطورة','المسار','الوقت'], alerts.map((a)=>`<tr><td>${escapeHtml(a.title)}<br><small>${escapeHtml(a.body || '')}</small></td><td>${badge(a.severity || 'MEDIUM')}</td><td>${escapeHtml(a.route || '-')}</td><td>${date(a.updatedAt || a.createdAt)}</td></tr>`))}</section>`, "التنبيهات الذكية", "متابعة استباقية بدون بحث يدوي.");
-  app.querySelector('[data-refresh-smart-alerts]')?.addEventListener('click', async () => { await endpoints.smartAdminAlerts(); setMessage('تم تحديث التنبيهات.', ''); renderSmartAlerts(); });
+  shell(`<section class="panel"><div class="panel-head"><div><h2>Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ© Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©</h2><p>ØªÙ†Ø¨ÙŠÙ‡Ø§Øª ØªÙ„Ù‚Ø§Ø¦ÙŠØ© Ø¹Ù† Ø§Ù„ØºÙŠØ§Ø¨ØŒ Ø§Ù„ØªØ£Ø®ÙŠØ±ØŒ Ù†Ø³ÙŠØ§Ù† Ø§Ù„Ø§Ù†ØµØ±Ø§ÙØŒ Ø§Ù„Ù…Ø³ØªÙ†Ø¯Ø§ØªØŒ ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ØªØ£Ø®Ø±Ø©.</p></div><button class="button primary" data-refresh-smart-alerts>ØªØ­Ø¯ÙŠØ« Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª</button></div>${table(['Ø§Ù„Ø¹Ù†ÙˆØ§Ù†','Ø§Ù„Ø®Ø·ÙˆØ±Ø©','Ø§Ù„Ù…Ø³Ø§Ø±','Ø§Ù„ÙˆÙ‚Øª'], alerts.map((a)=>`<tr><td>${escapeHtml(a.title)}<br><small>${escapeHtml(a.body || '')}</small></td><td>${badge(a.severity || 'MEDIUM')}</td><td>${escapeHtml(a.route || '-')}</td><td>${date(a.updatedAt || a.createdAt)}</td></tr>`))}</section>`, "Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©", "Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ø³ØªØ¨Ø§Ù‚ÙŠØ© Ø¨Ø¯ÙˆÙ† Ø¨Ø­Ø« ÙŠØ¯ÙˆÙŠ.");
+  app.querySelector('[data-refresh-smart-alerts]')?.addEventListener('click', async () => { await endpoints.smartAdminAlerts(); setMessage('ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª.', ''); renderSmartAlerts(); });
 }
 
 async function renderManagerSuite() {
   const data = await endpoints.managerSuite().then(unwrap);
   const rows = data.smartRows || [];
-  shell(`<section class="stack"><article class="panel accent-panel"><div class="panel-head"><div><h2>لوحة المدير المباشر</h2><p>كل مدير يرى فريقه فقط: حضور اليوم، طلبات معلقة، مهام، وتنبيهات.</p></div></div><div class="mini-stats">${(data.metrics||[]).map((m)=>`<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper||'')}</small></div>`).join('')}</div></article><article class="panel"><h2>فريقك اليوم</h2>${table(['الموظف','الحالة','حضور','انصراف','إجراء'], rows.map((row)=>`<tr><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName||row.employeeId)}</span></td><td>${badge(smartStatusLabel(row.status))}</td><td>${date(row.firstCheckInAt)}</td><td>${date(row.lastCheckOutAt)}</td><td><button class="button ghost" data-route="employee-archive?id=${escapeHtml(row.employeeId)}">أرشيف</button></td></tr>`))}</article><article class="panel"><h2>طلبات الفريق المعلقة</h2>${table(['النوع','الموظف','الحالة','التاريخ'], (data.pending||[]).map((item)=>`<tr><td>${escapeHtml(item.kindLabel||item.kind)}</td><td>${escapeHtml(item.employee?.fullName||'-')}</td><td>${badge(item.status)}</td><td>${date(item.createdAt||item.createdSort)}</td></tr>`))}</article></section>`, "لوحة المدير المباشر", "إدارة الفريق اليومي.");
+  shell(`<section class="stack"><article class="panel accent-panel"><div class="panel-head"><div><h2>Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</h2><p>ÙƒÙ„ Ù…Ø¯ÙŠØ± ÙŠØ±Ù‰ ÙØ±ÙŠÙ‚Ù‡ ÙÙ‚Ø·: Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…ØŒ Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©ØŒ Ù…Ù‡Ø§Ù…ØŒ ÙˆØªÙ†Ø¨ÙŠÙ‡Ø§Øª.</p></div></div><div class="mini-stats">${(data.metrics||[]).map((m)=>`<div><span>${escapeHtml(m.label)}</span><strong>${escapeHtml(m.value)}</strong><small>${escapeHtml(m.helper||'')}</small></div>`).join('')}</div></article><article class="panel"><h2>ÙØ±ÙŠÙ‚Ùƒ Ø§Ù„ÙŠÙˆÙ…</h2>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø§Ù„Ø©','Ø­Ø¶ÙˆØ±','Ø§Ù†ØµØ±Ø§Ù','Ø¥Ø¬Ø±Ø§Ø¡'], rows.map((row)=>`<tr><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName||row.employeeId)}</span></td><td>${badge(smartStatusLabel(row.status))}</td><td>${date(row.firstCheckInAt)}</td><td>${date(row.lastCheckOutAt)}</td><td><button class="button ghost" data-route="employee-archive?id=${escapeHtml(row.employeeId)}">Ø£Ø±Ø´ÙŠÙ</button></td></tr>`))}</article><article class="panel"><h2>Ø·Ù„Ø¨Ø§Øª Ø§Ù„ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¹Ù„Ù‚Ø©</h2>${table(['Ø§Ù„Ù†ÙˆØ¹','Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø§Ù„Ø©','Ø§Ù„ØªØ§Ø±ÙŠØ®'], (data.pending||[]).map((item)=>`<tr><td>${escapeHtml(item.kindLabel||item.kind)}</td><td>${escapeHtml(item.employee?.fullName||'-')}</td><td>${badge(item.status)}</td><td>${date(item.createdAt||item.createdSort)}</td></tr>`))}</article></section>`, "Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ÙØ±ÙŠÙ‚ Ø§Ù„ÙŠÙˆÙ…ÙŠ.");
 }
 
 async function renderMonthlyEvaluations() {
   const data = await endpoints.monthlyEvaluations({ month: new Date().toISOString().slice(0,7) }).then(unwrap);
   const rows = data.evaluations || [];
-  shell(`<section class="panel"><div class="panel-head"><div><h2>التقييم الشهري</h2><p>تقييم شهري يجمع الالتزام بالحضور والأداء والسلوك والمبادرات.</p></div><button class="button ghost" data-export-evaluations>تصدير CSV</button></div>${table(['الموظف','الحضور','الأداء','السلوك','الإجمالي','الحالة','حفظ'], rows.map((row)=>`<tr data-eval-row="${escapeHtml(row.id)}"><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName||row.employeeId)}</span></td><td><input class="mini-input" name="attendanceScore" value="${escapeHtml(row.attendanceScore||0)}" /></td><td><input class="mini-input" name="efficiencyScore" value="${escapeHtml(row.efficiencyScore||0)}" /></td><td><input class="mini-input" name="conductScore" value="${escapeHtml(row.conductScore||0)}" /></td><td><strong>${escapeHtml(row.totalScore||0)}</strong></td><td>${badge(row.status||'DRAFT')}</td><td><button class="button primary" data-save-eval="${escapeHtml(row.id)}">حفظ</button></td></tr>`))}</section>`, "التقييم الشهري", "إدارة تقييمات الأداء.");
-  app.querySelectorAll('[data-save-eval]').forEach((button)=>button.addEventListener('click', async ()=>{ const tr=button.closest('tr'); const values=Object.fromEntries([...tr.querySelectorAll('input')].map((i)=>[i.name,i.value])); await endpoints.saveMonthlyEvaluation(button.dataset.saveEval, values); setMessage('تم حفظ التقييم.', ''); renderMonthlyEvaluations(); }));
-  app.querySelector('[data-export-evaluations]')?.addEventListener('click', ()=>downloadFile('monthly-evaluations.csv', `\ufeff${toCsv([['الموظف','الحضور','الأداء','السلوك','الإجمالي'], ...rows.map((r)=>[r.employee?.fullName||r.employeeId,r.attendanceScore,r.efficiencyScore,r.conductScore,r.totalScore])])}`, 'text/csv;charset=utf-8'));
+  shell(`<section class="panel"><div class="panel-head"><div><h2>Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø´Ù‡Ø±ÙŠ</h2><p>ØªÙ‚ÙŠÙŠÙ… Ø´Ù‡Ø±ÙŠ ÙŠØ¬Ù…Ø¹ Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø£Ø¯Ø§Ø¡ ÙˆØ§Ù„Ø³Ù„ÙˆÙƒ ÙˆØ§Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª.</p></div><button class="button ghost" data-export-evaluations>ØªØµØ¯ÙŠØ± CSV</button></div>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø¶ÙˆØ±','Ø§Ù„Ø£Ø¯Ø§Ø¡','Ø§Ù„Ø³Ù„ÙˆÙƒ','Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ','Ø§Ù„Ø­Ø§Ù„Ø©','Ø­ÙØ¸'], rows.map((row)=>`<tr data-eval-row="${escapeHtml(row.id)}"><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName||row.employeeId)}</span></td><td><input class="mini-input" name="attendanceScore" value="${escapeHtml(row.attendanceScore||0)}" /></td><td><input class="mini-input" name="efficiencyScore" value="${escapeHtml(row.efficiencyScore||0)}" /></td><td><input class="mini-input" name="conductScore" value="${escapeHtml(row.conductScore||0)}" /></td><td><strong>${escapeHtml(row.totalScore||0)}</strong></td><td>${badge(row.status||'DRAFT')}</td><td><button class="button primary" data-save-eval="${escapeHtml(row.id)}">Ø­ÙØ¸</button></td></tr>`))}</section>`, "Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø´Ù‡Ø±ÙŠ", "Ø¥Ø¯Ø§Ø±Ø© ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„Ø£Ø¯Ø§Ø¡.");
+  app.querySelectorAll('[data-save-eval]').forEach((button)=>button.addEventListener('click', async ()=>{ const tr=button.closest('tr'); const values=Object.fromEntries([...tr.querySelectorAll('input')].map((i)=>[i.name,i.value])); await endpoints.saveMonthlyEvaluation(button.dataset.saveEval, values); setMessage('ØªÙ… Ø­ÙØ¸ Ø§Ù„ØªÙ‚ÙŠÙŠÙ….', ''); renderMonthlyEvaluations(); }));
+  app.querySelector('[data-export-evaluations]')?.addEventListener('click', ()=>downloadFile('monthly-evaluations.csv', `\ufeff${toCsv([['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø¶ÙˆØ±','Ø§Ù„Ø£Ø¯Ø§Ø¡','Ø§Ù„Ø³Ù„ÙˆÙƒ','Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ'], ...rows.map((r)=>[r.employee?.fullName||r.employeeId,r.attendanceScore,r.efficiencyScore,r.conductScore,r.totalScore])])}`, 'text/csv;charset=utf-8'));
 }
 
 async function renderPresenceMap() {
@@ -3551,14 +3563,14 @@ async function renderPresenceMap() {
   const missing = rows.filter((row) => !row.lastLocation?.latitude && ["PRESENT", "LATE", "CHECKED_OUT"].includes(row.status));
   const located = rows.filter((row) => row.lastLocation?.latitude && row.lastLocation?.longitude);
   shell(`<section class="stack presence-live-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>لوحة حضور لحظية للمدير التنفيذي</h2><p>خريطة مباشرة توضّح الحضور، التأخير، الخروج عن النطاق، ومن لم يرسل موقعه.</p></div><button class="button primary" data-refresh-presence>تحديث الآن</button></div>
-      <div class="metric-grid">${metric("حاضر", data.counts?.PRESENT || 0, "داخل المتابعة")}${metric("متأخر", data.counts?.LATE || 0, "يحتاج متابعة")}${metric("غائب", data.counts?.ABSENT || 0, "لم يسجل حضور")}${metric("لم يرسل موقع", missing.length, "حاضر بلا GPS")}${metric("خارج النطاق", data.counts?.outOfRange || 0, "بصمة مشكوك بها")}</div>
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>Ù„ÙˆØ­Ø© Ø­Ø¶ÙˆØ± Ù„Ø­Ø¸ÙŠØ© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ</h2><p>Ø®Ø±ÙŠØ·Ø© Ù…Ø¨Ø§Ø´Ø±Ø© ØªÙˆØ¶Ù‘Ø­ Ø§Ù„Ø­Ø¶ÙˆØ±ØŒ Ø§Ù„ØªØ£Ø®ÙŠØ±ØŒ Ø§Ù„Ø®Ø±ÙˆØ¬ Ø¹Ù† Ø§Ù„Ù†Ø·Ø§Ù‚ØŒ ÙˆÙ…Ù† Ù„Ù… ÙŠØ±Ø³Ù„ Ù…ÙˆÙ‚Ø¹Ù‡.</p></div><button class="button primary" data-refresh-presence>ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø¢Ù†</button></div>
+      <div class="metric-grid">${metric("Ø­Ø§Ø¶Ø±", data.counts?.PRESENT || 0, "Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø©")}${metric("Ù…ØªØ£Ø®Ø±", data.counts?.LATE || 0, "ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©")}${metric("ØºØ§Ø¦Ø¨", data.counts?.ABSENT || 0, "Ù„Ù… ÙŠØ³Ø¬Ù„ Ø­Ø¶ÙˆØ±")}${metric("Ù„Ù… ÙŠØ±Ø³Ù„ Ù…ÙˆÙ‚Ø¹", missing.length, "Ø­Ø§Ø¶Ø± Ø¨Ù„Ø§ GPS")}${metric("Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø·Ø§Ù‚", data.counts?.outOfRange || 0, "Ø¨ØµÙ…Ø© Ù…Ø´ÙƒÙˆÙƒ Ø¨Ù‡Ø§")}</div>
     </article>
-    <article class="panel"><div class="panel-head"><div><h2>الخريطة المباشرة</h2><p>نقاط الموظفين المتاحة تظهر كرابط مباشر على Google Maps، والباقي يظهر في قائمة "لم يرسل الموقع".</p></div></div>
-      <div class="live-map-board">${located.map((row, index) => `<a class="map-pin risk-${escapeHtml(row.risk?.level || 'CLEAR')}" style="--x:${12 + (index * 17) % 76}%;--y:${18 + (index * 23) % 64}%" target="_blank" rel="noopener" href="${escapeHtml(row.mapUrl)}"><strong>${escapeHtml(row.employee?.fullName || row.employeeId)}</strong><span>${escapeHtml(statusLabel(row.status))} · خطر ${escapeHtml(row.risk?.score || 0)}%</span></a>`).join('') || `<div class="empty">لا توجد مواقع GPS متاحة على الخريطة الآن.</div>`}</div>
+    <article class="panel"><div class="panel-head"><div><h2>Ø§Ù„Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ù…Ø¨Ø§Ø´Ø±Ø©</h2><p>Ù†Ù‚Ø§Ø· Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ù…ØªØ§Ø­Ø© ØªØ¸Ù‡Ø± ÙƒØ±Ø§Ø¨Ø· Ù…Ø¨Ø§Ø´Ø± Ø¹Ù„Ù‰ Google MapsØŒ ÙˆØ§Ù„Ø¨Ø§Ù‚ÙŠ ÙŠØ¸Ù‡Ø± ÙÙŠ Ù‚Ø§Ø¦Ù…Ø© "Ù„Ù… ÙŠØ±Ø³Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹".</p></div></div>
+      <div class="live-map-board">${located.map((row, index) => `<a class="map-pin risk-${escapeHtml(row.risk?.level || 'CLEAR')}" style="--x:${12 + (index * 17) % 76}%;--y:${18 + (index * 23) % 64}%" target="_blank" rel="noopener" href="${escapeHtml(row.mapUrl)}"><strong>${escapeHtml(row.employee?.fullName || row.employeeId)}</strong><span>${escapeHtml(statusLabel(row.status))} Â· Ø®Ø·Ø± ${escapeHtml(row.risk?.score || 0)}%</span></a>`).join('') || `<div class="empty">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…ÙˆØ§Ù‚Ø¹ GPS Ù…ØªØ§Ø­Ø© Ø¹Ù„Ù‰ Ø§Ù„Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ø¢Ù†.</div>`}</div>
     </article>
-    <article class="panel"><h2>تفاصيل الحضور والموقع</h2>${table(['الموظف','الحالة','الحضور','الانصراف','الموقع','مخاطر'], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td>${badge(row.status)}</td><td>${date(row.checkInAt)}</td><td>${date(row.checkOutAt)}</td><td>${row.mapUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(row.mapUrl)}">فتح الخريطة</a>` : '<span class="status warning">لم يرسل الموقع</span>'}</td><td>${badge(row.risk?.level || 'CLEAR')} ${escapeHtml(row.risk?.score || 0)}%</td></tr>`))}</article>
-  </section>`, "خريطة الحضور اللحظية", "متابعة تنفيذية مباشرة للحضور والموقع.");
+    <article class="panel"><h2>ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ù…ÙˆÙ‚Ø¹</h2>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø­Ø§Ù„Ø©','Ø§Ù„Ø­Ø¶ÙˆØ±','Ø§Ù„Ø§Ù†ØµØ±Ø§Ù','Ø§Ù„Ù…ÙˆÙ‚Ø¹','Ù…Ø®Ø§Ø·Ø±'], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td>${badge(row.status)}</td><td>${date(row.checkInAt)}</td><td>${date(row.checkOutAt)}</td><td>${row.mapUrl ? `<a target="_blank" rel="noopener" href="${escapeHtml(row.mapUrl)}">ÙØªØ­ Ø§Ù„Ø®Ø±ÙŠØ·Ø©</a>` : '<span class="status warning">Ù„Ù… ÙŠØ±Ø³Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹</span>'}</td><td>${badge(row.risk?.level || 'CLEAR')} ${escapeHtml(row.risk?.score || 0)}%</td></tr>`))}</article>
+  </section>`, "Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ù„Ø­Ø¸ÙŠØ©", "Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ø¨Ø§Ø´Ø±Ø© Ù„Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ù…ÙˆÙ‚Ø¹.");
   app.querySelector('[data-refresh-presence]')?.addEventListener('click', () => renderPresenceMap());
 }
 
@@ -3566,12 +3578,12 @@ async function renderAttendanceRisk() {
   const data = await endpoints.attendanceRiskCenter({ days: 7 }).then(unwrap);
   const rows = data.rows || [];
   shell(`<section class="stack attendance-risk-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>نظام تقييم خطر البصمة</h2><p>يرصد تكرار البصمة، الموقع غير الطبيعي، الجهاز الجديد، الحضور من مكان بعيد، والبصمة بدون GPS.</p></div><button class="button ghost" data-refresh-risk>إعادة التقييم</button></div>
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>Ù†Ø¸Ø§Ù… ØªÙ‚ÙŠÙŠÙ… Ø®Ø·Ø± Ø§Ù„Ø¨ØµÙ…Ø©</h2><p>ÙŠØ±ØµØ¯ ØªÙƒØ±Ø§Ø± Ø§Ù„Ø¨ØµÙ…Ø©ØŒ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠØŒ Ø§Ù„Ø¬Ù‡Ø§Ø² Ø§Ù„Ø¬Ø¯ÙŠØ¯ØŒ Ø§Ù„Ø­Ø¶ÙˆØ± Ù…Ù† Ù…ÙƒØ§Ù† Ø¨Ø¹ÙŠØ¯ØŒ ÙˆØ§Ù„Ø¨ØµÙ…Ø© Ø¨Ø¯ÙˆÙ† GPS.</p></div><button class="button ghost" data-refresh-risk>Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ…</button></div>
       <div class="chips">${(data.rules || []).map((rule) => `<span class="chip">${escapeHtml(rule)}</span>`).join('')}</div>
-      <div class="metric-grid">${metric('عالي', data.counts?.HIGH || 0, 'تحقيق فوري')}${metric('متوسط', data.counts?.MEDIUM || 0, 'مراجعة المدير')}${metric('منخفض', data.counts?.LOW || 0, 'متابعة')}${metric('سليم', data.counts?.CLEAR || 0, 'لا مؤشرات')}</div>
+      <div class="metric-grid">${metric('Ø¹Ø§Ù„ÙŠ', data.counts?.HIGH || 0, 'ØªØ­Ù‚ÙŠÙ‚ ÙÙˆØ±ÙŠ')}${metric('Ù…ØªÙˆØ³Ø·', data.counts?.MEDIUM || 0, 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ù…Ø¯ÙŠØ±')}${metric('Ù…Ù†Ø®ÙØ¶', data.counts?.LOW || 0, 'Ù…ØªØ§Ø¨Ø¹Ø©')}${metric('Ø³Ù„ÙŠÙ…', data.counts?.CLEAR || 0, 'Ù„Ø§ Ù…Ø¤Ø´Ø±Ø§Øª')}</div>
     </article>
-    <article class="panel"><h2>الموظفون حسب درجة الخطر</h2>${table(['الموظف','الدرجة','المستوى','الأسباب','آخر أحداث'], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td><strong>${escapeHtml(row.score)}%</strong></td><td>${badge(row.level)}</td><td>${(row.flags || []).map((flag) => `<span class="chip danger-soft">${escapeHtml(flag.label)}</span>`).join('') || '—'}</td><td>${(row.events || []).slice(0,3).map((event) => `${escapeHtml(statusLabel(event.type || event.action || event.status))} ${date(event.eventAt || event.createdAt)}`).join('<br>')}</td></tr>`))}</article>
-  </section>`, "مخاطر البصمة", "كشف التلاعب أو البصمات غير الطبيعية.");
+    <article class="panel"><h2>Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ† Ø­Ø³Ø¨ Ø¯Ø±Ø¬Ø© Ø§Ù„Ø®Ø·Ø±</h2>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø§Ù„Ø¯Ø±Ø¬Ø©','Ø§Ù„Ù…Ø³ØªÙˆÙ‰','Ø§Ù„Ø£Ø³Ø¨Ø§Ø¨','Ø¢Ø®Ø± Ø£Ø­Ø¯Ø§Ø«'], rows.map((row) => `<tr><td class="person-cell">${avatar(row.employee,'tiny')}<span>${escapeHtml(row.employee?.fullName || row.employeeId)}</span></td><td><strong>${escapeHtml(row.score)}%</strong></td><td>${badge(row.level)}</td><td>${(row.flags || []).map((flag) => `<span class="chip danger-soft">${escapeHtml(flag.label)}</span>`).join('') || 'â€”'}</td><td>${(row.events || []).slice(0,3).map((event) => `${escapeHtml(statusLabel(event.type || event.action || event.status))} ${date(event.eventAt || event.createdAt)}`).join('<br>')}</td></tr>`))}</article>
+  </section>`, "Ù…Ø®Ø§Ø·Ø± Ø§Ù„Ø¨ØµÙ…Ø©", "ÙƒØ´Ù Ø§Ù„ØªÙ„Ø§Ø¹Ø¨ Ø£Ùˆ Ø§Ù„Ø¨ØµÙ…Ø§Øª ØºÙŠØ± Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠØ©.");
   app.querySelector('[data-refresh-risk]')?.addEventListener('click', () => renderAttendanceRisk());
 }
 
@@ -3579,44 +3591,44 @@ async function renderAdminDecisions() {
   const data = await endpoints.adminDecisions().then(unwrap);
   const rows = data.decisions || [];
   shell(`<section class="stack admin-decisions-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>سجل القرارات الإدارية الرسمي</h2><p>كل قرار يصل للموظفين ويحتاج "تم الاطلاع" مع توقيت القراءة.</p></div></div>
-      <form id="decision-form" class="form-grid compact-form"><label>عنوان القرار<input name="title" required /></label><label>الأولوية<select name="priority"><option value="MEDIUM">متوسطة</option><option value="HIGH">عالية</option><option value="LOW">منخفضة</option></select></label><label class="span-2">نص القرار<textarea name="body" rows="4" required></textarea></label><label>النطاق<select name="scope"><option value="ALL">كل الموظفين</option><option value="SELECTED">موظفون محددون</option></select></label><label>أكواد الموظفين المحددين<input name="targetEmployeeIds" placeholder="اختياري: employee ids مفصولة بفاصلة" /></label><button class="button primary" type="submit">نشر القرار وإرسال إشعار</button></form>
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>Ø³Ø¬Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ© Ø§Ù„Ø±Ø³Ù…ÙŠ</h2><p>ÙƒÙ„ Ù‚Ø±Ø§Ø± ÙŠØµÙ„ Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆÙŠØ­ØªØ§Ø¬ "ØªÙ… Ø§Ù„Ø§Ø·Ù„Ø§Ø¹" Ù…Ø¹ ØªÙˆÙ‚ÙŠØª Ø§Ù„Ù‚Ø±Ø§Ø¡Ø©.</p></div></div>
+      <form id="decision-form" class="form-grid compact-form"><label>Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù‚Ø±Ø§Ø±<input name="title" required /></label><label>Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©<select name="priority"><option value="MEDIUM">Ù…ØªÙˆØ³Ø·Ø©</option><option value="HIGH">Ø¹Ø§Ù„ÙŠØ©</option><option value="LOW">Ù…Ù†Ø®ÙØ¶Ø©</option></select></label><label class="span-2">Ù†Øµ Ø§Ù„Ù‚Ø±Ø§Ø±<textarea name="body" rows="4" required></textarea></label><label>Ø§Ù„Ù†Ø·Ø§Ù‚<select name="scope"><option value="ALL">ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</option><option value="SELECTED">Ù…ÙˆØ¸ÙÙˆÙ† Ù…Ø­Ø¯Ø¯ÙˆÙ†</option></select></label><label>Ø£ÙƒÙˆØ§Ø¯ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ù…Ø­Ø¯Ø¯ÙŠÙ†<input name="targetEmployeeIds" placeholder="Ø§Ø®ØªÙŠØ§Ø±ÙŠ: employee ids Ù…ÙØµÙˆÙ„Ø© Ø¨ÙØ§ØµÙ„Ø©" /></label><button class="button primary" type="submit">Ù†Ø´Ø± Ø§Ù„Ù‚Ø±Ø§Ø± ÙˆØ¥Ø±Ø³Ø§Ù„ Ø¥Ø´Ø¹Ø§Ø±</button></form>
     </article>
-    <article class="panel"><h2>القرارات المنشورة</h2>${table(['العنوان','الأولوية','النطاق','النشر','الاطلاع','النص'], rows.map((row) => `<tr><td><strong>${escapeHtml(row.title)}</strong></td><td>${badge(row.priority)}</td><td>${escapeHtml(row.scope || 'ALL')}</td><td>${date(row.publishedAt || row.createdAt)}</td><td><strong>${escapeHtml((row.acknowledgements || []).length || (row.acknowledged ? 1 : 0))}</strong></td><td>${escapeHtml(row.body || '')}</td></tr>`))}</article>
-  </section>`, "سجل القرارات الإدارية", "قرارات رسمية قابلة للتوقيع والاطلاع.");
-  app.querySelector('#decision-form')?.addEventListener('submit', async (event) => { event.preventDefault(); await endpoints.createAdminDecision(readForm(event.currentTarget)); setMessage('تم نشر القرار وإرسال الإشعارات.', ''); renderAdminDecisions(); });
+    <article class="panel"><h2>Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ù…Ù†Ø´ÙˆØ±Ø©</h2>${table(['Ø§Ù„Ø¹Ù†ÙˆØ§Ù†','Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©','Ø§Ù„Ù†Ø·Ø§Ù‚','Ø§Ù„Ù†Ø´Ø±','Ø§Ù„Ø§Ø·Ù„Ø§Ø¹','Ø§Ù„Ù†Øµ'], rows.map((row) => `<tr><td><strong>${escapeHtml(row.title)}</strong></td><td>${badge(row.priority)}</td><td>${escapeHtml(row.scope || 'ALL')}</td><td>${date(row.publishedAt || row.createdAt)}</td><td><strong>${escapeHtml((row.acknowledgements || []).length || (row.acknowledged ? 1 : 0))}</strong></td><td>${escapeHtml(row.body || '')}</td></tr>`))}</article>
+  </section>`, "Ø³Ø¬Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©", "Ù‚Ø±Ø§Ø±Ø§Øª Ø±Ø³Ù…ÙŠØ© Ù‚Ø§Ø¨Ù„Ø© Ù„Ù„ØªÙˆÙ‚ÙŠØ¹ ÙˆØ§Ù„Ø§Ø·Ù„Ø§Ø¹.");
+  app.querySelector('#decision-form')?.addEventListener('submit', async (event) => { event.preventDefault(); await endpoints.createAdminDecision(readForm(event.currentTarget)); setMessage('ØªÙ… Ù†Ø´Ø± Ø§Ù„Ù‚Ø±Ø§Ø± ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.', ''); renderAdminDecisions(); });
 }
 
 async function renderMonthlyAutoPdfReports() {
   const month = new Date().toISOString().slice(0,7);
   const data = await endpoints.monthlyAutoPdfReports({ month }).then(unwrap);
   shell(`<section class="stack monthly-pdf-page">
-    <article class="panel accent-panel"><div class="panel-head"><div><h2>تقارير PDF شهرية تلقائية</h2><p>تجميع تلقائي للحضور، التأخير، الغياب، KPI، الشكاوى والطلبات لكل موظف ولكل مدير.</p></div><div class="toolbar"><button class="button primary" data-print-monthly>طباعة / حفظ PDF</button><button class="button ghost" data-regenerate-monthly>إعادة التوليد</button></div></div>
-      <div class="metric-grid">${metric('الموظفون', data.attendance?.rows?.length || 0, 'داخل التقرير')}${metric('المديرون', data.managers?.length || 0, 'تقارير فرق')}${metric('الشكاوى', data.disputes?.length || 0, 'هذا الشهر')}${metric('الطلبات', data.requests?.length || 0, 'هذا الشهر')}</div>
+    <article class="panel accent-panel"><div class="panel-head"><div><h2>ØªÙ‚Ø§Ø±ÙŠØ± PDF Ø´Ù‡Ø±ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ©</h2><p>ØªØ¬Ù…ÙŠØ¹ ØªÙ„Ù‚Ø§Ø¦ÙŠ Ù„Ù„Ø­Ø¶ÙˆØ±ØŒ Ø§Ù„ØªØ£Ø®ÙŠØ±ØŒ Ø§Ù„ØºÙŠØ§Ø¨ØŒ KPIØŒ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª Ù„ÙƒÙ„ Ù…ÙˆØ¸Ù ÙˆÙ„ÙƒÙ„ Ù…Ø¯ÙŠØ±.</p></div><div class="toolbar"><button class="button primary" data-print-monthly>Ø·Ø¨Ø§Ø¹Ø© / Ø­ÙØ¸ PDF</button><button class="button ghost" data-regenerate-monthly>Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªÙˆÙ„ÙŠØ¯</button></div></div>
+      <div class="metric-grid">${metric('Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†', data.attendance?.rows?.length || 0, 'Ø¯Ø§Ø®Ù„ Ø§Ù„ØªÙ‚Ø±ÙŠØ±')}${metric('Ø§Ù„Ù…Ø¯ÙŠØ±ÙˆÙ†', data.managers?.length || 0, 'ØªÙ‚Ø§Ø±ÙŠØ± ÙØ±Ù‚')}${metric('Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰', data.disputes?.length || 0, 'Ù‡Ø°Ø§ Ø§Ù„Ø´Ù‡Ø±')}${metric('Ø§Ù„Ø·Ù„Ø¨Ø§Øª', data.requests?.length || 0, 'Ù‡Ø°Ø§ Ø§Ù„Ø´Ù‡Ø±')}</div>
     </article>
-    <article class="panel print-area"><h2>${escapeHtml(data.title)}</h2><p>تاريخ التوليد: ${date(data.generatedAt)}</p><h3>ملخص الموظفين</h3>${table(['الموظف','حضور','تأخير','غياب','ملاحظات'], (data.attendance?.rows || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || row.employeeName || row.employeeId)}</td><td>${escapeHtml(row.presentDays || row.present || 0)}</td><td>${escapeHtml(row.lateMinutes || 0)} دقيقة</td><td>${escapeHtml(row.absentDays || row.absences || 0)}</td><td>${escapeHtml(row.recommendation || row.status || '')}</td></tr>`))}<h3>تقارير المديرين</h3>${table(['المدير','عدد الفريق','KPI','الشكاوى','الطلبات'], (data.managers || []).map((row) => `<tr><td>${escapeHtml(row.manager?.fullName || row.manager?.name || '')}</td><td>${escapeHtml(row.teamCount || 0)}</td><td>${escapeHtml(row.kpiRows?.length || 0)}</td><td>${escapeHtml(row.disputes?.length || 0)}</td><td>${escapeHtml(row.requests?.length || 0)}</td></tr>`))}</article>
-    <article class="panel"><h2>سجل التوليد</h2>${table(['الشهر','الحالة','التاريخ','الأعداد'], (data.runs || []).map((run) => `<tr><td>${escapeHtml(run.month)}</td><td>${badge(run.status)}</td><td>${date(run.generatedAt)}</td><td>${escapeHtml(JSON.stringify(run.counts || {}))}</td></tr>`))}</article>
-  </section>`, "PDF شهري تلقائي", "تقارير شهرية جاهزة للطباعة والحفظ PDF.");
+    <article class="panel print-area"><h2>${escapeHtml(data.title)}</h2><p>ØªØ§Ø±ÙŠØ® Ø§Ù„ØªÙˆÙ„ÙŠØ¯: ${date(data.generatedAt)}</p><h3>Ù…Ù„Ø®Øµ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</h3>${table(['Ø§Ù„Ù…ÙˆØ¸Ù','Ø­Ø¶ÙˆØ±','ØªØ£Ø®ÙŠØ±','ØºÙŠØ§Ø¨','Ù…Ù„Ø§Ø­Ø¸Ø§Øª'], (data.attendance?.rows || []).map((row) => `<tr><td>${escapeHtml(row.employee?.fullName || row.employeeName || row.employeeId)}</td><td>${escapeHtml(row.presentDays || row.present || 0)}</td><td>${escapeHtml(row.lateMinutes || 0)} Ø¯Ù‚ÙŠÙ‚Ø©</td><td>${escapeHtml(row.absentDays || row.absences || 0)}</td><td>${escapeHtml(row.recommendation || row.status || '')}</td></tr>`))}<h3>ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†</h3>${table(['Ø§Ù„Ù…Ø¯ÙŠØ±','Ø¹Ø¯Ø¯ Ø§Ù„ÙØ±ÙŠÙ‚','KPI','Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰','Ø§Ù„Ø·Ù„Ø¨Ø§Øª'], (data.managers || []).map((row) => `<tr><td>${escapeHtml(row.manager?.fullName || row.manager?.name || '')}</td><td>${escapeHtml(row.teamCount || 0)}</td><td>${escapeHtml(row.kpiRows?.length || 0)}</td><td>${escapeHtml(row.disputes?.length || 0)}</td><td>${escapeHtml(row.requests?.length || 0)}</td></tr>`))}</article>
+    <article class="panel"><h2>Ø³Ø¬Ù„ Ø§Ù„ØªÙˆÙ„ÙŠØ¯</h2>${table(['Ø§Ù„Ø´Ù‡Ø±','Ø§Ù„Ø­Ø§Ù„Ø©','Ø§Ù„ØªØ§Ø±ÙŠØ®','Ø§Ù„Ø£Ø¹Ø¯Ø§Ø¯'], (data.runs || []).map((run) => `<tr><td>${escapeHtml(run.month)}</td><td>${badge(run.status)}</td><td>${date(run.generatedAt)}</td><td>${escapeHtml(JSON.stringify(run.counts || {}))}</td></tr>`))}</article>
+  </section>`, "PDF Ø´Ù‡Ø±ÙŠ ØªÙ„Ù‚Ø§Ø¦ÙŠ", "ØªÙ‚Ø§Ø±ÙŠØ± Ø´Ù‡Ø±ÙŠØ© Ø¬Ø§Ù‡Ø²Ø© Ù„Ù„Ø·Ø¨Ø§Ø¹Ø© ÙˆØ§Ù„Ø­ÙØ¸ PDF.");
   app.querySelector('[data-print-monthly]')?.addEventListener('click', () => window.print());
   app.querySelector('[data-regenerate-monthly]')?.addEventListener('click', () => renderMonthlyAutoPdfReports());
 }
 
 async function renderSupabaseSetup() {
   const data = await endpoints.supabaseSetupCheck().then(unwrap);
-  shell(`<section class="panel"><div class="panel-head"><div><h2>لوحة إعداد Supabase</h2><p>فحص سريع لمعرفة هل النظام جاهز للحفظ الحقيقي بين كل الأجهزة.</p></div></div>${table(['الفحص','النتيجة','التفاصيل'], (data.checks||[]).map((c)=>`<tr><td>${escapeHtml(c.label)}</td><td>${c.ok ? badge('APPROVED') : badge('PENDING')}</td><td>${escapeHtml(c.detail||'')}</td></tr>`))}<div class="message warning">${escapeHtml(data.recommended || '')}</div></section>`, "إعداد Supabase", "فحص الاتصال والتجهيز.");
+  shell(`<section class="panel"><div class="panel-head"><div><h2>Ù„ÙˆØ­Ø© Ø¥Ø¹Ø¯Ø§Ø¯ Supabase</h2><p>ÙØ­Øµ Ø³Ø±ÙŠØ¹ Ù„Ù…Ø¹Ø±ÙØ© Ù‡Ù„ Ø§Ù„Ù†Ø¸Ø§Ù… Ø¬Ø§Ù‡Ø² Ù„Ù„Ø­ÙØ¸ Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ Ø¨ÙŠÙ† ÙƒÙ„ Ø§Ù„Ø£Ø¬Ù‡Ø²Ø©.</p></div></div>${table(['Ø§Ù„ÙØ­Øµ','Ø§Ù„Ù†ØªÙŠØ¬Ø©','Ø§Ù„ØªÙØ§ØµÙŠÙ„'], (data.checks||[]).map((c)=>`<tr><td>${escapeHtml(c.label)}</td><td>${c.ok ? badge('APPROVED') : badge('PENDING')}</td><td>${escapeHtml(c.detail||'')}</td></tr>`))}<div class="message warning">${escapeHtml(data.recommended || '')}</div></section>`, "Ø¥Ø¹Ø¯Ø§Ø¯ Supabase", "ÙØ­Øµ Ø§Ù„Ø§ØªØµØ§Ù„ ÙˆØ§Ù„ØªØ¬Ù‡ÙŠØ².");
 }
 
 async function renderDatabaseUpdates() {
   const data = await endpoints.databaseMigrationsStatus().then(unwrap);
-  shell(`<section class="panel"><div class="panel-head"><div><h2>تحديثات Database</h2><p>آخر Patch مطلوب: ${escapeHtml(data.expectedPatch)}</p></div></div>${table(['الترتيب','الملف','الحالة','إجراء'], (data.rows||[]).map((row)=>`<tr><td>${escapeHtml(row.order)}</td><td>${escapeHtml(row.name)}</td><td>${badge(row.status)}</td><td><button class="button ghost" data-mark-migration="${escapeHtml(row.name)}">تم تشغيله</button></td></tr>`))}<div class="message warning">${escapeHtml(data.notes||'')}</div></section>`, "تحديثات Database", "متابعة ملفات SQL المطلوبة.");
-  app.querySelectorAll('[data-mark-migration]').forEach((button)=>button.addEventListener('click', async ()=>{ await endpoints.markMigrationApplied(button.dataset.markMigration); setMessage('تم تعليم الملف كمطبق محليًا.', ''); renderDatabaseUpdates(); }));
+  shell(`<section class="panel"><div class="panel-head"><div><h2>ØªØ­Ø¯ÙŠØ«Ø§Øª Database</h2><p>Ø¢Ø®Ø± Patch Ù…Ø·Ù„ÙˆØ¨: ${escapeHtml(data.expectedPatch)}</p></div></div>${table(['Ø§Ù„ØªØ±ØªÙŠØ¨','Ø§Ù„Ù…Ù„Ù','Ø§Ù„Ø­Ø§Ù„Ø©','Ø¥Ø¬Ø±Ø§Ø¡'], (data.rows||[]).map((row)=>`<tr><td>${escapeHtml(row.order)}</td><td>${escapeHtml(row.name)}</td><td>${badge(row.status)}</td><td><button class="button ghost" data-mark-migration="${escapeHtml(row.name)}">ØªÙ… ØªØ´ØºÙŠÙ„Ù‡</button></td></tr>`))}<div class="message warning">${escapeHtml(data.notes||'')}</div></section>`, "ØªØ­Ø¯ÙŠØ«Ø§Øª Database", "Ù…ØªØ§Ø¨Ø¹Ø© Ù…Ù„ÙØ§Øª SQL Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©.");
+  app.querySelectorAll('[data-mark-migration]').forEach((button)=>button.addEventListener('click', async ()=>{ await endpoints.markMigrationApplied(button.dataset.markMigration); setMessage('ØªÙ… ØªØ¹Ù„ÙŠÙ… Ø§Ù„Ù…Ù„Ù ÙƒÙ…Ø·Ø¨Ù‚ Ù…Ø­Ù„ÙŠÙ‹Ø§.', ''); renderDatabaseUpdates(); }));
 }
 
 async function renderAutoBackup() {
   const data = await endpoints.autoBackupStatus().then(unwrap);
   const backups = data.backups || [];
-  shell(`<section class="stack"><article class="panel accent-panel"><div class="panel-head"><div><h2>Backup تلقائي حقيقي</h2><p>في الوضع المحلي يتم حفظ Snapshot داخلي. في Supabase الحقيقي يُنصح بجدولة Edge Function/Storage يوميًا.</p></div><button class="button primary" data-run-auto-backup>تشغيل Backup الآن</button></div><div class="mini-stats"><div><span>الاحتفاظ بآخر</span><strong>${escapeHtml(data.policy?.keepLast||30)}</strong></div><div><span>عدد النسخ</span><strong>${backups.length}</strong></div><div><span>آخر نسخة</span><strong>${escapeHtml(backups[0] ? date(backups[0].createdAt) : '-')}</strong></div></div></article><article class="panel"><h2>سجل النسخ</h2>${table(['العنوان','السبب','الوقت','الأعداد'], backups.map((b)=>`<tr><td>${escapeHtml(b.title)}</td><td>${escapeHtml(b.reason||'-')}</td><td>${date(b.createdAt)}</td><td>${escapeHtml(JSON.stringify(b.counts||{}))}</td></tr>`))}</article></section>`, "Backup تلقائي", "نسخ احتياطي وتشغيل يدوي.");
-  app.querySelector('[data-run-auto-backup]')?.addEventListener('click', async ()=>{ await endpoints.runAutomaticBackup({ reason: 'manual-admin' }); setMessage('تم إنشاء Backup بنجاح.', ''); renderAutoBackup(); });
+  shell(`<section class="stack"><article class="panel accent-panel"><div class="panel-head"><div><h2>Backup ØªÙ„Ù‚Ø§Ø¦ÙŠ Ø­Ù‚ÙŠÙ‚ÙŠ</h2><p>ÙÙŠ Ø§Ù„ÙˆØ¶Ø¹ Ø§Ù„Ù…Ø­Ù„ÙŠ ÙŠØªÙ… Ø­ÙØ¸ Snapshot Ø¯Ø§Ø®Ù„ÙŠ. ÙÙŠ Supabase Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ ÙŠÙÙ†ØµØ­ Ø¨Ø¬Ø¯ÙˆÙ„Ø© Edge Function/Storage ÙŠÙˆÙ…ÙŠÙ‹Ø§.</p></div><button class="button primary" data-run-auto-backup>ØªØ´ØºÙŠÙ„ Backup Ø§Ù„Ø¢Ù†</button></div><div class="mini-stats"><div><span>Ø§Ù„Ø§Ø­ØªÙØ§Ø¸ Ø¨Ø¢Ø®Ø±</span><strong>${escapeHtml(data.policy?.keepLast||30)}</strong></div><div><span>Ø¹Ø¯Ø¯ Ø§Ù„Ù†Ø³Ø®</span><strong>${backups.length}</strong></div><div><span>Ø¢Ø®Ø± Ù†Ø³Ø®Ø©</span><strong>${escapeHtml(backups[0] ? date(backups[0].createdAt) : '-')}</strong></div></div></article><article class="panel"><h2>Ø³Ø¬Ù„ Ø§Ù„Ù†Ø³Ø®</h2>${table(['Ø§Ù„Ø¹Ù†ÙˆØ§Ù†','Ø§Ù„Ø³Ø¨Ø¨','Ø§Ù„ÙˆÙ‚Øª','Ø§Ù„Ø£Ø¹Ø¯Ø§Ø¯'], backups.map((b)=>`<tr><td>${escapeHtml(b.title)}</td><td>${escapeHtml(b.reason||'-')}</td><td>${date(b.createdAt)}</td><td>${escapeHtml(JSON.stringify(b.counts||{}))}</td></tr>`))}</article></section>`, "Backup ØªÙ„Ù‚Ø§Ø¦ÙŠ", "Ù†Ø³Ø® Ø§Ø­ØªÙŠØ§Ø·ÙŠ ÙˆØªØ´ØºÙŠÙ„ ÙŠØ¯ÙˆÙŠ.");
+  app.querySelector('[data-run-auto-backup]')?.addEventListener('click', async ()=>{ await endpoints.runAutomaticBackup({ reason: 'manual-admin' }); setMessage('ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Backup Ø¨Ù†Ø¬Ø§Ø­.', ''); renderAutoBackup(); });
 }
 
 async function render() {
@@ -3629,7 +3641,7 @@ async function render() {
 
     const key = routeKey();
     if (!canRoute(key)) {
-      return shell(`<section class="panel"><h2>لا توجد صلاحية</h2><p>حسابك لا يملك صلاحية فتح هذه الصفحة. اطلب من مدير النظام تعديل الدور أو الصلاحيات.</p></section>`, "صلاحيات غير كافية", "تم منع الوصول للصفحة المطلوبة.");
+      return shell(`<section class="panel"><h2>Ù„Ø§ ØªÙˆØ¬Ø¯ ØµÙ„Ø§Ø­ÙŠØ©</h2><p>Ø­Ø³Ø§Ø¨Ùƒ Ù„Ø§ ÙŠÙ…Ù„Ùƒ ØµÙ„Ø§Ø­ÙŠØ© ÙØªØ­ Ù‡Ø°Ù‡ Ø§Ù„ØµÙØ­Ø©. Ø§Ø·Ù„Ø¨ Ù…Ù† Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù… ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ø¯ÙˆØ± Ø£Ùˆ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª.</p></section>`, "ØµÙ„Ø§Ø­ÙŠØ§Øª ØºÙŠØ± ÙƒØ§ÙÙŠØ©", "ØªÙ… Ù…Ù†Ø¹ Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„ØµÙØ­Ø© Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©.");
     }
     if (key === "dashboard") await renderDashboard();
     else if (key === "executive-report") await renderExecutiveReport();
@@ -3702,7 +3714,7 @@ async function render() {
   } catch (error) {
     console.error(error);
     setMessage("", error.message);
-    shell(`<section class="panel"><h2>تعذر تحميل الصفحة</h2><p>${escapeHtml(error.message)}</p></section>`, "خطأ", "راجع البيانات أو أعد تحميل الصفحة.");
+    shell(`<section class="panel"><h2>ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙØ­Ø©</h2><p>${escapeHtml(error.message)}</p></section>`, "Ø®Ø·Ø£", "Ø±Ø§Ø¬Ø¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø£Ùˆ Ø£Ø¹Ø¯ ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙØ­Ø©.");
   }
 }
 

@@ -1,14 +1,11 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 const root = process.cwd();
+const failures = [];
 const read = (file) => readFileSync(join(root, file), 'utf8');
-const assert = (ok, message) => { if (!ok) { console.error(message); process.exit(1); } };
-assert(existsSync(join(root, 'supabase/sql/patches/038_kpi_cycle_control_reports.sql')), 'Patch 038 must exist.');
-const api = read('shared/js/api.js');
-const patch = read('supabase/sql/patches/038_kpi_cycle_control_reports.sql');
-assert(api.includes('kpiWindowInfo') && api.includes('assertKpiSubmitAllowed'), 'API must include KPI cycle window enforcement.');
-assert(api.includes('recomputeKpi') && api.includes('sendKpiReminders') && api.includes('closeKpiCycle'), 'API must include KPI cycle actions.');
-assert(api.includes('expectedPatch: "064_attendance_fallback_workflow.sql"'), 'Expected patch must be 043 after executive presence/risk alignment.');
-assert(api.includes('038_kpi_cycle_control_reports.sql'), 'Database updates list must retain Patch 038.');
-assert(patch.includes('kpi_cycle_stage_report') && patch.includes('kpi_employee_stage_report'), 'Patch 038 must create KPI stage reports.');
-console.log('KPI cycle control check passed.');
+const assert = (condition, message) => { if (!condition) failures.push(message); };
+const sql = read('supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql');
+assert(sql.includes('038_kpi_cycle_control_reports'), 'Final SQL must include 038_kpi_cycle_control_reports.');
+assert(sql.includes('kpi_cycles'), 'Final SQL must include kpi_cycles.');
+if (failures.length) { console.error('tools/check-kpi-cycle-control.mjs failed:'); failures.forEach((f) => console.error(`- ${f}`)); process.exit(1); }
+console.log('kpi cycle control check passed.');

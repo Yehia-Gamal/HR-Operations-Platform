@@ -1,4 +1,4 @@
-// Production Supabase configuration.
+﻿// Production Supabase configuration.
 // IMPORTANT: Never put service_role keys or VAPID private keys in browser files.
 // Supabase configuration injected at build time.
 // NOTE: Do not place secrets such as service_role keys in this file. See .env.example for server-only values.
@@ -40,9 +40,9 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     gpsSafetyBufferMeters: 90,
     gpsUncertainReviewOnly: true,
     branchLocation: {
-      name: "مجمع أحلى شباب",
-      area: "منيل شيحة - الجيزة",
-      // اضبط هذه الإحداثيات من لوحة الإدارة إذا ظهر الحكم داخل/خارج المجمع بشكل غير صحيح.
+      name: "Ù…Ø¬Ù…Ø¹ Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨",
+      area: "Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©",
+      // Ø§Ø¶Ø¨Ø· Ù‡Ø°Ù‡ Ø§Ù„Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø¥Ø°Ø§ Ø¸Ù‡Ø± Ø§Ù„Ø­ÙƒÙ… Ø¯Ø§Ø®Ù„/Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹ Ø¨Ø´ÙƒÙ„ ØºÙŠØ± ØµØ­ÙŠØ­.
       latitude: 29.950738592862045,
       longitude: 31.238094542328678,
       radiusMeters: 180,
@@ -53,7 +53,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
   gateways: {
     admin: {
       enabled: true,
-      label: "بوابة HR / الإدارة",
+      label: "Ø¨ÙˆØ§Ø¨Ø© HR / Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©",
       code: "A7B3C9D4E6F8",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
       allowedPhones: ["01154869616", "010040455849", "01028403239"],
@@ -62,7 +62,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     },
     executive: {
       enabled: true,
-      label: "بوابة المدير التنفيذي",
+      label: "Ø¨ÙˆØ§Ø¨Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ",
       code: "EXEC-AHLA-2026",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
       allowedPhones: ["01154869616", "010040455849"],
@@ -83,14 +83,14 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     // Last SQL patch expected to be present on the database when this frontend is deployed
     expectedPatch: "074_e2e_test_readiness.sql",
     // Semantic version for the package; bump to force cache invalidation in SW
-    packageVersion: "full-workflow-live-20260504-private-v16-location-device-hotfix",
+    packageVersion: "v31-production-deploy-ready-keep-dev-files",
   },
   // Used by service workers to invalidate old caches
-  cacheVersion: "full-workflow-live-20260504-private-v16-location-device-hotfix",
+  cacheVersion: "v31-production-deploy-ready-keep-dev-files",
 });
 
 window.__HR_SUPABASE_CONFIG_LOADED__ = true;
-window.__HR_SUPABASE_CONFIG_VERSION__ = "full-workflow-live-20260504-private-v16-location-device-hotfix";
+window.__HR_SUPABASE_CONFIG_VERSION__ = "v31-production-deploy-ready-keep-dev-files";
 
 (function markSupabaseMode() {
   const cfg = window.HR_SUPABASE_CONFIG || {};

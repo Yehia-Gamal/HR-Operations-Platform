@@ -1,5 +1,5 @@
-// Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
-const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-executive-private-v22-location-notify-photo";
+﻿// Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
+const CACHE_NAME = "hr-attendance-v31-production-deploy-ready-keep-dev-files";
 const DEFAULT_OPEN_URL = "./executive/index.html";
 const ASSETS = [
   "./health.html",
@@ -50,8 +50,7 @@ function fallbackFor(request) {
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  if (url.pathname.startsWith("/api/") || url.pathname.includes("/rest/v1/") || url.hostname.endsWith("supabase.co")) {
-    event.respondWith(fetch(event.request));
+  if (url.pathname.startsWith("/api/") || url.pathname.includes("/rest/v1/") || url.pathname.includes("/functions/v1/") || url.hostname.endsWith("supabase.co")) {
     return;
   }
   if (event.request.method !== "GET") return;
@@ -67,10 +66,10 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  let payload = { title: "نظام الحضور", body: "لديك تنبيه جديد" };
+  let payload = { title: "Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ±", body: "Ù„Ø¯ÙŠÙƒ ØªÙ†Ø¨ÙŠÙ‡ Ø¬Ø¯ÙŠØ¯" };
   try { payload = event.data ? event.data.json() : payload; } catch {}
-  event.waitUntil(self.registration.showNotification(payload.title || "نظام الحضور", {
-    body: payload.body || "لديك تنبيه جديد",
+  event.waitUntil(self.registration.showNotification(payload.title || "Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ±", {
+    body: payload.body || "Ù„Ø¯ÙŠÙƒ ØªÙ†Ø¨ÙŠÙ‡ Ø¬Ø¯ÙŠØ¯",
     icon: "./shared/images/icon-192.png",
     badge: "./shared/images/favicon-64.png",
     tag: payload.tag || "hr-notification",

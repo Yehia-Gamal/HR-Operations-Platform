@@ -1,8 +1,8 @@
-import { endpoints, unwrap } from "./api.js?v=v22-location-notify-photo-20260505";
-import { enableWebPushSubscription } from "./push.js?v=v16-location-device-hotfix-20260504";
-import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v18-camera-gps-punch-fix-20260505";
-import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v16-location-device-hotfix-20260504";
-import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v16-location-device-hotfix-20260504";
+﻿import { endpoints, unwrap } from "./api.js?v=v31-production-deploy-ready-keep-dev-files";
+import { enableWebPushSubscription } from "./push.js?v=v31-production-deploy-ready-keep-dev-files";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v31-production-deploy-ready-keep-dev-files";
+import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-production-deploy-ready-keep-dev-files";
+import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-production-deploy-ready-keep-dev-files";
 
 document.documentElement.classList.add("employee-portal-root");
 document.body.classList.add("employee-portal");
@@ -24,74 +24,74 @@ const state = {
 };
 
 const adminScopes = new Set(["*", "users:manage", "employees:write", "settings:manage", "audit:view"]);
-const fullAccessRoles = new Set(["admin", "super-admin", "super_admin", "role-admin", "executive-secretary", "role-executive-secretary", "مدير النظام", "السكرتير التنفيذي"]);
-const executiveOnlyRoles = new Set(["executive", "role-executive", "المدير التنفيذي"]);
+const fullAccessRoles = new Set(["admin", "super-admin", "super_admin", "role-admin", "executive-secretary", "role-executive-secretary", "Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…", "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ"]);
+const executiveOnlyRoles = new Set(["executive", "role-executive", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ"]);
 const legacyEmployeeRoutes = [
-  ["home", "الرئيسية", "⌂"],
-  ["action-center", "مطلوب مني", "★"],
-  ["kpi", "تقييمي", "◎"],
-  ["punch", "البصمة", "◉"],
-  ["location", "الموقع", "⌖"],
-  ["leaves", "الإجازات", "✦"],
-  ["missions", "المأموريات", "⇄"],
-  ["requests", "طلباتي", "☰"],
-  ["tasks", "مهامي", "✓"],
-  ["daily-report", "تقريري", "✎"],
-  ["documents", "مستنداتي", "▣"],
-  ["policies", "السياسات", "§"],
-  ["disputes", "شكوى", "!"],
-  ["notifications", "الإشعارات", "●"],
-  ["profile", "حسابي", "☺"],
+  ["home", "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", "âŒ‚"],
+  ["action-center", "Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†ÙŠ", "â˜…"],
+  ["kpi", "ØªÙ‚ÙŠÙŠÙ…ÙŠ", "â—Ž"],
+  ["punch", "Ø§Ù„Ø¨ØµÙ…Ø©", "â—‰"],
+  ["location", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "âŒ–"],
+  ["leaves", "Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª", "âœ¦"],
+  ["missions", "Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª", "â‡„"],
+  ["requests", "Ø·Ù„Ø¨Ø§ØªÙŠ", "â˜°"],
+  ["tasks", "Ù…Ù‡Ø§Ù…ÙŠ", "âœ“"],
+  ["daily-report", "ØªÙ‚Ø±ÙŠØ±ÙŠ", "âœŽ"],
+  ["documents", "Ù…Ø³ØªÙ†Ø¯Ø§ØªÙŠ", "â–£"],
+  ["policies", "Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª", "Â§"],
+  ["disputes", "Ø´ÙƒÙˆÙ‰", "!"],
+  ["notifications", "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª", "â—"],
+  ["profile", "Ø­Ø³Ø§Ø¨ÙŠ", "â˜º"],
 ];
 
 const employeeRoutes = [
-  ["home", "الرئيسية", "🏠"],
-  ["action-center", "مطلوب مني", "⚡"],
-  ["punch", "البصمة", "👁"],
-  ["notifications", "الإشعارات", "🔔"],
-  ["more", "المزيد", "☰"],
+  ["home", "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", "ðŸ "],
+  ["action-center", "Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†ÙŠ", "âš¡"],
+  ["punch", "Ø§Ù„Ø¨ØµÙ…Ø©", "ðŸ‘"],
+  ["notifications", "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª", "ðŸ””"],
+  ["more", "Ø§Ù„Ù…Ø²ÙŠØ¯", "â˜°"],
 ];
 
 const moreEmployeeRoutes = [
-  ["kpi", "تقييمي", "⭐"],
-  ["leaves", "الإجازات", "🏖"],
-  ["missions", "المأموريات", "🚗"],
-  ["requests", "طلباتي", "📋"],
-  ["tasks", "مهامي", "✅"],
-  ["daily-report", "تقريري", "📝"],
-  ["documents", "مستنداتي", "📁"],
-  ["policies", "السياسات", "📜"],
-  ["decisions", "القرارات", "📢"],
-  ["disputes", "شكوى", "⚠️"],
-  ["location", "الموقع", "📍"],
-  ["profile", "حسابي", "👤"],
-  ["team", "فريقي", "👥"],
+  ["kpi", "ØªÙ‚ÙŠÙŠÙ…ÙŠ", "â­"],
+  ["leaves", "Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª", "ðŸ–"],
+  ["missions", "Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª", "ðŸš—"],
+  ["requests", "Ø·Ù„Ø¨Ø§ØªÙŠ", "ðŸ“‹"],
+  ["tasks", "Ù…Ù‡Ø§Ù…ÙŠ", "âœ…"],
+  ["daily-report", "ØªÙ‚Ø±ÙŠØ±ÙŠ", "ðŸ“"],
+  ["documents", "Ù…Ø³ØªÙ†Ø¯Ø§ØªÙŠ", "ðŸ“"],
+  ["policies", "Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª", "ðŸ“œ"],
+  ["decisions", "Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª", "ðŸ“¢"],
+  ["disputes", "Ø´ÙƒÙˆÙ‰", "âš ï¸"],
+  ["location", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "ðŸ“"],
+  ["profile", "Ø­Ø³Ø§Ø¨ÙŠ", "ðŸ‘¤"],
+  ["team", "ÙØ±ÙŠÙ‚ÙŠ", "ðŸ‘¥"],
 ];
 
 const routeSubtitles = {
-  home: "ملخص يومك، اختصارات سريعة، وآخر نشاطاتك.",
-  "action-center": "كل المطلوب منك الآن في شاشة واحدة: موقع، سياسة، مهمة، أو بصمة.",
-  kpi: "قيّم نفسك شهريًا ثم ارفع النموذج لمديرك المباشر للاعتماد.",
-  punch: "سجّل حضورك أو انصرافك مباشرة بعد قراءة GPS.",
-  location: "أرسل موقعك المباشر عند طلب الإدارة بضغطة واحدة.",
-  leaves: "قدّم طلب إجازة وتابع حالته بدون أوراق.",
-  missions: "قدّم طلب مأمورية وتابع موافقة الإدارة.",
-  requests: "تابع كل طلباتك من إجازات ومأموريات ومواقع وتعديلات.",
-  tasks: "تابع المهام المكلف بها وحدّث حالتها.",
-  "daily-report": "أرسل تقرير إنجازك اليومي والعوائق واحتياجات الدعم.",
-  documents: "مستنداتك الشخصية والتنبيهات الخاصة بانتهاء الصلاحية.",
-  policies: "اقرأ سياسات الجمعية ووقّع عليها إلكترونيًا.",
-  decisions: "قرارات إدارية رسمية تحتاج تأكيد الاطلاع مع توقيت القراءة.",
-  disputes: "ارفع شكوى أو طلب فض خلاف للجنة المختصة.",
-  notifications: "كل التنبيهات والطلبات المهمة في مكان واحد.",
-  profile: "بيانات حسابك ووسائل الاتصال وكلمة المرور.",
-  team: "إدارة فريقك وطلبات الإجازات والمأموريات بخصوصية ووضوح.",
+  home: "Ù…Ù„Ø®Øµ ÙŠÙˆÙ…ÙƒØŒ Ø§Ø®ØªØµØ§Ø±Ø§Øª Ø³Ø±ÙŠØ¹Ø©ØŒ ÙˆØ¢Ø®Ø± Ù†Ø´Ø§Ø·Ø§ØªÙƒ.",
+  "action-center": "ÙƒÙ„ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†Ùƒ Ø§Ù„Ø¢Ù† ÙÙŠ Ø´Ø§Ø´Ø© ÙˆØ§Ø­Ø¯Ø©: Ù…ÙˆÙ‚Ø¹ØŒ Ø³ÙŠØ§Ø³Ø©ØŒ Ù…Ù‡Ù…Ø©ØŒ Ø£Ùˆ Ø¨ØµÙ…Ø©.",
+  kpi: "Ù‚ÙŠÙ‘Ù… Ù†ÙØ³Ùƒ Ø´Ù‡Ø±ÙŠÙ‹Ø§ Ø«Ù… Ø§Ø±ÙØ¹ Ø§Ù„Ù†Ù…ÙˆØ°Ø¬ Ù„Ù…Ø¯ÙŠØ±Ùƒ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ù„Ù„Ø§Ø¹ØªÙ…Ø§Ø¯.",
+  punch: "Ø³Ø¬Ù‘Ù„ Ø­Ø¶ÙˆØ±Ùƒ Ø£Ùˆ Ø§Ù†ØµØ±Ø§ÙÙƒ Ù…Ø¨Ø§Ø´Ø±Ø© Ø¨Ø¹Ø¯ Ù‚Ø±Ø§Ø¡Ø© GPS.",
+  location: "Ø£Ø±Ø³Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø¹Ù†Ø¯ Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø¨Ø¶ØºØ·Ø© ÙˆØ§Ø­Ø¯Ø©.",
+  leaves: "Ù‚Ø¯Ù‘Ù… Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø© ÙˆØªØ§Ø¨Ø¹ Ø­Ø§Ù„ØªÙ‡ Ø¨Ø¯ÙˆÙ† Ø£ÙˆØ±Ø§Ù‚.",
+  missions: "Ù‚Ø¯Ù‘Ù… Ø·Ù„Ø¨ Ù…Ø£Ù…ÙˆØ±ÙŠØ© ÙˆØªØ§Ø¨Ø¹ Ù…ÙˆØ§ÙÙ‚Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©.",
+  requests: "ØªØ§Ø¨Ø¹ ÙƒÙ„ Ø·Ù„Ø¨Ø§ØªÙƒ Ù…Ù† Ø¥Ø¬Ø§Ø²Ø§Øª ÙˆÙ…Ø£Ù…ÙˆØ±ÙŠØ§Øª ÙˆÙ…ÙˆØ§Ù‚Ø¹ ÙˆØªØ¹Ø¯ÙŠÙ„Ø§Øª.",
+  tasks: "ØªØ§Ø¨Ø¹ Ø§Ù„Ù…Ù‡Ø§Ù… Ø§Ù„Ù…ÙƒÙ„Ù Ø¨Ù‡Ø§ ÙˆØ­Ø¯Ù‘Ø« Ø­Ø§Ù„ØªÙ‡Ø§.",
+  "daily-report": "Ø£Ø±Ø³Ù„ ØªÙ‚Ø±ÙŠØ± Ø¥Ù†Ø¬Ø§Ø²Ùƒ Ø§Ù„ÙŠÙˆÙ…ÙŠ ÙˆØ§Ù„Ø¹ÙˆØ§Ø¦Ù‚ ÙˆØ§Ø­ØªÙŠØ§Ø¬Ø§Øª Ø§Ù„Ø¯Ø¹Ù….",
+  documents: "Ù…Ø³ØªÙ†Ø¯Ø§ØªÙƒ Ø§Ù„Ø´Ø®ØµÙŠØ© ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø®Ø§ØµØ© Ø¨Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ©.",
+  policies: "Ø§Ù‚Ø±Ø£ Ø³ÙŠØ§Ø³Ø§Øª Ø§Ù„Ø¬Ù…Ø¹ÙŠØ© ÙˆÙˆÙ‚Ù‘Ø¹ Ø¹Ù„ÙŠÙ‡Ø§ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠÙ‹Ø§.",
+  decisions: "Ù‚Ø±Ø§Ø±Ø§Øª Ø¥Ø¯Ø§Ø±ÙŠØ© Ø±Ø³Ù…ÙŠØ© ØªØ­ØªØ§Ø¬ ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø§Ø·Ù„Ø§Ø¹ Ù…Ø¹ ØªÙˆÙ‚ÙŠØª Ø§Ù„Ù‚Ø±Ø§Ø¡Ø©.",
+  disputes: "Ø§Ø±ÙØ¹ Ø´ÙƒÙˆÙ‰ Ø£Ùˆ Ø·Ù„Ø¨ ÙØ¶ Ø®Ù„Ø§Ù Ù„Ù„Ø¬Ù†Ø© Ø§Ù„Ù…Ø®ØªØµØ©.",
+  notifications: "ÙƒÙ„ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…Ù‡Ù…Ø© ÙÙŠ Ù…ÙƒØ§Ù† ÙˆØ§Ø­Ø¯.",
+  profile: "Ø¨ÙŠØ§Ù†Ø§Øª Ø­Ø³Ø§Ø¨Ùƒ ÙˆÙˆØ³Ø§Ø¦Ù„ Ø§Ù„Ø§ØªØµØ§Ù„ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.",
+  team: "Ø¥Ø¯Ø§Ø±Ø© ÙØ±ÙŠÙ‚Ùƒ ÙˆØ·Ù„Ø¨Ø§Øª Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª ÙˆØ§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª Ø¨Ø®ØµÙˆØµÙŠØ© ÙˆÙˆØ¶ÙˆØ­.",
 };
 
 function greeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "صبحكم الله بكل خير";
-  return "عمتم مساءً";
+  if (hour < 12) return "ØµØ¨Ø­ÙƒÙ… Ø§Ù„Ù„Ù‡ Ø¨ÙƒÙ„ Ø®ÙŠØ±";
+  return "Ø¹Ù…ØªÙ… Ù…Ø³Ø§Ø¡Ù‹";
 }
 
 function timeNowText() {
@@ -106,7 +106,7 @@ function actionCard(route, icon, title, text) {
   return `<button type="button" class="quick-action-card" data-route="${escapeHtml(route)}"><span class="quick-icon">${icon}</span><strong>${escapeHtml(title)}</strong><span>${escapeHtml(text)}</span></button>`;
 }
 
-function metricCard(label, value, hint, icon = "📊") {
+function metricCard(label, value, hint, icon = "ðŸ“Š") {
   return `<article class="employee-stat"><div class="stat-icon">${icon}</div><div class="stat-body"><span>${escapeHtml(label)}</span><strong>${escapeHtml(String(value))}</strong><small>${escapeHtml(hint)}</small></div></article>`;
 }
 
@@ -114,7 +114,7 @@ function compactMetric(label, value, icon, route = "") {
   return `<button type="button" class="compact-metric-badge" ${route ? `data-route="${escapeHtml(route)}"` : ''}><span class="badge-icon">${icon}</span><strong>${escapeHtml(String(value))}</strong><span>${escapeHtml(label)}</span></button>`;
 }
 
-function confirmAction({ title = "تأكيد العملية", message = "هل تريد المتابعة؟", confirmLabel = "تأكيد", cancelLabel = "إلغاء", danger = false } = {}) {
+function confirmAction({ title = "ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", message = "Ù‡Ù„ ØªØ±ÙŠØ¯ Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø©ØŸ", confirmLabel = "ØªØ£ÙƒÙŠØ¯", cancelLabel = "Ø¥Ù„ØºØ§Ø¡", danger = false } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.className = "modal-backdrop";
@@ -140,7 +140,7 @@ function confirmAction({ title = "تأكيد العملية", message = "هل ت
   });
 }
 
-function askText({ title = "إضافة ملاحظة", message = "اكتب التفاصيل", defaultValue = "", confirmLabel = "حفظ", cancelLabel = "إلغاء" } = {}) {
+function askText({ title = "Ø¥Ø¶Ø§ÙØ© Ù…Ù„Ø§Ø­Ø¸Ø©", message = "Ø§ÙƒØªØ¨ Ø§Ù„ØªÙØ§ØµÙŠÙ„", defaultValue = "", confirmLabel = "Ø­ÙØ¸", cancelLabel = "Ø¥Ù„ØºØ§Ø¡" } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
     overlay.className = "modal-backdrop";
@@ -149,7 +149,7 @@ function askText({ title = "إضافة ملاحظة", message = "اكتب الت
     overlay.innerHTML = `
       <form class="confirm-modal prompt-modal">
         <div class="panel-head"><div><h2>${escapeHtml(title)}</h2><p>${escapeHtml(message)}</p></div></div>
-        <label class="span-2">التفاصيل<textarea name="answer" rows="3">${escapeHtml(defaultValue)}</textarea></label>
+        <label class="span-2">Ø§Ù„ØªÙØ§ØµÙŠÙ„<textarea name="answer" rows="3">${escapeHtml(defaultValue)}</textarea></label>
         <div class="form-actions">
           <button class="button ghost" type="button" data-cancel>${escapeHtml(cancelLabel)}</button>
           <button class="button primary" type="submit">${escapeHtml(confirmLabel)}</button>
@@ -181,6 +181,10 @@ function routeKey() {
 
 function showToast(message = "", type = "info") {
   if (!message) return;
+  if (window.HRToast && !showToast.__delegating) {
+    try { showToast.__delegating = true; window.HRToast(message, type === "error" ? "error" : "ok"); return; }
+    finally { showToast.__delegating = false; }
+  }
   document.querySelectorAll(".hr-toast").forEach((toast) => toast.remove());
   const toast = document.createElement("div");
   toast.className = `hr-toast ${type === "error" ? "error" : "ok"}`;
@@ -229,7 +233,7 @@ function resetIdleTimer() {
     state.user = null;
     state.message = "";
     state.error = "";
-    setMessage("تم تسجيل خروجك تلقائياً بعد 30 دقيقة من عدم النشاط.", "");
+    setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø®Ø±ÙˆØ¬Ùƒ ØªÙ„Ù‚Ø§Ø¦ÙŠØ§Ù‹ Ø¨Ø¹Ø¯ 30 Ø¯Ù‚ÙŠÙ‚Ø© Ù…Ù† Ø¹Ø¯Ù… Ø§Ù„Ù†Ø´Ø§Ø·.", "");
     renderLogin();
   }, IDLE_MS);
 }
@@ -255,7 +259,7 @@ function toBase64Url(buffer) {
 
 async function registerBrowserPasskey() {
   if (!window.PublicKeyCredential || !navigator.credentials?.create) {
-    throw new Error("هذا المتصفح لا يدعم بصمة الجهاز/Passkey. استخدم HTTPS أو localhost وموبايل يدعم البصمة.");
+    throw new Error("Ù‡Ø°Ø§ Ø§Ù„Ù…ØªØµÙØ­ Ù„Ø§ ÙŠØ¯Ø¹Ù… Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø²/Passkey. Ø§Ø³ØªØ®Ø¯Ù… HTTPS Ø£Ùˆ localhost ÙˆÙ…ÙˆØ¨Ø§ÙŠÙ„ ÙŠØ¯Ø¹Ù… Ø§Ù„Ø¨ØµÙ…Ø©.");
   }
   const userName = state.user?.email || state.user?.phone || state.user?.fullName || "employee";
   const challenge = crypto.getRandomValues(new Uint8Array(32));
@@ -263,7 +267,7 @@ async function registerBrowserPasskey() {
   const credential = await navigator.credentials.create({
     publicKey: {
       challenge,
-      rp: { name: "نظام أحلى شباب HR" },
+      rp: { name: "Ù†Ø¸Ø§Ù… Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨ HR" },
       user: { id: userId, name: userName, displayName: state.user?.fullName || state.user?.employee?.fullName || userName },
       pubKeyCredParams: [{ type: "public-key", alg: -7 }, { type: "public-key", alg: -257 }],
       authenticatorSelection: { userVerification: "required", residentKey: "preferred" },
@@ -276,7 +280,7 @@ async function registerBrowserPasskey() {
   const clientDataJSON = credential.response?.clientDataJSON ? toBase64Url(credential.response.clientDataJSON) : "";
   const transports = typeof credential.response?.getTransports === "function" ? credential.response.getTransports() : [];
   const deviceFingerprintHash = await getDeviceFingerprintHash();
-  const registered = unwrap(await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "بصمة جهاز الموظف", platform: navigator.platform || "browser", deviceFingerprintHash, trusted: true }));
+  const registered = unwrap(await endpoints.registerPasskey({ credentialId: rawId, attestationObject, clientDataJSON, transports, label: "Ø¨ØµÙ…Ø© Ø¬Ù‡Ø§Ø² Ø§Ù„Ù…ÙˆØ¸Ù", platform: navigator.platform || "browser", deviceFingerprintHash, trusted: true }));
   const credentialRow = registered?.credential || registered?.data || registered || {};
   state.user = { ...(state.user || {}), passkeyEnabled: true };
   if (state.user.employee) state.user.employee = { ...state.user.employee, passkeyEnabled: true };
@@ -294,17 +298,17 @@ async function registerBrowserPasskey() {
 
 function isMissingTrustedDeviceError(error) {
   const message = String(error?.message || error || "");
-  return /لا توجد بصمة جهاز|بصمة جهاز موثوقة|مفتاح المرور|Passkey|passkey|MISSING_PASSKEY/i.test(message);
+  return /Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ØµÙ…Ø© Ø¬Ù‡Ø§Ø²|Ø¨ØµÙ…Ø© Ø¬Ù‡Ø§Ø² Ù…ÙˆØ«ÙˆÙ‚Ø©|Ù…ÙØªØ§Ø­ Ø§Ù„Ù…Ø±ÙˆØ±|Passkey|passkey|MISSING_PASSKEY/i.test(message);
 }
 
-async function requestBrowserPasskeyForAction(label = "تأكيد العملية", employee = {}, options = {}) {
+async function requestBrowserPasskeyForAction(label = "ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", employee = {}, options = {}) {
   try {
     return { ok: true, ...(await requestEmployeePasskey({ endpoints, user: state.user, employee, label })) };
   } catch (error) {
     if (!options.autoRegisterOnMissing || !isMissingTrustedDeviceError(error)) throw error;
-    if (options.resultBox) options.resultBox.textContent = "لا توجد بصمة جهاز مسجلة لهذا الحساب. سيتم تسجيل بصمة هذا الموبايل الآن ثم إكمال العملية.";
+    if (options.resultBox) options.resultBox.textContent = "Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ØµÙ…Ø© Ø¬Ù‡Ø§Ø² Ù…Ø³Ø¬Ù„Ø© Ù„Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨. Ø³ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ Ø§Ù„Ø¢Ù† Ø«Ù… Ø¥ÙƒÙ…Ø§Ù„ Ø§Ù„Ø¹Ù…Ù„ÙŠØ©.";
     const registered = await registerBrowserPasskey();
-    if (options.resultBox) options.resultBox.textContent = "تم تسجيل بصمة الجهاز. جارٍ إكمال العملية...";
+    if (options.resultBox) options.resultBox.textContent = "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø². Ø¬Ø§Ø±Ù Ø¥ÙƒÙ…Ø§Ù„ Ø§Ù„Ø¹Ù…Ù„ÙŠØ©...";
     return registered;
   }
 }
@@ -347,7 +351,7 @@ async function pollNotificationsForSound() {
     saveSeenNotificationIds(seen);
     playInternalAlertSound();
     haptic([60, 40, 60]);
-    showToast(fresh[0].title || "وصل تنبيه داخلي جديد", "ok");
+    showToast(fresh[0].title || "ÙˆØµÙ„ ØªÙ†Ø¨ÙŠÙ‡ Ø¯Ø§Ø®Ù„ÙŠ Ø¬Ø¯ÙŠØ¯", "ok");
   }
 }
 
@@ -371,13 +375,13 @@ function passwordStrengthLevel(value = "") {
   if (/[A-Z]/.test(text) && /[a-z]/.test(text)) score += 1;
   if (/\d/.test(text)) score += 1;
   if (/[^A-Za-z0-9]/.test(text)) score += 1;
-  if (score >= 5) return { key: "strong", label: "قوية" };
-  if (score >= 3) return { key: "medium", label: "متوسطة" };
-  return { key: "weak", label: "ضعيفة" };
+  if (score >= 5) return { key: "strong", label: "Ù‚ÙˆÙŠØ©" };
+  if (score >= 3) return { key: "medium", label: "Ù…ØªÙˆØ³Ø·Ø©" };
+  return { key: "weak", label: "Ø¶Ø¹ÙŠÙØ©" };
 }
 
 function passwordStrengthMarkup() {
-  return `<div class="password-strength" data-password-strength><span></span><strong>اكتب كلمة مرور قوية</strong></div>`;
+  return `<div class="password-strength" data-password-strength><span></span><strong>Ø§ÙƒØªØ¨ ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù‚ÙˆÙŠØ©</strong></div>`;
 }
 
 function bindPasswordStrength(form) {
@@ -387,17 +391,17 @@ function bindPasswordStrength(form) {
   const update = () => {
     const level = passwordStrengthLevel(input.value);
     meter.dataset.level = level.key;
-    meter.querySelector('strong').textContent = input.value ? `قوة كلمة المرور: ${level.label}` : 'اكتب كلمة مرور قوية';
+    meter.querySelector('strong').textContent = input.value ? `Ù‚ÙˆØ© ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±: ${level.label}` : 'Ø§ÙƒØªØ¨ ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù‚ÙˆÙŠØ©';
   };
   input.addEventListener('input', update);
   update();
 }
 
-function renderLoadingSkeleton(title = "جاري التحميل", subtitle = "نجهز البيانات الآن...") {
+function renderLoadingSkeleton(title = "Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„", subtitle = "Ù†Ø¬Ù‡Ø² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¢Ù†...") {
   const current = routeKey();
   app.innerHTML = `
     <div class="employee-shell">
-      <header class="employee-topbar"><div class="employee-brand"><img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" /><div><strong>أحلى شباب</strong><span>تطبيق الموظفين</span></div></div></header>
+      <header class="employee-topbar"><div class="employee-brand"><img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" /><div><strong>Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨</strong><span>ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</span></div></div></header>
       <main class="employee-main">
         <section class="employee-page-head"><div><h1>${escapeHtml(title)}</h1><p>${escapeHtml(subtitle)}</p></div></section>
         <section class="employee-grid loading-skeleton" aria-busy="true" aria-live="polite">
@@ -406,7 +410,7 @@ function renderLoadingSkeleton(title = "جاري التحميل", subtitle = "ن
           <article class="employee-card"><div class="skeleton"></div><div class="skeleton short"></div></article>
         </section>
       </main>
-      <nav class="employee-bottom-nav" aria-label="تنقل تطبيق الموظف">
+      <nav class="employee-bottom-nav" aria-label="ØªÙ†Ù‚Ù„ ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù">
         ${employeeRoutes.map(([key, label, icon]) => `<button class="${current === key || (key === 'more' && isMoreRoute(current)) ? 'is-active' : ''}" type="button" disabled><strong>${icon}</strong><span>${escapeHtml(label)}</span></button>`).join("")}
       </nav>
     </div>`;
@@ -421,7 +425,7 @@ function normalizePermissionList(value) {
   if (typeof value === "string") {
     const trimmed = value.trim();
     if (!trimmed) return [];
-    try { return normalizePermissionList(JSON.parse(trimmed)); } catch { return trimmed.split(/[،,\s]+/).map((item) => item.trim()).filter(Boolean); }
+    try { return normalizePermissionList(JSON.parse(trimmed)); } catch { return trimmed.split(/[ØŒ,\s]+/).map((item) => item.trim()).filter(Boolean); }
   }
   if (value && typeof value === "object") {
     if (Array.isArray(value.permissions)) return normalizePermissionList(value.permissions);
@@ -437,9 +441,9 @@ function readForm(form) {
 
 function normalizeEgyptPhone(value = "") {
   let text = String(value || "").trim();
-  const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
-  text = text.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)));
+  const ar = "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
+  text = text.replace(/[Ù -Ù©]/g, (d) => String(ar.indexOf(d))).replace(/[Û°-Û¹]/g, (d) => String(fa.indexOf(d)));
   let digits = text.replace(/\D/g, "");
   if (digits.startsWith("0020")) digits = digits.slice(2);
   if (digits.startsWith("20") && digits.length >= 12) digits = `0${digits.slice(2)}`;
@@ -456,9 +460,9 @@ function fileToAvatarDataUrl(file) {
   return new Promise((resolve, reject) => {
     const image = new Image();
     const reader = new FileReader();
-    reader.onerror = () => reject(new Error("تعذر قراءة الصورة."));
+    reader.onerror = () => reject(new Error("ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„ØµÙˆØ±Ø©."));
     reader.onload = () => { image.src = reader.result; };
-    image.onerror = () => reject(new Error("ملف الصورة غير صالح."));
+    image.onerror = () => reject(new Error("Ù…Ù„Ù Ø§Ù„ØµÙˆØ±Ø© ØºÙŠØ± ØµØ§Ù„Ø­."));
     image.onload = () => {
       const max = 512;
       const scale = Math.min(1, max / Math.max(image.width, image.height));
@@ -500,29 +504,29 @@ function todayIso() {
 
 function statusLabel(value = "") {
   const map = {
-    CHECK_IN: "حضور",
-    CHECK_OUT: "انصراف",
-    PRESENT: "حاضر",
-    LATE: "متأخر",
-    ABSENT: "غائب",
-    PENDING: "قيد المراجعة",
-    APPROVED: "مقبول",
-    REJECTED: "مرفوض",
-    REJECTED_CONFIRMED: "رفض نهائي",
-    MANUAL_APPROVED: "اعتماد يدوي",
-    UNREAD: "جديد",
-    READ: "مقروء",
-    IN_REVIEW: "أمام اللجنة",
-    ON_LEAVE: "إجازة",
-    ON_MISSION: "مأمورية",
-    CHECKED_OUT: "انصرف",
-    LIVE_SHARED: "موقع مباشر مُرسل",
-    ACTION_REQUIRED: "إجراء مطلوب",
-    SELF_SUBMITTED: "مرسل من الموظف",
-    MANAGER_APPROVED: "اعتماد المدير",
-    HR_REVIEWED: "مراجعة HR",
-    SECRETARY_REVIEWED: "مراجعة السكرتير",
-    EXECUTIVE_APPROVED: "اعتماد المدير التنفيذي",
+    CHECK_IN: "Ø­Ø¶ÙˆØ±",
+    CHECK_OUT: "Ø§Ù†ØµØ±Ø§Ù",
+    PRESENT: "Ø­Ø§Ø¶Ø±",
+    LATE: "Ù…ØªØ£Ø®Ø±",
+    ABSENT: "ØºØ§Ø¦Ø¨",
+    PENDING: "Ù‚ÙŠØ¯ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©",
+    APPROVED: "Ù…Ù‚Ø¨ÙˆÙ„",
+    REJECTED: "Ù…Ø±ÙÙˆØ¶",
+    REJECTED_CONFIRMED: "Ø±ÙØ¶ Ù†Ù‡Ø§Ø¦ÙŠ",
+    MANUAL_APPROVED: "Ø§Ø¹ØªÙ…Ø§Ø¯ ÙŠØ¯ÙˆÙŠ",
+    UNREAD: "Ø¬Ø¯ÙŠØ¯",
+    READ: "Ù…Ù‚Ø±ÙˆØ¡",
+    IN_REVIEW: "Ø£Ù…Ø§Ù… Ø§Ù„Ù„Ø¬Ù†Ø©",
+    ON_LEAVE: "Ø¥Ø¬Ø§Ø²Ø©",
+    ON_MISSION: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©",
+    CHECKED_OUT: "Ø§Ù†ØµØ±Ù",
+    LIVE_SHARED: "Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø± Ù…ÙØ±Ø³Ù„",
+    ACTION_REQUIRED: "Ø¥Ø¬Ø±Ø§Ø¡ Ù…Ø·Ù„ÙˆØ¨",
+    SELF_SUBMITTED: "Ù…Ø±Ø³Ù„ Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù",
+    MANAGER_APPROVED: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ±",
+    HR_REVIEWED: "Ù…Ø±Ø§Ø¬Ø¹Ø© HR",
+    SECRETARY_REVIEWED: "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø³ÙƒØ±ØªÙŠØ±",
+    EXECUTIVE_APPROVED: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ",
   };
   return map[value] || value || "-";
 }
@@ -554,10 +558,10 @@ function resolveAvatarUrl(value) {
 
 function avatar(subject = {}, size = "") {
   const url = resolveAvatarUrl(subject?.avatarUrl || subject?.photoUrl || subject?.employee?.photoUrl || subject?.employee?.avatarUrl || bundledEmployeePhoto(subject) || "");
-  const name = subject?.fullName || subject?.name || subject?.email || subject?.employee?.fullName || "م";
+  const name = subject?.fullName || subject?.name || subject?.email || subject?.employee?.fullName || "Ù…";
   return url
     ? `<img class="avatar ${size}" src="${escapeHtml(url)}" alt="" loading="lazy" />`
-    : `<span class="avatar ${size}">${escapeHtml(String(name).trim().charAt(0) || "م")}</span>`;
+    : `<span class="avatar ${size}">${escapeHtml(String(name).trim().charAt(0) || "Ù…")}</span>`;
 }
 
 function permissionsOf(user = state.user) {
@@ -589,8 +593,8 @@ function employeeSubject() {
 }
 
 
-const BRANCH_DISPLAY_NAME = "مجمع أحلى شباب";
-const BRANCH_DISPLAY_AREA = "منيل شيحة - الجيزة";
+const BRANCH_DISPLAY_NAME = "Ù…Ø¬Ù…Ø¹ Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨";
+const BRANCH_DISPLAY_AREA = "Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©";
 const ATTENDANCE_REMINDER_HOUR = 9;
 const ATTENDANCE_REMINDER_MINUTE = 30;
 const FACE_SELFIE_TEMP_DISABLED = true;
@@ -662,16 +666,16 @@ function localGeofenceEvaluation(location = {}) {
 }
 
 function renderRequestList(requests = []) {
-  if (!requests || !requests.length) return `<div class="empty-state">لا توجد طلبات مسجلة.</div>`;
-  return `<div class="employee-list">${requests.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title || item.leaveType?.name || item.leaveType || item.type || "طلب")}</strong><span>${escapeHtml(date(item.createdAt || item.startDate || item.plannedStart || "-"))}</span><small>${escapeHtml(item.reason || item.notes || item.destinationName || "-")}</small></div><div class="list-item-side">${badge(item.finalStatus || item.workflowStatus || item.status)}</div></div>`).join("")}</div>`;
+  if (!requests || !requests.length) return `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª Ù…Ø³Ø¬Ù„Ø©.</div>`;
+  return `<div class="employee-list">${requests.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title || item.leaveType?.name || item.leaveType || item.type || "Ø·Ù„Ø¨")}</strong><span>${escapeHtml(date(item.createdAt || item.startDate || item.plannedStart || "-"))}</span><small>${escapeHtml(item.reason || item.notes || item.destinationName || "-")}</small></div><div class="list-item-side">${badge(item.finalStatus || item.workflowStatus || item.status)}</div></div>`).join("")}</div>`;
 }
 
 function currentEmployeeLabel(subject = employeeSubject()) {
-  return subject?.fullName || state.user?.fullName || state.user?.name || "الموظف";
+  return subject?.fullName || state.user?.fullName || state.user?.name || "Ø§Ù„Ù…ÙˆØ¸Ù";
 }
 
 function currentJobLabel(subject = employeeSubject()) {
-  return subject?.jobTitle || subject?.position || state.user?.role?.name || "موظف";
+  return subject?.jobTitle || subject?.position || state.user?.role?.name || "Ù…ÙˆØ¸Ù";
 }
 
 function employeeHeaderCell(subject = employeeSubject()) {
@@ -683,8 +687,8 @@ function locationLabelFromRecord(record = {}) {
   const attendanceStatus = String(record.status || record.type || record.eventType || "").toLowerCase();
   const branchish = ["inside_branch", "inside_branch_low_accuracy", "inside", "in_range", "active", "approved"].includes(locationStatus)
     || (!locationStatus && ["check_in", "check_out", "present", "late", "checked_out", "manual_approved"].includes(attendanceStatus) && !record.requiresReview);
-  if (branchish) return `${branchName()} — ${branchArea()}`;
-  return record.addressLabel || record.locationLabel || record.placeLabel || record.address || record.destinationName || "لم يتم تحديد عنوان نصي بعد";
+  if (branchish) return `${branchName()} â€” ${branchArea()}`;
+  return record.addressLabel || record.locationLabel || record.placeLabel || record.address || record.destinationName || "Ù„Ù… ÙŠØªÙ… ØªØ­Ø¯ÙŠØ¯ Ø¹Ù†ÙˆØ§Ù† Ù†ØµÙŠ Ø¨Ø¹Ø¯";
 }
 
 function locationStatusBadge(record = {}) {
@@ -694,11 +698,11 @@ function locationStatusBadge(record = {}) {
   const uncertain = status.includes("uncertain") || status.includes("low_accuracy") || status.includes("unavailable") || status.includes("unknown") || record.locationUncertain;
   const outside = status.includes("outside") || status.includes("out_of_range") || status.includes("geofence_miss");
   const acceptedAttendance = ["check_in", "check_out", "present", "late", "checked_out", "manual_approved"].includes(attendanceStatus);
-  if (inside) return `<span class="pill success">داخل المجمع</span>`;
-  if (uncertain) return `<span class="pill warning">الموقع غير مؤكد</span>`;
-  if (outside) return `<span class="pill danger">خارج المجمع</span>`;
-  if (acceptedAttendance && !record.requiresReview) return `<span class="pill success">تم التسجيل</span>`;
-  return `<span class="pill warning">بحاجة للتحقق</span>`;
+  if (inside) return `<span class="pill success">Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø¬Ù…Ø¹</span>`;
+  if (uncertain) return `<span class="pill warning">Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…Ø¤ÙƒØ¯</span>`;
+  if (outside) return `<span class="pill danger">Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹</span>`;
+  if (acceptedAttendance && !record.requiresReview) return `<span class="pill success">ØªÙ… Ø§Ù„ØªØ³Ø¬ÙŠÙ„</span>`;
+  return `<span class="pill warning">Ø¨Ø­Ø§Ø¬Ø© Ù„Ù„ØªØ­Ù‚Ù‚</span>`;
 }
 
 function readableLocationBlock(record = {}, { compact = false } = {}) {
@@ -707,13 +711,13 @@ function readableLocationBlock(record = {}, { compact = false } = {}) {
   const distance = Number(record.distanceFromBranch || record.distanceMeters || 0);
   const hasDistance = Number.isFinite(distance) && distance > 0;
   return `<div class="readable-location ${compact ? "compact" : ""}">
-    <div>${locationStatusBadge(record)}<strong>${escapeHtml(label)}</strong><small>${escapeHtml(label.includes(BRANCH_DISPLAY_NAME) ? BRANCH_DISPLAY_AREA : "الموقع الفعلي المسجل")}</small></div>
-    <div class="location-meta-row">${accuracy ? `<span>الدقة ±${Math.round(accuracy)} م</span>` : ""}${hasDistance ? `<span>يبعد تقريبًا ${Math.round(distance)} م</span>` : ""}</div>
+    <div>${locationStatusBadge(record)}<strong>${escapeHtml(label)}</strong><small>${escapeHtml(label.includes(BRANCH_DISPLAY_NAME) ? BRANCH_DISPLAY_AREA : "Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„ÙØ¹Ù„ÙŠ Ø§Ù„Ù…Ø³Ø¬Ù„")}</small></div>
+    <div class="location-meta-row">${accuracy ? `<span>Ø§Ù„Ø¯Ù‚Ø© Â±${Math.round(accuracy)} Ù…</span>` : ""}${hasDistance ? `<span>ÙŠØ¨Ø¹Ø¯ ØªÙ‚Ø±ÙŠØ¨Ù‹Ø§ ${Math.round(distance)} Ù…</span>` : ""}</div>
   </div>`;
 }
 
 function attendanceNoteField(value = "") {
-  return `<label class="span-2 punch-note-field">ملاحظة مع البصمة<textarea id="punch-notes" name="notes" rows="2" placeholder="اكتب ملاحظة إن وجدت: مأمورية، ظرف طارئ، تأخير مواصلات...">${escapeHtml(value)}</textarea></label>`;
+  return `<label class="span-2 punch-note-field">Ù…Ù„Ø§Ø­Ø¸Ø© Ù…Ø¹ Ø§Ù„Ø¨ØµÙ…Ø©<textarea id="punch-notes" name="notes" rows="2" placeholder="Ø§ÙƒØªØ¨ Ù…Ù„Ø§Ø­Ø¸Ø© Ø¥Ù† ÙˆØ¬Ø¯Øª: Ù…Ø£Ù…ÙˆØ±ÙŠØ©ØŒ Ø¸Ø±Ù Ø·Ø§Ø±Ø¦ØŒ ØªØ£Ø®ÙŠØ± Ù…ÙˆØ§ØµÙ„Ø§Øª...">${escapeHtml(value)}</textarea></label>`;
 }
 
 function isMorningPunchTime() {
@@ -724,26 +728,26 @@ function isMorningPunchTime() {
 function todayReminderDue(events = []) {
   const now = new Date();
   if (now.getHours() < ATTENDANCE_REMINDER_HOUR || (now.getHours() === ATTENDANCE_REMINDER_HOUR && now.getMinutes() < ATTENDANCE_REMINDER_MINUTE)) return false;
-  return !(events || []).some((e) => String(e.type || e.eventType || "").toLowerCase().includes("in") || String(e.type || "").includes("حضور"));
+  return !(events || []).some((e) => String(e.type || e.eventType || "").toLowerCase().includes("in") || String(e.type || "").includes("Ø­Ø¶ÙˆØ±"));
 }
 
 function kpiSlider({ name, label, weight, value = 0, readonly = false }) {
   const pct = Math.max(0, Math.min(100, Number(value || 0)));
   const calculated = (pct * weight / 100).toFixed(1);
-  return `<label class="kpi-slider-field ${readonly ? "is-readonly" : ""}"><span>${escapeHtml(label)}</span><input type="range" name="${escapeHtml(name)}" min="0" max="100" step="1" value="${pct}" ${readonly ? "disabled" : ""} data-weight="${weight}" /><div class="kpi-slider-meta"><b>${pct}%</b><small>الوزن ${weight} — المحتسب ${calculated}/${weight}</small></div><div class="kpi-progress"><i style="width:${pct}%"></i></div></label>`;
+  return `<label class="kpi-slider-field ${readonly ? "is-readonly" : ""}"><span>${escapeHtml(label)}</span><input type="range" name="${escapeHtml(name)}" min="0" max="100" step="1" value="${pct}" ${readonly ? "disabled" : ""} data-weight="${weight}" /><div class="kpi-slider-meta"><b>${pct}%</b><small>Ø§Ù„ÙˆØ²Ù† ${weight} â€” Ø§Ù„Ù…Ø­ØªØ³Ø¨ ${calculated}/${weight}</small></div><div class="kpi-progress"><i style="width:${pct}%"></i></div></label>`;
 }
 
 function getManagerLikeRole() {
   const role = roleKey();
   const perms = permissionsOf();
-  return role.includes("manager") || role.includes("مدير") || perms.has("team:manage") || perms.has("employees:team");
+  return role.includes("manager") || role.includes("Ù…Ø¯ÙŠØ±") || perms.has("team:manage") || perms.has("employees:team");
 }
 
 function isMoreRoute(key = routeKey()) {
   return moreEmployeeRoutes.some(([route]) => route === key);
 }
 
-function shell(content, title = "تطبيق الموظف", subtitle = "") {
+function shell(content, title = "ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù", subtitle = "") {
   const current = routeKey();
   const user = state.user || {};
   const employee = employeeSubject();
@@ -752,29 +756,29 @@ function shell(content, title = "تطبيق الموظف", subtitle = "") {
       <header class="employee-topbar">
         <div class="employee-brand is-larger-logo">
           <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
-          <div><strong>أحلى شباب</strong><span>تطبيق الموظفين</span></div>
+          <div><strong>Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨</strong><span>ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</span></div>
         </div>
-        <div class="employee-user" title="${escapeHtml(user.fullName || user.name || user.email || "مستخدم")}">
+        <div class="employee-user" title="${escapeHtml(user.fullName || user.name || user.email || "Ù…Ø³ØªØ®Ø¯Ù…")}">
           ${avatar(user, "tiny")}
-          <span><strong>${escapeHtml(user.fullName || user.name || employee.fullName || "مستخدم")}</strong><small>${escapeHtml(employee.jobTitle || "تطبيق الموظفين")}</small></span>
+          <span><strong>${escapeHtml(user.fullName || user.name || employee.fullName || "Ù…Ø³ØªØ®Ø¯Ù…")}</strong><small>${escapeHtml(employee.jobTitle || "ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†")}</small></span>
         </div>
       </header>
       <main class="employee-main">
         <section class="employee-page-head">
           <div><h1>${escapeHtml(title)}</h1><p>${escapeHtml(subtitle || routeSubtitles[current] || "")}</p></div>
         </section>
-        ${(user.mustChangePassword || user.temporaryPassword) && current !== "profile" ? `<section class="employee-card full must-change-card"><strong>كلمة المرور مؤقتة</strong><span>من فضلك غيّر كلمة المرور من صفحة حسابي لتأمين حسابك.</span><button class="button primary small" type="button" data-route="profile">تغيير الآن</button></section>` : ""}
+        ${(user.mustChangePassword || user.temporaryPassword) && current !== "profile" ? `<section class="employee-card full must-change-card"><strong>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù…Ø¤Ù‚ØªØ©</strong><span>Ù…Ù† ÙØ¶Ù„Ùƒ ØºÙŠÙ‘Ø± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù…Ù† ØµÙØ­Ø© Ø­Ø³Ø§Ø¨ÙŠ Ù„ØªØ£Ù…ÙŠÙ† Ø­Ø³Ø§Ø¨Ùƒ.</span><button class="button primary small" type="button" data-route="profile">ØªØºÙŠÙŠØ± Ø§Ù„Ø¢Ù†</button></section>` : ""}
         ${content}
       </main>
-      <nav class="employee-bottom-nav" aria-label="تنقل تطبيق الموظف">
+      <nav class="employee-bottom-nav" aria-label="ØªÙ†Ù‚Ù„ ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù">
         ${employeeRoutes.map(([key, label, icon]) => key === "more"
           ? `<button class="${isMoreRoute(current) ? "is-active" : ""}" type="button" data-more-menu aria-expanded="false"><strong>${icon}</strong><span>${escapeHtml(label)}</span></button>`
           : `<button class="${current === key ? "is-active" : ""}" type="button" data-route="${key}"><strong>${icon}</strong><span>${escapeHtml(label)}</span></button>`).join("")}
       </nav>
       <div class="employee-more-backdrop hidden" data-more-backdrop></div>
-      <section class="employee-more-sheet hidden" data-more-sheet aria-label="قائمة المزيد">
+      <section class="employee-more-sheet hidden" data-more-sheet aria-label="Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…Ø²ÙŠØ¯">
         <div class="more-sheet-handle"></div>
-        <div class="more-sheet-head"><strong>المزيد</strong><button type="button" class="icon-button" data-close-more aria-label="إغلاق">×</button></div>
+        <div class="more-sheet-head"><strong>Ø§Ù„Ù…Ø²ÙŠØ¯</strong><button type="button" class="icon-button" data-close-more aria-label="Ø¥ØºÙ„Ø§Ù‚">Ã—</button></div>
         <div class="more-sheet-grid">
           ${moreEmployeeRoutes.map(([key, label, icon]) => `<button class="${current === key ? "is-active" : ""}" type="button" data-route="${key}"><strong>${icon}</strong><span>${escapeHtml(label)}</span></button>`).join("")}
         </div>
@@ -799,9 +803,26 @@ function shell(content, title = "تطبيق الموظف", subtitle = "") {
   app.querySelector("[data-close-more]")?.addEventListener("click", closeMore);
   document.onkeydown = (event) => { if (event.key === "Escape") closeMore(); };
   app.querySelectorAll("[data-route]").forEach((button) => button.addEventListener("click", () => { closeMore(); location.hash = button.dataset.route; }));
+  app.querySelectorAll("[data-enable-notifications]").forEach((button) => button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    button.dataset.hrPushBound = "1";
+    try {
+      const explained = await window.HRExplainAndEnablePush?.();
+      if (explained !== false && Notification?.permission === "granted") await enableWebPushSubscription(endpoints);
+      setMessage("ØªÙ… ØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ Ù„Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø².", "");
+    } catch (error) {
+      setMessage("", friendlyError(error, "ØªØ¹Ø°Ø± ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª."));
+    }
+  }));
+  app.querySelectorAll("[data-enable-location]").forEach((button) => button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    button.dataset.hrLocationBound = "1";
+    try { await window.HRExplainAndEnableLocation?.(); }
+    catch (error) { setMessage("", friendlyError(error, "ØªØ¹Ø°Ø± ØªÙØ¹ÙŠÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹.")); }
+  }));
   app.querySelectorAll("form[data-ajax]").forEach((form) => form.addEventListener("submit", handleFormSubmit));
   app.querySelector("[data-logout]")?.addEventListener("click", async () => {
-    const ok = await confirmAction({ title: "تسجيل الخروج", message: "هل تريد تسجيل الخروج من تطبيق الموظفين؟", confirmLabel: "خروج", danger: true });
+    const ok = await confirmAction({ title: "ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬", message: "Ù‡Ù„ ØªØ±ÙŠØ¯ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø®Ø±ÙˆØ¬ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†ØŸ", confirmLabel: "Ø®Ø±ÙˆØ¬", danger: true });
     if (!ok) return;
     await endpoints.logout();
     localStorage.removeItem("hr-attendance.local-db.v7");
@@ -821,27 +842,27 @@ async function handleFormSubmit(event) {
   try {
     if (action === "leave") {
       if (values.startDate && values.endDate && values.startDate > values.endDate) {
-        setMessage("", "تاريخ نهاية الإجازة يجب أن يكون بعد تاريخ البداية.");
+        setMessage("", "ØªØ§Ø±ÙŠØ® Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø© ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø¨Ø¹Ø¯ ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¨Ø¯Ø§ÙŠØ©.");
         renderLeaves();
         return;
       }
       await endpoints.createLeave({ ...values, workflowStatus: "pending_manager_review", status: "PENDING_MANAGER_REVIEW" });
-      setMessage("تم إرسال طلب الإجازة للمدير المباشر.", "");
+      setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.", "");
       location.hash = "leaves";
     }
     if (action === "mission") {
       await endpoints.createMission({ ...values, workflowStatus: "pending_manager_review", status: "PENDING_MANAGER_REVIEW" });
-      setMessage("تم إرسال طلب المأمورية للمدير المباشر.", "");
+      setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.", "");
       location.hash = "missions";
     }
     if (action === "dispute") {
       await endpoints.createDispute({ ...values, employeeId: state.user?.employeeId || state.user?.employee?.id || "", status: "committee_review", privacyLevel: "committee_only" });
-      setMessage("تم رفع الشكوى إلى لجنة حل المشاكل والخلافات.", "");
+      setMessage("ØªÙ… Ø±ÙØ¹ Ø§Ù„Ø´ÙƒÙˆÙ‰ Ø¥Ù„Ù‰ Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª.", "");
       location.hash = "disputes";
     }
     render();
   } catch (error) {
-    setMessage("", error.message || "حدث خطأ أثناء الحفظ.");
+    setMessage("", error.message || "Ø­Ø¯Ø« Ø®Ø·Ø£ Ø£Ø«Ù†Ø§Ø¡ Ø§Ù„Ø­ÙØ¸.");
     render();
   }
 }
@@ -858,18 +879,18 @@ async function renderLogin() {
       <form class="employee-login-card refined-login-card" id="employee-login-form" novalidate>
         <div class="login-brand-row">
           <img src="../shared/images/ahla-shabab-logo.png" alt="" onerror="this.style.display='none'" />
-          <div><strong>أحلى شباب</strong><span>تطبيق الموظفين</span></div>
+          <div><strong>Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨</strong><span>ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</span></div>
         </div>
-        <h1>دخول الموظفين</h1>
-        <div class="employee-login-intro"><span class="login-highlight">الدخول برقم الهاتف</span><span class="login-separator"></span><span class="login-highlight">كلمة المرور المؤقتة = رقم الهاتف</span></div>
-        <div class="login-features"><span class="login-feature">دخول بالهاتف</span><span class="login-feature">GPS + البصمة</span><span class="login-feature">إشعارات داخلية</span></div>
+        <h1>Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†</h1>
+        <div class="employee-login-intro"><span class="login-highlight">Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ</span><span class="login-separator"></span><span class="login-highlight">ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ© = Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ</span></div>
+        <div class="login-features"><span class="login-feature">Ø¯Ø®ÙˆÙ„ Ø¨Ø§Ù„Ù‡Ø§ØªÙ</span><span class="login-feature">GPS + Ø§Ù„Ø¨ØµÙ…Ø©</span><span class="login-feature">Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø¯Ø§Ø®Ù„ÙŠØ©</span></div>
         ${state.error ? `<div class="message error">${escapeHtml(state.error)}</div>` : ""}
         ${state.message ? `<div class="message">${escapeHtml(state.message)}</div>` : ""}
-        ${state.lastLoginFailed ? `<div class="message warning compact">تعذر تسجيل الدخول. تأكد من الرقم وكلمة المرور ثم أعد المحاولة.</div>` : ""}
-        <label>رقم الهاتف<input name="identifier" value="${escapeHtml(identifierValue)}" autocomplete="username" inputmode="tel" placeholder="01xxxxxxxxx" required /></label>
-        <label>كلمة المرور<input name="password" type="password" value="${escapeHtml(passwordValue)}" autocomplete="current-password" placeholder="أدخل كلمة المرور" /></label>
-        <button class="button primary full" type="submit">دخول التطبيق</button>
-        <button class="button ghost full compact-ghost" type="button" data-forgot-password>نسيت كلمة السر؟</button>
+        ${state.lastLoginFailed ? `<div class="message warning compact">ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„. ØªØ£ÙƒØ¯ Ù…Ù† Ø§Ù„Ø±Ù‚Ù… ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.</div>` : ""}
+        <label>Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ<input name="identifier" value="${escapeHtml(identifierValue)}" autocomplete="username" inputmode="tel" placeholder="01xxxxxxxxx" required /></label>
+        <label>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±<input name="password" type="password" value="${escapeHtml(passwordValue)}" autocomplete="current-password" placeholder="Ø£Ø¯Ø®Ù„ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±" /></label>
+        <button class="button primary full" type="submit">Ø¯Ø®ÙˆÙ„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚</button>
+        <button class="button ghost full compact-ghost" type="button" data-forgot-password>Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ø³Ø±ØŸ</button>
       </form>
     </div>
   `;
@@ -889,12 +910,12 @@ async function renderLogin() {
       state.user = unwrap(await endpoints.login(state.loginIdentifier, state.loginPassword));
       state.loginPassword = "";
       state.lastLoginFailed = false;
-      setMessage("تم تسجيل الدخول بنجاح.", "");
+      setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ù†Ø¬Ø§Ø­.", "");
       startNotificationPolling();
       render();
     } catch (error) {
       state.lastLoginFailed = true;
-      setMessage("", error.message || "تعذر تسجيل الدخول.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„.");
       renderLogin();
     }
   });
@@ -903,17 +924,17 @@ async function renderLogin() {
     state.loginIdentifier = values.identifier || state.loginIdentifier || "";
     state.loginPassword = values.password || state.loginPassword || "";
     if (!state.loginIdentifier) {
-      setMessage("", "اكتب رقم الهاتف أولًا.");
+      setMessage("", "Ø§ÙƒØªØ¨ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ø£ÙˆÙ„Ù‹Ø§.");
       return renderLogin();
     }
     try {
       await endpoints.forgotPassword(state.loginIdentifier);
       state.lastLoginFailed = false;
-      setMessage("تم إرسال طلب إعادة تعيين كلمة المرور.", "");
+      setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.", "");
       renderLogin();
     } catch (error) {
       state.lastLoginFailed = true;
-      setMessage("", error.message || "تعذر إرسال رابط إعادة التعيين.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªØ¹ÙŠÙŠÙ†.");
       renderLogin();
     }
   });
@@ -952,7 +973,7 @@ async function getBrowserLocation(options = {}) {
       const value = best() || fallback || { locationPermission: "timeout", accuracyMeters: null };
       if (value.accuracyMeters && value.accuracyMeters > policy.maxAcceptableAccuracy) {
         value.locationWarning = "GPS_UNRELIABLE";
-        value.locationError = "قراءة الموقع غير دقيقة كفاية للحكم داخل/خارج المجمع. أعد المحاولة في مكان مفتوح أو أرسلها للمراجعة.";
+        value.locationError = "Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ø¯Ù‚ÙŠÙ‚Ø© ÙƒÙØ§ÙŠØ© Ù„Ù„Ø­ÙƒÙ… Ø¯Ø§Ø®Ù„/Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹. Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© ÙÙŠ Ù…ÙƒØ§Ù† Ù…ÙØªÙˆØ­ Ø£Ùˆ Ø£Ø±Ø³Ù„Ù‡Ø§ Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©.";
       }
       resolve(value);
     };
@@ -1006,19 +1027,19 @@ async function getVerifiedBrowserLocation(employeeId = "", options = {}) {
     allowed: Boolean(inside),
     requiresReview: Boolean((uncertain && !inside) || evaluation.requiresReview),
   };
-  if (merged.insideBranch) merged.addressLabel = `${branchName()} — ${branchArea()}`;
-  else if (merged.locationUncertain) merged.addressLabel = "الموقع غير مؤكد — سيتم إرساله للمراجعة بدل الحكم الخاطئ";
-  else merged.addressLabel = merged.addressLabel || "موقع خارج المجمع";
+  if (merged.insideBranch) merged.addressLabel = `${branchName()} â€” ${branchArea()}`;
+  else if (merged.locationUncertain) merged.addressLabel = "Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…Ø¤ÙƒØ¯ â€” Ø³ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„Ù‡ Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø¨Ø¯Ù„ Ø§Ù„Ø­ÙƒÙ… Ø§Ù„Ø®Ø§Ø·Ø¦";
+  else merged.addressLabel = merged.addressLabel || "Ù…ÙˆÙ‚Ø¹ Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹";
   return merged;
 }
 
 
-function friendlyError(error, fallback = "تعذر تنفيذ العملية.") {
+function friendlyError(error, fallback = "ØªØ¹Ø°Ø± ØªÙ†ÙÙŠØ° Ø§Ù„Ø¹Ù…Ù„ÙŠØ©.") {
   const text = String(error?.message || error || fallback);
-  if (text.includes("permission") || text.includes("صلاحية") || text.includes("الموقع")) return "لم نتمكن من تحديد موقعك. فعّل GPS واسمح للتطبيق بالوصول للموقع ثم حاول مرة أخرى.";
-  if (text.includes("network") || text.includes("fetch")) return "الاتصال غير مستقر. تأكد من الإنترنت ثم أعد المحاولة.";
-  if (text.includes("quota") || text.includes("مساحة")) return "مساحة التخزين المحلية امتلأت. استخدم صورة أصغر أو اطلب من الإدارة تفعيل Supabase.";
-  if (text.includes("خارج") || text.includes("outside")) return "أنت خارج نطاق الجمعية. سيتم إرسال البصمة للمراجعة إذا كان ذلك مسموحًا.";
+  if (text.includes("permission") || text.includes("ØµÙ„Ø§Ø­ÙŠØ©") || text.includes("Ø§Ù„Ù…ÙˆÙ‚Ø¹")) return "Ù„Ù… Ù†ØªÙ…ÙƒÙ† Ù…Ù† ØªØ­Ø¯ÙŠØ¯ Ù…ÙˆÙ‚Ø¹Ùƒ. ÙØ¹Ù‘Ù„ GPS ÙˆØ§Ø³Ù…Ø­ Ù„Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¨Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ù…ÙˆÙ‚Ø¹ Ø«Ù… Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.";
+  if (text.includes("network") || text.includes("fetch")) return "Ø§Ù„Ø§ØªØµØ§Ù„ ØºÙŠØ± Ù…Ø³ØªÙ‚Ø±. ØªØ£ÙƒØ¯ Ù…Ù† Ø§Ù„Ø¥Ù†ØªØ±Ù†Øª Ø«Ù… Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.";
+  if (text.includes("quota") || text.includes("Ù…Ø³Ø§Ø­Ø©")) return "Ù…Ø³Ø§Ø­Ø© Ø§Ù„ØªØ®Ø²ÙŠÙ† Ø§Ù„Ù…Ø­Ù„ÙŠØ© Ø§Ù…ØªÙ„Ø£Øª. Ø§Ø³ØªØ®Ø¯Ù… ØµÙˆØ±Ø© Ø£ØµØºØ± Ø£Ùˆ Ø§Ø·Ù„Ø¨ Ù…Ù† Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ØªÙØ¹ÙŠÙ„ Supabase.";
+  if (text.includes("Ø®Ø§Ø±Ø¬") || text.includes("outside")) return "Ø£Ù†Øª Ø®Ø§Ø±Ø¬ Ù†Ø·Ø§Ù‚ Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©. Ø³ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø¨ØµÙ…Ø© Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø¥Ø°Ø§ ÙƒØ§Ù† Ø°Ù„Ùƒ Ù…Ø³Ù…ÙˆØ­Ù‹Ø§.";
   return text || fallback;
 }
 
@@ -1026,34 +1047,38 @@ async function renderRecoveryPassword() {
   shell(`
     <section class="employee-grid">
       <form class="employee-card full" id="recovery-password-form">
-        <h2>تعيين كلمة مرور جديدة</h2>
-        <p>تم فتح رابط استعادة كلمة المرور. اكتب كلمة مرور جديدة لا تقل عن 8 أحرف.</p>
-        <label>كلمة المرور الجديدة<input type="password" name="newPassword" autocomplete="new-password" minlength="8" required /></label>
+        <h2>ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ø¬Ø¯ÙŠØ¯Ø©</h2>
+        <p>ØªÙ… ÙØªØ­ Ø±Ø§Ø¨Ø· Ø§Ø³ØªØ¹Ø§Ø¯Ø© ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±. Ø§ÙƒØªØ¨ ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ø¬Ø¯ÙŠØ¯Ø© Ù„Ø§ ØªÙ‚Ù„ Ø¹Ù† 8 Ø£Ø­Ø±Ù.</p>
+        <label>ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©<input type="password" name="newPassword" autocomplete="new-password" minlength="8" required /></label>
         ${passwordStrengthMarkup()}
-        <label>تأكيد كلمة المرور الجديدة<input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required /></label>
-        <button class="button primary full" type="submit">حفظ كلمة المرور الجديدة</button>
+        <label>ØªØ£ÙƒÙŠØ¯ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©<input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required /></label>
+        <button class="button primary full" type="submit">Ø­ÙØ¸ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©</button>
       </form>
     </section>
-  `, "استعادة كلمة المرور", "تعيين كلمة مرور جديدة بعد فتح رابط الاستعادة.");
+  `, "Ø§Ø³ØªØ¹Ø§Ø¯Ø© ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±", "ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ø¬Ø¯ÙŠØ¯Ø© Ø¨Ø¹Ø¯ ÙØªØ­ Ø±Ø§Ø¨Ø· Ø§Ù„Ø§Ø³ØªØ¹Ø§Ø¯Ø©.");
   bindPasswordStrength(app.querySelector("#recovery-password-form"));
   app.querySelector("#recovery-password-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
-    if (values.newPassword !== values.confirmPassword) { setMessage("", "تأكيد كلمة المرور غير مطابق."); return renderRecoveryPassword(); }
+    if (values.newPassword !== values.confirmPassword) { setMessage("", "ØªØ£ÙƒÙŠØ¯ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± Ù…Ø·Ø§Ø¨Ù‚."); return renderRecoveryPassword(); }
     try {
       await endpoints.changePassword({ ...values, recoveryMode: true });
       state.recoveryMode = false;
-      setMessage("تم حفظ كلمة المرور الجديدة. يمكنك استخدام الحساب الآن.", "");
+      setMessage("ØªÙ… Ø­ÙØ¸ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ø­Ø³Ø§Ø¨ Ø§Ù„Ø¢Ù†.", "");
       location.hash = "profile";
       renderProfile();
     } catch (error) {
-      setMessage("", error.message || "تعذر حفظ كلمة المرور الجديدة.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ø­ÙØ¸ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©.");
       renderRecoveryPassword();
     }
   });
 }
 
 async function renderHome() {
+  if (window.HRV9?.shouldShowOnboarding?.(state.user?.profile || state.user || {})) {
+    location.hash = "profile";
+    return;
+  }
   const [events, leaves, notifications, missions, tasks, liveRequests] = await Promise.all([
     endpoints.myAttendanceEvents().then(unwrap).catch(() => []),
     endpoints.leaves().then(unwrap).catch(() => []),
@@ -1078,48 +1103,48 @@ async function renderHome() {
     <section class="employee-home-flow">
       <article class="employee-hero-card home-welcome">
         ${employeeHeaderCell(employee)}
-        <p>كل ما تحتاجه يوميًا في شاشة واحدة: بصمة، موقع، إجازة، مأمورية، شكوى، وإشعارات.</p>
-        <div class="hero-meta"><span class="hero-chip">${escapeHtml(fullDateText())}</span><span class="hero-chip">الساعة ${escapeHtml(timeNowText())}</span>${todayEvents.length ? `<span class="hero-chip success">تم تسجيل ${todayEvents.length} حركة اليوم</span>` : `<span class="hero-chip warning">لم تسجل حضور اليوم</span>`}</div>
+        <p>ÙƒÙ„ Ù…Ø§ ØªØ­ØªØ§Ø¬Ù‡ ÙŠÙˆÙ…ÙŠÙ‹Ø§ ÙÙŠ Ø´Ø§Ø´Ø© ÙˆØ§Ø­Ø¯Ø©: Ø¨ØµÙ…Ø©ØŒ Ù…ÙˆÙ‚Ø¹ØŒ Ø¥Ø¬Ø§Ø²Ø©ØŒ Ù…Ø£Ù…ÙˆØ±ÙŠØ©ØŒ Ø´ÙƒÙˆÙ‰ØŒ ÙˆØ¥Ø´Ø¹Ø§Ø±Ø§Øª.</p>
+        <div class="hero-meta"><span class="hero-chip">${escapeHtml(fullDateText())}</span><span class="hero-chip">Ø§Ù„Ø³Ø§Ø¹Ø© ${escapeHtml(timeNowText())}</span>${todayEvents.length ? `<span class="hero-chip success">ØªÙ… ØªØ³Ø¬ÙŠÙ„ ${todayEvents.length} Ø­Ø±ÙƒØ© Ø§Ù„ÙŠÙˆÙ…</span>` : `<span class="hero-chip warning">Ù„Ù… ØªØ³Ø¬Ù„ Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…</span>`}</div>
       </article>
 
-      ${reminder ? `<article class="employee-card full attendance-reminder-card"><h2>تذكير بصمة 10:00 صباحًا</h2><p>لم يتم تسجيل بصمة الحضور حتى الآن. يرجى تسجيل البصمة عند الوصول. سيصلك تنبيه الموبايل الساعة 9:30 صباحًا.</p><button class="button primary full" data-route="punch">تسجيل بصمة الآن</button></article>` : ""}
+      ${reminder ? `<article class="employee-card full attendance-reminder-card"><h2>ØªØ°ÙƒÙŠØ± Ø¨ØµÙ…Ø© 10:00 ØµØ¨Ø§Ø­Ù‹Ø§</h2><p>Ù„Ù… ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†. ÙŠØ±Ø¬Ù‰ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø© Ø¹Ù†Ø¯ Ø§Ù„ÙˆØµÙˆÙ„. Ø³ÙŠØµÙ„Ùƒ ØªÙ†Ø¨ÙŠÙ‡ Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ Ø§Ù„Ø³Ø§Ø¹Ø© 9:30 ØµØ¨Ø§Ø­Ù‹Ø§.</p><button class="button primary full" data-route="punch">ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¢Ù†</button></article>` : ""}
 
       <article class="employee-card full punch-primary-card">
-        <div class="panel-kicker">البصمة اليومية</div>
-        <h2>${todayEvents.length ? "متابعة حركة اليوم" : "جاهز لتسجيل الحضور"}</h2>
-        <p>${todayEvents.length ? `آخر حركة مسجلة: ${escapeHtml(date(lastEvent.eventAt || lastEvent.createdAt))}` : "سجّل حضورك عند الوصول، أو أرسل موقعك لو طلبته الإدارة."}</p>
-        <div class="employee-actions-row"><button class="button primary" data-route="punch">فتح البصمة</button><button class="button ghost" data-route="location">إرسال موقعي</button></div>
+        <div class="panel-kicker">Ø§Ù„Ø¨ØµÙ…Ø© Ø§Ù„ÙŠÙˆÙ…ÙŠØ©</div>
+        <h2>${todayEvents.length ? "Ù…ØªØ§Ø¨Ø¹Ø© Ø­Ø±ÙƒØ© Ø§Ù„ÙŠÙˆÙ…" : "Ø¬Ø§Ù‡Ø² Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ±"}</h2>
+        <p>${todayEvents.length ? `Ø¢Ø®Ø± Ø­Ø±ÙƒØ© Ù…Ø³Ø¬Ù„Ø©: ${escapeHtml(date(lastEvent.eventAt || lastEvent.createdAt))}` : "Ø³Ø¬Ù‘Ù„ Ø­Ø¶ÙˆØ±Ùƒ Ø¹Ù†Ø¯ Ø§Ù„ÙˆØµÙˆÙ„ØŒ Ø£Ùˆ Ø£Ø±Ø³Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ù„Ùˆ Ø·Ù„Ø¨ØªÙ‡ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©."}</p>
+        <div class="employee-actions-row"><button class="button primary" data-route="punch">ÙØªØ­ Ø§Ù„Ø¨ØµÙ…Ø©</button><button class="button ghost" data-route="location">Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ</button></div>
       </article>
 
       <article class="employee-card full location-status-card">
-        <h2>حالة الموقع</h2>
-        ${lastEvent?.id ? readableLocationBlock(lastEvent) : `<div class="readable-location"><div><span class="pill warning">لم يتم التحقق بعد</span><strong>${branchName()}</strong><small>${branchArea()}</small></div></div>`}
-        <div class="employee-actions-row"><button class="button ghost small" data-route="punch">عرض الخريطة واختبار الموقع</button></div>
+        <h2>Ø­Ø§Ù„Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹</h2>
+        ${lastEvent?.id ? readableLocationBlock(lastEvent) : `<div class="readable-location"><div><span class="pill warning">Ù„Ù… ÙŠØªÙ… Ø§Ù„ØªØ­Ù‚Ù‚ Ø¨Ø¹Ø¯</span><strong>${branchName()}</strong><small>${branchArea()}</small></div></div>`}
+        <div class="employee-actions-row"><button class="button ghost small" data-route="punch">Ø¹Ø±Ø¶ Ø§Ù„Ø®Ø±ÙŠØ·Ø© ÙˆØ§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹</button></div>
       </article>
 
-      <div class="employee-actions-row v10-permissions-row"><button class="button ghost small" data-enable-notifications type="button">تفعيل الإشعارات</button><button class="button ghost small" data-enable-location type="button">تفعيل الموقع</button></div>
+      <div class="employee-actions-row v10-permissions-row"><button class="button ghost small" data-enable-notifications type="button">ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª</button><button class="button ghost small" data-enable-location type="button">ØªÙØ¹ÙŠÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹</button></div>
       <section class="quick-actions-grid unified-actions">
-        ${compactMetric("بصمات اليوم", todayEvents.length, "👁", "punch")}
-        ${compactMetric("إشعارات", unread, "🔔", "notifications")}
-        ${compactMetric("طلبات موقع", pendingLive, "📍", "location")}
-        ${compactMetric("إجازات معلقة", pendingLeaves, "🏖", "leaves")}
-        ${compactMetric("مأموريات معلقة", pendingMissions, "🚗", "missions")}
-        ${compactMetric("مهامي", tasks.filter((t) => t.status !== "COMPLETED").length, "✅", "tasks")}
-        ${compactMetric("تقييمي KPI", "فتح", "📊", "kpi")}
-        ${compactMetric("شكوى/خلاف", "رفع", "⚖️", "disputes")}
-        ${getManagerLikeRole() ? compactMetric("فريقي", "إدارة", "👥", "team") : ""}
+        ${compactMetric("Ø¨ØµÙ…Ø§Øª Ø§Ù„ÙŠÙˆÙ…", todayEvents.length, "ðŸ‘", "punch")}
+        ${compactMetric("Ø¥Ø´Ø¹Ø§Ø±Ø§Øª", unread, "ðŸ””", "notifications")}
+        ${compactMetric("Ø·Ù„Ø¨Ø§Øª Ù…ÙˆÙ‚Ø¹", pendingLive, "ðŸ“", "location")}
+        ${compactMetric("Ø¥Ø¬Ø§Ø²Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", pendingLeaves, "ðŸ–", "leaves")}
+        ${compactMetric("Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª Ù…Ø¹Ù„Ù‚Ø©", pendingMissions, "ðŸš—", "missions")}
+        ${compactMetric("Ù…Ù‡Ø§Ù…ÙŠ", tasks.filter((t) => t.status !== "COMPLETED").length, "âœ…", "tasks")}
+        ${compactMetric("ØªÙ‚ÙŠÙŠÙ…ÙŠ KPI", "ÙØªØ­", "ðŸ“Š", "kpi")}
+        ${compactMetric("Ø´ÙƒÙˆÙ‰/Ø®Ù„Ø§Ù", "Ø±ÙØ¹", "âš–ï¸", "disputes")}
+        ${getManagerLikeRole() ? compactMetric("ÙØ±ÙŠÙ‚ÙŠ", "Ø¥Ø¯Ø§Ø±Ø©", "ðŸ‘¥", "team") : ""}
       </section>
 
       <article class="employee-card full context-state-card">
-        <h2>حالة اليوم</h2>
-        ${inside ? `<p class="success-text">أنت داخل نطاق مجمع أحلى شباب، ويمكن اعتماد البصمة تلقائيًا إذا اكتملت خطوات التحقق.</p>` : `<p class="warning-text">إذا كنت خارج المجمع، سيتم ذكر المكان الفعلي مع ملاحظتك، وقد تُحوّل البصمة للمراجعة أو المأمورية.</p>`}
-        <div class="employee-actions-row"><button class="button ghost" data-route="missions">طلب مأمورية</button><button class="button ghost" data-route="leaves">طلب إجازة</button></div>
+        <h2>Ø­Ø§Ù„Ø© Ø§Ù„ÙŠÙˆÙ…</h2>
+        ${inside ? `<p class="success-text">Ø£Ù†Øª Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ù…Ø¬Ù…Ø¹ Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨ØŒ ÙˆÙŠÙ…ÙƒÙ† Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¨ØµÙ…Ø© ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ø¥Ø°Ø§ Ø§ÙƒØªÙ…Ù„Øª Ø®Ø·ÙˆØ§Øª Ø§Ù„ØªØ­Ù‚Ù‚.</p>` : `<p class="warning-text">Ø¥Ø°Ø§ ÙƒÙ†Øª Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹ØŒ Ø³ÙŠØªÙ… Ø°ÙƒØ± Ø§Ù„Ù…ÙƒØ§Ù† Ø§Ù„ÙØ¹Ù„ÙŠ Ù…Ø¹ Ù…Ù„Ø§Ø­Ø¸ØªÙƒØŒ ÙˆÙ‚Ø¯ ØªÙØ­ÙˆÙ‘Ù„ Ø§Ù„Ø¨ØµÙ…Ø© Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø£Ùˆ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ©.</p>`}
+        <div class="employee-actions-row"><button class="button ghost" data-route="missions">Ø·Ù„Ø¨ Ù…Ø£Ù…ÙˆØ±ÙŠØ©</button><button class="button ghost" data-route="leaves">Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø©</button></div>
       </article>
 
-      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 3).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(statusLabel(item.type || item.eventType || "حركة"))}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small></div><div class="list-item-side">${locationStatusBadge(item)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة بعد.</div>`}</article>
-      <article class="employee-card full"><h2>آخر طلباتي</h2>${renderRequestList([...leaves.filter((x)=>x.employeeId===employeeId), ...missions.filter((x)=>x.employeeId===employeeId)].slice(0,3))}</article>
+      <article class="employee-card full"><h2>Ø¢Ø®Ø± Ø¨ØµÙ…Ø§ØªÙŠ</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 3).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(statusLabel(item.type || item.eventType || "Ø­Ø±ÙƒØ©"))}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small></div><div class="list-item-side">${locationStatusBadge(item)}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ØµÙ…Ø§Øª Ù…Ø³Ø¬Ù„Ø© Ø¨Ø¹Ø¯.</div>`}</article>
+      <article class="employee-card full"><h2>Ø¢Ø®Ø± Ø·Ù„Ø¨Ø§ØªÙŠ</h2>${renderRequestList([...leaves.filter((x)=>x.employeeId===employeeId), ...missions.filter((x)=>x.employeeId===employeeId)].slice(0,3))}</article>
     </section>
-  `, "الرئيسية", "ملخص سريع ومختصر لحسابك اليوم.");
+  `, "Ø§Ù„Ø±Ø¦ÙŠØ³ÙŠØ©", "Ù…Ù„Ø®Øµ Ø³Ø±ÙŠØ¹ ÙˆÙ…Ø®ØªØµØ± Ù„Ø­Ø³Ø§Ø¨Ùƒ Ø§Ù„ÙŠÙˆÙ….");
 }
 
 async function renderActionCenter() {
@@ -1128,20 +1153,20 @@ async function renderActionCenter() {
   shell(`
     <section class="employee-grid">
       <article class="employee-card full ${actions.length ? 'urgent-card' : ''}">
-        <div class="panel-kicker">مطلوب مني الآن</div>
-        <h2>${actions.length ? `لديك ${actions.length} إجراء مطلوب` : 'لا توجد إجراءات مطلوبة'}</h2>
-        <p>هذه الصفحة تجمع المطلوب منك بدل البحث داخل الصفحات: طلب موقع، سياسة، مهمة، مستند، أو بصمة تحتاج متابعة.</p>
+        <div class="panel-kicker">Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†ÙŠ Ø§Ù„Ø¢Ù†</div>
+        <h2>${actions.length ? `Ù„Ø¯ÙŠÙƒ ${actions.length} Ø¥Ø¬Ø±Ø§Ø¡ Ù…Ø·Ù„ÙˆØ¨` : 'Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª Ù…Ø·Ù„ÙˆØ¨Ø©'}</h2>
+        <p>Ù‡Ø°Ù‡ Ø§Ù„ØµÙØ­Ø© ØªØ¬Ù…Ø¹ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†Ùƒ Ø¨Ø¯Ù„ Ø§Ù„Ø¨Ø­Ø« Ø¯Ø§Ø®Ù„ Ø§Ù„ØµÙØ­Ø§Øª: Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ØŒ Ø³ÙŠØ§Ø³Ø©ØŒ Ù…Ù‡Ù…Ø©ØŒ Ù…Ø³ØªÙ†Ø¯ØŒ Ø£Ùˆ Ø¨ØµÙ…Ø© ØªØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©.</p>
       </article>
       ${actions.length ? actions.map((item) => `
         <article class="employee-card full">
-          <div class="panel-kicker">${escapeHtml(item.type || 'ACTION')} — ${escapeHtml(item.severity || '')}</div>
+          <div class="panel-kicker">${escapeHtml(item.type || 'ACTION')} â€” ${escapeHtml(item.severity || '')}</div>
           <h2>${escapeHtml(item.title)}</h2>
           <p>${escapeHtml(item.body || '')}</p>
-          <button class="button primary" data-route="${escapeHtml(item.route || 'home')}">فتح الإجراء</button>
+          <button class="button primary" data-route="${escapeHtml(item.route || 'home')}">ÙØªØ­ Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡</button>
         </article>
-      `).join('') : `<article class="employee-card full"><div class="empty-state">كل شيء مكتمل حاليًا. تابع الإشعارات والمهام يوميًا.</div></article>`}
+      `).join('') : `<article class="employee-card full"><div class="empty-state">ÙƒÙ„ Ø´ÙŠØ¡ Ù…ÙƒØªÙ…Ù„ Ø­Ø§Ù„ÙŠÙ‹Ø§. ØªØ§Ø¨Ø¹ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª ÙˆØ§Ù„Ù…Ù‡Ø§Ù… ÙŠÙˆÙ…ÙŠÙ‹Ø§.</div></article>`}
     </section>
-  `, "مطلوب مني الآن", "مركز الإجراءات العاجلة للموظف.");
+  `, "Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†ÙŠ Ø§Ù„Ø¢Ù†", "Ù…Ø±ÙƒØ² Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª Ø§Ù„Ø¹Ø§Ø¬Ù„Ø© Ù„Ù„Ù…ÙˆØ¸Ù.");
 }
 
 
@@ -1154,7 +1179,7 @@ async function renderPunch() {
       endpoints.myAttendanceEvents().then(unwrap).catch(() => []),
     ]);
   } catch (error) {
-    shell(`<section class="employee-card"><h2>لا يمكن فتح البصمة</h2><p>${escapeHtml(error.message || "الحساب غير مرتبط بموظف.")}</p></section>`, "البصمة", "يلزم ربط الحساب بموظف.");
+    shell(`<section class="employee-card"><h2>Ù„Ø§ ÙŠÙ…ÙƒÙ† ÙØªØ­ Ø§Ù„Ø¨ØµÙ…Ø©</h2><p>${escapeHtml(error.message || "Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…Ø±ØªØ¨Ø· Ø¨Ù…ÙˆØ¸Ù.")}</p></section>`, "Ø§Ù„Ø¨ØµÙ…Ø©", "ÙŠÙ„Ø²Ù… Ø±Ø¨Ø· Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ù…ÙˆØ¸Ù.");
     return;
   }
   const employee = address.employee || state.user?.employee || employeeSubject();
@@ -1162,61 +1187,64 @@ async function renderPunch() {
   const myEvents = events.filter((event) => !employeeId || event.employeeId === employeeId);
   const todayEvents = myEvents.filter((event) => String(event.eventAt || event.createdAt || "").startsWith(todayIso()));
   const suggestedType = todayEvents.length && isMorningPunchTime() === false ? "out" : (todayEvents.some((e)=>String(e.type||e.eventType||"").toLowerCase().includes("in")) ? "out" : "in");
-  const primaryLabel = suggestedType === "in" ? "بصمة حضور الآن" : "بصمة انصراف الآن";
-  const secondaryLabel = suggestedType === "in" ? "بصمة انصراف" : "بصمة حضور";
+  const primaryLabel = suggestedType === "in" ? "Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ± Ø§Ù„Ø¢Ù†" : "Ø¨ØµÙ…Ø© Ø§Ù†ØµØ±Ø§Ù Ø§Ù„Ø¢Ù†";
+  const secondaryLabel = suggestedType === "in" ? "Ø¨ØµÙ…Ø© Ø§Ù†ØµØ±Ø§Ù" : "Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ±";
   shell(`
     <section class="employee-grid punch-mobile punch-redesigned">
       <article class="employee-card full">
-        <div class="punch-focus">${employeeHeaderCell(employee)}<div class="punch-orb">👁</div></div>
+        <div class="punch-focus">${employeeHeaderCell(employee)}<div class="punch-orb">ðŸ‘</div></div>
         <div class="branch-readable-card">
-          <div class="branch-circle">📍</div>
+          <div class="branch-circle">ðŸ“</div>
           <div><strong>${branchName()}</strong><small>${branchArea()}</small></div>
         </div>
-        <div id="gps-map-preview" class="gps-map-preview"><div class="geo-circle"><span>نطاق المجمع</span><i></i></div><small>اضغط اختبار الموقع لعرض حالتك داخل/خارج المجمع.</small></div>
+        <div id="gps-map-preview" class="gps-map-preview"><div class="geo-circle"><span>Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹</span><i></i></div><small>Ø§Ø¶ØºØ· Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù„Ø¹Ø±Ø¶ Ø­Ø§Ù„ØªÙƒ Ø¯Ø§Ø®Ù„/Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹.</small></div>
         ${attendanceNoteField()}
         <div class="employee-actions-stack punch-actions-clear">
           <button class="button primary full" data-punch-type="${suggestedType}">${primaryLabel}</button>
           <button class="button ghost full" data-punch-type="${suggestedType === "in" ? "out" : "in"}">${secondaryLabel}</button>
-          <button class="button ghost small" data-test-gps type="button">اختبار الموقع / عرض الخريطة</button>
+          <button class="button ghost small" data-test-gps type="button">Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹ / Ø¹Ø±Ø¶ Ø§Ù„Ø®Ø±ÙŠØ·Ø©</button>
         </div>
         <div id="punch-result" class="message compact hidden"></div>
-        <p class="form-hint">تسجيل/تحديث بصمة الجهاز انتقل إلى: حسابي ← أمان الجهاز، حتى لا يختلط بزر البصمة.</p>
+        <p class="form-hint">ØªØ³Ø¬ÙŠÙ„/ØªØ­Ø¯ÙŠØ« Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø§Ù†ØªÙ‚Ù„ Ø¥Ù„Ù‰: Ø­Ø³Ø§Ø¨ÙŠ â† Ø£Ù…Ø§Ù† Ø§Ù„Ø¬Ù‡Ø§Ø²ØŒ Ø­ØªÙ‰ Ù„Ø§ ÙŠØ®ØªÙ„Ø· Ø¨Ø²Ø± Ø§Ù„Ø¨ØµÙ…Ø©.</p>
       </article>
-      <article class="employee-card full"><h2>آخر بصماتي</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 5).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(statusLabel(item.type || item.eventType || "حركة"))}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small>${item.notes ? `<small>ملاحظة: ${escapeHtml(item.notes)}</small>` : ""}</div><div class="list-item-side">${locationStatusBadge(item)}${badge(item.riskLevel || item.status || "")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بصمات مسجلة.</div>`}</article>
+      <article class="employee-card full"><h2>Ø¢Ø®Ø± Ø¨ØµÙ…Ø§ØªÙŠ</h2>${myEvents.length ? `<div class="employee-list">${myEvents.slice(0, 5).map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(statusLabel(item.type || item.eventType || "Ø­Ø±ÙƒØ©"))}</strong><span>${escapeHtml(date(item.eventAt || item.createdAt))}</span><small>${escapeHtml(locationLabelFromRecord(item))}</small>${item.notes ? `<small>Ù…Ù„Ø§Ø­Ø¸Ø©: ${escapeHtml(item.notes)}</small>` : ""}</div><div class="list-item-side">${locationStatusBadge(item)}${badge(item.riskLevel || item.status || "")}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ØµÙ…Ø§Øª Ù…Ø³Ø¬Ù„Ø©.</div>`}</article>
     </section>
-  `, "البصمة", "تسجيل حضور أو انصراف ببصمة الجهاز + GPS.");
+  `, "Ø§Ù„Ø¨ØµÙ…Ø©", "ØªØ³Ø¬ÙŠÙ„ Ø­Ø¶ÙˆØ± Ø£Ùˆ Ø§Ù†ØµØ±Ø§Ù Ø¨Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² + GPS.");
 
   const resultBox = app.querySelector("#punch-result");
   app.querySelector("[data-test-gps]")?.addEventListener("click", async () => {
     try {
       resultBox?.classList.remove("hidden", "danger-box");
-      if (resultBox) resultBox.textContent = "جاري اختبار الموقع بدقة عالية...";
+      if (resultBox) resultBox.textContent = "Ø¬Ø§Ø±ÙŠ Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¨Ø¯Ù‚Ø© Ø¹Ø§Ù„ÙŠØ©...";
       const current = await getVerifiedBrowserLocation(employeeId);
-      const normalized = { ...current, status: current.geofenceStatus || (current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch")), addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || (current.locationUncertain ? "الموقع غير مؤكد" : "موقع خارج المجمع")) };
+      const normalized = { ...current, status: current.geofenceStatus || (current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch")), addressLabel: current.insideBranch ? `${branchName()} â€” ${branchArea()}` : (current.addressLabel || (current.locationUncertain ? "Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…Ø¤ÙƒØ¯" : "Ù…ÙˆÙ‚Ø¹ Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹")) };
       sessionStorage.setItem("hr.employee.lastGpsTest", JSON.stringify({ ...normalized, testedAt: new Date().toISOString() }));
       const preview = app.querySelector("#gps-map-preview");
-      if (preview) preview.innerHTML = `${readableLocationBlock(normalized)}<a class="button ghost small" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}">فتح الخريطة</a>`;
-      if (resultBox) resultBox.textContent = current.insideBranch ? "أنت داخل نطاق مجمع أحلى شباب." : (current.locationUncertain ? "الموقع غير مؤكد؛ لن نحكم أنك خارج المجمع، وسيُرسل للمراجعة مع الدقة والمسافة." : "أنت خارج المجمع، سيتم تسجيل المكان الفعلي والملاحظة عند البصمة.");
+      if (preview) preview.innerHTML = `${readableLocationBlock(normalized)}<a class="button ghost small" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}">ÙØªØ­ Ø§Ù„Ø®Ø±ÙŠØ·Ø©</a>`;
+      if (resultBox) resultBox.textContent = current.insideBranch ? "Ø£Ù†Øª Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ù…Ø¬Ù…Ø¹ Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨." : (current.locationUncertain ? "Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…Ø¤ÙƒØ¯Ø› Ù„Ù† Ù†Ø­ÙƒÙ… Ø£Ù†Ùƒ Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹ØŒ ÙˆØ³ÙŠÙØ±Ø³Ù„ Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ù…Ø¹ Ø§Ù„Ø¯Ù‚Ø© ÙˆØ§Ù„Ù…Ø³Ø§ÙØ©." : "Ø£Ù†Øª Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹ØŒ Ø³ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ù…ÙƒØ§Ù† Ø§Ù„ÙØ¹Ù„ÙŠ ÙˆØ§Ù„Ù…Ù„Ø§Ø­Ø¸Ø© Ø¹Ù†Ø¯ Ø§Ù„Ø¨ØµÙ…Ø©.");
     } catch (error) {
       resultBox?.classList.remove("hidden");
       resultBox?.classList.add("danger-box");
-      if (resultBox) resultBox.textContent = friendlyError(error, "تعذر اختبار الموقع.");
+      if (resultBox) resultBox.textContent = friendlyError(error, "ØªØ¹Ø°Ø± Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹.");
     }
   });
 
   app.querySelectorAll("[data-punch-type]").forEach((button) => button.addEventListener("click", async () => {
     const type = button.dataset.punchType || "in";
-    const actionText = type === "out" ? "انصراف" : "حضور";
+    const actionText = type === "out" ? "Ø§Ù†ØµØ±Ø§Ù" : "Ø­Ø¶ÙˆØ±";
     try {
       resultBox?.classList.remove("hidden", "danger-box");
-      if (resultBox) resultBox.textContent = `جاري تأكيد بصمة الجهاز ثم GPS لتسجيل ${actionText}...`;
+      if (resultBox) resultBox.textContent = `Ø¬Ø§Ø±ÙŠ ØªØ£ÙƒÙŠØ¯ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø«Ù… GPS Ù„ØªØ³Ø¬ÙŠÙ„ ${actionText}...`;
       const preFingerprint = await getDeviceFingerprintHash().catch(() => "");
       const policyAck = await ensureAttendancePolicyAcknowledged({ endpoints, employee, deviceFingerprintHash: preFingerprint });
-      const device = await requestBrowserPasskeyForAction(`تأكيد بصمة ${actionText}`, employee, { autoRegisterOnMissing: true, resultBox });
-      if (resultBox) resultBox.textContent = "جاري قراءة GPS. بصمة الوجه معطلة مؤقتاً...";
+      const device = await requestBrowserPasskeyForAction(`ØªØ£ÙƒÙŠØ¯ Ø¨ØµÙ…Ø© ${actionText}`, employee, { autoRegisterOnMissing: true, resultBox });
+      if (!state.lastLocation) await window.HRExplainAndEnableLocation?.();
+      if (resultBox) resultBox.textContent = "Ø¬Ø§Ø±ÙŠ Ù‚Ø±Ø§Ø¡Ø© GPS ÙˆØ§Ù„ØªÙ‚Ø§Ø· ØµÙˆØ±Ø© ØªØ­Ù‚Ù‚...";
       const current = await getVerifiedBrowserLocation(employeeId, { samples: 4, windowMs: 10000, targetAccuracy: 60 });
-      const selfie = { ok: true, reason: "FACE_SELFIE_TEMP_DISABLED", selfieUrl: "" };
-      if (!current.latitude || !current.longitude || current.locationPermission === "denied") throw new Error("لم يتم استلام إحداثيات GPS. فعّل الموقع من المتصفح واضغط اختبار الموقع أولاً.");
+      state.lastLocation = current;
+      const selfie = await capturePunchSelfie({ endpoints, employeeId, resultBox }).catch((error) => ({ ok: false, reason: "SELFIE_CAPTURE_FAILED", message: error?.message || "ØªØ¹Ø°Ø± Ø§Ù„ØªÙ‚Ø§Ø· ØµÙˆØ±Ø© Ø§Ù„ØªØ­Ù‚Ù‚.", selfieUrl: "" }));
+      if (!selfie.ok) throw new Error(selfie.message || "ÙŠÙ„Ø²Ù… Ø§Ù„ØªÙ‚Ø§Ø· ØµÙˆØ±Ø© ØªØ­Ù‚Ù‚ Ù‚Ø¨Ù„ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©.");
+      if (!current.latitude || !current.longitude || current.locationPermission === "denied") throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ø³ØªÙ„Ø§Ù… Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª GPS. ÙØ¹Ù‘Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­ ÙˆØ§Ø¶ØºØ· Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø£ÙˆÙ„Ø§Ù‹.");
       const qr = isQrDisabled() ? { valid: true, status: "DISABLED", riskFlags: [], requiresReview: false } : await requestBranchQrChallenge({ endpoints, branchId: address.branch?.id || address.branchId || "main" }).catch(() => ({ status: "NOT_PROVIDED" }));
       const trustedDevice = await ensureTrustedDeviceApproval({ endpoints, employee, device: { ...device, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint }, selfieUrl: selfie.selfieUrl || selfie.url || "", location: current }).catch(() => ({ status: "PENDING_REVIEW", requiresReview: true, riskFlags: ["DEVICE_APPROVAL_CHECK_FAILED"] }));
       const status = current.insideBranch ? "inside_branch" : (current.locationUncertain ? "location_uncertain" : "outside_branch");
@@ -1233,16 +1261,16 @@ async function renderPunch() {
       const finalRiskScore = directRecord ? 0 : Number(merged.riskScore ?? risk.riskScore ?? 0);
       const finalRiskLevel = directRecord ? "LOW" : (merged.riskLevel || risk.riskLevel || "MEDIUM");
       const notes = app.querySelector("#punch-notes")?.value || "";
-      const body = { ...current, type: type === "out" ? "CHECK_OUT" : "CHECK_IN", eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${branchName()} — ${branchArea()}` : (current.addressLabel || current.locationLabel || (current.locationUncertain ? "الموقع غير مؤكد — مراجعة" : "خارج نطاق المجمع")), verificationStatus: "verified", biometricMethod: isQrDisabled() ? "passkey+gps" : "passkey+gps+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: finalRiskScore, riskLevel: finalRiskLevel, riskFlags: finalRiskFlags, requiresReview: finalRequiresReview };
+      const body = { ...current, type: type === "out" ? "CHECK_OUT" : "CHECK_IN", eventType: type, employeeId, notes, status, locationStatus: status, addressLabel: current.insideBranch ? `${branchName()} â€” ${branchArea()}` : (current.addressLabel || current.locationLabel || (current.locationUncertain ? "Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…Ø¤ÙƒØ¯ â€” Ù…Ø±Ø§Ø¬Ø¹Ø©" : "Ø®Ø§Ø±Ø¬ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹")), verificationStatus: "verified", biometricMethod: isQrDisabled() ? "passkey+gps" : "passkey+gps+qr", passkeyCredentialId: device.passkeyCredentialId, trustedDeviceId: device.trustedDeviceId, deviceFingerprintHash: device.deviceFingerprintHash || preFingerprint, browserInstallId: policyAck.browserInstallId || "", selfieUrl: selfie.selfieUrl || selfie.url || "", branchQrStatus: qr.status, branchQrChallengeId: qr.challengeId || "", antiSpoofingFlags: locationTrust.flags || [], riskScore: finalRiskScore, riskLevel: finalRiskLevel, riskFlags: finalRiskFlags, requiresReview: finalRequiresReview };
       if (!device.ok || !selfie.ok || current.locationPermission === "denied") await createFormalFallbackRequest?.({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => submitFallbackAttendanceRequest({ endpoints, reason: "IDENTITY_COMPONENT_FAILED", body }).catch(() => null));
       await endpoints.recordAttendance(body);
       rememberDevicePunch(body.deviceFingerprintHash, employeeId);
-      setMessage(status === "inside_branch" ? `تم تسجيل بصمة ${actionText} داخل مجمع أحلى شباب.` : (status === "location_uncertain" ? `تم تسجيل بصمة ${actionText} كموقع غير مؤكد وستظهر للمراجعة بدل الحكم بالخروج.` : `تم تسجيل بصمة ${actionText} خارج المجمع وستظهر للمراجعة مع المكان والملاحظة.`), "");
+      setMessage(status === "inside_branch" ? `ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© ${actionText} Ø¯Ø§Ø®Ù„ Ù…Ø¬Ù…Ø¹ Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨.` : (status === "location_uncertain" ? `ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© ${actionText} ÙƒÙ…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…Ø¤ÙƒØ¯ ÙˆØ³ØªØ¸Ù‡Ø± Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø¨Ø¯Ù„ Ø§Ù„Ø­ÙƒÙ… Ø¨Ø§Ù„Ø®Ø±ÙˆØ¬.` : `ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© ${actionText} Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹ ÙˆØ³ØªØ¸Ù‡Ø± Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ù…Ø¹ Ø§Ù„Ù…ÙƒØ§Ù† ÙˆØ§Ù„Ù…Ù„Ø§Ø­Ø¸Ø©.`), "");
       renderPunch();
     } catch (error) {
       resultBox?.classList.remove("hidden");
       resultBox?.classList.add("danger-box");
-      if (resultBox) resultBox.textContent = friendlyError(error, "تعذر تسجيل البصمة.");
+      if (resultBox) resultBox.textContent = friendlyError(error, "ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©.");
     }
   }));
 }
@@ -1255,63 +1283,63 @@ async function renderLocation() {
     endpoints.passkeyStatus().then(unwrap).catch(() => []),
   ]);
   const employeeId = state.user?.employeeId || state.user?.employee?.id;
-  const employee = state.user?.employee || { id: employeeId, fullName: state.user?.fullName || "الموظف" };
+  const employee = state.user?.employee || { id: employeeId, fullName: state.user?.fullName || "Ø§Ù„Ù…ÙˆØ¸Ù" };
   const trustedPasskeys = filterEmployeePasskeys(passkeys || [], state.user || {}, employee);
   const hasTrustedDevice = trustedPasskeys.length > 0;
   const mine = rows.filter((item) => !item.employeeId || item.employeeId === employeeId).slice(0, 20);
   const pending = liveRequests.filter((item) => item.status === "PENDING").slice(0, 5);
   shell(`
     <section class="employee-grid">
-      ${pending.length ? `<article class="employee-card full urgent-card"><div class="panel-kicker">إجراء مطلوب</div><h2>طلبات موقع مباشر من الإدارة</h2><p>شارك موقعك الحالي فقط عند موافقتك. يتم تسجيل الطلب والرد في سجل النظام.</p><div class="employee-list">${pending.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.requestedByName || "الإدارة")}</strong><span>${escapeHtml(item.reason || "طلب موقع مباشر")}</span><small>ينتهي: ${escapeHtml(date(item.expiresAt))}</small></div><div class="list-item-side"><button class="button primary" data-live-send="${escapeHtml(item.id)}">إرسال موقعي</button><button class="button ghost" data-live-reject="${escapeHtml(item.id)}">رفض</button></div></div>`).join("")}</div></article>` : ""}
+      ${pending.length ? `<article class="employee-card full urgent-card"><div class="panel-kicker">Ø¥Ø¬Ø±Ø§Ø¡ Ù…Ø·Ù„ÙˆØ¨</div><h2>Ø·Ù„Ø¨Ø§Øª Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø± Ù…Ù† Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©</h2><p>Ø´Ø§Ø±Ùƒ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ ÙÙ‚Ø· Ø¹Ù†Ø¯ Ù…ÙˆØ§ÙÙ‚ØªÙƒ. ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø·Ù„Ø¨ ÙˆØ§Ù„Ø±Ø¯ ÙÙŠ Ø³Ø¬Ù„ Ø§Ù„Ù†Ø¸Ø§Ù….</p><div class="employee-list">${pending.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.requestedByName || "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©")}</strong><span>${escapeHtml(item.reason || "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø±")}</span><small>ÙŠÙ†ØªÙ‡ÙŠ: ${escapeHtml(date(item.expiresAt))}</small></div><div class="list-item-side"><button class="button primary" data-live-send="${escapeHtml(item.id)}">Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ</button><button class="button ghost" data-live-reject="${escapeHtml(item.id)}">Ø±ÙØ¶</button></div></div>`).join("")}</div></article>` : ""}
       <article class="employee-card full">
-        <div class="panel-kicker">موقع مباشر</div>
-        <h2>إرسال موقعي الحالي</h2>
-        <p>استخدم هذا الزر لإرسال موقعك الحالي طوعًا أو عند وجود طلب من الإدارة. لا يوجد تتبع مستمر في الخلفية.</p>
-        <button class="button primary full" data-send-location>إرسال موقعي الآن</button>
+        <div class="panel-kicker">Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø±</div>
+        <h2>Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø­Ø§Ù„ÙŠ</h2>
+        <p>Ø§Ø³ØªØ®Ø¯Ù… Ù‡Ø°Ø§ Ø§Ù„Ø²Ø± Ù„Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ Ø·ÙˆØ¹Ù‹Ø§ Ø£Ùˆ Ø¹Ù†Ø¯ ÙˆØ¬ÙˆØ¯ Ø·Ù„Ø¨ Ù…Ù† Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©. Ù„Ø§ ÙŠÙˆØ¬Ø¯ ØªØªØ¨Ø¹ Ù…Ø³ØªÙ…Ø± ÙÙŠ Ø§Ù„Ø®Ù„ÙÙŠØ©.</p>
+        <button class="button primary full" data-send-location>Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø¢Ù†</button>
         <div class="device-inline-status ${hasTrustedDevice ? 'ok' : 'warn'}">
-          <strong>${hasTrustedDevice ? '✅ بصمة الجهاز مسجلة' : '⚠️ بصمة الجهاز غير مسجلة'}</strong>
-          <span>${hasTrustedDevice ? 'سيطلب النظام بصمة الهاتف قبل إرسال الموقع.' : 'يمكن تسجيل بصمة هذا الموبايل من هنا مباشرة بدون الذهاب لحسابي.'}</span>
-          ${hasTrustedDevice ? '' : '<button class="button ghost full" type="button" data-register-location-passkey>تسجيل بصمة هذا الجهاز الآن</button>'}
+          <strong>${hasTrustedDevice ? 'âœ… Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ù…Ø³Ø¬Ù„Ø©' : 'âš ï¸ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² ØºÙŠØ± Ù…Ø³Ø¬Ù„Ø©'}</strong>
+          <span>${hasTrustedDevice ? 'Ø³ÙŠØ·Ù„Ø¨ Ø§Ù„Ù†Ø¸Ø§Ù… Ø¨ØµÙ…Ø© Ø§Ù„Ù‡Ø§ØªÙ Ù‚Ø¨Ù„ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹.' : 'ÙŠÙ…ÙƒÙ† ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ Ù…Ù† Ù‡Ù†Ø§ Ù…Ø¨Ø§Ø´Ø±Ø© Ø¨Ø¯ÙˆÙ† Ø§Ù„Ø°Ù‡Ø§Ø¨ Ù„Ø­Ø³Ø§Ø¨ÙŠ.'}</span>
+          ${hasTrustedDevice ? '' : '<button class="button ghost full" type="button" data-register-location-passkey>ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø² Ø§Ù„Ø¢Ù†</button>'}
         </div>
         <div id="location-result" class="risk-box hidden"></div>
       </article>
-      <article class="employee-card full"><h2>سجل المواقع والطلبات</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${statusLabel(item.status)}</strong><span>${date(item.requestedAt || item.date || item.createdAt)}</span><small>${item.latitude && item.longitude ? `${escapeHtml(item.latitude)} , ${escapeHtml(item.longitude)}` : "لم يتم إرسال إحداثيات بعد"}</small></div><div class="list-item-side">${item.latitude && item.longitude ? `<a target="_blank" rel="noopener" class="button ghost" href="https://www.google.com/maps?q=${escapeHtml(item.latitude)},${escapeHtml(item.longitude)}">خريطة</a>` : badge(item.status || "PENDING")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد طلبات موقع بعد.</div>`}</article>
-      <article class="employee-card full"><h2>طلبات الموقع المباشر</h2>${liveRequests.length ? `<div class="employee-list">${liveRequests.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.requestedByName || "الإدارة")}</strong><span>${escapeHtml(item.reason || "طلب موقع")}</span><small>${escapeHtml(date(item.createdAt))}</small></div><div class="list-item-side">${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد طلبات مباشرة.</div>`}</article>
+      <article class="employee-card full"><h2>Ø³Ø¬Ù„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹ ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${statusLabel(item.status)}</strong><span>${date(item.requestedAt || item.date || item.createdAt)}</span><small>${item.latitude && item.longitude ? `${escapeHtml(item.latitude)} , ${escapeHtml(item.longitude)}` : "Ù„Ù… ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø¨Ø¹Ø¯"}</small></div><div class="list-item-side">${item.latitude && item.longitude ? `<a target="_blank" rel="noopener" class="button ghost" href="https://www.google.com/maps?q=${escapeHtml(item.latitude)},${escapeHtml(item.longitude)}">Ø®Ø±ÙŠØ·Ø©</a>` : badge(item.status || "PENDING")}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª Ù…ÙˆÙ‚Ø¹ Ø¨Ø¹Ø¯.</div>`}</article>
+      <article class="employee-card full"><h2>Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</h2>${liveRequests.length ? `<div class="employee-list">${liveRequests.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.requestedByName || "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©")}</strong><span>${escapeHtml(item.reason || "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹")}</span><small>${escapeHtml(date(item.createdAt))}</small></div><div class="list-item-side">${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª Ù…Ø¨Ø§Ø´Ø±Ø©.</div>`}</article>
     </section>
-  `, "الموقع", "مشاركة الموقع المباشر بموافقة الموظف عند الطلب.");
+  `, "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ù…Ø´Ø§Ø±ÙƒØ© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø¨Ù…ÙˆØ§ÙÙ‚Ø© Ø§Ù„Ù…ÙˆØ¸Ù Ø¹Ù†Ø¯ Ø§Ù„Ø·Ù„Ø¨.");
   const result = app.querySelector("#location-result");
   const sendLive = async (id) => {
     result?.classList.remove("hidden", "danger-box");
-    if (result) result.textContent = "جاري تأكيد بصمة الجهاز قبل إرسال الموقع...";
-    const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {}, { autoRegisterOnMissing: true, resultBox: result });
+    if (result) result.textContent = "Ø¬Ø§Ø±ÙŠ ØªØ£ÙƒÙŠØ¯ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ù‚Ø¨Ù„ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹...";
+    const device = await requestBrowserPasskeyForAction("Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹", state.user?.employee || {}, { autoRegisterOnMissing: true, resultBox: result });
     const passkeyCredentialId = device.passkeyCredentialId;
-    if (result) result.textContent = "جاري قراءة الموقع بدقة عالية...";
+    if (result) result.textContent = "Ø¬Ø§Ø±ÙŠ Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¨Ø¯Ù‚Ø© Ø¹Ø§Ù„ÙŠØ©...";
     const current = await getVerifiedBrowserLocation(employeeId);
-    if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع. فعّل GPS واسمح للتطبيق بالوصول للموقع.");
+    if (current.locationPermission !== "granted") throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹. ÙØ¹Ù‘Ù„ GPS ÙˆØ§Ø³Ù…Ø­ Ù„Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¨Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ù…ÙˆÙ‚Ø¹.");
     await endpoints.respondLiveLocationRequest(id, { status: "APPROVED", ...current, biometricMethod: "passkey", passkeyCredentialId });
   };
   app.querySelectorAll("[data-live-send]").forEach((button) => button.addEventListener("click", async () => {
-    try { await sendLive(button.dataset.liveSend); setMessage("تم إرسال موقعك المباشر للإدارة.", ""); renderLocation(); } catch (error) { setMessage("", friendlyError(error, "تعذر إرسال الموقع.")); renderLocation(); }
+    try { await sendLive(button.dataset.liveSend); setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©.", ""); renderLocation(); } catch (error) { setMessage("", friendlyError(error, "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹.")); renderLocation(); }
   }));
   app.querySelectorAll("[data-live-reject]").forEach((button) => button.addEventListener("click", async () => {
-    const reason = await askText({ title: "رفض إرسال الموقع", message: "اكتب سبب رفض إرسال الموقع حتى يظهر للإدارة.", defaultValue: "غير متاح الآن", confirmLabel: "إرسال الرفض" });
+    const reason = await askText({ title: "Ø±ÙØ¶ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹", message: "Ø§ÙƒØªØ¨ Ø³Ø¨Ø¨ Ø±ÙØ¶ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø­ØªÙ‰ ÙŠØ¸Ù‡Ø± Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©.", defaultValue: "ØºÙŠØ± Ù…ØªØ§Ø­ Ø§Ù„Ø¢Ù†", confirmLabel: "Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø±ÙØ¶" });
     if (reason === null) return;
-    try { await endpoints.respondLiveLocationRequest(button.dataset.liveReject, { status: "REJECTED", reason }); setMessage("تم إرسال سبب الرفض للإدارة.", ""); renderLocation(); } catch (error) { setMessage("", error.message || "تعذر حفظ الرد."); renderLocation(); }
+    try { await endpoints.respondLiveLocationRequest(button.dataset.liveReject, { status: "REJECTED", reason }); setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø³Ø¨Ø¨ Ø§Ù„Ø±ÙØ¶ Ù„Ù„Ø¥Ø¯Ø§Ø±Ø©.", ""); renderLocation(); } catch (error) { setMessage("", error.message || "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø±Ø¯."); renderLocation(); }
   }));
   app.querySelector("[data-register-location-passkey]")?.addEventListener("click", async (event) => {
     const button = event.currentTarget;
     try {
       button.disabled = true;
       result?.classList.remove("hidden", "danger-box");
-      if (result) result.textContent = "افتح بصمة الهاتف أو قفل الشاشة لتسجيل بصمة هذا الجهاز...";
+      if (result) result.textContent = "Ø§ÙØªØ­ Ø¨ØµÙ…Ø© Ø§Ù„Ù‡Ø§ØªÙ Ø£Ùˆ Ù‚ÙÙ„ Ø§Ù„Ø´Ø§Ø´Ø© Ù„ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø²...";
       await registerBrowserPasskey();
-      if (result) result.textContent = "تم تسجيل بصمة الجهاز بنجاح. يمكنك الآن إرسال موقعك أو تسجيل البصمة.";
-      setMessage("تم تسجيل بصمة الجهاز بنجاح.", "");
+      if (result) result.textContent = "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø¨Ù†Ø¬Ø§Ø­. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø¢Ù† Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø£Ùˆ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©.";
+      setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø¨Ù†Ø¬Ø§Ø­.", "");
       renderLocation();
     } catch (error) {
       result?.classList.remove("hidden");
       result?.classList.add("danger-box");
-      if (result) result.textContent = friendlyError(error, "تعذر تسجيل بصمة الجهاز.");
+      if (result) result.textContent = friendlyError(error, "ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø².");
     } finally {
       button.disabled = false;
     }
@@ -1319,19 +1347,19 @@ async function renderLocation() {
   app.querySelector("[data-send-location]")?.addEventListener("click", async () => {
     try {
       result?.classList.remove("hidden", "danger-box");
-      if (result) result.textContent = "جاري تأكيد بصمة الجهاز قبل إرسال الموقع...";
-      const device = await requestBrowserPasskeyForAction("إرسال الموقع", state.user?.employee || {}, { autoRegisterOnMissing: true, resultBox: result });
+      if (result) result.textContent = "Ø¬Ø§Ø±ÙŠ ØªØ£ÙƒÙŠØ¯ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ù‚Ø¨Ù„ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹...";
+      const device = await requestBrowserPasskeyForAction("Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹", state.user?.employee || {}, { autoRegisterOnMissing: true, resultBox: result });
       const passkeyCredentialId = device.passkeyCredentialId;
-      if (result) result.textContent = "جاري قراءة الموقع...";
+      if (result) result.textContent = "Ø¬Ø§Ø±ÙŠ Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹...";
       const current = await getVerifiedBrowserLocation(employeeId);
-      if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع.");
+      if (current.locationPermission !== "granted") throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹.");
       const pendingLocationRequest = mine.find((item) => item.status === "PENDING" && item.id && String(item.id).startsWith("locreq"));
       if (pendingLocationRequest) await endpoints.updateLocationRequest(pendingLocationRequest.id, { status: "APPROVED", ...current, biometricMethod: "passkey", passkeyCredentialId });
       else await endpoints.recordLocation({ employeeId, source: "employee_app", status: "ACTIVE", ...current, biometricMethod: "passkey", passkeyCredentialId });
-      setMessage("تم إرسال موقعك الحالي بنجاح.", "");
+      setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ Ø¨Ù†Ø¬Ø§Ø­.", "");
       renderLocation();
     } catch (error) {
-      if (result) { result.classList.remove("hidden"); result.classList.add("danger-box"); result.textContent = friendlyError(error, "تعذر إرسال الموقع."); }
+      if (result) { result.classList.remove("hidden"); result.classList.add("danger-box"); result.textContent = friendlyError(error, "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹."); }
     }
   });
 }
@@ -1344,21 +1372,21 @@ async function renderLeaves() {
   shell(`
     <section class="employee-grid">
       <form class="employee-card full" data-ajax="leave">
-        <div class="panel-kicker">مسار اعتماد: المدير المباشر ثم HR</div>
-        <h2>طلب إجازة</h2>
-        <p>يتم إرسال الطلب أولًا إلى المدير المباشر، وبعد موافقته ينتقل إلى HR للاعتماد النهائي.</p>
+        <div class="panel-kicker">Ù…Ø³Ø§Ø± Ø§Ø¹ØªÙ…Ø§Ø¯: Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø«Ù… HR</div>
+        <h2>Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø©</h2>
+        <p>ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø·Ù„Ø¨ Ø£ÙˆÙ„Ù‹Ø§ Ø¥Ù„Ù‰ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±ØŒ ÙˆØ¨Ø¹Ø¯ Ù…ÙˆØ§ÙÙ‚ØªÙ‡ ÙŠÙ†ØªÙ‚Ù„ Ø¥Ù„Ù‰ HR Ù„Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ.</p>
         <div class="employee-form-grid">
-          <label>نوع الإجازة<select name="leaveType"><option>اعتيادية</option><option>مرضية</option><option>طارئة</option></select></label>
-          <label>من تاريخ<input type="date" name="startDate" required /></label>
-          <label>إلى تاريخ<input type="date" name="endDate" required /></label>
-          <label class="span-2">السبب<textarea name="reason" rows="3" required></textarea></label>
+          <label>Ù†ÙˆØ¹ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©<select name="leaveType"><option>Ø§Ø¹ØªÙŠØ§Ø¯ÙŠØ©</option><option>Ù…Ø±Ø¶ÙŠØ©</option><option>Ø·Ø§Ø±Ø¦Ø©</option></select></label>
+          <label>Ù…Ù† ØªØ§Ø±ÙŠØ®<input type="date" name="startDate" required /></label>
+          <label>Ø¥Ù„Ù‰ ØªØ§Ø±ÙŠØ®<input type="date" name="endDate" required /></label>
+          <label class="span-2">Ø§Ù„Ø³Ø¨Ø¨<textarea name="reason" rows="3" required></textarea></label>
         </div>
         <input type="hidden" name="workflowStatus" value="pending_manager_review" />
-        <button class="button primary full" type="submit">إرسال للمدير المباشر</button>
+        <button class="button primary full" type="submit">Ø¥Ø±Ø³Ø§Ù„ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</button>
       </form>
-      <article class="employee-card full"><h2>طلباتي</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.leaveType?.name || item.leaveType || "إجازة")}</strong><span>${escapeHtml(item.startDate || "-")} إلى ${escapeHtml(item.endDate || "-")}</span><small>${escapeHtml(item.managerDecision ? `قرار المدير: ${item.managerDecision}` : "بانتظار مسار الاعتماد")}</small></div><div class="list-item-side">${badge(item.finalStatus || item.workflowStatus || item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد طلبات إجازة.</div>`}</article>
+      <article class="employee-card full"><h2>Ø·Ù„Ø¨Ø§ØªÙŠ</h2>${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.leaveType?.name || item.leaveType || "Ø¥Ø¬Ø§Ø²Ø©")}</strong><span>${escapeHtml(item.startDate || "-")} Ø¥Ù„Ù‰ ${escapeHtml(item.endDate || "-")}</span><small>${escapeHtml(item.managerDecision ? `Ù‚Ø±Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ±: ${item.managerDecision}` : "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ù…Ø³Ø§Ø± Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯")}</small></div><div class="list-item-side">${badge(item.finalStatus || item.workflowStatus || item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø·Ù„Ø¨Ø§Øª Ø¥Ø¬Ø§Ø²Ø©.</div>`}</article>
     </section>
-  `, "الإجازات", "تقديم طلب إجازة ومتابعة الاعتماد.");
+  `, "Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª", "ØªÙ‚Ø¯ÙŠÙ… Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø© ÙˆÙ…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯.");
 }
 
 async function renderMissions() {
@@ -1368,20 +1396,20 @@ async function renderMissions() {
   shell(`
     <section class="employee-grid">
       <form class="employee-card full" data-ajax="mission">
-        <div class="panel-kicker">مسار اعتماد: المدير المباشر ثم HR</div>
-        <h2>طلب مأمورية</h2>
-        <p>اكتب تفاصيل المأمورية والوجهة وموعد البداية والنهاية. ينتقل الطلب للمدير المباشر ثم HR.</p>
-        <label>عنوان المأمورية<input name="title" required placeholder="مثال: زيارة حالة / توصيل مستندات" /></label>
-        <label>الوجهة<input name="destinationName" required placeholder="اسم المكان أو العنوان" /></label>
-        <label>بداية المأمورية<input name="plannedStart" type="datetime-local" required /></label>
-        <label>نهاية المأمورية<input name="plannedEnd" type="datetime-local" required /></label>
-        <label>ملاحظات إضافية<textarea name="notes" rows="2" placeholder="اكتب تفاصيل مختصرة إن وجدت"></textarea></label>
+        <div class="panel-kicker">Ù…Ø³Ø§Ø± Ø§Ø¹ØªÙ…Ø§Ø¯: Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø«Ù… HR</div>
+        <h2>Ø·Ù„Ø¨ Ù…Ø£Ù…ÙˆØ±ÙŠØ©</h2>
+        <p>Ø§ÙƒØªØ¨ ØªÙØ§ØµÙŠÙ„ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ© ÙˆØ§Ù„ÙˆØ¬Ù‡Ø© ÙˆÙ…ÙˆØ¹Ø¯ Ø§Ù„Ø¨Ø¯Ø§ÙŠØ© ÙˆØ§Ù„Ù†Ù‡Ø§ÙŠØ©. ÙŠÙ†ØªÙ‚Ù„ Ø§Ù„Ø·Ù„Ø¨ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø«Ù… HR.</p>
+        <label>Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ©<input name="title" required placeholder="Ù…Ø«Ø§Ù„: Ø²ÙŠØ§Ø±Ø© Ø­Ø§Ù„Ø© / ØªÙˆØµÙŠÙ„ Ù…Ø³ØªÙ†Ø¯Ø§Øª" /></label>
+        <label>Ø§Ù„ÙˆØ¬Ù‡Ø©<input name="destinationName" required placeholder="Ø§Ø³Ù… Ø§Ù„Ù…ÙƒØ§Ù† Ø£Ùˆ Ø§Ù„Ø¹Ù†ÙˆØ§Ù†" /></label>
+        <label>Ø¨Ø¯Ø§ÙŠØ© Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ©<input name="plannedStart" type="datetime-local" required /></label>
+        <label>Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ©<input name="plannedEnd" type="datetime-local" required /></label>
+        <label>Ù…Ù„Ø§Ø­Ø¸Ø§Øª Ø¥Ø¶Ø§ÙÙŠØ©<textarea name="notes" rows="2" placeholder="Ø§ÙƒØªØ¨ ØªÙØ§ØµÙŠÙ„ Ù…Ø®ØªØµØ±Ø© Ø¥Ù† ÙˆØ¬Ø¯Øª"></textarea></label>
         <input type="hidden" name="workflowStatus" value="pending_manager_review" />
-        <div class="employee-actions-stack"><button class="button primary">إرسال للمدير المباشر</button></div>
+        <div class="employee-actions-stack"><button class="button primary">Ø¥Ø±Ø³Ø§Ù„ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</button></div>
       </form>
-      <article class="employee-card full"><h2>مأمورياتي</h2>${renderRequestList(mine)}</article>
+      <article class="employee-card full"><h2>Ù…Ø£Ù…ÙˆØ±ÙŠØ§ØªÙŠ</h2>${renderRequestList(mine)}</article>
     </section>
-  `, "المأموريات", "طلب ومتابعة المأموريات المعتمدة.");
+  `, "Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª", "Ø·Ù„Ø¨ ÙˆÙ…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©.");
 }
 
 async function renderDisputes() {
@@ -1395,43 +1423,43 @@ async function renderDisputes() {
   shell(`
     <section class="employee-grid disputes-polished-page">
       <article class="employee-card full disputes-hero-card">
-        <div class="panel-kicker">لجنة حل المشاكل والخلافات</div>
-        <h2>تقديم شكوى أو طلب فض خلاف</h2>
-        <p>يتم رفع الطلب للجنة المختصة بسرية، ثم المتابعة عبر السكرتير التنفيذي والتصعيد للمدير التنفيذي عند الحاجة.</p>
+        <div class="panel-kicker">Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª</div>
+        <h2>ØªÙ‚Ø¯ÙŠÙ… Ø´ÙƒÙˆÙ‰ Ø£Ùˆ Ø·Ù„Ø¨ ÙØ¶ Ø®Ù„Ø§Ù</h2>
+        <p>ÙŠØªÙ… Ø±ÙØ¹ Ø§Ù„Ø·Ù„Ø¨ Ù„Ù„Ø¬Ù†Ø© Ø§Ù„Ù…Ø®ØªØµØ© Ø¨Ø³Ø±ÙŠØ©ØŒ Ø«Ù… Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø¹Ø¨Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ù†Ø¯ Ø§Ù„Ø­Ø§Ø¬Ø©.</p>
         <div class="workflow-steps compact-workflow">
-          ${["الموظف", "اللجنة", "السكرتير التنفيذي", "المدير التنفيذي"].map((step, index) => `<span><strong>${index + 1}</strong>${escapeHtml(step)}</span>`).join("")}
+          ${["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù„Ø¬Ù†Ø©", "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ"].map((step, index) => `<span><strong>${index + 1}</strong>${escapeHtml(step)}</span>`).join("")}
         </div>
       </article>
       <form class="employee-card full dispute-form-card" data-ajax="dispute">
         <div class="employee-form-grid">
           <div class="span-2 segmented-field">
-            <span>نوع الطلب</span>
-            <label><input type="radio" name="category" value="شكوى" checked /> شكوى</label>
-            <label><input type="radio" name="category" value="فض خلاف" /> فض خلاف</label>
-            <label><input type="radio" name="category" value="ملاحظة سلوكية" /> ملاحظة سلوكية</label>
+            <span>Ù†ÙˆØ¹ Ø§Ù„Ø·Ù„Ø¨</span>
+            <label><input type="radio" name="category" value="Ø´ÙƒÙˆÙ‰" checked /> Ø´ÙƒÙˆÙ‰</label>
+            <label><input type="radio" name="category" value="ÙØ¶ Ø®Ù„Ø§Ù" /> ÙØ¶ Ø®Ù„Ø§Ù</label>
+            <label><input type="radio" name="category" value="Ù…Ù„Ø§Ø­Ø¸Ø© Ø³Ù„ÙˆÙƒÙŠØ©" /> Ù…Ù„Ø§Ø­Ø¸Ø© Ø³Ù„ÙˆÙƒÙŠØ©</label>
           </div>
           <div class="span-2 segmented-field danger-levels">
-            <span>الأولوية</span>
-            <label><input type="radio" name="priority" value="LOW" /> عادية</label>
-            <label><input type="radio" name="priority" value="MEDIUM" checked /> متوسطة</label>
-            <label><input type="radio" name="priority" value="HIGH" /> عاجلة</label>
+            <span>Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©</span>
+            <label><input type="radio" name="priority" value="LOW" /> Ø¹Ø§Ø¯ÙŠØ©</label>
+            <label><input type="radio" name="priority" value="MEDIUM" checked /> Ù…ØªÙˆØ³Ø·Ø©</label>
+            <label><input type="radio" name="priority" value="HIGH" /> Ø¹Ø§Ø¬Ù„Ø©</label>
           </div>
-          <label class="span-2 checkbox-line polished-check"><input type="checkbox" name="hasRelatedEmployee" value="yes" data-toggle-related-employee /> الطلب متعلق بموظف معين</label>
-          <label class="span-2 related-employee-field hidden">اختيار الموظف<select name="relatedEmployeeId"><option value="">اختر الموظف</option>${employees.map((e)=>`<option value="${escapeHtml(e.id)}">${escapeHtml(e.fullName || e.name || e.email || e.id)}</option>`).join("")}</select></label>
-          <label class="span-2">عنوان مختصر<input name="title" required placeholder="مثال: خلاف في تسليم مهمة" /></label>
+          <label class="span-2 checkbox-line polished-check"><input type="checkbox" name="hasRelatedEmployee" value="yes" data-toggle-related-employee /> Ø§Ù„Ø·Ù„Ø¨ Ù…ØªØ¹Ù„Ù‚ Ø¨Ù…ÙˆØ¸Ù Ù…Ø¹ÙŠÙ†</label>
+          <label class="span-2 related-employee-field hidden">Ø§Ø®ØªÙŠØ§Ø± Ø§Ù„Ù…ÙˆØ¸Ù<select name="relatedEmployeeId"><option value="">Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù</option>${employees.map((e)=>`<option value="${escapeHtml(e.id)}">${escapeHtml(e.fullName || e.name || e.email || e.id)}</option>`).join("")}</select></label>
+          <label class="span-2">Ø¹Ù†ÙˆØ§Ù† Ù…Ø®ØªØµØ±<input name="title" required placeholder="Ù…Ø«Ø§Ù„: Ø®Ù„Ø§Ù ÙÙŠ ØªØ³Ù„ÙŠÙ… Ù…Ù‡Ù…Ø©" /></label>
           <div class="span-2 repeat-grid">
-            <label class="checkbox-line polished-check"><input type="checkbox" name="repeatedBefore" value="yes" /> تكررت سابقًا</label>
-            <label class="checkbox-line polished-check"><input type="checkbox" name="repeatedWithSamePerson" value="yes" /> تكررت مع نفس الشخص</label>
+            <label class="checkbox-line polished-check"><input type="checkbox" name="repeatedBefore" value="yes" /> ØªÙƒØ±Ø±Øª Ø³Ø§Ø¨Ù‚Ù‹Ø§</label>
+            <label class="checkbox-line polished-check"><input type="checkbox" name="repeatedWithSamePerson" value="yes" /> ØªÙƒØ±Ø±Øª Ù…Ø¹ Ù†ÙØ³ Ø§Ù„Ø´Ø®Øµ</label>
           </div>
-          <label class="span-2">التفاصيل كاملة<textarea name="description" rows="7" required placeholder="اكتب ماذا حدث، متى، أين، ومن الأطراف إن وجدوا. كلما كانت التفاصيل أوضح كان القرار أسرع."></textarea></label>
-          <label class="span-2">ملاحظات أو شهود<input name="notes" placeholder="اختياري" /></label>
-          <label class="span-2">مرفقات داعمة<input name="attachmentNote" placeholder="اذكر أسماء الملفات أو سلمها للجنة عند الطلب" /></label>
+          <label class="span-2">Ø§Ù„ØªÙØ§ØµÙŠÙ„ ÙƒØ§Ù…Ù„Ø©<textarea name="description" rows="7" required placeholder="Ø§ÙƒØªØ¨ Ù…Ø§Ø°Ø§ Ø­Ø¯Ø«ØŒ Ù…ØªÙ‰ØŒ Ø£ÙŠÙ†ØŒ ÙˆÙ…Ù† Ø§Ù„Ø£Ø·Ø±Ø§Ù Ø¥Ù† ÙˆØ¬Ø¯ÙˆØ§. ÙƒÙ„Ù…Ø§ ÙƒØ§Ù†Øª Ø§Ù„ØªÙØ§ØµÙŠÙ„ Ø£ÙˆØ¶Ø­ ÙƒØ§Ù† Ø§Ù„Ù‚Ø±Ø§Ø± Ø£Ø³Ø±Ø¹."></textarea></label>
+          <label class="span-2">Ù…Ù„Ø§Ø­Ø¸Ø§Øª Ø£Ùˆ Ø´Ù‡ÙˆØ¯<input name="notes" placeholder="Ø§Ø®ØªÙŠØ§Ø±ÙŠ" /></label>
+          <label class="span-2">Ù…Ø±ÙÙ‚Ø§Øª Ø¯Ø§Ø¹Ù…Ø©<input name="attachmentNote" placeholder="Ø§Ø°ÙƒØ± Ø£Ø³Ù…Ø§Ø¡ Ø§Ù„Ù…Ù„ÙØ§Øª Ø£Ùˆ Ø³Ù„Ù…Ù‡Ø§ Ù„Ù„Ø¬Ù†Ø© Ø¹Ù†Ø¯ Ø§Ù„Ø·Ù„Ø¨" /></label>
         </div>
-        <button class="button primary full" type="submit">رفع الطلب للجنة</button>
+        <button class="button primary full" type="submit">Ø±ÙØ¹ Ø§Ù„Ø·Ù„Ø¨ Ù„Ù„Ø¬Ù†Ø©</button>
       </form>
-      <article class="employee-card full"><h2>طلباتي السابقة</h2>${mine.length ? `<div class="employee-list polished-history-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${date(item.createdAt)}</span><small>${escapeHtml(item.publicUpdate || item.committeeDecision || "قيد مراجعة اللجنة")}</small></div><div class="list-item-side">${badge(item.priority || item.severity || "MEDIUM")} ${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد شكاوى مسجلة.</div>`}</article>
+      <article class="employee-card full"><h2>Ø·Ù„Ø¨Ø§ØªÙŠ Ø§Ù„Ø³Ø§Ø¨Ù‚Ø©</h2>${mine.length ? `<div class="employee-list polished-history-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${date(item.createdAt)}</span><small>${escapeHtml(item.publicUpdate || item.committeeDecision || "Ù‚ÙŠØ¯ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ù„Ø¬Ù†Ø©")}</small></div><div class="list-item-side">${badge(item.priority || item.severity || "MEDIUM")} ${badge(item.status)}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø´ÙƒØ§ÙˆÙ‰ Ù…Ø³Ø¬Ù„Ø©.</div>`}</article>
     </section>
-  `, "الشكاوى", "طلب شكوى أو فض خلاف بسرية ووضوح.");
+  `, "Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰", "Ø·Ù„Ø¨ Ø´ÙƒÙˆÙ‰ Ø£Ùˆ ÙØ¶ Ø®Ù„Ø§Ù Ø¨Ø³Ø±ÙŠØ© ÙˆÙˆØ¶ÙˆØ­.");
   const toggle = app.querySelector("[data-toggle-related-employee]");
   const field = app.querySelector(".related-employee-field");
   toggle?.addEventListener("change", () => field?.classList.toggle("hidden", !toggle.checked));
@@ -1444,7 +1472,7 @@ async function renderKpi() {
   const mine = (payload.evaluations || []).find((item) => item.employeeId === employeeId) || {};
   const cycle = payload.cycle || {};
   const windowInfo = payload.windowInfo || cycle.window || {};
-  const monthName = cycle.name || `تقييم شهر ${new Date().toLocaleDateString("ar-EG", { month: "long", year: "numeric" })}`;
+  const monthName = cycle.name || `ØªÙ‚ÙŠÙŠÙ… Ø´Ù‡Ø± ${new Date().toLocaleDateString("ar-EG", { month: "long", year: "numeric" })}`;
   const total = [
     [mine.targetPercent ?? mine.targetScore, 40],
     [mine.efficiencyPercent ?? mine.efficiencyScore, 20],
@@ -1457,49 +1485,49 @@ async function renderKpi() {
   shell(`
     <section class="employee-grid kpi-advanced">
       <article class="employee-card full accent-card">
-        <div class="panel-kicker">KPI شهري — ${escapeHtml(monthName)}</div>
-        <h2>نموذج التقييم الذاتي</h2>
-        <p>السكرتير التنفيذي يفتح الدورة. الموظف يقيّم نفسه من يوم 20 إلى 22، ثم HR يضيف بنوده، ثم المدير المباشر يعتمد خلال 3 أيام، ثم يرفع للسكرتير التنفيذي.</p>
-        <div class="employee-actions-row"><span class="login-feature">الحالة: ${badge(mine.status || "closed")}</span><span class="login-feature">الإجمالي التقديري: ${escapeHtml(total)}%</span><span class="login-feature">النموذج: ${escapeHtml(windowInfo.isOpen === false ? "مغلق" : "مفتوح")}</span></div>
+        <div class="panel-kicker">KPI Ø´Ù‡Ø±ÙŠ â€” ${escapeHtml(monthName)}</div>
+        <h2>Ù†Ù…ÙˆØ°Ø¬ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø°Ø§ØªÙŠ</h2>
+        <p>Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙŠÙØªØ­ Ø§Ù„Ø¯ÙˆØ±Ø©. Ø§Ù„Ù…ÙˆØ¸Ù ÙŠÙ‚ÙŠÙ‘Ù… Ù†ÙØ³Ù‡ Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ 22ØŒ Ø«Ù… HR ÙŠØ¶ÙŠÙ Ø¨Ù†ÙˆØ¯Ù‡ØŒ Ø«Ù… Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙŠØ¹ØªÙ…Ø¯ Ø®Ù„Ø§Ù„ 3 Ø£ÙŠØ§Ù…ØŒ Ø«Ù… ÙŠØ±ÙØ¹ Ù„Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.</p>
+        <div class="employee-actions-row"><span class="login-feature">Ø§Ù„Ø­Ø§Ù„Ø©: ${badge(mine.status || "closed")}</span><span class="login-feature">Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„ØªÙ‚Ø¯ÙŠØ±ÙŠ: ${escapeHtml(total)}%</span><span class="login-feature">Ø§Ù„Ù†Ù…ÙˆØ°Ø¬: ${escapeHtml(windowInfo.isOpen === false ? "Ù…ØºÙ„Ù‚" : "Ù…ÙØªÙˆØ­")}</span></div>
       </article>
       <form class="employee-card full" id="kpi-self-form">
         <div class="kpi-slider-stack">
-          ${kpiSlider({ name: "targetPercent", label: "تحقيق الأهداف", weight: 40, value: mine.targetPercent ?? mine.targetScore })}
-          ${kpiSlider({ name: "efficiencyPercent", label: "الكفاءة في أداء المهام", weight: 20, value: mine.efficiencyPercent ?? mine.efficiencyScore })}
-          ${kpiSlider({ name: "conductPercent", label: "حسن التعامل والسلوك", weight: 5, value: mine.conductPercent ?? mine.conductScore })}
-          ${kpiSlider({ name: "initiativesPercent", label: "التبرعات والمبادرات", weight: 5, value: mine.initiativesPercent ?? mine.initiativesScore })}
-          <div class="employee-card-subtle"><strong>بنود HR فقط — 30 درجة</strong><p>الحضور والانصراف 20%، الصلاة في المسجد 5%، وحضور حلقة الشيخ وليد 5%. تظهر للموظف للعلم فقط ولا يمكن تعديلها هنا.</p></div>
-          ${kpiSlider({ name: "attendancePercent", label: "الحضور والانصراف — HR", weight: 20, value: mine.attendancePercent ?? mine.attendanceScore, readonly: true })}
-          ${kpiSlider({ name: "quranPercent", label: "حلقة الشيخ وليد — HR", weight: 5, value: mine.quranPercent ?? mine.quranCircleScore, readonly: true })}
-          ${kpiSlider({ name: "prayerPercent", label: "الصلاة في المسجد — HR", weight: 5, value: mine.prayerPercent ?? mine.prayerScore, readonly: true })}
-          <label>ملاحظاتي للمدير<textarea name="employeeNotes" rows="4">${escapeHtml(mine.employeeNotes || "")}</textarea></label>
+          ${kpiSlider({ name: "targetPercent", label: "ØªØ­Ù‚ÙŠÙ‚ Ø§Ù„Ø£Ù‡Ø¯Ø§Ù", weight: 40, value: mine.targetPercent ?? mine.targetScore })}
+          ${kpiSlider({ name: "efficiencyPercent", label: "Ø§Ù„ÙƒÙØ§Ø¡Ø© ÙÙŠ Ø£Ø¯Ø§Ø¡ Ø§Ù„Ù…Ù‡Ø§Ù…", weight: 20, value: mine.efficiencyPercent ?? mine.efficiencyScore })}
+          ${kpiSlider({ name: "conductPercent", label: "Ø­Ø³Ù† Ø§Ù„ØªØ¹Ø§Ù…Ù„ ÙˆØ§Ù„Ø³Ù„ÙˆÙƒ", weight: 5, value: mine.conductPercent ?? mine.conductScore })}
+          ${kpiSlider({ name: "initiativesPercent", label: "Ø§Ù„ØªØ¨Ø±Ø¹Ø§Øª ÙˆØ§Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª", weight: 5, value: mine.initiativesPercent ?? mine.initiativesScore })}
+          <div class="employee-card-subtle"><strong>Ø¨Ù†ÙˆØ¯ HR ÙÙ‚Ø· â€” 30 Ø¯Ø±Ø¬Ø©</strong><p>Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù 20%ØŒ Ø§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯ 5%ØŒ ÙˆØ­Ø¶ÙˆØ± Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ 5%. ØªØ¸Ù‡Ø± Ù„Ù„Ù…ÙˆØ¸Ù Ù„Ù„Ø¹Ù„Ù… ÙÙ‚Ø· ÙˆÙ„Ø§ ÙŠÙ…ÙƒÙ† ØªØ¹Ø¯ÙŠÙ„Ù‡Ø§ Ù‡Ù†Ø§.</p></div>
+          ${kpiSlider({ name: "attendancePercent", label: "Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù â€” HR", weight: 20, value: mine.attendancePercent ?? mine.attendanceScore, readonly: true })}
+          ${kpiSlider({ name: "quranPercent", label: "Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ â€” HR", weight: 5, value: mine.quranPercent ?? mine.quranCircleScore, readonly: true })}
+          ${kpiSlider({ name: "prayerPercent", label: "Ø§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯ â€” HR", weight: 5, value: mine.prayerPercent ?? mine.prayerScore, readonly: true })}
+          <label>Ù…Ù„Ø§Ø­Ø¸Ø§ØªÙŠ Ù„Ù„Ù…Ø¯ÙŠØ±<textarea name="employeeNotes" rows="4">${escapeHtml(mine.employeeNotes || "")}</textarea></label>
         </div>
         <input type="hidden" name="employeeId" value="${escapeHtml(employeeId)}" />
         <input type="hidden" name="cycleName" value="${escapeHtml(monthName)}" />
         <input type="hidden" name="status" value="employee_submitted" />
-        <button class="button primary full" type="submit" ${windowInfo.isOpen === false ? "disabled" : ""}>رفع التقييم للمدير المباشر</button>
-        ${windowInfo.isOpen === false ? `<p class="form-hint danger-text">النموذج غير مفتوح حاليًا. يفتحه السكرتير التنفيذي حسب دورة التقييم.</p>` : ""}
+        <button class="button primary full" type="submit" ${windowInfo.isOpen === false ? "disabled" : ""}>Ø±ÙØ¹ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</button>
+        ${windowInfo.isOpen === false ? `<p class="form-hint danger-text">Ø§Ù„Ù†Ù…ÙˆØ°Ø¬ ØºÙŠØ± Ù…ÙØªÙˆØ­ Ø­Ø§Ù„ÙŠÙ‹Ø§. ÙŠÙØªØ­Ù‡ Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø­Ø³Ø¨ Ø¯ÙˆØ±Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ….</p>` : ""}
       </form>
-      <article class="employee-card full"><h2>مسار الاعتماد</h2><div class="employee-list">
-        ${["الموظف يرسل تقييمه خلال 48 ساعة", "HR يضيف الحضور والانصراف والصلاة وحلقة القرآن", "المدير المباشر يراجع ويعتمد خلال 3 أيام", "السكرتير التنفيذي يراجع ويجهز PDF", "الاعتماد النهائي والأرشفة"].map((step, index) => `<div class="employee-list-item"><div><strong>${index + 1}. ${escapeHtml(step)}</strong></div><div class="list-item-side">${index === 0 && mine.status ? badge(mine.status) : ""}</div></div>`).join("")}
+      <article class="employee-card full"><h2>Ù…Ø³Ø§Ø± Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯</h2><div class="employee-list">
+        ${["Ø§Ù„Ù…ÙˆØ¸Ù ÙŠØ±Ø³Ù„ ØªÙ‚ÙŠÙŠÙ…Ù‡ Ø®Ù„Ø§Ù„ 48 Ø³Ø§Ø¹Ø©", "HR ÙŠØ¶ÙŠÙ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù ÙˆØ§Ù„ØµÙ„Ø§Ø© ÙˆØ­Ù„Ù‚Ø© Ø§Ù„Ù‚Ø±Ø¢Ù†", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙŠØ±Ø§Ø¬Ø¹ ÙˆÙŠØ¹ØªÙ…Ø¯ Ø®Ù„Ø§Ù„ 3 Ø£ÙŠØ§Ù…", "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙŠØ±Ø§Ø¬Ø¹ ÙˆÙŠØ¬Ù‡Ø² PDF", "Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ ÙˆØ§Ù„Ø£Ø±Ø´ÙØ©"].map((step, index) => `<div class="employee-list-item"><div><strong>${index + 1}. ${escapeHtml(step)}</strong></div><div class="list-item-side">${index === 0 && mine.status ? badge(mine.status) : ""}</div></div>`).join("")}
       </div></article>
     </section>
-  `, "تقييمي", "نموذج KPI الشهري الخاص بالموظف.");
+  `, "ØªÙ‚ÙŠÙŠÙ…ÙŠ", "Ù†Ù…ÙˆØ°Ø¬ KPI Ø§Ù„Ø´Ù‡Ø±ÙŠ Ø§Ù„Ø®Ø§Øµ Ø¨Ø§Ù„Ù…ÙˆØ¸Ù.");
   app.querySelectorAll('.kpi-slider-field input[type="range"]').forEach((input) => input.addEventListener("input", () => {
     const weight = Number(input.dataset.weight || 0);
     const pct = Number(input.value || 0);
     const meta = input.closest('.kpi-slider-field')?.querySelector('.kpi-slider-meta');
     const bar = input.closest('.kpi-slider-field')?.querySelector('.kpi-progress i');
-    if (meta) meta.innerHTML = `<b>${pct}%</b><small>الوزن ${weight} — المحتسب ${(pct * weight / 100).toFixed(1)}/${weight}</small>`;
+    if (meta) meta.innerHTML = `<b>${pct}%</b><small>Ø§Ù„ÙˆØ²Ù† ${weight} â€” Ø§Ù„Ù…Ø­ØªØ³Ø¨ ${(pct * weight / 100).toFixed(1)}/${weight}</small>`;
     if (bar) bar.style.width = `${pct}%`;
   }));
   app.querySelector("#kpi-self-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     try {
       await endpoints.saveKpiEvaluation(readForm(event.currentTarget));
-      setMessage("تم رفع تقييمك للمدير المباشر بنجاح.", "");
+      setMessage("ØªÙ… Ø±ÙØ¹ ØªÙ‚ÙŠÙŠÙ…Ùƒ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø¨Ù†Ø¬Ø§Ø­.", "");
       renderKpi();
-    } catch (error) { setMessage("", error.message || "تعذر حفظ التقييم."); renderKpi(); }
+    } catch (error) { setMessage("", error.message || "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…."); renderKpi(); }
   });
 }
 
@@ -1507,27 +1535,27 @@ async function renderRequests() {
   const summary = await endpoints.myRequests().then(unwrap).catch(() => ({ pending: 0, approved: 0, rejected: 0, latest: [] }));
   shell(`
     <section class="employee-grid">
-      <article class="employee-card"><span class="panel-kicker">قيد المراجعة</span><strong class="big-number">${escapeHtml(summary.pending || 0)}</strong><p>طلبات تنتظر قرار الإدارة أو المدير المباشر.</p></article>
-      <article class="employee-card"><span class="panel-kicker">مقبولة</span><strong class="big-number">${escapeHtml(summary.approved || 0)}</strong><p>طلبات تمت الموافقة عليها.</p></article>
-      <article class="employee-card"><span class="panel-kicker">مرفوضة</span><strong class="big-number">${escapeHtml(summary.rejected || 0)}</strong><p>طلبات تم رفضها مع متابعة السبب.</p></article>
-      <article class="employee-card full"><h2>آخر طلباتي</h2>${renderRequestList(summary.latest || [])}</article>
-      <article class="employee-card full"><h2>إنشاء طلب سريع</h2><div class="employee-actions-row"><button class="button primary" data-route="leaves">طلب إجازة</button><button class="button ghost" data-route="missions">طلب مأمورية</button><button class="button ghost" data-route="disputes">شكوى/خلاف</button><button class="button ghost" data-route="location">إرسال موقع</button></div></article>
+      <article class="employee-card"><span class="panel-kicker">Ù‚ÙŠØ¯ Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©</span><strong class="big-number">${escapeHtml(summary.pending || 0)}</strong><p>Ø·Ù„Ø¨Ø§Øª ØªÙ†ØªØ¸Ø± Ù‚Ø±Ø§Ø± Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø£Ùˆ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.</p></article>
+      <article class="employee-card"><span class="panel-kicker">Ù…Ù‚Ø¨ÙˆÙ„Ø©</span><strong class="big-number">${escapeHtml(summary.approved || 0)}</strong><p>Ø·Ù„Ø¨Ø§Øª ØªÙ…Øª Ø§Ù„Ù…ÙˆØ§ÙÙ‚Ø© Ø¹Ù„ÙŠÙ‡Ø§.</p></article>
+      <article class="employee-card"><span class="panel-kicker">Ù…Ø±ÙÙˆØ¶Ø©</span><strong class="big-number">${escapeHtml(summary.rejected || 0)}</strong><p>Ø·Ù„Ø¨Ø§Øª ØªÙ… Ø±ÙØ¶Ù‡Ø§ Ù…Ø¹ Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ø³Ø¨Ø¨.</p></article>
+      <article class="employee-card full"><h2>Ø¢Ø®Ø± Ø·Ù„Ø¨Ø§ØªÙŠ</h2>${renderRequestList(summary.latest || [])}</article>
+      <article class="employee-card full"><h2>Ø¥Ù†Ø´Ø§Ø¡ Ø·Ù„Ø¨ Ø³Ø±ÙŠØ¹</h2><div class="employee-actions-row"><button class="button primary" data-route="leaves">Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø©</button><button class="button ghost" data-route="missions">Ø·Ù„Ø¨ Ù…Ø£Ù…ÙˆØ±ÙŠØ©</button><button class="button ghost" data-route="disputes">Ø´ÙƒÙˆÙ‰/Ø®Ù„Ø§Ù</button><button class="button ghost" data-route="location">Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹</button></div></article>
     </section>
-  `, "طلباتي", "كل طلباتك وحالتها في شاشة واحدة.");
+  `, "Ø·Ù„Ø¨Ø§ØªÙŠ", "ÙƒÙ„ Ø·Ù„Ø¨Ø§ØªÙƒ ÙˆØ­Ø§Ù„ØªÙ‡Ø§ ÙÙŠ Ø´Ø§Ø´Ø© ÙˆØ§Ø­Ø¯Ø©.");
 }
 
 async function renderTasks() {
   const tasks = await endpoints.myTasks().then(unwrap).catch(() => []);
   shell(`
     <section class="employee-card full">
-      <div class="panel-kicker">المهام</div>
-      <h2>مهامي الحالية</h2>
-      ${tasks.length ? `<div class="employee-list">${tasks.map((task) => `<div class="employee-list-item"><div><strong>${escapeHtml(task.title)}</strong><span>${escapeHtml(task.description || "")}</span><small>الأولوية: ${escapeHtml(statusLabel(task.priority))} — الاستحقاق: ${escapeHtml(task.dueDate || "-")}</small></div><div class="list-item-side">${badge(task.status)}${task.status !== "DONE" ? `<button class="button ghost small" data-task-done="${escapeHtml(task.id)}">تم</button>` : ""}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد مهام مكلف بها الآن.</div>`}
+      <div class="panel-kicker">Ø§Ù„Ù…Ù‡Ø§Ù…</div>
+      <h2>Ù…Ù‡Ø§Ù…ÙŠ Ø§Ù„Ø­Ø§Ù„ÙŠØ©</h2>
+      ${tasks.length ? `<div class="employee-list">${tasks.map((task) => `<div class="employee-list-item"><div><strong>${escapeHtml(task.title)}</strong><span>${escapeHtml(task.description || "")}</span><small>Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©: ${escapeHtml(statusLabel(task.priority))} â€” Ø§Ù„Ø§Ø³ØªØ­Ù‚Ø§Ù‚: ${escapeHtml(task.dueDate || "-")}</small></div><div class="list-item-side">${badge(task.status)}${task.status !== "DONE" ? `<button class="button ghost small" data-task-done="${escapeHtml(task.id)}">ØªÙ…</button>` : ""}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ù‡Ø§Ù… Ù…ÙƒÙ„Ù Ø¨Ù‡Ø§ Ø§Ù„Ø¢Ù†.</div>`}
     </section>
-  `, "مهامي", "تابع التكليفات اليومية وحدّث حالتها.");
+  `, "Ù…Ù‡Ø§Ù…ÙŠ", "ØªØ§Ø¨Ø¹ Ø§Ù„ØªÙƒÙ„ÙŠÙØ§Øª Ø§Ù„ÙŠÙˆÙ…ÙŠØ© ÙˆØ­Ø¯Ù‘Ø« Ø­Ø§Ù„ØªÙ‡Ø§.");
   app.querySelectorAll("[data-task-done]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.updateTask(button.dataset.taskDone, { status: "DONE" });
-    setMessage("تم تحديث المهمة.", "");
+    setMessage("ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù‡Ù…Ø©.", "");
     renderTasks();
   }));
 }
@@ -1538,28 +1566,28 @@ async function renderDailyReport() {
   const todayReport = reports.find((row) => row.reportDate === today) || {};
   shell(
     `<section class="employee-grid">
-      <article class="employee-card full accent-card"><h2>التقرير اليومي</h2><p>اكتب ما تم إنجازه اليوم، العوائق التي تحتاج دعمًا، وخطة الغد. يتم إرسال التقرير لمديرك والسكرتير التنفيذي للمتابعة التشغيلية.</p></article>
+      <article class="employee-card full accent-card"><h2>Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ</h2><p>Ø§ÙƒØªØ¨ Ù…Ø§ ØªÙ… Ø¥Ù†Ø¬Ø§Ø²Ù‡ Ø§Ù„ÙŠÙˆÙ…ØŒ Ø§Ù„Ø¹ÙˆØ§Ø¦Ù‚ Ø§Ù„ØªÙŠ ØªØ­ØªØ§Ø¬ Ø¯Ø¹Ù…Ù‹Ø§ØŒ ÙˆØ®Ø·Ø© Ø§Ù„ØºØ¯. ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ù„Ù…Ø¯ÙŠØ±Ùƒ ÙˆØ§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ù„Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªØ´ØºÙŠÙ„ÙŠØ©.</p></article>
       <article class="employee-card full">
         <form id="daily-report-form" class="employee-form">
-          <label>تاريخ التقرير<input type="date" name="reportDate" value="${escapeHtml(todayReport.reportDate || today)}" required /></label>
-          <label>ما تم إنجازه اليوم<textarea name="achievements" rows="4" required>${escapeHtml(todayReport.achievements || "")}</textarea></label>
-          <label>العوائق أو المشاكل<textarea name="blockers" rows="3">${escapeHtml(todayReport.blockers || "")}</textarea></label>
-          <label>خطة الغد<textarea name="tomorrowPlan" rows="3">${escapeHtml(todayReport.tomorrowPlan || "")}</textarea></label>
-          <label>الدعم المطلوب<textarea name="supportNeeded" rows="2">${escapeHtml(todayReport.supportNeeded || "")}</textarea></label>
-          <label>الحالة النفسية/ضغط العمل<select name="mood"><option value="NORMAL">طبيعي</option><option value="GOOD">جيد</option><option value="STRESSED">ضغط عالي</option><option value="NEEDS_SUPPORT">أحتاج دعم</option></select></label>
-          <button class="button primary" type="submit">إرسال التقرير</button>
+          <label>ØªØ§Ø±ÙŠØ® Ø§Ù„ØªÙ‚Ø±ÙŠØ±<input type="date" name="reportDate" value="${escapeHtml(todayReport.reportDate || today)}" required /></label>
+          <label>Ù…Ø§ ØªÙ… Ø¥Ù†Ø¬Ø§Ø²Ù‡ Ø§Ù„ÙŠÙˆÙ…<textarea name="achievements" rows="4" required>${escapeHtml(todayReport.achievements || "")}</textarea></label>
+          <label>Ø§Ù„Ø¹ÙˆØ§Ø¦Ù‚ Ø£Ùˆ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„<textarea name="blockers" rows="3">${escapeHtml(todayReport.blockers || "")}</textarea></label>
+          <label>Ø®Ø·Ø© Ø§Ù„ØºØ¯<textarea name="tomorrowPlan" rows="3">${escapeHtml(todayReport.tomorrowPlan || "")}</textarea></label>
+          <label>Ø§Ù„Ø¯Ø¹Ù… Ø§Ù„Ù…Ø·Ù„ÙˆØ¨<textarea name="supportNeeded" rows="2">${escapeHtml(todayReport.supportNeeded || "")}</textarea></label>
+          <label>Ø§Ù„Ø­Ø§Ù„Ø© Ø§Ù„Ù†ÙØ³ÙŠØ©/Ø¶ØºØ· Ø§Ù„Ø¹Ù…Ù„<select name="mood"><option value="NORMAL">Ø·Ø¨ÙŠØ¹ÙŠ</option><option value="GOOD">Ø¬ÙŠØ¯</option><option value="STRESSED">Ø¶ØºØ· Ø¹Ø§Ù„ÙŠ</option><option value="NEEDS_SUPPORT">Ø£Ø­ØªØ§Ø¬ Ø¯Ø¹Ù…</option></select></label>
+          <button class="button primary" type="submit">Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚Ø±ÙŠØ±</button>
         </form>
       </article>
-      <article class="employee-card full"><h2>تقاريري السابقة</h2>${reports.length ? `<div class="employee-list">${reports.slice(0, 20).map((report) => `<div class="employee-list-item"><div><strong>${escapeHtml(report.reportDate || "-")}</strong><span>${escapeHtml(report.achievements || "-")}</span><small>${escapeHtml(report.blockers ? `عوائق: ${report.blockers}` : "بدون عوائق")}</small></div><div class="list-item-side">${badge(report.status)}${report.managerComment ? `<small>${escapeHtml(report.managerComment)}</small>` : ""}</div></div>`).join("")}</div>` : `<div class="empty-state">لم ترسل تقارير يومية بعد.</div>`}</article>
+      <article class="employee-card full"><h2>ØªÙ‚Ø§Ø±ÙŠØ±ÙŠ Ø§Ù„Ø³Ø§Ø¨Ù‚Ø©</h2>${reports.length ? `<div class="employee-list">${reports.slice(0, 20).map((report) => `<div class="employee-list-item"><div><strong>${escapeHtml(report.reportDate || "-")}</strong><span>${escapeHtml(report.achievements || "-")}</span><small>${escapeHtml(report.blockers ? `Ø¹ÙˆØ§Ø¦Ù‚: ${report.blockers}` : "Ø¨Ø¯ÙˆÙ† Ø¹ÙˆØ§Ø¦Ù‚")}</small></div><div class="list-item-side">${badge(report.status)}${report.managerComment ? `<small>${escapeHtml(report.managerComment)}</small>` : ""}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ù… ØªØ±Ø³Ù„ ØªÙ‚Ø§Ø±ÙŠØ± ÙŠÙˆÙ…ÙŠØ© Ø¨Ø¹Ø¯.</div>`}</article>
     </section>`,
-    "التقرير اليومي",
-    "متابعة إنجازاتك واحتياجات الدعم.",
+    "Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ",
+    "Ù…ØªØ§Ø¨Ø¹Ø© Ø¥Ù†Ø¬Ø§Ø²Ø§ØªÙƒ ÙˆØ§Ø­ØªÙŠØ§Ø¬Ø§Øª Ø§Ù„Ø¯Ø¹Ù….",
   );
   app.querySelector("#daily-report-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     try {
       await endpoints.createDailyReport(readForm(event.currentTarget));
-      setMessage("تم إرسال التقرير اليومي بنجاح.", "");
+      setMessage("ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ Ø¨Ù†Ø¬Ø§Ø­.", "");
       renderDailyReport();
     } catch (error) { setMessage("", error.message); renderDailyReport(); }
   });
@@ -1569,12 +1597,12 @@ async function renderDocuments() {
   const docs = await endpoints.myDocuments().then(unwrap).catch(() => []);
   shell(`
     <section class="employee-card full">
-      <div class="panel-kicker">المستندات</div>
-      <h2>مستنداتي</h2>
-      <p>راجع مستنداتك المسجلة، وفي حالة وجود مستند منتهي أو ناقص تواصل مع الإدارة.</p>
-      ${docs.length ? `<div class="employee-list">${docs.map((doc) => `<div class="employee-list-item"><div><strong>${doc.fileUrl ? `<a href="${escapeHtml(doc.fileUrl)}" target="_blank" rel="noopener">${escapeHtml(doc.title)}</a>` : escapeHtml(doc.title)}</strong><span>${escapeHtml(doc.documentType || "مستند")}</span><small>ينتهي: ${escapeHtml(doc.expiresOn || "-")} — ${escapeHtml(doc.notes || "")}</small></div><div class="list-item-side">${badge(doc.status || "ACTIVE")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد مستندات مسجلة لك بعد.</div>`}
+      <div class="panel-kicker">Ø§Ù„Ù…Ø³ØªÙ†Ø¯Ø§Øª</div>
+      <h2>Ù…Ø³ØªÙ†Ø¯Ø§ØªÙŠ</h2>
+      <p>Ø±Ø§Ø¬Ø¹ Ù…Ø³ØªÙ†Ø¯Ø§ØªÙƒ Ø§Ù„Ù…Ø³Ø¬Ù„Ø©ØŒ ÙˆÙÙŠ Ø­Ø§Ù„Ø© ÙˆØ¬ÙˆØ¯ Ù…Ø³ØªÙ†Ø¯ Ù…Ù†ØªÙ‡ÙŠ Ø£Ùˆ Ù†Ø§Ù‚Øµ ØªÙˆØ§ØµÙ„ Ù…Ø¹ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©.</p>
+      ${docs.length ? `<div class="employee-list">${docs.map((doc) => `<div class="employee-list-item"><div><strong>${doc.fileUrl ? `<a href="${escapeHtml(doc.fileUrl)}" target="_blank" rel="noopener">${escapeHtml(doc.title)}</a>` : escapeHtml(doc.title)}</strong><span>${escapeHtml(doc.documentType || "Ù…Ø³ØªÙ†Ø¯")}</span><small>ÙŠÙ†ØªÙ‡ÙŠ: ${escapeHtml(doc.expiresOn || "-")} â€” ${escapeHtml(doc.notes || "")}</small></div><div class="list-item-side">${badge(doc.status || "ACTIVE")}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø³ØªÙ†Ø¯Ø§Øª Ù…Ø³Ø¬Ù„Ø© Ù„Ùƒ Ø¨Ø¹Ø¯.</div>`}
     </section>
-  `, "مستنداتي", "أرشيف الملفات والتنبيهات الخاصة بك.");
+  `, "Ù…Ø³ØªÙ†Ø¯Ø§ØªÙŠ", "Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…Ù„ÙØ§Øª ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø®Ø§ØµØ© Ø¨Ùƒ.");
 }
 
 
@@ -1584,25 +1612,25 @@ async function renderPolicies() {
   shell(`
     <section class="employee-grid">
       <article class="employee-card full">
-        <div class="panel-kicker">السياسات والتوقيعات</div>
-        <h2>سياسات الجمعية</h2>
-        <p>اقرأ كل سياسة واضغط تأكيد القراءة. هذا يساعد الإدارة على توثيق الالتزام الداخلي بدون ورق.</p>
+        <div class="panel-kicker">Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª ÙˆØ§Ù„ØªÙˆÙ‚ÙŠØ¹Ø§Øª</div>
+        <h2>Ø³ÙŠØ§Ø³Ø§Øª Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©</h2>
+        <p>Ø§Ù‚Ø±Ø£ ÙƒÙ„ Ø³ÙŠØ§Ø³Ø© ÙˆØ§Ø¶ØºØ· ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ù‚Ø±Ø§Ø¡Ø©. Ù‡Ø°Ø§ ÙŠØ³Ø§Ø¹Ø¯ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø¹Ù„Ù‰ ØªÙˆØ«ÙŠÙ‚ Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ Ø¨Ø¯ÙˆÙ† ÙˆØ±Ù‚.</p>
       </article>
       ${policies.length ? policies.map((policy) => `
         <article class="employee-card full">
-          <div class="panel-kicker">${escapeHtml(policy.category || "GENERAL")} — إصدار ${escapeHtml(policy.version || "1.0")}</div>
+          <div class="panel-kicker">${escapeHtml(policy.category || "GENERAL")} â€” Ø¥ØµØ¯Ø§Ø± ${escapeHtml(policy.version || "1.0")}</div>
           <h2>${escapeHtml(policy.title)}</h2>
           <p>${escapeHtml(policy.body || "")}</p>
           <div class="employee-actions-row">
-            ${policy.acknowledged ? `<span class="pill success">تم التأكيد ${escapeHtml(policy.acknowledgedAt ? date(policy.acknowledgedAt) : "")}</span>` : `<button class="button primary" data-ack-policy="${escapeHtml(policy.id)}">أؤكد القراءة والالتزام</button>`}
+            ${policy.acknowledged ? `<span class="pill success">ØªÙ… Ø§Ù„ØªØ£ÙƒÙŠØ¯ ${escapeHtml(policy.acknowledgedAt ? date(policy.acknowledgedAt) : "")}</span>` : `<button class="button primary" data-ack-policy="${escapeHtml(policy.id)}">Ø£Ø¤ÙƒØ¯ Ø§Ù„Ù‚Ø±Ø§Ø¡Ø© ÙˆØ§Ù„Ø§Ù„ØªØ²Ø§Ù…</button>`}
           </div>
         </article>
-      `).join("") : `<article class="employee-card full"><div class="empty-state">لا توجد سياسات مطلوبة الآن.</div></article>`}
+      `).join("") : `<article class="employee-card full"><div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø³ÙŠØ§Ø³Ø§Øª Ù…Ø·Ù„ÙˆØ¨Ø© Ø§Ù„Ø¢Ù†.</div></article>`}
     </section>
-  `, "السياسات", "قراءة وتوقيع سياسات الجمعية.");
+  `, "Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª", "Ù‚Ø±Ø§Ø¡Ø© ÙˆØªÙˆÙ‚ÙŠØ¹ Ø³ÙŠØ§Ø³Ø§Øª Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©.");
   app.querySelectorAll("[data-ack-policy]").forEach((button) => button.addEventListener("click", async () => {
     await endpoints.acknowledgePolicy(button.dataset.ackPolicy);
-    setMessage("تم تأكيد قراءة السياسة.", "");
+    setMessage("ØªÙ… ØªØ£ÙƒÙŠØ¯ Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ø³ÙŠØ§Ø³Ø©.", "");
     renderPolicies();
   }));
 }
@@ -1613,26 +1641,26 @@ async function renderAdminDecisions() {
   shell(`
     <section class="employee-grid">
       <article class="employee-card full">
-        <div class="panel-kicker">القرارات الإدارية</div>
-        <h2>سجل القرارات الرسمية</h2>
-        <p>كل قرار يظهر هنا يحتاج تأكيد "تم الاطلاع" ليتم حفظ توقيت القراءة رسميًا.</p>
+        <div class="panel-kicker">Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©</div>
+        <h2>Ø³Ø¬Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø±Ø³Ù…ÙŠØ©</h2>
+        <p>ÙƒÙ„ Ù‚Ø±Ø§Ø± ÙŠØ¸Ù‡Ø± Ù‡Ù†Ø§ ÙŠØ­ØªØ§Ø¬ ØªØ£ÙƒÙŠØ¯ "ØªÙ… Ø§Ù„Ø§Ø·Ù„Ø§Ø¹" Ù„ÙŠØªÙ… Ø­ÙØ¸ ØªÙˆÙ‚ÙŠØª Ø§Ù„Ù‚Ø±Ø§Ø¡Ø© Ø±Ø³Ù…ÙŠÙ‹Ø§.</p>
       </article>
       ${decisions.length ? decisions.map((decision) => `
         <article class="employee-card full decision-card ${decision.acknowledged ? 'is-acknowledged' : ''}">
-          <div class="panel-kicker">${escapeHtml(decision.category || 'ADMINISTRATIVE')} — ${escapeHtml(decision.priority || 'MEDIUM')}</div>
+          <div class="panel-kicker">${escapeHtml(decision.category || 'ADMINISTRATIVE')} â€” ${escapeHtml(decision.priority || 'MEDIUM')}</div>
           <h2>${escapeHtml(decision.title)}</h2>
           <p>${escapeHtml(decision.body || '')}</p>
-          <small>تاريخ النشر: ${date(decision.publishedAt || decision.createdAt)}</small>
+          <small>ØªØ§Ø±ÙŠØ® Ø§Ù„Ù†Ø´Ø±: ${date(decision.publishedAt || decision.createdAt)}</small>
           <div class="employee-actions-row">
-            ${decision.acknowledged ? `<span class="pill success">تم الاطلاع ${escapeHtml(decision.acknowledgedAt ? date(decision.acknowledgedAt) : '')}</span>` : `<button class="button primary" data-ack-decision="${escapeHtml(decision.id)}">تم الاطلاع</button>`}
+            ${decision.acknowledged ? `<span class="pill success">ØªÙ… Ø§Ù„Ø§Ø·Ù„Ø§Ø¹ ${escapeHtml(decision.acknowledgedAt ? date(decision.acknowledgedAt) : '')}</span>` : `<button class="button primary" data-ack-decision="${escapeHtml(decision.id)}">ØªÙ… Ø§Ù„Ø§Ø·Ù„Ø§Ø¹</button>`}
           </div>
         </article>
-      `).join('') : `<article class="employee-card full"><div class="empty-state">لا توجد قرارات إدارية مطلوبة الآن.</div></article>`}
+      `).join('') : `<article class="employee-card full"><div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù‚Ø±Ø§Ø±Ø§Øª Ø¥Ø¯Ø§Ø±ÙŠØ© Ù…Ø·Ù„ÙˆØ¨Ø© Ø§Ù„Ø¢Ù†.</div></article>`}
     </section>
-  `, "القرارات", "تأكيد الاطلاع على القرارات الرسمية.");
+  `, "Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª", "ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø§Ø·Ù„Ø§Ø¹ Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø±Ø³Ù…ÙŠØ©.");
   app.querySelectorAll('[data-ack-decision]').forEach((button) => button.addEventListener('click', async () => {
     await endpoints.acknowledgeAdminDecision(button.dataset.ackDecision);
-    setMessage('تم تسجيل اطلاعك على القرار.', '');
+    setMessage('ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø§Ø·Ù„Ø§Ø¹Ùƒ Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø±Ø§Ø±.', '');
     renderAdminDecisions();
   }));
 }
@@ -1643,18 +1671,18 @@ async function renderNotifications() {
   const mine = rows.filter((item) => !item.employeeId || item.employeeId === employeeId || item.userId === state.user?.id).slice(0, 50);
   shell(`
     <section class="employee-card full">
-      <div class="panel-kicker">التنبيهات</div>
-      <h2>الإشعارات</h2>
-      <div class="employee-actions-row"><button class="button ghost" data-enable-push>شرح وتفعيل إشعارات الموبايل</button></div>
-      ${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.body || "")}</span><small>${date(item.createdAt)}</small></div><div class="list-item-side">${badge(item.status || (item.isRead ? "READ" : "UNREAD"))}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد إشعارات.</div>`}
+      <div class="panel-kicker">Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª</div>
+      <h2>Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª</h2>
+      <div class="employee-actions-row"><button class="button ghost" data-enable-push>Ø´Ø±Ø­ ÙˆØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„</button></div>
+      ${mine.length ? `<div class="employee-list">${mine.map((item) => `<div class="employee-list-item"><div><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.body || "")}</span><small>${date(item.createdAt)}</small></div><div class="list-item-side">${badge(item.status || (item.isRead ? "READ" : "UNREAD"))}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.</div>`}
     </section>
-  `, "الإشعارات", "كل التنبيهات والطلبات المهمة.");
+  `, "Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª", "ÙƒÙ„ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…Ù‡Ù…Ø©.");
   app.querySelector("[data-enable-push]")?.addEventListener("click", async () => {
     try {
-      const ok = await confirmAction({ title: "تفعيل إشعارات الموبايل", message: "سنرسل لك فقط تنبيهات مهمة مثل تذكير البصمة، طلب إرسال الموقع، الإجازات، والقرارات الإدارية. يمكنك إيقافها من إعدادات المتصفح في أي وقت.", confirmLabel: "تفعيل الآن", cancelLabel: "لاحقًا" });
-      if (!ok) return;
+      const ok = await window.HRExplainAndEnablePush?.();
+      if (ok === false && Notification?.permission !== "granted") return;
       await enableWebPushSubscription(endpoints);
-      setMessage("تم تفعيل اشتراك Web Push الحقيقي لهذا الجهاز.", "");
+      setMessage("ØªÙ… ØªÙØ¹ÙŠÙ„ Ø§Ø´ØªØ±Ø§Ùƒ Web Push Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ Ù„Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø².", "");
       renderNotifications();
     } catch (error) {
       setMessage("", error.message);
@@ -1693,7 +1721,7 @@ function renderEmployeeOrgTree(roots = [], byManager = new Map(), options = {}) 
     if (employee.id === currentId) classes.push("is-me");
     if (employee.id === myManagerId) classes.push("is-my-manager");
     if (myTeamIds.has(employee.id)) classes.push("is-direct-report");
-    const childMeta = children.length ? `${children.length} مباشر / ${collectDescendants(employee.id, byManager).length} إجمالي` : "بدون تابعين";
+    const childMeta = children.length ? `${children.length} Ù…Ø¨Ø§Ø´Ø± / ${collectDescendants(employee.id, byManager).length} Ø¥Ø¬Ù…Ø§Ù„ÙŠ` : "Ø¨Ø¯ÙˆÙ† ØªØ§Ø¨Ø¹ÙŠÙ†";
     return `<div class="employee-org-tree-item" style="--org-depth:${depth}">
       <article class="${classes.join(" ")}">
         <div class="org-node-head">
@@ -1704,7 +1732,7 @@ function renderEmployeeOrgTree(roots = [], byManager = new Map(), options = {}) 
           </div>
         </div>
         <div class="org-node-meta">
-          <span class="org-chip">${escapeHtml(employee.department?.name || employee.branch?.name || employee.role?.name || "الهيكل الوظيفي")}</span>
+          <span class="org-chip">${escapeHtml(employee.department?.name || employee.branch?.name || employee.role?.name || "Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ")}</span>
           <span class="org-chip org-chip-muted">${escapeHtml(childMeta)}</span>
         </div>
       </article>
@@ -1731,7 +1759,7 @@ function buildEmployeeOrgModel(employees = []) {
   const secretary = active.find((employee) => {
     const slug = employeeRoleSlug(employee);
     const title = String(employee.jobTitle || employee.role?.name || "");
-    return slug.includes("executive-secretary") || title.includes("السكرتير التنفيذي");
+    return slug.includes("executive-secretary") || title.includes("Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ");
   }) || null;
   const allRoots = active.filter((employee) => !byId.has(employee.managerEmployeeId || employee.managerId || employee.directManagerId || employee.manager?.id || ""));
   const roots = executiveDirector ? [executiveDirector, ...allRoots.filter((employee) => employee.id !== executiveDirector.id)] : allRoots;
@@ -1759,46 +1787,46 @@ async function renderTeam() {
   shell(`
     <section class="employee-grid team-manager-page">
       <article class="employee-card full employee-org-shell">
-        <div class="panel-kicker">الهيكل الوظيفي</div>
-        <h2>فريقي والهيكل الوظيفي</h2>
-        <p>عرض احترافي متصل يبدأ من المدير التنفيذي ثم السكرتير التنفيذي ثم المديرين ثم الموظفين مع إبراز موقعك وفريقك داخل الشبكة.</p>
+        <div class="panel-kicker">Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ</div>
+        <h2>ÙØ±ÙŠÙ‚ÙŠ ÙˆØ§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ</h2>
+        <p>Ø¹Ø±Ø¶ Ø§Ø­ØªØ±Ø§ÙÙŠ Ù…ØªØµÙ„ ÙŠØ¨Ø¯Ø£ Ù…Ù† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø«Ù… Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø«Ù… Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ† Ø«Ù… Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ù…Ø¹ Ø¥Ø¨Ø±Ø§Ø² Ù…ÙˆÙ‚Ø¹Ùƒ ÙˆÙØ±ÙŠÙ‚Ùƒ Ø¯Ø§Ø®Ù„ Ø§Ù„Ø´Ø¨ÙƒØ©.</p>
         <div class="team-overview-grid">
-          <article class="team-summary-card"><span>قمة الهيكل</span><strong>${escapeHtml(org.executiveDirector?.fullName || "المدير التنفيذي")}</strong><small>${escapeHtml(org.executiveDirector?.jobTitle || "القيادة التنفيذية")}</small></article>
-          <article class="team-summary-card"><span>السكرتير التنفيذي</span><strong>${escapeHtml(org.secretary?.fullName || "-")}</strong><small>${escapeHtml(org.secretary?.jobTitle || "-")}</small></article>
-          <article class="team-summary-card"><span>فريقي المباشر</span><strong>${escapeHtml(team.length)}</strong><small>${managerLike ? "تابعون مباشرون" : "لا يوجد فريق مباشر"}</small></article>
-          <article class="team-summary-card"><span>إجمالي تحت مسؤوليتي</span><strong>${escapeHtml(descendantsCount)}</strong><small>مباشر + غير مباشر</small></article>
+          <article class="team-summary-card"><span>Ù‚Ù…Ø© Ø§Ù„Ù‡ÙŠÙƒÙ„</span><strong>${escapeHtml(org.executiveDirector?.fullName || "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ")}</strong><small>${escapeHtml(org.executiveDirector?.jobTitle || "Ø§Ù„Ù‚ÙŠØ§Ø¯Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©")}</small></article>
+          <article class="team-summary-card"><span>Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ</span><strong>${escapeHtml(org.secretary?.fullName || "-")}</strong><small>${escapeHtml(org.secretary?.jobTitle || "-")}</small></article>
+          <article class="team-summary-card"><span>ÙØ±ÙŠÙ‚ÙŠ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</span><strong>${escapeHtml(team.length)}</strong><small>${managerLike ? "ØªØ§Ø¨Ø¹ÙˆÙ† Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†" : "Ù„Ø§ ÙŠÙˆØ¬Ø¯ ÙØ±ÙŠÙ‚ Ù…Ø¨Ø§Ø´Ø±"}</small></article>
+          <article class="team-summary-card"><span>Ø¥Ø¬Ù…Ø§Ù„ÙŠ ØªØ­Øª Ù…Ø³Ø¤ÙˆÙ„ÙŠØªÙŠ</span><strong>${escapeHtml(descendantsCount)}</strong><small>Ù…Ø¨Ø§Ø´Ø± + ØºÙŠØ± Ù…Ø¨Ø§Ø´Ø±</small></article>
         </div>
         <div class="employee-org-legend">
-          <span class="org-legend-item"><i class="legend-dot executive"></i>القيادة العليا</span>
-          <span class="org-legend-item"><i class="legend-dot me"></i>حسابي</span>
-          <span class="org-legend-item"><i class="legend-dot team"></i>فريقي المباشر</span>
-          <span class="org-legend-item"><i class="legend-dot manager"></i>مديري المباشر</span>
+          <span class="org-legend-item"><i class="legend-dot executive"></i>Ø§Ù„Ù‚ÙŠØ§Ø¯Ø© Ø§Ù„Ø¹Ù„ÙŠØ§</span>
+          <span class="org-legend-item"><i class="legend-dot me"></i>Ø­Ø³Ø§Ø¨ÙŠ</span>
+          <span class="org-legend-item"><i class="legend-dot team"></i>ÙØ±ÙŠÙ‚ÙŠ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</span>
+          <span class="org-legend-item"><i class="legend-dot manager"></i>Ù…Ø¯ÙŠØ±ÙŠ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</span>
         </div>
         ${hierarchyMarkup}
       </article>
       <article class="employee-card full">
-        <div class="panel-kicker">فريقي المباشر</div>
-        <h2>موظفو فريقي</h2>
-        ${team.length ? `<div class="employee-list my-team-focus-grid">${team.map((e)=>`<div class="employee-list-item"><div>${employeeHeaderCell(e)}</div><div class="list-item-side">${badge(e.status || "ACTIVE")}</div></div>`).join("")}</div>` : `<div class="empty-state">لا توجد بيانات فريق مرتبطة بحسابك حتى الآن.</div>`}
+        <div class="panel-kicker">ÙØ±ÙŠÙ‚ÙŠ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±</div>
+        <h2>Ù…ÙˆØ¸ÙÙˆ ÙØ±ÙŠÙ‚ÙŠ</h2>
+        ${team.length ? `<div class="employee-list my-team-focus-grid">${team.map((e)=>`<div class="employee-list-item"><div>${employeeHeaderCell(e)}</div><div class="list-item-side">${badge(e.status || "ACTIVE")}</div></div>`).join("")}</div>` : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª ÙØ±ÙŠÙ‚ Ù…Ø±ØªØ¨Ø·Ø© Ø¨Ø­Ø³Ø§Ø¨Ùƒ Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†.</div>`}
       </article>
-      <article class="employee-card full"><h2>طلبات إجازة تنتظر مراجعتي</h2>${pendingLeaves.length ? renderManagerReviewList(pendingLeaves, "leave") : `<div class="empty-state">لا توجد إجازات معلقة للمدير.</div>`}</article>
-      <article class="employee-card full"><h2>طلبات مأمورية تنتظر مراجعتي</h2>${pendingMissions.length ? renderManagerReviewList(pendingMissions, "mission") : `<div class="empty-state">لا توجد مأموريات معلقة للمدير.</div>`}</article>
+      <article class="employee-card full"><h2>Ø·Ù„Ø¨Ø§Øª Ø¥Ø¬Ø§Ø²Ø© ØªÙ†ØªØ¸Ø± Ù…Ø±Ø§Ø¬Ø¹ØªÙŠ</h2>${pendingLeaves.length ? renderManagerReviewList(pendingLeaves, "leave") : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¥Ø¬Ø§Ø²Ø§Øª Ù…Ø¹Ù„Ù‚Ø© Ù„Ù„Ù…Ø¯ÙŠØ±.</div>`}</article>
+      <article class="employee-card full"><h2>Ø·Ù„Ø¨Ø§Øª Ù…Ø£Ù…ÙˆØ±ÙŠØ© ØªÙ†ØªØ¸Ø± Ù…Ø±Ø§Ø¬Ø¹ØªÙŠ</h2>${pendingMissions.length ? renderManagerReviewList(pendingMissions, "mission") : `<div class="empty-state">Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª Ù…Ø¹Ù„Ù‚Ø© Ù„Ù„Ù…Ø¯ÙŠØ±.</div>`}</article>
     </section>
-  `, "فريقي", "الهيكل الوظيفي الكامل ومراجعات الفريق.");
+  `, "ÙØ±ÙŠÙ‚ÙŠ", "Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ Ø§Ù„ÙƒØ§Ù…Ù„ ÙˆÙ…Ø±Ø§Ø¬Ø¹Ø§Øª Ø§Ù„ÙØ±ÙŠÙ‚.");
   app.querySelectorAll("[data-manager-review]").forEach((button)=>button.addEventListener("click", async()=>{
     const [kind, id, action] = button.dataset.managerReview.split(":");
     const note = "";
     try {
       if (kind === "leave") await endpoints.updateLeave(id, action === "approve" ? "manager_approve" : "reject", { managerNote: note });
       if (kind === "mission") await endpoints.updateMission(id, action === "approve" ? "manager_approve" : "reject", { managerNote: note });
-      setMessage(action === "approve" ? "تم اعتماد الطلب وتحويله إلى HR." : "تم رفض الطلب.", "");
+      setMessage(action === "approve" ? "ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø·Ù„Ø¨ ÙˆØªØ­ÙˆÙŠÙ„Ù‡ Ø¥Ù„Ù‰ HR." : "ØªÙ… Ø±ÙØ¶ Ø§Ù„Ø·Ù„Ø¨.", "");
       renderTeam();
-    } catch (error) { setMessage("", error.message || "تعذر حفظ قرار المدير."); renderTeam(); }
+    } catch (error) { setMessage("", error.message || "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ù‚Ø±Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ±."); renderTeam(); }
   }));
 }
 
 function renderManagerReviewList(items = [], kind = "leave") {
-  return `<div class="employee-list">${items.map((item)=>`<div class="employee-list-item"><div><strong>${escapeHtml(item.title || item.leaveType || item.destinationName || "طلب")}</strong><span>${escapeHtml(item.startDate || item.plannedStart || item.createdAt || "-")}</span><small>${escapeHtml(item.reason || item.notes || item.destinationName || "")}</small></div><div class="list-item-side"><button class="button primary small" data-manager-review="${kind}:${escapeHtml(item.id)}:approve">اعتماد</button><button class="button danger small" data-manager-review="${kind}:${escapeHtml(item.id)}:reject">رفض</button></div></div>`).join("")}</div>`;
+  return `<div class="employee-list">${items.map((item)=>`<div class="employee-list-item"><div><strong>${escapeHtml(item.title || item.leaveType || item.destinationName || "Ø·Ù„Ø¨")}</strong><span>${escapeHtml(item.startDate || item.plannedStart || item.createdAt || "-")}</span><small>${escapeHtml(item.reason || item.notes || item.destinationName || "")}</small></div><div class="list-item-side"><button class="button primary small" data-manager-review="${kind}:${escapeHtml(item.id)}:approve">Ø§Ø¹ØªÙ…Ø§Ø¯</button><button class="button danger small" data-manager-review="${kind}:${escapeHtml(item.id)}:reject">Ø±ÙØ¶</button></div></div>`).join("")}</div>`;
 }
 
 async function renderProfile() {
@@ -1808,56 +1836,56 @@ async function renderProfile() {
     <section class="employee-grid">
       <article class="employee-card full profile-card">
         <div class="profile-hero">
-          <div class="person-cell large">${avatar(user, "large")}<span><strong>${escapeHtml(user.fullName || user.name || employee.fullName || "الموظف")}</strong><small>${escapeHtml(employee.jobTitle || "تطبيق الموظفين")}</small></span></div>
+          <div class="person-cell large">${avatar(user, "large")}<span><strong>${escapeHtml(user.fullName || user.name || employee.fullName || "Ø§Ù„Ù…ÙˆØ¸Ù")}</strong><small>${escapeHtml(employee.jobTitle || "ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†")}</small></span></div>
         </div>
         <dl class="profile-list">
-          <div><dt>الموبايل</dt><dd>${escapeHtml(employee.phone || user.phone || "-")}</dd></div>
-          <div><dt>المسمى الوظيفي</dt><dd>${escapeHtml(employee.jobTitle || "-")}</dd></div>
+          <div><dt>Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„</dt><dd>${escapeHtml(employee.phone || user.phone || "-")}</dd></div>
+          <div><dt>Ø§Ù„Ù…Ø³Ù…Ù‰ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ</dt><dd>${escapeHtml(employee.jobTitle || "-")}</dd></div>
         </dl>
-        <div class="employee-actions-stack"><button class="button danger" data-logout>خروج</button></div>
+        <div class="employee-actions-stack"><button class="button danger" data-logout>Ø®Ø±ÙˆØ¬</button></div>
       </article>
       <form class="employee-card full" id="employee-contact-form">
-        <div class="panel-kicker">قائمة التعديلات</div>
-        <h2>تعديل الصورة والبريد ورقم الهاتف</h2>
-        <p>يمكنك تحديث الصورة ورقم الهاتف والبريد. يتم ضغط الصورة قبل الرفع لتسريع التطبيق، ورقم الهاتف يجب أن يكون رقمًا مصريًا صحيحًا.</p>
+        <div class="panel-kicker">Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„ØªØ¹Ø¯ÙŠÙ„Ø§Øª</div>
+        <h2>ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„ØµÙˆØ±Ø© ÙˆØ§Ù„Ø¨Ø±ÙŠØ¯ ÙˆØ±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ</h2>
+        <p>ÙŠÙ…ÙƒÙ†Ùƒ ØªØ­Ø¯ÙŠØ« Ø§Ù„ØµÙˆØ±Ø© ÙˆØ±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ÙˆØ§Ù„Ø¨Ø±ÙŠØ¯. ÙŠØªÙ… Ø¶ØºØ· Ø§Ù„ØµÙˆØ±Ø© Ù‚Ø¨Ù„ Ø§Ù„Ø±ÙØ¹ Ù„ØªØ³Ø±ÙŠØ¹ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ØŒ ÙˆØ±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø±Ù‚Ù…Ù‹Ø§ Ù…ØµØ±ÙŠÙ‹Ø§ ØµØ­ÙŠØ­Ù‹Ø§.</p>
         <div class="profile-photo-editor">
           <div data-avatar-preview>${avatar(user, "large")}</div>
           <div class="profile-photo-actions">
-            <label class="button ghost">تغيير الصورة<input class="hidden-file" type="file" name="avatarFile" accept="image/*" /></label>
-            <small>معاينة فورية وضغط تلقائي قبل الحفظ</small>
+            <label class="button ghost">ØªØºÙŠÙŠØ± Ø§Ù„ØµÙˆØ±Ø©<input class="hidden-file" type="file" name="avatarFile" accept="image/*" /></label>
+            <small>Ù…Ø¹Ø§ÙŠÙ†Ø© ÙÙˆØ±ÙŠØ© ÙˆØ¶ØºØ· ØªÙ„Ù‚Ø§Ø¦ÙŠ Ù‚Ø¨Ù„ Ø§Ù„Ø­ÙØ¸</small>
           </div>
         </div>
         <div class="employee-form-grid">
-          <label class="span-2">البريد الإلكتروني<input type="email" name="email" autocomplete="email" value="${escapeHtml(user.email || employee.email || "")}" required /></label>
-          <label class="span-2">رقم الهاتف<input name="phone" inputmode="tel" autocomplete="tel" pattern="01[0125][0-9]{8}" value="${escapeHtml(employee.phone || user.phone || "")}" placeholder="01xxxxxxxxx" required /></label>
+          <label class="span-2">Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ<input type="email" name="email" autocomplete="email" value="${escapeHtml(user.email || employee.email || "")}" required /></label>
+          <label class="span-2">Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ<input name="phone" inputmode="tel" autocomplete="tel" pattern="01[0125][0-9]{8}" value="${escapeHtml(employee.phone || user.phone || "")}" placeholder="01xxxxxxxxx" required /></label>
           <input type="hidden" name="avatarUrl" value="${escapeHtml(user.avatarUrl || user.photoUrl || employee.photoUrl || "")}" />
         </div>
-        <button class="button primary full" type="submit">حفظ التعديلات</button>
+        <button class="button primary full" type="submit">Ø­ÙØ¸ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„Ø§Øª</button>
       </form>
       <article class="employee-card full device-security-card" id="employee-device-security">
-        <div class="panel-kicker">أمان الجهاز</div>
-        <h2>تسجيل بصمة الجهاز لهذا الحساب</h2>
-        <p>اضغط الزر من نفس الموبايل لتسجيل Passkey/بصمة الجهاز. بعدها سيطلب النظام بصمة الهاتف قبل إرسال الموقع أو تسجيل الحضور/الانصراف.</p>
+        <div class="panel-kicker">Ø£Ù…Ø§Ù† Ø§Ù„Ø¬Ù‡Ø§Ø²</div>
+        <h2>ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ù„Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨</h2>
+        <p>Ø§Ø¶ØºØ· Ø§Ù„Ø²Ø± Ù…Ù† Ù†ÙØ³ Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ Ù„ØªØ³Ø¬ÙŠÙ„ Passkey/Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø². Ø¨Ø¹Ø¯Ù‡Ø§ Ø³ÙŠØ·Ù„Ø¨ Ø§Ù„Ù†Ø¸Ø§Ù… Ø¨ØµÙ…Ø© Ø§Ù„Ù‡Ø§ØªÙ Ù‚Ø¨Ù„ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø£Ùˆ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ±/Ø§Ù„Ø§Ù†ØµØ±Ø§Ù.</p>
         <div class="employee-actions-stack">
-          <button class="button primary full" type="button" data-register-passkey>تسجيل / تحديث بصمة الجهاز</button>
-          <button class="button ghost full" type="button" data-test-gps>اختبار الموقع قبل البصمة</button>
+          <button class="button primary full" type="button" data-register-passkey>ØªØ³Ø¬ÙŠÙ„ / ØªØ­Ø¯ÙŠØ« Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø²</button>
+          <button class="button ghost full" type="button" data-test-gps>Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù‚Ø¨Ù„ Ø§Ù„Ø¨ØµÙ…Ø©</button>
         </div>
         <div id="device-security-result" class="message compact hidden"></div>
       </article>
       <form class="employee-card full" id="employee-password-form">
-        <div class="panel-kicker">الأمان</div>
-        <h2>تغيير كلمة المرور</h2>
+        <div class="panel-kicker">Ø§Ù„Ø£Ù…Ø§Ù†</div>
+        <h2>ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±</h2>
         <div class="employee-form-grid">
           <input class="visually-hidden" type="text" name="username" autocomplete="username" value="${escapeHtml(user.email || employee.email || employee.phone || user.phone || "")}" tabindex="-1" aria-hidden="true" />
-          <label class="span-2">كلمة المرور الحالية<input type="password" name="currentPassword" autocomplete="current-password" required /></label>
-          <label class="span-2">كلمة المرور الجديدة<input type="password" name="newPassword" autocomplete="new-password" minlength="8" placeholder="8 أحرف على الأقل" required /></label>
+          <label class="span-2">ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø­Ø§Ù„ÙŠØ©<input type="password" name="currentPassword" autocomplete="current-password" required /></label>
+          <label class="span-2">ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©<input type="password" name="newPassword" autocomplete="new-password" minlength="8" placeholder="8 Ø£Ø­Ø±Ù Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„" required /></label>
           <div class="span-2">${passwordStrengthMarkup()}</div>
-          <label class="span-2">تأكيد كلمة المرور الجديدة<input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required /></label>
+          <label class="span-2">ØªØ£ÙƒÙŠØ¯ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©<input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required /></label>
         </div>
-        <button class="button primary full" type="submit">حفظ كلمة المرور</button>
+        <button class="button primary full" type="submit">Ø­ÙØ¸ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±</button>
       </form>
     </section>
-  `, "حسابي", "بياناتي ووسائل الاتصال.");
+  `, "Ø­Ø³Ø§Ø¨ÙŠ", "Ø¨ÙŠØ§Ù†Ø§ØªÙŠ ÙˆÙˆØ³Ø§Ø¦Ù„ Ø§Ù„Ø§ØªØµØ§Ù„.");
   bindPasswordStrength(app.querySelector("#employee-password-form"));
   const profileForm = app.querySelector("#employee-contact-form");
   profileForm?.querySelector("[name='avatarFile']")?.addEventListener("change", async (event) => {
@@ -1866,9 +1894,9 @@ async function renderProfile() {
     try {
       const dataUrl = await fileToAvatarDataUrl(file);
       const preview = profileForm.querySelector("[data-avatar-preview]");
-      if (preview && dataUrl) preview.innerHTML = `<img class="person-avatar large" src="${escapeHtml(dataUrl)}" alt="معاينة الصورة" />`;
+      if (preview && dataUrl) preview.innerHTML = `<img class="person-avatar large" src="${escapeHtml(dataUrl)}" alt="Ù…Ø¹Ø§ÙŠÙ†Ø© Ø§Ù„ØµÙˆØ±Ø©" />`;
     } catch (error) {
-      setMessage("", error.message || "تعذر معاينة الصورة.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ù…Ø¹Ø§ÙŠÙ†Ø© Ø§Ù„ØµÙˆØ±Ø©.");
     }
   });
   app.querySelector("[data-register-passkey]")?.addEventListener("click", async (event) => {
@@ -1877,14 +1905,14 @@ async function renderProfile() {
     try {
       button.disabled = true;
       box?.classList.remove("hidden", "danger-box");
-      if (box) box.textContent = "افتح بصمة الهاتف/قفل الشاشة لتسجيل الجهاز...";
+      if (box) box.textContent = "Ø§ÙØªØ­ Ø¨ØµÙ…Ø© Ø§Ù„Ù‡Ø§ØªÙ/Ù‚ÙÙ„ Ø§Ù„Ø´Ø§Ø´Ø© Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¬Ù‡Ø§Ø²...";
       await registerBrowserPasskey();
-      if (box) box.textContent = "تم تسجيل بصمة الجهاز وربطها بحسابك. يمكنك الآن إرسال الموقع وتسجيل الحضور/الانصراف.";
-      setMessage("تم تسجيل بصمة الجهاز بنجاح.", "");
+      if (box) box.textContent = "ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² ÙˆØ±Ø¨Ø·Ù‡Ø§ Ø¨Ø­Ø³Ø§Ø¨Ùƒ. ÙŠÙ…ÙƒÙ†Ùƒ Ø§Ù„Ø¢Ù† Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ±/Ø§Ù„Ø§Ù†ØµØ±Ø§Ù.";
+      setMessage("ØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø² Ø¨Ù†Ø¬Ø§Ø­.", "");
     } catch (error) {
       box?.classList.remove("hidden");
       box?.classList.add("danger-box");
-      if (box) box.textContent = friendlyError(error, "تعذر تسجيل بصمة الجهاز.");
+      if (box) box.textContent = friendlyError(error, "ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø².");
     } finally {
       button.disabled = false;
     }
@@ -1893,27 +1921,27 @@ async function renderProfile() {
     const box = app.querySelector("#device-security-result");
     try {
       box?.classList.remove("hidden", "danger-box");
-      if (box) box.textContent = "جاري اختبار GPS بدقة عالية...";
+      if (box) box.textContent = "Ø¬Ø§Ø±ÙŠ Ø§Ø®ØªØ¨Ø§Ø± GPS Ø¨Ø¯Ù‚Ø© Ø¹Ø§Ù„ÙŠØ©...";
       const current = await getVerifiedBrowserLocation(user.employeeId || employee.id || state.user?.employeeId || "");
-      if (box) box.innerHTML = `${readableLocationBlock(current)}${current.latitude && current.longitude ? `<a class="button ghost small" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}">فتح الخريطة</a>` : ""}`;
+      if (box) box.innerHTML = `${readableLocationBlock(current)}${current.latitude && current.longitude ? `<a class="button ghost small" target="_blank" rel="noopener" href="https://maps.google.com/?q=${encodeURIComponent(`${current.latitude},${current.longitude}`)}">ÙØªØ­ Ø§Ù„Ø®Ø±ÙŠØ·Ø©</a>` : ""}`;
     } catch (error) {
       box?.classList.remove("hidden");
       box?.classList.add("danger-box");
-      if (box) box.textContent = friendlyError(error, "تعذر اختبار الموقع.");
+      if (box) box.textContent = friendlyError(error, "ØªØ¹Ø°Ø± Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹.");
     }
   });
   app.querySelector("#employee-password-form")?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
-    if (values.newPassword !== values.confirmPassword) { setMessage("", "تأكيد كلمة المرور غير مطابق."); return renderProfile(); }
-    try { await endpoints.changePassword(values); setMessage("تم تغيير كلمة المرور بنجاح.", ""); event.currentTarget.reset(); } catch (error) { setMessage("", error.message || "تعذر تغيير كلمة المرور."); }
+    if (values.newPassword !== values.confirmPassword) { setMessage("", "ØªØ£ÙƒÙŠØ¯ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± Ù…Ø·Ø§Ø¨Ù‚."); return renderProfile(); }
+    try { await endpoints.changePassword(values); setMessage("ØªÙ… ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø¨Ù†Ø¬Ø§Ø­.", ""); event.currentTarget.reset(); } catch (error) { setMessage("", error.message || "ØªØ¹Ø°Ø± ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±."); }
     renderProfile();
   });
   profileForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
     const values = readForm(event.currentTarget);
     values.phone = normalizeEgyptPhone(values.phone || "");
-    if (!validEgyptPhone(values.phone)) { setMessage("", "اكتب رقم هاتف مصري صحيح يبدأ بـ 01."); return renderProfile(); }
+    if (!validEgyptPhone(values.phone)) { setMessage("", "Ø§ÙƒØªØ¨ Ø±Ù‚Ù… Ù‡Ø§ØªÙ Ù…ØµØ±ÙŠ ØµØ­ÙŠØ­ ÙŠØ¨Ø¯Ø£ Ø¨Ù€ 01."); return renderProfile(); }
     try {
       const file = event.currentTarget.querySelector("[name='avatarFile']")?.files?.[0];
       if (file) {
@@ -1923,9 +1951,9 @@ async function renderProfile() {
       delete values.avatarFile;
       const updated = unwrap(await endpoints.updateMyContact(values));
       state.user = updated || state.user;
-      setMessage("تم حفظ التعديلات. إذا غيرت البريد قد تحتاج تأكيد البريد الجديد قبل استخدامه في تسجيل الدخول.", "");
+      setMessage("ØªÙ… Ø­ÙØ¸ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„Ø§Øª. Ø¥Ø°Ø§ ØºÙŠØ±Øª Ø§Ù„Ø¨Ø±ÙŠØ¯ Ù‚Ø¯ ØªØ­ØªØ§Ø¬ ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¬Ø¯ÙŠØ¯ Ù‚Ø¨Ù„ Ø§Ø³ØªØ®Ø¯Ø§Ù…Ù‡ ÙÙŠ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„.", "");
     } catch (error) {
-      setMessage("", error.message || "تعذر حفظ التعديلات.");
+      setMessage("", error.message || "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„ØªØ¹Ø¯ÙŠÙ„Ø§Øª.");
     }
     renderProfile();
   });
@@ -1939,7 +1967,7 @@ async function render() {
     startNotificationPolling();
     if (state.recoveryMode) return renderRecoveryPassword();
     const key = routeKey();
-    renderLoadingSkeleton(routeSubtitles[key] ? (moreEmployeeRoutes.concat(employeeRoutes).find(([route]) => route === key)?.[1] || "تطبيق الموظف") : "تطبيق الموظف", routeSubtitles[key] || "جاري تجهيز البيانات...");
+    renderLoadingSkeleton(routeSubtitles[key] ? (moreEmployeeRoutes.concat(employeeRoutes).find(([route]) => route === key)?.[1] || "ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù") : "ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù", routeSubtitles[key] || "Ø¬Ø§Ø±ÙŠ ØªØ¬Ù‡ÙŠØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª...");
     if (key === "action-center") return renderActionCenter();
     if (key === "kpi") return renderKpi();
     if (key === "punch") return renderPunch();
@@ -1959,8 +1987,8 @@ async function render() {
     return renderHome();
   } catch (error) {
     console.error(error);
-    setMessage("", error.message || "تعذر تحميل الصفحة.");
-    shell(`<section class="employee-card"><h2>تعذر تحميل الصفحة</h2><p>${escapeHtml(error.message || "حدث خطأ")}</p></section>`, "خطأ", "راجع الاتصال أو أعد المحاولة.");
+    setMessage("", error.message || "ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙØ­Ø©.");
+    shell(`<section class="employee-card"><h2>ØªØ¹Ø°Ø± ØªØ­Ù…ÙŠÙ„ Ø§Ù„ØµÙØ­Ø©</h2><p>${escapeHtml(error.message || "Ø­Ø¯Ø« Ø®Ø·Ø£")}</p></section>`, "Ø®Ø·Ø£", "Ø±Ø§Ø¬Ø¹ Ø§Ù„Ø§ØªØµØ§Ù„ Ø£Ùˆ Ø£Ø¹Ø¯ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø©.");
   }
 }
 

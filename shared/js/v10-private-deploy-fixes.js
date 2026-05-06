@@ -1,15 +1,37 @@
-
-(function(){
+﻿(function(){
   const cfg = (window.HR_SUPABASE_CONFIG = window.HR_SUPABASE_CONFIG || {});
-  cfg.attendance = Object.assign({ qrRequired:false, reminderInPageHour:10, reminderPushHour:9, reminderPushMinute:30 }, cfg.attendance || {});
+  cfg.attendance = Object.assign({
+    qrRequired:false,
+    reminderInPageHour:10,
+    reminderPushHour:9,
+    reminderPushMinute:30,
+    gpsSamples:18,
+    gpsSampleWindowMs:30000,
+    gpsTargetAccuracyMeters:15,
+    gpsMaxAcceptableAccuracyMeters:90,
+    gpsSafetyBufferMeters:90,
+    gpsUncertainReviewOnly:true
+  }, cfg.attendance || {}, { qrRequired:false });
+  cfg.security = Object.assign({ allowLocalFallback:false }, cfg.security || {});
+  try { delete cfg.security.allowLocalDemo; } catch {}
+  cfg.cacheVersion = cfg.cacheVersion || 'v31-production-deploy-ready-keep-dev-files';
+  cfg.deployment = Object.assign({}, cfg.deployment || {}, { packageVersion: 'v31-production-deploy-ready-keep-dev-files' });
   window.HR_QR_REQUIRED = false;
   window.HR_PRIVATE_DEPLOY_BUNDLE = true;
+
   function toast(msg,type='ok',ms=5000){
-    if(!msg) return; document.querySelectorAll('.hr-toast.v10').forEach(t=>t.remove());
-    const el=document.createElement('div'); el.className='hr-toast v10 '+(type==='error'?'error':'ok'); el.textContent=msg; el.setAttribute('role','status'); document.body.appendChild(el);
-    requestAnimationFrame(()=>el.classList.add('is-visible')); setTimeout(()=>{el.classList.remove('is-visible'); setTimeout(()=>el.remove(),260)},ms);
+    if(!msg) return;
+    document.querySelectorAll('.hr-toast.v10').forEach(t=>t.remove());
+    const el=document.createElement('div');
+    el.className='hr-toast v10 '+(type==='error'?'error':'ok');
+    el.textContent=msg;
+    el.setAttribute('role','status');
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('is-visible'));
+    setTimeout(()=>{el.classList.remove('is-visible'); setTimeout(()=>el.remove(),260)},ms);
   }
-  function confirmDialog({title='تأكيد', message='', confirmLabel='تأكيد', cancelLabel='لاحقًا'}={}){
+
+  function confirmDialog({title='ØªØ£ÙƒÙŠØ¯', message='', confirmLabel='ØªØ£ÙƒÙŠØ¯', cancelLabel='Ù„Ø§Ø­Ù‚Ù‹Ø§'}={}){
     return new Promise(resolve=>{
       const overlay=document.createElement('div');
       overlay.className='modal-backdrop v10-confirm-backdrop';
@@ -30,54 +52,36 @@
       overlay.querySelector('[data-confirm]').focus();
     });
   }
+
   window.HRToast = toast;
   window.HRExplainAndEnablePush = async function(){
-    if(!('Notification' in window)) return toast('هذا المتصفح لا يدعم الإشعارات.', 'error');
-    if(!('serviceWorker' in navigator) || !('PushManager' in window)) return toast('إشعارات Web Push غير مدعومة على هذا الجهاز.', 'error');
+    if(!('Notification' in window)) { toast('Ù‡Ø°Ø§ Ø§Ù„Ù…ØªØµÙØ­ Ù„Ø§ ÙŠØ¯Ø¹Ù… Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.', 'error'); return false; }
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)) { toast('Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Web Push ØºÙŠØ± Ù…Ø¯Ø¹ÙˆÙ…Ø© Ø¹Ù„Ù‰ Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø².', 'error'); return false; }
     const ok = await confirmDialog({
-      title:'تفعيل الإشعارات',
-      message:'سيتم تفعيل إشعارات البصمة وطلب الموقع والقرارات الإدارية على هذا الجهاز. يمكنك إيقافها لاحقًا من إعدادات المتصفح.',
-      confirmLabel:'تفعيل',
-      cancelLabel:'لاحقًا'
+      title:'ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª',
+      message:'Ø³ÙŠØªÙ… ØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ø¨ØµÙ…Ø© ÙˆØ·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ© Ø¹Ù„Ù‰ Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø². ÙŠÙ…ÙƒÙ†Ùƒ Ø¥ÙŠÙ‚Ø§ÙÙ‡Ø§ Ù„Ø§Ø­Ù‚Ù‹Ø§ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…ØªØµÙØ­.',
+      confirmLabel:'ØªÙØ¹ÙŠÙ„',
+      cancelLabel:'Ù„Ø§Ø­Ù‚Ù‹Ø§'
     });
     if(!ok) return false;
     const perm = await Notification.requestPermission();
-    toast(perm==='granted'?'تم السماح بالإشعارات.':'لم يتم السماح بالإشعارات.', perm==='granted'?'ok':'error');
+    toast(perm==='granted'?'ØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.':'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.', perm==='granted'?'ok':'error');
     return perm==='granted';
   };
+
   window.HRExplainAndEnableLocation = async function(){
-    if(!navigator.geolocation) return toast('هذا الجهاز لا يدعم تحديد الموقع.', 'error');
+    if(!navigator.geolocation) { toast('Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø² Ù„Ø§ ÙŠØ¯Ø¹Ù… ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹.', 'error'); return null; }
     return new Promise(resolve=>navigator.geolocation.getCurrentPosition(
-      pos=>{ toast('تم تفعيل الموقع وقراءة GPS بنجاح.'); resolve(pos); },
-      err=>{ toast('لم يتم السماح بالموقع. فعّل صلاحية الموقع من إعدادات المتصفح.', 'error'); resolve(null); },
+      pos=>{ toast('ØªÙ… ØªÙØ¹ÙŠÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆÙ‚Ø±Ø§Ø¡Ø© GPS Ø¨Ù†Ø¬Ø§Ø­.'); resolve(pos); },
+      err=>{ toast('Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ù…ÙˆÙ‚Ø¹. ÙØ¹Ù‘Ù„ ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…ØªØµÙØ­.', 'error'); resolve(null); },
       {enableHighAccuracy:true,timeout:20000,maximumAge:0}
     ));
   };
+
   document.addEventListener('click', (e)=>{
-    const btn=e.target.closest('[data-enable-push],[data-enable-notifications]'); if(btn){ e.preventDefault(); window.HRExplainAndEnablePush(); }
-    const loc=e.target.closest('[data-enable-location]'); if(loc){ e.preventDefault(); window.HRExplainAndEnableLocation(); }
+    const btn=e.target.closest('[data-enable-push],[data-enable-notifications]');
+    if(btn && !btn.dataset.hrPushBound){ e.preventDefault(); window.HRExplainAndEnablePush(); }
+    const loc=e.target.closest('[data-enable-location]');
+    if(loc && !loc.dataset.hrLocationBound){ e.preventDefault(); window.HRExplainAndEnableLocation(); }
   });
-})();
-
-
-// V11 private deploy alignment: QR is fully disabled by policy and push/GPS defaults are tightened.
-(function applyPrivateDeployV11(){
-  const cfg = window.HR_SUPABASE_CONFIG || {};
-  cfg.attendance = Object.assign({
-    qrRequired: false,
-    reminderInPageHour: 10,
-    reminderPushHour: 9,
-    reminderPushMinute: 30,
-    gpsSamples: 18,
-    gpsSampleWindowMs: 30000,
-    gpsTargetAccuracyMeters: 15,
-    gpsMaxAcceptableAccuracyMeters: 90,
-    gpsSafetyBufferMeters: 90,
-    gpsUncertainReviewOnly: true
-  }, cfg.attendance || {}, { qrRequired: false });
-  cfg.security = Object.assign({ allowLocalFallback: false }, cfg.security || {});
-  try { delete cfg.security.allowLocalDemo; } catch {}
-  cfg.cacheVersion = cfg.cacheVersion || 'full-workflow-live-20260504-private-v13';
-  window.HR_QR_REQUIRED = false;
-  window.HR_PRIVATE_DEPLOY_V11_APPLIED = true;
 })();

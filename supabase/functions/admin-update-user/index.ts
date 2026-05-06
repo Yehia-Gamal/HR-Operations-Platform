@@ -53,9 +53,11 @@ Deno.serve(async (req) => {
   if (email) authPatch.email = email;
   if (body.password) {
     const newPassword = String(body.password);
-    const phonePassword = Boolean(phone && newPassword === phone);
-    if (!strongEnough(newPassword) && !phonePassword) {
-      return json(req, { error: 'PASSWORD_WEAK', message: 'كلمة المرور ضعيفة. يجب أن تكون قوية أو مطابقة لرقم هاتف الموظف ككلمة مرور مؤقتة.' }, 400);
+    if (phone && normalizePhone(newPassword) === phone) {
+      return json(req, { error: 'PASSWORD_REJECTED', message: 'كلمة المرور غير مقبولة.' }, 400);
+    }
+    if (!strongEnough(newPassword)) {
+      return json(req, { error: 'PASSWORD_WEAK', message: 'كلمة المرور ضعيفة. يجب أن تحتوي 10 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز، ولا يُسمح باستخدام رقم الهاتف ككلمة مرور.' }, 400);
     }
     authPatch.password = newPassword;
   }

@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from 'node:fs';
+﻿import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Script } from 'node:vm';
 const root = process.cwd();
@@ -8,12 +8,12 @@ const assert = (condition, message) => { if (!condition) failures.push(message);
 function moduleToScript(source) {
   return source.replace(/^\s*import\s+[^;]+;\s*$/gm, '').replace(/^\s*export\s+default\s+/gm, '').replace(/^\s*export\s+(async\s+function|function|class)\s+/gm, '$1 ').replace(/^\s*export\s+(const|let|var)\s+/gm, '$1 ').replace(/^\s*export\s*\{[^}]*\};?\s*$/gm, '');
 }
-for (const file of ['shared/js/api.js','shared/js/app-admin.js','shared/js/employee-app.js','shared/js/executive-app.js','shared/js/supabase-api.js','shared/js/register-sw.js','sw.js']) {
+for (const file of ['shared/js/api.js','shared/js/app-admin.js','shared/js/employee-app.js','shared/js/executive-app.js','shared/js/supabase-api.js','shared/js/register-sw.js','sw.js','sw-admin.js','sw-employee.js','sw-executive.js','shared/js/v9-hardening.js','shared/js/v10-private-deploy-fixes.js']) {
   try { new Script(moduleToScript(read(file)), { filename: file }); } catch (error) { failures.push(`${file}: ${error.message}`); }
 }
 for (const file of ['index.html','admin-login.html','operations-gate/index.html','admin/index.html','employee/index.html','executive/index.html','tools/reset-cache.html'].filter((f) => existsSync(join(root, f)))) {
   const html = read(file);
-  [...html.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)].forEach((match, index) => {
+  [...html.matchAll(/<script(?![^>]*src=)[^>]*>([\s\S]*?)<\/script>/gi)].forEach((match, index) => {
     const code = match[1].trim();
     if (!code) return;
     try { new Script(code, { filename: `${file} inline script #${index + 1}` }); } catch (error) { failures.push(`${file} inline script #${index + 1}: ${error.message}`); }
@@ -25,15 +25,18 @@ const db = read('shared/js/database.js');
 const sw = read('sw.js');
 const reg = read('shared/js/register-sw.js');
 const supabaseApi = read('shared/js/supabase-api.js');
-assert(read('package.json').includes('1.4.0-full-workflow-live-20260504'), 'Package version must be 1.4.0-full-workflow-live-20260504.');
-assert(api.includes('expectedPatch: "064_attendance_fallback_workflow.sql"'), 'Expected patch must be 043.');
-for (const patch of ['037_kpi_policy_window_hr_scoring.sql','038_kpi_cycle_control_reports.sql','039_management_hr_reports_workflow.sql','040_runtime_alignment_fix.sql','041_audit_v7_security_mobile_alignment.sql','042_authorized_roster_phone_login_internal_channel.sql','064_attendance_fallback_workflow.sql']) assert(api.includes(patch) && existsSync(join(root, 'supabase/sql/patches', patch)), `${patch} must exist and be listed.`);
+const finalSql = read('supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql');
+assert(read('package.json').includes('v31-production-deploy-ready-keep-dev-files'), 'Package version must be v31-production-deploy-ready-keep-dev-files.');
+assert(existsSync(join(root, 'supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql')), 'Final SQL Editor file must exist.');
+assert(existsSync(join(root, 'supabase/sql/VERIFY_AFTER_SUPABASE_DEPLOY.sql')), 'Post deploy verify SQL must exist.');
+for (const token of ['037_kpi_policy_window_hr_scoring','038_kpi_cycle_control_reports','039_management_hr_reports_workflow','040_runtime_alignment_fix','041_audit_v7_security_mobile_alignment','042_authorized_roster_phone_login_internal_channel','064_attendance_fallback_workflow']) assert(finalSql.includes(token), `${token} must exist in final SQL bundle.`);
 for (const route of ['management-structure','team-dashboard','hr-operations','dispute-workflow','report-center','presence-map','attendance-risk','admin-decisions','monthly-auto-pdf']) assert(app.includes(route), `Missing route ${route}.`);
 for (const fn of ['managementStructure','assignManager','teamDashboard','hrOperations','disputeWorkflow','reportCenter','exportManagementReport','executivePresenceDashboard','attendanceRiskCenter','adminDecisions','monthlyAutoPdfReports']) assert(api.includes(`${fn}: async`), `Missing local endpoint ${fn}.`);
 for (const fn of ['managementStructure','assignManager','teamDashboard','hrOperations','disputeWorkflow','reportCenter','exportManagementReport','monthlyEvaluations','runSmartAttendance','databaseMigrationsStatus','myActionCenter','executivePresenceDashboard','attendanceRiskCenter','adminDecisions','monthlyAutoPdfReports']) assert(supabaseApi.includes(`${fn}: async`), `Missing Supabase endpoint ${fn}.`);
 for (const scope of ['organization:manage','team:dashboard','hr:operations','disputes:escalate','reports:pdf','reports:excel','attendance:risk','decisions:manage','reports:monthly-pdf-auto']) assert(api.includes(scope) && db.includes(scope), `Missing permission ${scope}.`);
-assert(app.includes('حضور حلقة الشيخ وليد يوسف الأسبوعية') && app.includes('خاص بـ HR'), 'KPI HR-only fields must remain clear.');
-assert(sw.includes('hr-attendance-full-workflow-live-20260504') && reg.includes('hr-attendance-full-workflow-live-20260504'), 'Service worker cache must be management-suite version.');
+assert(app.includes('Ø­Ø¶ÙˆØ± Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ ÙŠÙˆØ³Ù Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ÙŠØ©') && app.includes('Ø®Ø§Øµ Ø¨Ù€ HR'), 'KPI HR-only fields must remain clear.');
+assert(sw.includes('v31-production-deploy-ready-keep-dev-files') && reg.includes('v31-production-deploy-ready-keep-dev-files'), 'Service worker cache must be v29 version.');
+assert(supabaseApi.includes('send-push-notifications') && !supabaseApi.includes('send-push-notification"') && !supabaseApi.includes("send-push-notification'"), 'Runtime must use canonical send-push-notifications only.');
 assert(read('operations-gate/index.html').includes('hr.opsGatewayUnlockedTarget'), 'Operations gate must keep scoped target unlock.');
 assert(read('admin/index.html').includes("unlockedTarget === 'admin'"), 'Admin gate must require admin target.');
 assert(read('executive/index.html').includes("unlockedTarget === 'executive'"), 'Executive gate must require executive target.');

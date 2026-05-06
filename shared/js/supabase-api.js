@@ -1,4 +1,4 @@
-const SUPABASE_CDN = "https://esm.sh/@supabase/supabase-js@2";
+﻿const SUPABASE_CDN = "https://esm.sh/@supabase/supabase-js@2";
 const CONFIG = () => globalThis.HR_SUPABASE_CONFIG || {};
 const clone = (value) => JSON.parse(JSON.stringify(value ?? null));
 const now = () => new Date().toISOString();
@@ -6,8 +6,8 @@ const makeId = (prefix = "id") => `${prefix}-${globalThis.crypto?.randomUUID?.()
 const toInt = (v, fallback = 0) => Number.isFinite(Number(v)) ? Number(v) : fallback;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const DEFAULT_COMPLEX = {
-  name: "مجمع منيل شيحة",
-  address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912",
+  name: "Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©",
+  address: "Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912",
   latitude: 29.950738592862045,
   longitude: 31.238094542328678,
   radiusMeters: 180,
@@ -51,11 +51,11 @@ async function getSupabase() {
 
 async function sb() {
   const client = await getSupabase();
-  if (!client) throw new Error("لم يتم تفعيل Supabase بعد. عدّل shared/js/supabase-config.js.");
+  if (!client) throw new Error("Ù„Ù… ÙŠØªÙ… ØªÙØ¹ÙŠÙ„ Supabase Ø¨Ø¹Ø¯. Ø¹Ø¯Ù‘Ù„ shared/js/supabase-config.js.");
   return client;
 }
 
-function fail(error, fallback = "تعذر تنفيذ العملية على Supabase.") {
+function fail(error, fallback = "ØªØ¹Ø°Ø± ØªÙ†ÙÙŠØ° Ø§Ù„Ø¹Ù…Ù„ÙŠØ© Ø¹Ù„Ù‰ Supabase.") {
   if (!error) return;
   const message = error.message || error.details || error.hint || fallback;
   throw new Error(message);
@@ -85,6 +85,57 @@ async function ignoreSupabaseError(operation) {
   try { await operation; } catch {}
 }
 
+function notificationSnake(row = {}) {
+  const data = row.data && typeof row.data === "object" ? row.data : {};
+  return {
+    user_id: row.user_id || row.userId || null,
+    employee_id: row.employee_id || row.employeeId || null,
+    title: row.title || "ØªÙ†Ø¨ÙŠÙ‡",
+    body: row.body || row.message || "",
+    type: row.type || "INFO",
+    status: row.status || "UNREAD",
+    is_read: row.is_read === true || row.isRead === true,
+    route: row.route || data.route || "",
+    data,
+    created_at: row.created_at || row.createdAt || now(),
+  };
+}
+
+async function safeCreateNotifications(client, rows, options = {}) {
+  const list = (Array.isArray(rows) ? rows : [rows]).filter(Boolean).map(notificationSnake);
+  if (!list.length) return { created: 0, ids: [] };
+  const block = options.block === true;
+  const fallbackMessage = options.message || "ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø± Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ.";
+
+  // V26: prefer SECURITY DEFINER bulk RPC to avoid RLS and column-shape 400 errors.
+  try {
+    const { data, error } = await client.rpc("safe_create_notifications_bulk", { p_rows: list });
+    if (!error) return { created: Array.isArray(data) ? data.length : list.length, ids: Array.isArray(data) ? data.map((row) => row.id || row) : [] };
+    console.warn("safe_create_notifications_bulk skipped; apply SQL Patch 079", error.message || error);
+  } catch (error) {
+    console.warn("safe_create_notifications_bulk unavailable", error?.message || error);
+  }
+
+  try {
+    const { data, error } = await client.from("notifications").insert(list).select("id");
+    if (error) {
+      if (block) fail(error, fallbackMessage);
+      console.warn("notifications fallback insert skipped", error.message || error);
+      return { created: 0, ids: [] };
+    }
+    return { created: Array.isArray(data) ? data.length : list.length, ids: (data || []).map((row) => row.id) };
+  } catch (error) {
+    if (block) throw error;
+    console.warn("notifications fallback insert failed", error?.message || error);
+    return { created: 0, ids: [] };
+  }
+}
+
+async function safeCreateNotification(client, row, options = {}) {
+  const result = await safeCreateNotifications(client, [row], options);
+  return result.ids?.[0] || "";
+}
+
 function toSnake(row) {
   const out = {};
   for (const [key, value] of Object.entries(row || {})) out[snakeKey(key)] = value;
@@ -95,7 +146,7 @@ function rolePermissions(role) {
   if (!role) return [];
   if (Array.isArray(role.permissions)) return role.permissions;
   if (typeof role.permissions === "string") {
-    try { return rolePermissions({ permissions: JSON.parse(role.permissions) }); } catch { return role.permissions.split(/[،,\s]+/).map((s) => s.trim()).filter(Boolean); }
+    try { return rolePermissions({ permissions: JSON.parse(role.permissions) }); } catch { return role.permissions.split(/[ØŒ,\s]+/).map((s) => s.trim()).filter(Boolean); }
   }
   if (role.permissions && typeof role.permissions === "object") {
     if (Array.isArray(role.permissions.permissions)) return rolePermissions(role.permissions);
@@ -120,7 +171,7 @@ async function selectAll(table, query = "*", options = {}) {
     rows.push(...(data || []));
     if ((data || []).length < (to - from + 1)) break;
   }
-  if (rows.length >= maxRows) console.warn(`[${table}] تم الوصول للحد الأقصى ${maxRows}. استخدم فلترة التاريخ لو الجدول كبير جدًا.`);
+  if (rows.length >= maxRows) console.warn(`[${table}] ØªÙ… Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ø­Ø¯ Ø§Ù„Ø£Ù‚ØµÙ‰ ${maxRows}. Ø§Ø³ØªØ®Ø¯Ù… ÙÙ„ØªØ±Ø© Ø§Ù„ØªØ§Ø±ÙŠØ® Ù„Ùˆ Ø§Ù„Ø¬Ø¯ÙˆÙ„ ÙƒØ¨ÙŠØ± Ø¬Ø¯Ù‹Ø§.`);
   return rows;
 }
 
@@ -128,6 +179,11 @@ let _coreCache = null;
 let _coreExpiry = 0;
 async function core({ force = false } = {}) {
   if (!force && _coreCache && Date.now() < _coreExpiry) return _coreCache;
+  try {
+    const cached = sessionStorage.getItem("hr.core");
+    const expiry = Number(sessionStorage.getItem("hr.core.exp") || 0);
+    if (!force && cached && Date.now() < expiry) return (_coreCache = JSON.parse(cached));
+  } catch {}
   const [roles, branches, departments, governorates, complexes] = await Promise.all([
     selectAll("roles", "*", { limit: 1000 }),
     selectAll("branches", "*", { limit: 1000 }),
@@ -144,6 +200,10 @@ async function core({ force = false } = {}) {
     complexes: map(complexes),
   };
   _coreExpiry = Date.now() + 60_000;
+  try {
+    sessionStorage.setItem("hr.core", JSON.stringify(_coreCache));
+    sessionStorage.setItem("hr.core.exp", String(_coreExpiry));
+  } catch {}
   return _coreCache;
 }
 
@@ -251,7 +311,7 @@ async function selfEmployeeId() {
 function leavePayload(body = {}, employeeId = body.employeeId) {
   return compact({
     employee_id: employeeId,
-    type: body.leaveType || body.type || "اعتيادية",
+    type: body.leaveType || body.type || "Ø§Ø¹ØªÙŠØ§Ø¯ÙŠØ©",
     start_date: body.startDate,
     end_date: body.endDate,
     reason: body.reason || "",
@@ -263,7 +323,7 @@ function leavePayload(body = {}, employeeId = body.employeeId) {
 function missionPayload(body = {}, employeeId = body.employeeId) {
   return compact({
     employee_id: employeeId,
-    title: body.title || "مأمورية",
+    title: body.title || "Ù…Ø£Ù…ÙˆØ±ÙŠØ©",
     destination: body.destinationName || body.destination || "",
     planned_start: body.plannedStart,
     planned_end: body.plannedEnd,
@@ -275,7 +335,7 @@ function missionPayload(body = {}, employeeId = body.employeeId) {
 
 function disputePayload(body = {}, employeeId = body.employeeId) {
   return compact({
-    title: body.title || "شكوى / خلاف",
+    title: body.title || "Ø´ÙƒÙˆÙ‰ / Ø®Ù„Ø§Ù",
     description: body.description || "",
     employee_id: employeeId || undefined,
     status: body.status || "IN_REVIEW",
@@ -328,7 +388,7 @@ async function uploadDataUrl(bucket, folder, dataUrl, fileName = "selfie.jpg") {
   const ext = fileName.split(".").pop() || "jpg";
   const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const { error } = await client.storage.from(bucket).upload(path, blob, { upsert: false, contentType: blob.type || "image/jpeg" });
-  fail(error, "تعذر رفع الصورة.");
+  fail(error, "ØªØ¹Ø°Ø± Ø±ÙØ¹ Ø§Ù„ØµÙˆØ±Ø©.");
   const { data } = client.storage.from(bucket).getPublicUrl(path);
   return data.publicUrl;
 }
@@ -339,13 +399,13 @@ async function compressImageFile(file, { maxSide = 900, quality = 0.82 } = {}) {
   const dataUrl = await new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("تعذر قراءة الصورة."));
+    reader.onerror = () => reject(new Error("ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„ØµÙˆØ±Ø©."));
     reader.readAsDataURL(file);
   });
   const image = await new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error("ملف الصورة غير صالح."));
+    img.onerror = () => reject(new Error("Ù…Ù„Ù Ø§Ù„ØµÙˆØ±Ø© ØºÙŠØ± ØµØ§Ù„Ø­."));
     img.src = dataUrl;
   });
   const scale = Math.min(1, maxSide / Math.max(image.width || maxSide, image.height || maxSide));
@@ -366,11 +426,11 @@ async function uploadFile(bucket, folder, file, { privateFile = false } = {}) {
   const safe = String(file.name || "file").replace(/[^\w.\-]+/g, "-");
   const path = `${folder}/${Date.now()}-${safe}`;
   const { error } = await client.storage.from(bucket).upload(path, file, { upsert: false, contentType: file.type || "application/octet-stream" });
-  fail(error, "تعذر رفع الملف.");
+  fail(error, "ØªØ¹Ø°Ø± Ø±ÙØ¹ Ø§Ù„Ù…Ù„Ù.");
   if (privateFile) {
     const expiresIn = Number(CONFIG().security?.attachmentSignedUrlSeconds || 3600);
     const { data: signed, error: signError } = await client.storage.from(bucket).createSignedUrl(path, expiresIn);
-    fail(signError, "تم رفع الملف لكن تعذر إنشاء رابط آمن مؤقت.");
+    fail(signError, "ØªÙ… Ø±ÙØ¹ Ø§Ù„Ù…Ù„Ù Ù„ÙƒÙ† ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø±Ø§Ø¨Ø· Ø¢Ù…Ù† Ù…Ø¤Ù‚Øª.");
     return { url: signed?.signedUrl || "", bucket, path, expiresIn };
   }
   const { data } = client.storage.from(bucket).getPublicUrl(path);
@@ -385,7 +445,7 @@ async function signedAttachmentUrl(item) {
   const expiresIn = Number(CONFIG().security?.attachmentSignedUrlSeconds || 3600);
   const { data, error } = await client.storage.from(bucket).createSignedUrl(path, expiresIn);
   if (error) {
-    console.warn("تعذر إنشاء رابط مرفق مؤقت", error.message || error);
+    console.warn("ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø±Ø§Ø¨Ø· Ù…Ø±ÙÙ‚ Ù…Ø¤Ù‚Øª", error.message || error);
     return item.url || "";
   }
   return data?.signedUrl || item.url || "";
@@ -401,7 +461,7 @@ async function employeeById(employeeId) {
 
 async function myEmployee() {
   const user = await currentUser();
-  if (!user?.employeeId) throw new Error("هذا الحساب غير مرتبط بملف موظف.");
+  if (!user?.employeeId) throw new Error("Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…Ø±ØªØ¨Ø· Ø¨Ù…Ù„Ù Ù…ÙˆØ¸Ù.");
   return await employeeById(user.employeeId);
 }
 
@@ -430,14 +490,14 @@ function evaluateGeo(address, body = {}) {
   let geofenceStatus = "unknown";
   let distanceFromBranchMeters = null;
   let allowed = false;
-  let message = "تعذر قراءة الموقع الحالي.";
+  let message = "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ.";
   const accuracyMeters = body.accuracyMeters != null ? Number(body.accuracyMeters) : null;
   if (!current) {
     geofenceStatus = body.locationPermission === "denied" ? "permission_denied" : "location_unavailable";
-    message = geofenceStatus === "permission_denied" ? "تم رفض صلاحية الموقع." : "الموقع غير متاح.";
+    message = geofenceStatus === "permission_denied" ? "ØªÙ… Ø±ÙØ¶ ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„Ù…ÙˆÙ‚Ø¹." : "Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…ØªØ§Ø­.";
   } else if (!address?.hasConfiguredAddress) {
     geofenceStatus = "branch_location_missing";
-    message = "لم يتم ضبط إحداثيات الفرع المعتمد.";
+    message = "Ù„Ù… ÙŠØªÙ… Ø¶Ø¨Ø· Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø§Ù„ÙØ±Ø¹ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯.";
   } else {
     distanceFromBranchMeters = distanceMeters(current, { latitude: address.latitude, longitude: address.longitude });
     const weakAccuracy = accuracyMeters != null && accuracyMeters > address.maxAccuracyMeters;
@@ -446,8 +506,8 @@ function evaluateGeo(address, body = {}) {
     allowed = distanceFromBranchMeters != null && (distanceFromBranchMeters <= address.radiusMeters || (weakAccuracy && distanceFromBranchMeters <= effectiveRadius));
     geofenceStatus = allowed ? (weakAccuracy ? "inside_branch_low_accuracy" : "inside_branch") : (weakAccuracy ? "location_low_accuracy" : "outside_branch");
     message = allowed
-      ? (weakAccuracy ? `تم قبول الموقع مع دقة GPS ضعيفة (${accuracyMeters} متر). يفضل تشغيل الموقع عالي الدقة.` : "الموقع داخل العنوان المحدد ويمكن تسجيل البصمة.")
-      : (weakAccuracy ? `دقة الموقع ضعيفة: ${accuracyMeters} متر. اقترب من مكان مفتوح وفعّل GPS عالي الدقة ثم حاول مرة أخرى.` : `أنت خارج نطاق العنوان المحدد. المسافة ${distanceFromBranchMeters} متر والنطاق ${address.radiusMeters} متر.`);
+      ? (weakAccuracy ? `ØªÙ… Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ø¹ Ø¯Ù‚Ø© GPS Ø¶Ø¹ÙŠÙØ© (${accuracyMeters} Ù…ØªØ±). ÙŠÙØ¶Ù„ ØªØ´ØºÙŠÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¹Ø§Ù„ÙŠ Ø§Ù„Ø¯Ù‚Ø©.` : "Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¯Ø§Ø®Ù„ Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ø­Ø¯Ø¯ ÙˆÙŠÙ…ÙƒÙ† ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©.")
+      : (weakAccuracy ? `Ø¯Ù‚Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¶Ø¹ÙŠÙØ©: ${accuracyMeters} Ù…ØªØ±. Ø§Ù‚ØªØ±Ø¨ Ù…Ù† Ù…ÙƒØ§Ù† Ù…ÙØªÙˆØ­ ÙˆÙØ¹Ù‘Ù„ GPS Ø¹Ø§Ù„ÙŠ Ø§Ù„Ø¯Ù‚Ø© Ø«Ù… Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.` : `Ø£Ù†Øª Ø®Ø§Ø±Ø¬ Ù†Ø·Ø§Ù‚ Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ø­Ø¯Ø¯. Ø§Ù„Ù…Ø³Ø§ÙØ© ${distanceFromBranchMeters} Ù…ØªØ± ÙˆØ§Ù„Ù†Ø·Ø§Ù‚ ${address.radiusMeters} Ù…ØªØ±.`);
   }
   return { allowed, canRecord: allowed, geofenceStatus, distanceFromBranchMeters, distanceMeters: distanceFromBranchMeters, radiusMeters: address.radiusMeters, maxAccuracyMeters: address.maxAccuracyMeters, accuracyMeters, message, blockReason: allowed ? "" : message };
 }
@@ -462,7 +522,7 @@ async function upsertDaily(employeeId, event) {
     p_late_minutes: event.late_minutes || event.lateMinutes || 0,
     p_requires_review: Boolean(event.requires_review || event.requiresReview),
   });
-  fail(error, 'تعذر تحديث يومية الحضور.');
+  fail(error, 'ØªØ¹Ø°Ø± ØªØ­Ø¯ÙŠØ« ÙŠÙˆÙ…ÙŠØ© Ø§Ù„Ø­Ø¶ÙˆØ±.');
 }
 
 function riskLevelFromScore(score = 0) {
@@ -483,7 +543,7 @@ async function serverSharedDeviceFlags(client, employeeId, deviceFingerprintHash
     .neq("employee_id", employeeId)
     .limit(5);
   if (error) {
-    console.warn("تعذر فحص استخدام نفس الجهاز على الخادم", error);
+    console.warn("ØªØ¹Ø°Ø± ÙØ­Øµ Ø§Ø³ØªØ®Ø¯Ø§Ù… Ù†ÙØ³ Ø§Ù„Ø¬Ù‡Ø§Ø² Ø¹Ù„Ù‰ Ø§Ù„Ø®Ø§Ø¯Ù…", error);
     return [];
   }
   return (data || []).length ? ["SERVER_SHARED_DEVICE_RECENT"] : [];
@@ -523,10 +583,10 @@ async function recordPunch(type, body = {}, forceEmployeeId = "") {
   let lateMinutes = 0;
   if (type === "CHECK_IN") {
     const { data: calculatedLate, error: lateError } = await client.rpc('calculate_late_minutes', { p_employee_id: employee.id, p_event_at: eventAt });
-    fail(lateError, 'تعذر حساب التأخير.');
+    fail(lateError, 'ØªØ¹Ø°Ø± Ø­Ø³Ø§Ø¨ Ø§Ù„ØªØ£Ø®ÙŠØ±.');
     lateMinutes = Number(calculatedLate || 0);
   }
-  const status = type === "CHECK_IN" ? (lateMinutes > 0 ? "LATE" : "PRESENT") : "CHECK_OUT"; // للتقارير فقط، لا يمنع التسجيل
+  const status = type === "CHECK_IN" ? (lateMinutes > 0 ? "LATE" : "PRESENT") : "CHECK_OUT"; // Ù„Ù„ØªÙ‚Ø§Ø±ÙŠØ± ÙÙ‚Ø·ØŒ Ù„Ø§ ÙŠÙ…Ù†Ø¹ Ø§Ù„ØªØ³Ø¬ÙŠÙ„
   const basePayload = {
     employee_id: employee.id,
     user_id: user?.id || null,
@@ -566,7 +626,7 @@ async function recordPunch(type, body = {}, forceEmployeeId = "") {
     insert = await client.from("attendance_events").insert(basePayload).select("*").single();
   }
   const { data, error } = insert;
-  fail(error, "تعذر حفظ البصمة.");
+  fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø¨ØµÙ…Ø©.");
   if (data?.id && (body.identityCheck || body.riskFlags || body.riskScore != null)) {
     await ignoreSupabaseError(client.from("attendance_identity_checks").insert({
       attendance_event_id: data.id,
@@ -634,12 +694,12 @@ async function recordManualPunch(type, body = {}, forceEmployeeId = "") {
     verification_status: "manual",
     biometric_method: "manual",
     selfie_url: "",
-    notes: body.notes || "تسجيل يدوي — يحتاج مراجعة واعتماد HR",
+    notes: body.notes || "ØªØ³Ø¬ÙŠÙ„ ÙŠØ¯ÙˆÙŠ â€” ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø© ÙˆØ§Ø¹ØªÙ…Ø§Ø¯ HR",
     late_minutes: 0,
     requires_review: true,
   };
   const { data, error } = await client.from("attendance_events").insert(payload).select("*").single();
-  fail(error, "تعذر حفظ البصمة اليدوية.");
+  fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø¨ØµÙ…Ø© Ø§Ù„ÙŠØ¯ÙˆÙŠØ©.");
   await upsertDaily(employee.id, payload);
   return { ...mapEvent(data), manual: true, requiresReview: true };
 }
@@ -685,7 +745,7 @@ async function tableRows(table, order = "created_at", ascending = false, options
     rows.push(...(data || []));
     if ((data || []).length < (to - from + 1)) break;
   }
-  if (rows.length >= maxRows) console.warn(`[${table}] تم الوصول للحد الأقصى ${maxRows}. استخدم فلترة التاريخ لو الجدول كبير جدًا.`);
+  if (rows.length >= maxRows) console.warn(`[${table}] ØªÙ… Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ø­Ø¯ Ø§Ù„Ø£Ù‚ØµÙ‰ ${maxRows}. Ø§Ø³ØªØ®Ø¯Ù… ÙÙ„ØªØ±Ø© Ø§Ù„ØªØ§Ø±ÙŠØ® Ù„Ùˆ Ø§Ù„Ø¬Ø¯ÙˆÙ„ ÙƒØ¨ÙŠØ± Ø¬Ø¯Ù‹Ø§.`);
   return rows;
 }
 
@@ -706,9 +766,9 @@ function csvEscape(value) {
 
 function normalizeLoginPhone(value) {
   let text = String(value || "").trim();
-  const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
-  text = text.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)));
+  const ar = "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
+  text = text.replace(/[Ù -Ù©]/g, (d) => String(ar.indexOf(d))).replace(/[Û°-Û¹]/g, (d) => String(fa.indexOf(d)));
   let digits = text.replace(/\D/g, "");
   if (!digits) return "";
   if (digits.startsWith("0020")) digits = digits.slice(2);
@@ -764,22 +824,22 @@ function setLoginResolveCooldown(phone) {
 async function resolveLoginEmail(identifier) {
   const client = await sb();
   const raw = String(identifier || "").trim();
-  if (!raw) throw new Error("اكتب رقم الهاتف أو البريد الإلكتروني.");
+  if (!raw) throw new Error("Ø§ÙƒØªØ¨ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ø£Ùˆ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ.");
   if (looksLikeEmail(raw)) return raw.toLowerCase();
   const phone = normalizeLoginPhone(raw);
-  if (!phone) throw new Error("اكتب رقم هاتف صحيح أو بريد إلكتروني صحيح.");
+  if (!phone) throw new Error("Ø§ÙƒØªØ¨ Ø±Ù‚Ù… Ù‡Ø§ØªÙ ØµØ­ÙŠØ­ Ø£Ùˆ Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ ØµØ­ÙŠØ­.");
   const cachedEmail = getCachedLoginEmail(phone);
   if (cachedEmail) return cachedEmail;
   const cooldownSeconds = getLoginResolveCooldown(phone);
-  if (cooldownSeconds) throw new Error(`خدمة الدخول برقم الهاتف تم استدعاؤها بشكل متكرر. انتظر ${cooldownSeconds} ثانية أو استخدم البريد الإلكتروني.`);
+  if (cooldownSeconds) throw new Error(`Ø®Ø¯Ù…Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ØªÙ… Ø§Ø³ØªØ¯Ø¹Ø§Ø¤Ù‡Ø§ Ø¨Ø´ÙƒÙ„ Ù…ØªÙƒØ±Ø±. Ø§Ù†ØªØ¸Ø± ${cooldownSeconds} Ø«Ø§Ù†ÙŠØ© Ø£Ùˆ Ø§Ø³ØªØ®Ø¯Ù… Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ.`);
   const { data, error } = await client.functions.invoke("resolve-login-identifier", { body: { identifier: phone } });
   if (error) {
     console.warn("resolve-login-identifier function failed", error);
     setLoginResolveCooldown(phone);
-    throw new Error("خدمة الدخول برقم الهاتف تواجه مشكلة أو تم تجاوز الحد المسموح. يرجى المحاولة باستخدام البريد الإلكتروني.");
+    throw new Error("Ø®Ø¯Ù…Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ØªÙˆØ§Ø¬Ù‡ Ù…Ø´ÙƒÙ„Ø© Ø£Ùˆ ØªÙ… ØªØ¬Ø§ÙˆØ² Ø§Ù„Ø­Ø¯ Ø§Ù„Ù…Ø³Ù…ÙˆØ­. ÙŠØ±Ø¬Ù‰ Ø§Ù„Ù…Ø­Ø§ÙˆÙ„Ø© Ø¨Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ.");
   }
   const email = String(data?.email || "").trim();
-  if (!email) throw new Error("لا يوجد حساب دخول مرتبط بهذا الرقم. تواصل مع الإدارة لربط الرقم بالموظف.");
+  if (!email) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„ Ù…Ø±ØªØ¨Ø· Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø±Ù‚Ù…. ØªÙˆØ§ØµÙ„ Ù…Ø¹ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ù„Ø±Ø¨Ø· Ø§Ù„Ø±Ù‚Ù… Ø¨Ø§Ù„Ù…ÙˆØ¸Ù.");
   cacheLoginEmail(phone, email.toLowerCase());
   return email.toLowerCase();
 }
@@ -794,7 +854,7 @@ async function supabaseDailyReportRows(filters = {}) {
   if (filters.employeeId) query = query.eq("employee_id", filters.employeeId);
   if (filters.status) query = query.eq("status", filters.status);
   const { data, error } = await query;
-  fail(error, "تعذر قراءة التقارير اليومية. تأكد من تطبيق Patch 022.");
+  fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 022.");
   return (data || []).map(({ employee, ...row }) => ({ ...toCamel(row), employee: employee ? enrichEmployee(employee) : null }));
 }
 
@@ -813,9 +873,9 @@ function scoreSupabaseRisk(employee, attendance = [], days = 7) {
     .sort((a, b) => new Date(a.eventAt || a.createdAt || 0) - new Date(b.eventAt || b.createdAt || 0));
   const flags = [];
   const deviceIds = new Set(events.map((event) => event.deviceId || event.deviceFingerprint || event.clientId || event.userAgent).filter(Boolean));
-  if (deviceIds.size > 1) flags.push({ code: 'NEW_DEVICE', label: 'جهاز جديد أو أكثر', points: 20 });
+  if (deviceIds.size > 1) flags.push({ code: 'NEW_DEVICE', label: 'Ø¬Ù‡Ø§Ø² Ø¬Ø¯ÙŠØ¯ Ø£Ùˆ Ø£ÙƒØ«Ø±', points: 20 });
   const outside = events.filter((event) => ['outside_branch','geofence_miss','location_low_accuracy','permission_denied','location_unavailable'].includes(event.geofenceStatus) || event.requiresReview);
-  if (outside.length) flags.push({ code: 'OUT_OF_RANGE', label: `بصمات خارج النطاق/ضعيفة: ${outside.length}`, points: Math.min(35, outside.length * 10) });
+  if (outside.length) flags.push({ code: 'OUT_OF_RANGE', label: `Ø¨ØµÙ…Ø§Øª Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø·Ø§Ù‚/Ø¶Ø¹ÙŠÙØ©: ${outside.length}`, points: Math.min(35, outside.length * 10) });
   let duplicateCount = 0;
   for (let i = 1; i < events.length; i += 1) {
     const prev = events[i - 1];
@@ -824,11 +884,11 @@ function scoreSupabaseRisk(employee, attendance = [], days = 7) {
     const gap = Math.abs(new Date(cur.eventAt || cur.createdAt || 0) - new Date(prev.eventAt || prev.createdAt || 0)) / 60000;
     if (sameType && gap <= 10) duplicateCount += 1;
   }
-  if (duplicateCount) flags.push({ code: 'DUPLICATE_PUNCH', label: `تكرار بصمة سريع: ${duplicateCount}`, points: Math.min(30, duplicateCount * 15) });
+  if (duplicateCount) flags.push({ code: 'DUPLICATE_PUNCH', label: `ØªÙƒØ±Ø§Ø± Ø¨ØµÙ…Ø© Ø³Ø±ÙŠØ¹: ${duplicateCount}`, points: Math.min(30, duplicateCount * 15) });
   const far = events.filter((event) => Number(event.distanceMeters || event.distanceFromBranchMeters || 0) >= 1000);
-  if (far.length) flags.push({ code: 'FAR_DISTANCE', label: `حضور من مسافة بعيدة: ${far.length}`, points: Math.min(35, far.length * 12) });
+  if (far.length) flags.push({ code: 'FAR_DISTANCE', label: `Ø­Ø¶ÙˆØ± Ù…Ù† Ù…Ø³Ø§ÙØ© Ø¨Ø¹ÙŠØ¯Ø©: ${far.length}`, points: Math.min(35, far.length * 12) });
   const missingLocation = events.filter((event) => !event.latitude && !event.location?.latitude && ['CHECK_IN','CHECK_OUT'].includes(event.type || event.action));
-  if (missingLocation.length) flags.push({ code: 'MISSING_LOCATION', label: `بصمة بدون موقع: ${missingLocation.length}`, points: Math.min(25, missingLocation.length * 8) });
+  if (missingLocation.length) flags.push({ code: 'MISSING_LOCATION', label: `Ø¨ØµÙ…Ø© Ø¨Ø¯ÙˆÙ† Ù…ÙˆÙ‚Ø¹: ${missingLocation.length}`, points: Math.min(25, missingLocation.length * 8) });
   const score = Math.min(100, flags.reduce((sum, flag) => sum + Number(flag.points || 0), 0));
   const level = score >= 70 ? 'HIGH' : score >= 35 ? 'MEDIUM' : score > 0 ? 'LOW' : 'CLEAR';
   return { employeeId: employee.id, employee, score, level, flags, events: events.slice(-12).reverse(), generatedAt: now() };
@@ -880,7 +940,7 @@ export const supabaseEndpoints = {
     ]);
     const rows = (employees || []).map((employee) => scoreSupabaseRisk(employee, attendance || [], days)).sort((a, b) => b.score - a.score);
     const counts = rows.reduce((acc, row) => { acc.total += 1; acc[row.level] = (acc[row.level] || 0) + 1; return acc; }, { total: 0, HIGH: 0, MEDIUM: 0, LOW: 0, CLEAR: 0 });
-    return { days, counts, rows, generatedAt: now(), rules: ['تكرار بصمة خلال 10 دقائق','خروج عن نطاق الفرع','جهاز جديد','حضور من مسافة بعيدة','بصمة بدون GPS'] };
+    return { days, counts, rows, generatedAt: now(), rules: ['ØªÙƒØ±Ø§Ø± Ø¨ØµÙ…Ø© Ø®Ù„Ø§Ù„ 10 Ø¯Ù‚Ø§Ø¦Ù‚','Ø®Ø±ÙˆØ¬ Ø¹Ù† Ù†Ø·Ø§Ù‚ Ø§Ù„ÙØ±Ø¹','Ø¬Ù‡Ø§Ø² Ø¬Ø¯ÙŠØ¯','Ø­Ø¶ÙˆØ± Ù…Ù† Ù…Ø³Ø§ÙØ© Ø¨Ø¹ÙŠØ¯Ø©','Ø¨ØµÙ…Ø© Ø¨Ø¯ÙˆÙ† GPS'] };
   },
   adminDecisions: async () => {
     const client = await sb();
@@ -890,7 +950,7 @@ export const supabaseEndpoints = {
       client.from('admin_decisions').select('*').order('created_at', { ascending: false }).limit(500),
       client.from('admin_decision_acknowledgements').select('*').order('acknowledged_at', { ascending: false }).limit(5000),
     ]);
-    fail(error, 'تعذر قراءة سجل القرارات الإدارية. تأكد من تطبيق Patch 043.');
+    fail(error, 'ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø³Ø¬Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 043.');
     const ackRows = toCamel(acks || []);
     let rows = toCamel(decisions || []);
     if (!manage) rows = rows.filter((decision) => decisionVisibleToSupabaseUser(decision, user));
@@ -903,16 +963,16 @@ export const supabaseEndpoints = {
   createAdminDecision: async (body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
-    if (!supabaseUserHas(user, ['decisions:manage','notifications:manage','executive:report'])) throw new Error('لا تملك صلاحية إصدار قرار إداري.');
-    const targetEmployeeIds = Array.isArray(body.targetEmployeeIds) ? body.targetEmployeeIds.filter(Boolean) : String(body.targetEmployeeIds || '').split(/[،,\s]+/).filter(Boolean);
-    const payload = { title: body.title || 'قرار إداري', body: body.body || body.description || '', category: body.category || 'ADMINISTRATIVE', priority: body.priority || 'MEDIUM', scope: body.scope || (targetEmployeeIds.length ? 'SELECTED' : 'ALL'), target_employee_ids: targetEmployeeIds, requires_acknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== 'false', status: body.status || 'PUBLISHED', issued_by_user_id: user?.id || null, issued_by_employee_id: user?.employeeId || null, published_at: now(), created_at: now(), updated_at: now() };
+    if (!supabaseUserHas(user, ['decisions:manage','notifications:manage','executive:report'])) throw new Error('Ù„Ø§ ØªÙ…Ù„Ùƒ ØµÙ„Ø§Ø­ÙŠØ© Ø¥ØµØ¯Ø§Ø± Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ.');
+    const targetEmployeeIds = Array.isArray(body.targetEmployeeIds) ? body.targetEmployeeIds.filter(Boolean) : String(body.targetEmployeeIds || '').split(/[ØŒ,\s]+/).filter(Boolean);
+    const payload = { title: body.title || 'Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ', body: body.body || body.description || '', category: body.category || 'ADMINISTRATIVE', priority: body.priority || 'MEDIUM', scope: body.scope || (targetEmployeeIds.length ? 'SELECTED' : 'ALL'), target_employee_ids: targetEmployeeIds, requires_acknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== 'false', status: body.status || 'PUBLISHED', issued_by_user_id: user?.id || null, issued_by_employee_id: user?.employeeId || null, published_at: now(), created_at: now(), updated_at: now() };
     const { data, error } = await client.from('admin_decisions').insert(payload).select('*').single();
-    fail(error, 'تعذر نشر القرار الإداري. تأكد من تطبيق Patch 043.');
+    fail(error, 'ØªØ¹Ø°Ø± Ù†Ø´Ø± Ø§Ù„Ù‚Ø±Ø§Ø± Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠ. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 043.');
     const employees = await supabaseEndpoints.employees().catch(() => []);
     const recipients = payload.scope === 'SELECTED' ? targetEmployeeIds : (employees || []).map((employee) => employee.id);
     if (recipients.length) {
-      await ignoreSupabaseError(client.from('notifications').insert(recipients.map((employeeId) => ({ employee_id: employeeId, title: 'قرار إداري جديد يحتاج اطلاع', body: payload.title, type: 'ACTION_REQUIRED', status: 'UNREAD', is_read: false, created_at: now() }))));
-      await client.functions.invoke('send-push-notification', { body: { targetEmployeeIds: recipients, title: 'قرار إداري جديد', body: payload.title, type: 'ACTION_REQUIRED' } }).catch(() => null);
+      await safeCreateNotifications(client, recipients.map((employeeId) => ({ employee_id: employeeId, title: 'Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ Ø¬Ø¯ÙŠØ¯ ÙŠØ­ØªØ§Ø¬ Ø§Ø·Ù„Ø§Ø¹', body: payload.title, type: 'ACTION_REQUIRED', route: 'decisions', data: { route: 'decisions', decisionId: data?.id || '' } })));
+      await client.functions.invoke('send-push-notifications', { body: { targetEmployeeIds: recipients, title: 'Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ Ø¬Ø¯ÙŠØ¯', body: payload.title, type: 'ACTION_REQUIRED' } }).catch(() => null);
     }
     await audit('admin_decision.create', 'admin_decision', data?.id || '', payload).catch(() => null);
     return toCamel(data);
@@ -921,10 +981,10 @@ export const supabaseEndpoints = {
     const client = await sb();
     const user = await currentUser();
     const employeeId = user?.employeeId || user?.employee?.id;
-    if (!employeeId) throw new Error('لا يوجد موظف مرتبط بالحساب.');
+    if (!employeeId) throw new Error('Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨.');
     const payload = { decision_id: decisionId, employee_id: employeeId, user_id: user?.id || null, acknowledged_at: now(), created_at: now(), user_agent: navigator.userAgent || '' };
     const { data, error } = await client.from('admin_decision_acknowledgements').upsert(payload, { onConflict: 'decision_id,employee_id' }).select('*').single();
-    fail(error, 'تعذر تسجيل الاطلاع على القرار.');
+    fail(error, 'ØªØ¹Ø°Ø± ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø§Ø·Ù„Ø§Ø¹ Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø±Ø§Ø±.');
     return toCamel(data);
   },
   disputeMinutes: async (caseId = '') => {
@@ -932,16 +992,16 @@ export const supabaseEndpoints = {
     let query = client.from('dispute_minutes').select('*').order('session_at', { ascending: false }).limit(500);
     if (caseId) query = query.eq('case_id', caseId);
     const { data, error } = await query;
-    fail(error, 'تعذر قراءة محاضر لجنة حل الخلافات. تأكد من تطبيق Patch 043.');
+    fail(error, 'ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ù…Ø­Ø§Ø¶Ø± Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 043.');
     return { minutes: toCamel(data || []) };
   },
   saveDisputeMinute: async (body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
     const caseId = body.caseId || body.disputeId || '';
-    const payload = { case_id: caseId, session_at: body.sessionAt || now(), members: Array.isArray(body.members) ? body.members : String(body.members || 'المدير التنفيذي، السكرتير التنفيذي، HR، المدير المباشر').split(/[،,]/).map((x) => x.trim()).filter(Boolean), decision: body.decision || body.committeeDecision || '', notes: body.notes || body.note || '', attachments: Array.isArray(body.attachments) ? body.attachments : [], signed_by_user_id: user?.id || null, signed_by_name: user?.name || user?.fullName || 'النظام', signature_status: 'SIGNED', created_at: now() };
+    const payload = { case_id: caseId, session_at: body.sessionAt || now(), members: Array.isArray(body.members) ? body.members : String(body.members || 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØŒ Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØŒ HRØŒ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±').split(/[ØŒ,]/).map((x) => x.trim()).filter(Boolean), decision: body.decision || body.committeeDecision || '', notes: body.notes || body.note || '', attachments: Array.isArray(body.attachments) ? body.attachments : [], signed_by_user_id: user?.id || null, signed_by_name: user?.name || user?.fullName || 'Ø§Ù„Ù†Ø¸Ø§Ù…', signature_status: 'SIGNED', created_at: now() };
     const { data, error } = await client.from('dispute_minutes').insert(payload).select('*').single();
-    fail(error, 'تعذر حفظ محضر لجنة حل الخلافات. تأكد من تطبيق Patch 043.');
+    fail(error, 'ØªØ¹Ø°Ø± Ø­ÙØ¸ Ù…Ø­Ø¶Ø± Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 043.');
     await ignoreSupabaseError(client.from('dispute_cases').update({ committee_decision: payload.decision, resolution: payload.decision, status: body.status || 'COMMITTEE_REVIEW', updated_at: now() }).eq('id', caseId));
     await audit('dispute.minute.save', 'dispute_case', caseId, payload).catch(() => null);
     return { minute: toCamel(data) };
@@ -963,7 +1023,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     await ignoreSupabaseError(client.from('monthly_pdf_report_runs').insert(run));
     const runs = await maybeTableRows('monthly_pdf_report_runs', 'generated_at', false).then(toCamel);
-    return { month, title: `التقارير الشهرية PDF — ${month}`, generatedAt: now(), status: 'READY', attendance, evaluations: evaluations.evaluations || [], disputes: disputes.cases || [], requests: requests.rows || [], managers, runs };
+    return { month, title: `Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠØ© PDF â€” ${month}`, generatedAt: now(), status: 'READY', attendance, evaluations: evaluations.evaluations || [], disputes: disputes.cases || [], requests: requests.rows || [], managers, runs };
   },
   controlRoom: async () => {
     const [quality, requests, tasks, dailyReports, alerts] = await Promise.all([
@@ -983,15 +1043,15 @@ export const supabaseEndpoints = {
     const room = await supabaseEndpoints.controlRoom();
     const generated = [];
     for (const issue of room.readiness?.issues || []) generated.push({ fingerprint: `issue:${issue.area}:${issue.title}:${issue.detail}`, severity: issue.severity || "MEDIUM", title: issue.title, body: issue.detail || "", route: "quality-center", status: "OPEN", updated_at: now(), created_at: now() });
-    for (const row of room.staleRequests || []) generated.push({ fingerprint: `sla:${row.kind}:${row.id}`, severity: "HIGH", title: "طلب متأخر عن SLA", body: row.label || row.kindLabel || row.id, route: "requests", status: "OPEN", updated_at: now(), created_at: now() });
+    for (const row of room.staleRequests || []) generated.push({ fingerprint: `sla:${row.kind}:${row.id}`, severity: "HIGH", title: "Ø·Ù„Ø¨ Ù…ØªØ£Ø®Ø± Ø¹Ù† SLA", body: row.label || row.kindLabel || row.id, route: "requests", status: "OPEN", updated_at: now(), created_at: now() });
     for (const item of generated) await client.from("smart_alerts").upsert(item, { onConflict: "fingerprint" }).catch(() => null);
     await audit("smart_audit.run", "system", "control-room", { generated: generated.length }).catch(() => null);
     return { alerts: generated, snapshot: await supabaseEndpoints.controlRoom() };
   },
   resolveSmartAlert: async (id, body = {}) => {
     const client = await sb();
-    const { data, error } = await client.from("smart_alerts").update({ status: body.status || "RESOLVED", resolution_note: body.note || "تمت المعالجة", resolved_at: now() }).eq("id", id).select("*").single();
-    fail(error, "تعذر إغلاق التنبيه.");
+    const { data, error } = await client.from("smart_alerts").update({ status: body.status || "RESOLVED", resolution_note: body.note || "ØªÙ…Øª Ø§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø©", resolved_at: now() }).eq("id", id).select("*").single();
+    fail(error, "ØªØ¹Ø°Ø± Ø¥ØºÙ„Ø§Ù‚ Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡.");
     await audit("smart_alert.resolve", "smart_alert", id, body).catch(() => null);
     return toCamel(data);
   },
@@ -1005,27 +1065,27 @@ export const supabaseEndpoints = {
     const [employees, users, attendance, documents, dailyReports] = await Promise.all([supabaseEndpoints.employees(), supabaseEndpoints.users(), maybeTableRows("attendance_events").then(toCamel), supabaseEndpoints.employeeDocuments().catch(() => []), supabaseDailyReportRows().catch(() => [])]);
     return { exportedAt: now(), backend: "supabase", employees, users: users.map((u) => ({ ...u, password: "***" })), attendanceEvents: attendance, employeeDocuments: documents, dailyReports };
   },
-  validateImportBackup: async (payload = {}) => ({ ok: Boolean(payload && Array.isArray(payload.employees)), issues: Array.isArray(payload.employees) ? [] : ["لا يوجد employees[] داخل الملف"], warnings: [], employees: payload?.employees?.length || 0, users: payload?.users?.length || 0 }),
-  importBackup: async () => { throw new Error("استيراد Supabase يتم عبر ملفات SQL/CSV مراجعَة وليس من المتصفح حفاظًا على البيانات. استخدم التصدير ثم ارفعه للأدمن التقني."); },
+  validateImportBackup: async (payload = {}) => ({ ok: Boolean(payload && Array.isArray(payload.employees)), issues: Array.isArray(payload.employees) ? [] : ["Ù„Ø§ ÙŠÙˆØ¬Ø¯ employees[] Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ù„Ù"], warnings: [], employees: payload?.employees?.length || 0, users: payload?.users?.length || 0 }),
+  importBackup: async () => { throw new Error("Ø§Ø³ØªÙŠØ±Ø§Ø¯ Supabase ÙŠØªÙ… Ø¹Ø¨Ø± Ù…Ù„ÙØ§Øª SQL/CSV Ù…Ø±Ø§Ø¬Ø¹ÙŽØ© ÙˆÙ„ÙŠØ³ Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­ Ø­ÙØ§Ø¸Ù‹Ø§ Ø¹Ù„Ù‰ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª. Ø§Ø³ØªØ®Ø¯Ù… Ø§Ù„ØªØµØ¯ÙŠØ± Ø«Ù… Ø§Ø±ÙØ¹Ù‡ Ù„Ù„Ø£Ø¯Ù…Ù† Ø§Ù„ØªÙ‚Ù†ÙŠ."); },
   dailyReports: async (filters = {}) => supabaseDailyReportRows(filters),
   myDailyReports: async () => { const user = await currentUser(); return supabaseDailyReportRows({ employeeId: user?.employeeId || user?.employee?.id || "" }); },
   createDailyReport: async (body = {}) => {
     const client = await sb();
     const user = await currentUser();
     const employeeId = body.employeeId || user?.employeeId || user?.employee?.id;
-    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بالحساب.");
+    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨.");
     const payload = { employee_id: employeeId, report_date: body.reportDate || new Date().toISOString().slice(0, 10), achievements: body.achievements || body.done || "", blockers: body.blockers || "", tomorrow_plan: body.tomorrowPlan || body.plan || "", support_needed: body.supportNeeded || "", mood: body.mood || "NORMAL", status: body.status || "SUBMITTED", updated_at: now(), created_at: now() };
     const { data, error } = await client.from("daily_reports").upsert(payload, { onConflict: "employee_id,report_date" }).select("*, employee:employees(*)").single();
-    fail(error, "تعذر حفظ التقرير اليومي. تأكد من تطبيق Patch 022.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 022.");
     await audit("daily_report.create", "daily_report", data.id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
   },
   reviewDailyReport: async (id, body = {}) => {
     const client = await sb();
-    const payload = { status: body.status || "REVIEWED", manager_comment: body.managerComment || body.comment || "تمت المراجعة", reviewed_at: now() };
+    const payload = { status: body.status || "REVIEWED", manager_comment: body.managerComment || body.comment || "ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©", reviewed_at: now() };
     const { data, error } = await client.from("daily_reports").update(payload).eq("id", id).select("*, employee:employees(*)").single();
-    fail(error, "تعذر مراجعة التقرير اليومي.");
+    fail(error, "ØªØ¹Ø°Ø± Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ.");
     await audit("daily_report.review", "daily_report", id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
@@ -1035,26 +1095,13 @@ export const supabaseEndpoints = {
     const client = await sb();
     const email = await resolveLoginEmail(identifier);
     const { error } = await client.auth.signInWithPassword({ email, password });
-    fail(error, "بيانات الدخول غير صحيحة. تأكد من رقم الهاتف/البريد وكلمة المرور أو استخدم نسيت كلمة السر.");
+    fail(error, "Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„ ØºÙŠØ± ØµØ­ÙŠØ­Ø©. ØªØ£ÙƒØ¯ Ù…Ù† Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ/Ø§Ù„Ø¨Ø±ÙŠØ¯ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø£Ùˆ Ø§Ø³ØªØ®Ø¯Ù… Ù†Ø³ÙŠØª ÙƒÙ„Ù…Ø© Ø§Ù„Ø³Ø±.");
     const user = await currentUser();
     await audit("auth.login", "profile", user?.id, { identifier: String(identifier || "").trim(), resolvedEmail: email }).catch(() => null);
     return user;
   },
-  employeeRegister: async (body = {}) => {
-    const client = await sb();
-    const fullName = String(body.fullName || body.name || "").trim();
-    const phone = normalizeLoginPhone(body.phone || "");
-    const email = String(body.email || "").trim().toLowerCase();
-    const password = String(body.password || "");
-    if (!fullName) throw new Error("اكتب اسم الموظف.");
-    if (!phone && !email) throw new Error("اكتب رقم الهاتف أو البريد الإلكتروني.");
-    if (password.length < 8) throw new Error("كلمة المرور يجب ألا تقل عن 8 أحرف.");
-    const { data, error } = await client.functions.invoke("employee-register", { body: { fullName, phone, email, password } });
-    fail(error || (data?.error ? new Error(data.error) : null), "تعذر تسجيل الموظف. تأكد من نشر Edge Function employee-register وتطبيق Patch 036.");
-    const loginIdentifier = data?.email || email || phone;
-    const user = await supabaseEndpoints.login(loginIdentifier, password);
-    await audit("employee.self_register", "employee", data?.employeeId, { employeeId: data?.employeeId, userId: data?.userId }).catch(() => null);
-    return user;
+  employeeRegister: async () => {
+    throw new Error("Ø§Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø°Ø§ØªÙŠ Ù…ØªÙˆÙ‚Ù. ØªØªÙ… Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ù…Ù† Ù„ÙˆØ­Ø© HR ÙÙ‚Ø·.");
   },
   forgotPassword: async (identifier) => {
     const client = await sb();
@@ -1062,7 +1109,7 @@ export const supabaseEndpoints = {
     const targetHash = location.pathname.includes("/employee/") ? "" : "#settings";
     const redirectTo = `${location.origin}${location.pathname}${targetHash}`;
     const { error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
-    fail(error, "تعذر إرسال رابط إعادة تعيين كلمة المرور.");
+    fail(error, "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø±Ø§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.");
     await audit("auth.password_reset_requested", "profile", email, { identifier: String(identifier || "").trim(), resolvedEmail: email }).catch(() => null);
     return { sent: true };
   },
@@ -1074,16 +1121,16 @@ export const supabaseEndpoints = {
   changePassword: async (body = {}) => {
     const client = await sb();
     const user = await currentUser();
-    if (!user?.email) throw new Error("لا توجد جلسة نشطة.");
-    if (!body.newPassword || String(body.newPassword).length < 8) throw new Error("كلمة المرور الجديدة يجب ألا تقل عن 8 أحرف.");
-    if (body.confirmPassword && body.newPassword !== body.confirmPassword) throw new Error("تأكيد كلمة المرور غير مطابق.");
+    if (!user?.email) throw new Error("Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¬Ù„Ø³Ø© Ù†Ø´Ø·Ø©.");
+    if (!body.newPassword || String(body.newPassword).length < 8) throw new Error("ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© ÙŠØ¬Ø¨ Ø£Ù„Ø§ ØªÙ‚Ù„ Ø¹Ù† 8 Ø£Ø­Ø±Ù.");
+    if (body.confirmPassword && body.newPassword !== body.confirmPassword) throw new Error("ØªØ£ÙƒÙŠØ¯ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± Ù…Ø·Ø§Ø¨Ù‚.");
     const recoveryMode = body.recoveryMode === true || body.recoveryMode === "true";
     if (!recoveryMode) {
       const verify = await client.auth.signInWithPassword({ email: user.email, password: body.currentPassword });
-      fail(verify.error, "كلمة المرور الحالية غير صحيحة.");
+      fail(verify.error, "ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø­Ø§Ù„ÙŠØ© ØºÙŠØ± ØµØ­ÙŠØ­Ø©.");
     }
     const { error } = await client.auth.updateUser({ password: body.newPassword });
-    fail(error, "تعذر تغيير كلمة المرور.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.");
     await client.from("profiles").update({ must_change_password: false, temporary_password: false, password_changed_at: now() }).eq("id", user.id);
     await audit("auth.password_changed", "profile", user.id, { passwordChangedAt: now(), recoveryMode });
     return { changed: true };
@@ -1101,7 +1148,7 @@ export const supabaseEndpoints = {
   employee: async (id) => employeeById(id),
   bulkEmployeeAction: async (body = {}) => {
     const ids = Array.isArray(body.ids) ? body.ids : [];
-    if (!ids.length) throw new Error("حدد موظفًا واحدًا على الأقل.");
+    if (!ids.length) throw new Error("Ø­Ø¯Ø¯ Ù…ÙˆØ¸ÙÙ‹Ø§ ÙˆØ§Ø­Ø¯Ù‹Ø§ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„.");
     let updated = 0;
     for (const id of ids) {
       if (body.action === "delete") await supabaseEndpoints.deleteEmployee(id);
@@ -1110,7 +1157,7 @@ export const supabaseEndpoints = {
       else if (body.action === "notify") {
         const client = await sb();
         const { data: employee } = await client.from("employees").select("id,user_id").eq("id", id).maybeSingle();
-        await client.from("notifications").insert({ user_id: employee?.user_id || null, employee_id: id, title: body.title || "تنبيه من الإدارة", body: body.message || "يرجى مراجعة الإدارة.", type: body.type || "ACTION_REQUIRED", status: "UNREAD", is_read: false });
+        await safeCreateNotification(client, { user_id: employee?.user_id || null, employee_id: id, title: body.title || "ØªÙ†Ø¨ÙŠÙ‡ Ù…Ù† Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©", body: body.message || "ÙŠØ±Ø¬Ù‰ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©.", type: body.type || "ACTION_REQUIRED" });
       }
       updated += 1;
     }
@@ -1120,7 +1167,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const payload = toEmployeePayload(body);
     const { data, error } = await client.from("employees").insert(payload).select("*").single();
-    fail(error, "تعذر إنشاء الموظف.");
+    fail(error, "ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ù…ÙˆØ¸Ù.");
     if (body.createUser) await supabaseEndpoints.createUser({ ...body, employeeId: data.id, email: body.email || data.email });
     await audit("create", "employee", data.id, data);
     return enrichEmployee(data, await core());
@@ -1128,7 +1175,7 @@ export const supabaseEndpoints = {
   updateEmployee: async (id, body = {}) => {
     const client = await sb();
     const { data, error } = await client.from("employees").update(toEmployeePayload(body)).eq("id", id).select("*").single();
-    fail(error, "تعذر تعديل الموظف.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…ÙˆØ¸Ù.");
     await audit("update", "employee", id, data);
     return enrichEmployee(data, await core());
   },
@@ -1145,7 +1192,7 @@ export const supabaseEndpoints = {
     const payload = { ...body };
     if (!payload.password && payload.phone) payload.password = String(payload.phone || "").replace(/\D/g, "");
     const { data, error } = await client.functions.invoke("admin-create-user", { body: payload });
-    fail(error || (data?.error ? new Error(data.error) : null), "تعذر إنشاء مستخدم Supabase. تأكد من نشر Edge Function admin-create-user.");
+    fail(error || (data?.error ? new Error(data.error) : null), "ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ù…Ø³ØªØ®Ø¯Ù… Supabase. ØªØ£ÙƒØ¯ Ù…Ù† Ù†Ø´Ø± Edge Function admin-create-user.");
     const created = data?.user || data;
     if (body.avatarUrl && created?.id) {
       await client.from("profiles").update({ avatar_url: body.avatarUrl }).eq("id", created.id).catch(() => null);
@@ -1157,12 +1204,12 @@ export const supabaseEndpoints = {
     const client = await sb();
     if (body.email || body.phone || body.password) {
       const { data, error } = await client.functions.invoke("admin-update-user", { body: { ...body, id, userId: id } });
-      fail(error || (data?.error ? new Error(data.error) : null), "تعذر تعديل بيانات المستخدم في Supabase Auth. تأكد من نشر Edge Function admin-update-user.");
+      fail(error || (data?.error ? new Error(data.error) : null), "ØªØ¹Ø°Ø± ØªØ¹Ø¯ÙŠÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ÙÙŠ Supabase Auth. ØªØ£ÙƒØ¯ Ù…Ù† Ù†Ø´Ø± Edge Function admin-update-user.");
       if (data?.user) return enrichProfile(data.user, await core({ force: true }));
     }
     const payload = compact({ full_name: body.name || body.fullName, avatar_url: body.avatarUrl || body.photoUrl, employee_id: body.employeeId, role_id: body.roleId, branch_id: body.branchId, department_id: body.departmentId, governorate_id: body.governorateId, complex_id: body.complexId, status: body.status, ...contactPayload(body) });
     const { data, error } = await client.from("profiles").update(payload).eq("id", id).select("*").single();
-    fail(error, "تعذر تعديل المستخدم.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù….");
     if (data?.employee_id && (body.email || body.phone)) {
       await client.from("employees").update(contactPayload(body)).eq("id", data.employee_id).catch(() => null);
     }
@@ -1172,16 +1219,16 @@ export const supabaseEndpoints = {
   updateMyContact: async (body = {}) => {
     const client = await sb();
     const user = await currentUser();
-    if (!user?.id) throw new Error("لا توجد جلسة نشطة.");
+    if (!user?.id) throw new Error("Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¬Ù„Ø³Ø© Ù†Ø´Ø·Ø©.");
     const avatarUrl = body.avatarUrl || body.photoUrl || "";
     const payload = compact({ ...contactPayload(body), avatar_url: avatarUrl || undefined });
-    if (!payload.email && !payload.phone && !payload.avatar_url) throw new Error("اكتب بريدًا إلكترونيًا أو رقم هاتف أو اختر صورة للحفظ.");
+    if (!payload.email && !payload.phone && !payload.avatar_url) throw new Error("Ø§ÙƒØªØ¨ Ø¨Ø±ÙŠØ¯Ù‹Ø§ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠÙ‹Ø§ Ø£Ùˆ Ø±Ù‚Ù… Ù‡Ø§ØªÙ Ø£Ùˆ Ø§Ø®ØªØ± ØµÙˆØ±Ø© Ù„Ù„Ø­ÙØ¸.");
     if (payload.email && payload.email !== String(user.email || "").toLowerCase()) {
       const { error: authError } = await client.auth.updateUser({ email: payload.email });
-      fail(authError, "تعذر طلب تعديل بريد تسجيل الدخول. قد يحتاج البريد الجديد إلى تأكيد.");
+      fail(authError, "ØªØ¹Ø°Ø± Ø·Ù„Ø¨ ØªØ¹Ø¯ÙŠÙ„ Ø¨Ø±ÙŠØ¯ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„. Ù‚Ø¯ ÙŠØ­ØªØ§Ø¬ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¬Ø¯ÙŠØ¯ Ø¥Ù„Ù‰ ØªØ£ÙƒÙŠØ¯.");
     }
     const { data, error } = await client.from("profiles").update(payload).eq("id", user.id).select("*").single();
-    fail(error, "تعذر حفظ بيانات الاتصال.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø§ØªØµØ§Ù„.");
     if (user.employeeId || user.employee?.id) {
       const employeePayload = compact({ ...contactPayload(body), photo_url: avatarUrl || undefined, avatar_url: avatarUrl || undefined });
       await client.from("employees").update(employeePayload).eq("id", user.employeeId || user.employee.id).catch(() => null);
@@ -1208,13 +1255,23 @@ export const supabaseEndpoints = {
     return {
       cards: { employees: empCount.count || 0, presentToday: todayEventCount.count || 0, pendingRequests: (pendingLeaves.count || 0) + (pendingMissions.count || 0), leavesToday: leavesToday.count || 0 },
       metrics: [
-        { label: 'الموظفون', value: empCount.count || 0, helper: 'حسب صلاحياتك' },
-        { label: 'بصمات اليوم', value: todayEventCount.count || 0, helper: 'من قاعدة البيانات مباشرة' },
-        { label: 'طلبات معلقة', value: (pendingLeaves.count || 0) + (pendingMissions.count || 0), helper: 'إجازات ومأموريات' },
+        { label: 'Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†', value: empCount.count || 0, helper: 'Ø­Ø³Ø¨ ØµÙ„Ø§Ø­ÙŠØ§ØªÙƒ' },
+        { label: 'Ø¨ØµÙ…Ø§Øª Ø§Ù„ÙŠÙˆÙ…', value: todayEventCount.count || 0, helper: 'Ù…Ù† Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù…Ø¨Ø§Ø´Ø±Ø©' },
+        { label: 'Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©', value: (pendingLeaves.count || 0) + (pendingMissions.count || 0), helper: 'Ø¥Ø¬Ø§Ø²Ø§Øª ÙˆÙ…Ø£Ù…ÙˆØ±ÙŠØ§Øª' },
         { label: 'Supabase', value: 'Live', helper: 'Realtime/RLS' },
       ],
-      attendanceBreakdown: ['CHECK_IN', 'CHECK_OUT', 'LATE', 'REJECTED'].map((type) => ({ label: type, value: events.filter((e) => e.type === type || e.status === type).length })),
-      attendanceTrends: ['CHECK_IN', 'CHECK_OUT', 'LATE', 'REJECTED'].map((type) => ({ label: type, present: events.filter((e) => e.type === type || e.status === type).length, late: 0, mission: 0 })),
+      attendanceBreakdown: [
+        { type: 'CHECK_IN', label: 'Ø­Ø¶ÙˆØ±' },
+        { type: 'CHECK_OUT', label: 'Ø§Ù†ØµØ±Ø§Ù' },
+        { type: 'LATE', label: 'ØªØ£Ø®ÙŠØ±' },
+        { type: 'REJECTED', label: 'Ù…Ø±ÙÙˆØ¶' },
+      ].map((item) => ({ label: item.label, value: events.filter((e) => e.type === item.type || e.status === item.type).length })),
+      attendanceTrends: [
+        { type: 'CHECK_IN', label: 'Ø­Ø¶ÙˆØ±' },
+        { type: 'CHECK_OUT', label: 'Ø§Ù†ØµØ±Ø§Ù' },
+        { type: 'LATE', label: 'ØªØ£Ø®ÙŠØ±' },
+        { type: 'REJECTED', label: 'Ù…Ø±ÙÙˆØ¶' },
+      ].map((item) => ({ label: item.label, present: events.filter((e) => e.type === item.type || e.status === item.type).length, late: 0, mission: 0 })),
       latestEvents: events,
       latestAudit: toCamel(latestAudit.data || []),
     };
@@ -1244,11 +1301,11 @@ export const supabaseEndpoints = {
         auditLogs: auditLogs.count || 0,
       },
       checks: [
-        { label: "اتصال قاعدة البيانات", ok: !errors.length, detail: errors[0]?.message || `${latencyMs}ms` },
-        { label: "الأدوار والصلاحيات", ok: (roles.count || 0) > 0, detail: `${roles.count || 0} دور` },
-        { label: "ملفات الموظفين", ok: (employees.count || 0) >= 0, detail: `${employees.count || 0} موظف` },
-        { label: "Realtime", ok: CONFIG().realtime?.enabled !== false, detail: CONFIG().realtime?.enabled ? "مفعل" : "غير مفعل" },
-        { label: "المرفقات الخاصة", ok: true, detail: "تستخدم Signed URLs مؤقتة" },
+        { label: "Ø§ØªØµØ§Ù„ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª", ok: !errors.length, detail: errors[0]?.message || `${latencyMs}ms` },
+        { label: "Ø§Ù„Ø£Ø¯ÙˆØ§Ø± ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª", ok: (roles.count || 0) > 0, detail: `${roles.count || 0} Ø¯ÙˆØ±` },
+        { label: "Ù…Ù„ÙØ§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", ok: (employees.count || 0) >= 0, detail: `${employees.count || 0} Ù…ÙˆØ¸Ù` },
+        { label: "Realtime", ok: CONFIG().realtime?.enabled !== false, detail: CONFIG().realtime?.enabled ? "Ù…ÙØ¹Ù„" : "ØºÙŠØ± Ù…ÙØ¹Ù„" },
+        { label: "Ø§Ù„Ù…Ø±ÙÙ‚Ø§Øª Ø§Ù„Ø®Ø§ØµØ©", ok: true, detail: "ØªØ³ØªØ®Ø¯Ù… Signed URLs Ù…Ø¤Ù‚ØªØ©" },
       ],
     };
   },
@@ -1261,7 +1318,7 @@ export const supabaseEndpoints = {
       supabaseEndpoints.health().catch((error) => ({ database: "ERROR", error: error.message })),
       supabaseEndpoints.attendanceAddress().catch(() => ({})),
     ]);
-    let bucketDetail = "لم يتم الفحص من المتصفح";
+    let bucketDetail = "Ù„Ù… ÙŠØªÙ… Ø§Ù„ÙØ­Øµ Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­";
     let bucketOk = false;
     try {
       const required = [CONFIG().storage?.avatarsBucket || "avatars", CONFIG().storage?.punchSelfiesBucket || "punch-selfies", CONFIG().storage?.attachmentsBucket || "employee-attachments"];
@@ -1270,9 +1327,9 @@ export const supabaseEndpoints = {
       const existing = new Set((data || []).map((bucket) => bucket.id || bucket.name));
       const missing = required.filter((bucket) => !existing.has(bucket));
       bucketOk = missing.length === 0;
-      bucketDetail = missing.length ? "ناقص: " + missing.join(" / ") : required.join(" / ");
+      bucketDetail = missing.length ? "Ù†Ø§Ù‚Øµ: " + missing.join(" / ") : required.join(" / ");
     } catch (error) {
-      bucketDetail = error.message || "تعذر فحص Storage من المتصفح";
+      bucketDetail = error.message || "ØªØ¹Ø°Ø± ÙØ­Øµ Storage Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­";
     }
     const usersByEmployee = new Set((users || []).map((item) => item.employeeId).filter(Boolean));
     const linkedUsers = (users || []).filter((item) => item.employeeId);
@@ -1281,13 +1338,13 @@ export const supabaseEndpoints = {
       backend: "Supabase",
       generatedAt: now(),
       checks: [
-        { label: "Supabase Auth", ok: Boolean(user), status: user ? "APPROVED" : "REJECTED", detail: user?.email || "لا توجد جلسة" },
-        { label: "قاعدة البيانات", ok: health.database !== "ERROR", status: health.database === "ERROR" ? "REJECTED" : "APPROVED", detail: health.database || health.mode || "Supabase" },
-        { label: "ربط المستخدمين بالموظفين", ok: linkedUsers.length === users.length, status: linkedUsers.length === users.length ? "linked" : "unlinked", detail: String(linkedUsers.length) + "/" + String(users.length) },
-        { label: "موظفون بلا حساب دخول", ok: employeesWithoutUsers === 0, status: "INFO", detail: String(employeesWithoutUsers) + " ملف" },
-        { label: "إحداثيات المجمع", ok: Boolean(address.latitude && address.longitude), status: address.latitude && address.longitude ? "APPROVED" : "REJECTED", detail: String(address.latitude || "-") + ", " + String(address.longitude || "-") },
+        { label: "Supabase Auth", ok: Boolean(user), status: user ? "APPROVED" : "REJECTED", detail: user?.email || "Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¬Ù„Ø³Ø©" },
+        { label: "Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª", ok: health.database !== "ERROR", status: health.database === "ERROR" ? "REJECTED" : "APPROVED", detail: health.database || health.mode || "Supabase" },
+        { label: "Ø±Ø¨Ø· Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† Ø¨Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", ok: linkedUsers.length === users.length, status: linkedUsers.length === users.length ? "linked" : "unlinked", detail: String(linkedUsers.length) + "/" + String(users.length) },
+        { label: "Ù…ÙˆØ¸ÙÙˆÙ† Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„", ok: employeesWithoutUsers === 0, status: "INFO", detail: String(employeesWithoutUsers) + " Ù…Ù„Ù" },
+        { label: "Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹", ok: Boolean(address.latitude && address.longitude), status: address.latitude && address.longitude ? "APPROVED" : "REJECTED", detail: String(address.latitude || "-") + ", " + String(address.longitude || "-") },
         { label: "Storage Buckets", ok: bucketOk, status: bucketOk ? "storage_ok" : "storage_missing", detail: bucketDetail },
-        { label: "RLS", ok: true, status: "INFO", detail: "مفعّل من SQL Policies — راجع Supabase Advisor للإنتاج" },
+        { label: "RLS", ok: true, status: "INFO", detail: "Ù…ÙØ¹Ù‘Ù„ Ù…Ù† SQL Policies â€” Ø±Ø§Ø¬Ø¹ Supabase Advisor Ù„Ù„Ø¥Ù†ØªØ§Ø¬" },
       ],
     };
   },
@@ -1325,7 +1382,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const user = await currentUser().catch(() => null);
     const employee = body.employeeId ? await employeeById(body.employeeId).catch(() => null) : await myEmployee().catch(() => null);
-    if (!employee?.id) return { skipped: true, reason: "لا يوجد موظف مرتبط" };
+    if (!employee?.id) return { skipped: true, reason: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø·" };
     const payload = {
       employee_id: employee.id,
       user_id: user?.id || null,
@@ -1341,7 +1398,7 @@ export const supabaseEndpoints = {
       verification_status: "failed",
       biometric_method: "passkey",
       selfie_url: "",
-      notes: body.blockReason || body.notes || "محاولة بصمة مرفوضة",
+      notes: body.blockReason || body.notes || "Ù…Ø­Ø§ÙˆÙ„Ø© Ø¨ØµÙ…Ø© Ù…Ø±ÙÙˆØ¶Ø©",
       late_minutes: 0,
       requires_review: true,
     };
@@ -1368,7 +1425,7 @@ export const supabaseEndpoints = {
       rows.push(...(data || []));
       if ((data || []).length < (to - from + 1)) break;
     }
-    if (rows.length >= maxRows) console.warn("[attendance_events] تم الوصول للحد الأقصى، استخدم فلترة التاريخ لتخفيف الحمل.");
+    if (rows.length >= maxRows) console.warn("[attendance_events] ØªÙ… Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ø­Ø¯ Ø§Ù„Ø£Ù‚ØµÙ‰ØŒ Ø§Ø³ØªØ®Ø¯Ù… ÙÙ„ØªØ±Ø© Ø§Ù„ØªØ§Ø±ÙŠØ® Ù„ØªØ®ÙÙŠÙ Ø§Ù„Ø­Ù…Ù„.");
     return rows.map((row) => { const { employee, ...event } = row; return { ...mapEvent(event), employee: employee ? enrichEmployee(employee) : null }; });
   },
   attendanceDaily: async (params = {}) => {
@@ -1392,10 +1449,10 @@ export const supabaseEndpoints = {
   selfCheckOut: (body = {}) => recordPunch("CHECK_OUT", body),
   recordAttendance: (body = {}) => {
     const action = String(body.eventType || body.type || body.action || "").toLowerCase();
-    const out = ["out", "checkout", "check_out", "انصراف"].includes(action);
+    const out = ["out", "checkout", "check_out", "Ø§Ù†ØµØ±Ø§Ù"].includes(action);
     return recordPunch(out ? "CHECK_OUT" : "CHECK_IN", body, body.employeeId);
   },
-  regenerateAttendance: async () => ({ generated: 0, message: "في Supabase يتم تحديث اليومية عند كل بصمة، ويمكن إضافة Cron لاحقًا." }),
+  regenerateAttendance: async () => ({ generated: 0, message: "ÙÙŠ Supabase ÙŠØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„ÙŠÙˆÙ…ÙŠØ© Ø¹Ù†Ø¯ ÙƒÙ„ Ø¨ØµÙ…Ø©ØŒ ÙˆÙŠÙ…ÙƒÙ† Ø¥Ø¶Ø§ÙØ© Cron Ù„Ø§Ø­Ù‚Ù‹Ø§." }),
   manualAttendance: async (body = {}) => recordManualPunch(body.type || "CHECK_IN", body, body.employeeId),
   adjustAttendance: async (body = {}) => createOrUpdate("attendance_exceptions", body),
   missions: async () => {
@@ -1406,9 +1463,9 @@ export const supabaseEndpoints = {
   },
   createMission: async (body = {}) => {
     const employeeId = body.employeeId || await selfEmployeeId();
-    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بهذا الحساب لإرسال طلب المأمورية.");
+    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ Ù„Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ©.");
     const row = await createOrUpdate("missions", missionPayload(body, employeeId));
-    await supabaseEndpoints.createAnnouncement?.({ audience: "managers", title: "مأمورية جديدة تحتاج اعتماد", body: body.title || "مأمورية" }).catch(() => null);
+    await supabaseEndpoints.createAnnouncement?.({ audience: "managers", title: "Ù…Ø£Ù…ÙˆØ±ÙŠØ© Ø¬Ø¯ÙŠØ¯Ø© ØªØ­ØªØ§Ø¬ Ø§Ø¹ØªÙ…Ø§Ø¯", body: body.title || "Ù…Ø£Ù…ÙˆØ±ÙŠØ©" }).catch(() => null);
     return row;
   },
   updateMission: async (id, action, extra = {}) => createOrUpdate("missions", { ...extra, status: action === "reject" ? "REJECTED" : action === "manager_approve" ? "PENDING_HR_REVIEW" : action === "complete" ? "COMPLETED" : "APPROVED", workflow_status: action === "manager_approve" ? "pending_hr_review" : action }, id),
@@ -1421,9 +1478,9 @@ export const supabaseEndpoints = {
   },
   createLeave: async (body = {}) => {
     const employeeId = body.employeeId || await selfEmployeeId();
-    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بهذا الحساب لإرسال طلب الإجازة.");
-    if (!body.startDate || !body.endDate) throw new Error("حدد تاريخ بداية ونهاية الإجازة.");
-    if (String(body.endDate) < String(body.startDate)) throw new Error("تاريخ نهاية الإجازة يجب أن يكون بعد تاريخ البداية.");
+    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ Ù„Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©.");
+    if (!body.startDate || !body.endDate) throw new Error("Ø­Ø¯Ø¯ ØªØ§Ø±ÙŠØ® Ø¨Ø¯Ø§ÙŠØ© ÙˆÙ†Ù‡Ø§ÙŠØ© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©.");
+    if (String(body.endDate) < String(body.startDate)) throw new Error("ØªØ§Ø±ÙŠØ® Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø© ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø¨Ø¹Ø¯ ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¨Ø¯Ø§ÙŠØ©.");
     return createOrUpdate("leave_requests", leavePayload(body, employeeId));
   },
   updateLeave: async (id, action, extra = {}) => createOrUpdate("leave_requests", { ...extra, status: action === "reject" ? "REJECTED" : action === "manager_approve" ? "PENDING_HR_REVIEW" : "APPROVED", workflow_status: action === "manager_approve" ? "pending_hr_review" : action }, id),
@@ -1437,17 +1494,17 @@ export const supabaseEndpoints = {
     const audience = body.audience || "all";
     const target = employees.filter((employee) => audience === "all" || audience === "managers" ? (audience === "all" || ["manager", "direct-manager", "hr-manager", "executive", "executive-secretary", "admin"].includes(employee.role?.slug)) : (employee.departmentId === audience || employee.branchId === audience));
     if (!target.length) return { created: 0, pushed: 0 };
-    const rows = target.map((employee) => ({ user_id: employee.userId || null, employee_id: employee.id, title: body.title || "إعلان إداري", body: body.body || body.message || "", type: body.type || "ANNOUNCEMENT", status: "UNREAD", is_read: false, created_at: now() }));
-    const { error } = await client.from("notifications").insert(rows);
-    fail(error, "تعذر إرسال الإعلان.");
+    const rows = target.map((employee) => ({ user_id: employee.userId || null, employee_id: employee.id, title: body.title || "Ø¥Ø¹Ù„Ø§Ù† Ø¥Ø¯Ø§Ø±ÙŠ", body: body.body || body.message || "", type: body.type || "ANNOUNCEMENT", status: "UNREAD", is_read: false, created_at: now() }));
+    const noteResult = await safeCreateNotifications(client, rows, { block: true, message: "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†." });
+    if (!noteResult.created) throw new Error("Ù„Ù… ÙŠØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø£ÙŠ Ø¥Ø´Ø¹Ø§Ø± Ø¯Ø§Ø®Ù„ÙŠ Ù„Ù„Ø¥Ø¹Ù„Ø§Ù†.");
     await createOrUpdate("employee_announcements", {
-      title: body.title || "إعلان إداري",
+      title: body.title || "Ø¥Ø¹Ù„Ø§Ù† Ø¥Ø¯Ø§Ø±ÙŠ",
       body: body.body || body.message || "",
       targetScope: audience === "all" ? "ALL" : audience === "managers" ? "MANAGERS" : "FILTER",
       targetValue: audience === "all" ? "" : audience,
     }).catch(() => null);
     let pushed = 0;
-    await client.functions.invoke("send-push-notification", { body: { title: body.title || "إعلان إداري", body: body.body || body.message || "", tag: "announcement", targetEmployeeIds: target.map((employee) => employee.id) } })
+    await client.functions.invoke("send-push-notifications", { body: { title: body.title || "Ø¥Ø¹Ù„Ø§Ù† Ø¥Ø¯Ø§Ø±ÙŠ", body: body.body || body.message || "", tag: "announcement", targetEmployeeIds: target.map((employee) => employee.id) } })
       .then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); })
       .catch(() => null);
     return { created: rows.length, pushed };
@@ -1456,37 +1513,37 @@ export const supabaseEndpoints = {
   reports: async () => {
     const schedules = await selectAll("report_schedules", "*", { limit: 100 }).then(toCamel).catch(() => []);
     return { jobs: [], schedules, templates: [
-      { key: "attendance", name: "الحضور والانصراف" },
-      { key: "employees", name: "بيانات الموظفين" },
-      { key: "requests", name: "الطلبات والموافقات" },
-      { key: "kpi", name: "تقييمات الأداء" },
-      { key: "security", name: "الأمان ومحاولات الدخول" },
+      { key: "attendance", name: "Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù" },
+      { key: "employees", name: "Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†" },
+      { key: "requests", name: "Ø§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ§Ù„Ù…ÙˆØ§ÙÙ‚Ø§Øª" },
+      { key: "kpi", name: "ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„Ø£Ø¯Ø§Ø¡" },
+      { key: "security", name: "Ø§Ù„Ø£Ù…Ø§Ù† ÙˆÙ…Ø­Ø§ÙˆÙ„Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„" },
     ] };
   },
   exportReportData: async (body = {}) => {
     const key = body.reportKey || "attendance";
     if (key === "employees") {
       const employees = await supabaseEndpoints.employees();
-      return { title: "تقرير الموظفين", headers: ["الاسم", "الهاتف", "البريد", "المسمى", "القسم", "الحالة"], rows: employees.map((e) => [e.fullName, e.phone, e.email, e.jobTitle, e.department?.name || "", e.status || ""]) };
+      return { title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", headers: ["Ø§Ù„Ø§Ø³Ù…", "Ø§Ù„Ù‡Ø§ØªÙ", "Ø§Ù„Ø¨Ø±ÙŠØ¯", "Ø§Ù„Ù…Ø³Ù…Ù‰", "Ø§Ù„Ù‚Ø³Ù…", "Ø§Ù„Ø­Ø§Ù„Ø©"], rows: employees.map((e) => [e.fullName, e.phone, e.email, e.jobTitle, e.department?.name || "", e.status || ""]) };
     }
     if (key === "requests") {
       const payload = await supabaseEndpoints.requestCenter({});
-      return { title: "تقرير الطلبات", headers: ["النوع", "العنوان", "الموظف", "الحالة", "آخر تحديث"], rows: payload.rows.map((item) => [item.kindLabel, item.label, item.employee?.fullName || "", item.status || "", item.workflow?.at?.(-1)?.at || item.createdSort || ""]) };
+      return { title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø·Ù„Ø¨Ø§Øª", headers: ["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ«"], rows: payload.rows.map((item) => [item.kindLabel, item.label, item.employee?.fullName || "", item.status || "", item.workflow?.at?.(-1)?.at || item.createdSort || ""]) };
     }
     if (key === "kpi") {
       const rows = await tableRows("kpi_evaluations", "created_at", false).then(toCamel).catch(() => []);
-      return { title: "تقرير تقييم الأداء", headers: ["الموظف", "الإجمالي", "الحالة"], rows: rows.map((item) => [item.employeeId || "", item.totalScore || "", item.status || ""]) };
+      return { title: "ØªÙ‚Ø±ÙŠØ± ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡", headers: ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ", "Ø§Ù„Ø­Ø§Ù„Ø©"], rows: rows.map((item) => [item.employeeId || "", item.totalScore || "", item.status || ""]) };
     }
     if (key === "security") {
       const rows = await supabaseEndpoints.auditLogs({ limit: 500 }).catch(() => []);
-      return { title: "تقرير الأمان", headers: ["العملية", "المستخدم", "الكيان", "الوقت"], rows: rows.map((log) => [log.action, log.actor || "", log.entityType || "", log.createdAt || ""]) };
+      return { title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø£Ù…Ø§Ù†", headers: ["Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", "Ø§Ù„ÙƒÙŠØ§Ù†", "Ø§Ù„ÙˆÙ‚Øª"], rows: rows.map((log) => [log.action, log.actor || "", log.entityType || "", log.createdAt || ""]) };
     }
     const events = await supabaseEndpoints.attendanceEvents({ limit: 1000 }).catch(() => []);
-    return { title: "تقرير الحضور والانصراف", headers: ["الموظف", "النوع", "الحالة", "الوقت", "المصدر", "ملاحظات"], rows: events.map((event) => [event.employee?.fullName || event.employeeId, event.type || "", event.status || event.geofenceStatus || "", event.eventAt || event.createdAt || "", event.source || "", event.notes || event.blockReason || ""]) };
+    return { title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", headers: ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ÙˆÙ‚Øª", "Ø§Ù„Ù…ØµØ¯Ø±", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"], rows: events.map((event) => [event.employee?.fullName || event.employeeId, event.type || "", event.status || event.geofenceStatus || "", event.eventAt || event.createdAt || "", event.source || "", event.notes || event.blockReason || ""]) };
   },
   saveReportSchedule: async (body = {}) => createOrUpdate("report_schedules", body).catch(() => ({ ...body, id: `client-${Date.now()}`, clientOnly: true })),
   createReport: async () => ({ ok: true }),
-  settings: async () => ({ orgName: "جمعية خواطر أحلى شباب الخيرية", backend: "Supabase" }),
+  settings: async () => ({ orgName: "Ø¬Ù…Ø¹ÙŠØ© Ø®ÙˆØ§Ø·Ø± Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨ Ø§Ù„Ø®ÙŠØ±ÙŠØ©", backend: "Supabase" }),
   updateSettings: async (body) => body,
   kpi: async () => {
     const [employees, evaluations] = await Promise.all([supabaseEndpoints.employees(), tableRows("kpi_evaluations", "created_at", false).then(toCamel)]);
@@ -1499,27 +1556,27 @@ export const supabaseEndpoints = {
     const startsAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), 20, 0, 0, 0);
     const deadlineAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), 25, 23, 59, 59);
     const hardCloseAt = new Date(nowDate.getFullYear(), nowDate.getMonth(), 28, 23, 59, 59);
-    const windowInfo = { startDay: 20, endDay: 25, deadlineDay: 25, isOpen: nowDate >= startsAt && nowDate <= deadlineAt, isBefore: nowDate < startsAt, isLate: nowDate > deadlineAt && nowDate <= hardCloseAt, isClosed: nowDate > hardCloseAt, label: nowDate >= startsAt && nowDate <= deadlineAt ? "مفتوحة الآن" : nowDate > deadlineAt && nowDate <= hardCloseAt ? "مراجعة متأخرة" : nowDate > hardCloseAt ? "مغلقة" : "لم تبدأ", message: "تقييم الموظف والمدير من يوم 20 إلى 25، ثم HR والسكرتير والتنفيذي للمراجعة والإغلاق." };
-    const policy = { evaluationStartDay: 20, evaluationEndDay: 25, submissionDeadlineDay: 25, meetingRequired: true, description: "تقييم شهري من يوم 20 إلى 25، وآخر موعد للتسليم يوم 25. بنود الحضور والانصراف والصلاة في المسجد وحضور حلقة الشيخ وليد يوسف الأسبوعية من تقييم HR فقط." };
+    const windowInfo = { startDay: 20, endDay: 25, deadlineDay: 25, isOpen: nowDate >= startsAt && nowDate <= deadlineAt, isBefore: nowDate < startsAt, isLate: nowDate > deadlineAt && nowDate <= hardCloseAt, isClosed: nowDate > hardCloseAt, label: nowDate >= startsAt && nowDate <= deadlineAt ? "Ù…ÙØªÙˆØ­Ø© Ø§Ù„Ø¢Ù†" : nowDate > deadlineAt && nowDate <= hardCloseAt ? "Ù…Ø±Ø§Ø¬Ø¹Ø© Ù…ØªØ£Ø®Ø±Ø©" : nowDate > hardCloseAt ? "Ù…ØºÙ„Ù‚Ø©" : "Ù„Ù… ØªØ¨Ø¯Ø£", message: "ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ù…ÙˆØ¸Ù ÙˆØ§Ù„Ù…Ø¯ÙŠØ± Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ 25ØŒ Ø«Ù… HR ÙˆØ§Ù„Ø³ÙƒØ±ØªÙŠØ± ÙˆØ§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© ÙˆØ§Ù„Ø¥ØºÙ„Ø§Ù‚." };
+    const policy = { evaluationStartDay: 20, evaluationEndDay: 25, submissionDeadlineDay: 25, meetingRequired: true, description: "ØªÙ‚ÙŠÙŠÙ… Ø´Ù‡Ø±ÙŠ Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ 25ØŒ ÙˆØ¢Ø®Ø± Ù…ÙˆØ¹Ø¯ Ù„Ù„ØªØ³Ù„ÙŠÙ… ÙŠÙˆÙ… 25. Ø¨Ù†ÙˆØ¯ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù ÙˆØ§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯ ÙˆØ­Ø¶ÙˆØ± Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ ÙŠÙˆØ³Ù Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ÙŠØ© Ù…Ù† ØªÙ‚ÙŠÙŠÙ… HR ÙÙ‚Ø·." };
     const criteria = [
-      { code: "TARGET", name: "تحقيق الأهداف", maxScore: 40, parentCode: "MANAGER_EMPLOYEE" },
-      { code: "TASK_EFFICIENCY", name: "الكفاءة في أداء المهام", maxScore: 20, parentCode: "MANAGER_EMPLOYEE" },
-      { code: "ATTENDANCE_COMMITMENT", name: "الالتزام بمواعيد العمل حضورًا وانصرافًا", maxScore: 20, parentCode: "HR_ONLY" },
-      { code: "CONDUCT", name: "حسن التعامل والسلوك مع الزملاء والمديرين", maxScore: 5, parentCode: "MANAGER_EMPLOYEE" },
-      { code: "MOSQUE_PRAYER", name: "الالتزام بالصلاة في المسجد", maxScore: 5, parentCode: "HR_ONLY" },
-      { code: "QURAN_CIRCLE", name: "حضور حلقة الشيخ وليد يوسف الأسبوعية", maxScore: 5, parentCode: "HR_ONLY" },
-      { code: "INITIATIVES_DONATIONS", name: "المشاركة في التبرعات والمبادرات", maxScore: 5, parentCode: "MANAGER_EMPLOYEE" },
+      { code: "TARGET", name: "ØªØ­Ù‚ÙŠÙ‚ Ø§Ù„Ø£Ù‡Ø¯Ø§Ù", maxScore: 40, parentCode: "MANAGER_EMPLOYEE" },
+      { code: "TASK_EFFICIENCY", name: "Ø§Ù„ÙƒÙØ§Ø¡Ø© ÙÙŠ Ø£Ø¯Ø§Ø¡ Ø§Ù„Ù…Ù‡Ø§Ù…", maxScore: 20, parentCode: "MANAGER_EMPLOYEE" },
+      { code: "ATTENDANCE_COMMITMENT", name: "Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨Ù…ÙˆØ§Ø¹ÙŠØ¯ Ø§Ù„Ø¹Ù…Ù„ Ø­Ø¶ÙˆØ±Ù‹Ø§ ÙˆØ§Ù†ØµØ±Ø§ÙÙ‹Ø§", maxScore: 20, parentCode: "HR_ONLY" },
+      { code: "CONDUCT", name: "Ø­Ø³Ù† Ø§Ù„ØªØ¹Ø§Ù…Ù„ ÙˆØ§Ù„Ø³Ù„ÙˆÙƒ Ù…Ø¹ Ø§Ù„Ø²Ù…Ù„Ø§Ø¡ ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", maxScore: 5, parentCode: "MANAGER_EMPLOYEE" },
+      { code: "MOSQUE_PRAYER", name: "Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨Ø§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯", maxScore: 5, parentCode: "HR_ONLY" },
+      { code: "QURAN_CIRCLE", name: "Ø­Ø¶ÙˆØ± Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ ÙŠÙˆØ³Ù Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ÙŠØ©", maxScore: 5, parentCode: "HR_ONLY" },
+      { code: "INITIATIVES_DONATIONS", name: "Ø§Ù„Ù…Ø´Ø§Ø±ÙƒØ© ÙÙŠ Ø§Ù„ØªØ¨Ø±Ø¹Ø§Øª ÙˆØ§Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª", maxScore: 5, parentCode: "MANAGER_EMPLOYEE" },
     ];
     const pendingEmployees = employees.filter((emp) => !visible.some((e) => e.employeeId === emp.id));
     const byStatus = (status) => visible.filter((item) => String(item.status || "DRAFT") === status).length;
     const progressMetrics = [
-      { label: "لم يبدأوا", value: pendingEmployees.length, helper: "بلا تقييم" },
-      { label: "بانتظار المدير", value: byStatus("SELF_SUBMITTED"), helper: "مرسل من الموظف" },
-      { label: "بانتظار HR", value: byStatus("MANAGER_APPROVED"), helper: "اعتماد المدير تم" },
-      { label: "بانتظار السكرتير", value: byStatus("HR_REVIEWED"), helper: "مراجعة HR تمت" },
-      { label: "بانتظار التنفيذي", value: byStatus("SECRETARY_REVIEWED"), helper: "مراجعة السكرتير تمت" },
+      { label: "Ù„Ù… ÙŠØ¨Ø¯Ø£ÙˆØ§", value: pendingEmployees.length, helper: "Ø¨Ù„Ø§ ØªÙ‚ÙŠÙŠÙ…" },
+      { label: "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ±", value: byStatus("SELF_SUBMITTED"), helper: "Ù…Ø±Ø³Ù„ Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù" },
+      { label: "Ø¨Ø§Ù†ØªØ¸Ø§Ø± HR", value: byStatus("MANAGER_APPROVED"), helper: "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± ØªÙ…" },
+      { label: "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ±", value: byStatus("HR_REVIEWED"), helper: "Ù…Ø±Ø§Ø¬Ø¹Ø© HR ØªÙ…Øª" },
+      { label: "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", value: byStatus("SECRETARY_REVIEWED"), helper: "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± ØªÙ…Øª" },
     ];
-    return { accessMode, currentEmployeeId, policy, windowInfo, criteria, cycle: { id: new Date().toISOString().slice(0, 7), name: "تقييم الشهر الحالي", window: windowInfo }, evaluations: visible, pendingEmployees, progressMetrics, metrics: [{ label: "حالة نافذة KPI", value: windowInfo.label, helper: windowInfo.message }, { label: "التقييمات", value: visible.length }, { label: "بانتظار التقييم", value: pendingEmployees.length }] };
+    return { accessMode, currentEmployeeId, policy, windowInfo, criteria, cycle: { id: new Date().toISOString().slice(0, 7), name: "ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø´Ù‡Ø± Ø§Ù„Ø­Ø§Ù„ÙŠ", window: windowInfo }, evaluations: visible, pendingEmployees, progressMetrics, metrics: [{ label: "Ø­Ø§Ù„Ø© Ù†Ø§ÙØ°Ø© KPI", value: windowInfo.label, helper: windowInfo.message }, { label: "Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª", value: visible.length }, { label: "Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„ØªÙ‚ÙŠÙŠÙ…", value: pendingEmployees.length }] };
   },
   saveKpiEvaluation: async (body = {}) => createOrUpdate("kpi_evaluations", body),
   updateKpiEvaluation: async (id, body = {}) => createOrUpdate("kpi_evaluations", body, id),
@@ -1530,8 +1587,8 @@ export const supabaseEndpoints = {
     const committeeEmails = ["direct.manager.03@organization.local", "direct.manager.02@organization.local", "direct.manager.01@organization.local", "executive.secretary@organization.local", "executive.director@organization.local"];
     const client = await sb();
     const { data: profiles } = await client.from("profiles").select("id,employee_id,email").in("email", committeeEmails);
-    const notes = (profiles || []).map((profile) => ({ user_id: profile.id, employee_id: profile.employee_id, title: "مشكلة جديدة للجنة حل المشاكل", body: body.title || "شكوى / خلاف", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false }));
-    if (notes.length) await ignoreSupabaseError(client.from("notifications").insert(notes));
+    const notes = (profiles || []).map((profile) => ({ user_id: profile.id, employee_id: profile.employee_id, title: "Ù…Ø´ÙƒÙ„Ø© Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„", body: body.title || "Ø´ÙƒÙˆÙ‰ / Ø®Ù„Ø§Ù", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false }));
+    if (notes.length) await safeCreateNotifications(client, notes).catch(() => null);
     return row;
   },
   updateDispute: async (id, body = {}) => createOrUpdate("dispute_cases", disputePayload(body), id),
@@ -1550,7 +1607,7 @@ export const supabaseEndpoints = {
   createLocationRequest: async (body = {}) => {
     const request = await createOrUpdate("location_requests", {
       employeeId: body.employeeId,
-      purpose: body.purpose || "فتح الموقع وإرسال اللوكيشن المباشر",
+      purpose: body.purpose || "ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±",
       requestReason: "",
       status: "PENDING",
       requestedAt: now(),
@@ -1558,17 +1615,17 @@ export const supabaseEndpoints = {
     try {
       const client = await sb();
       const { data: employee } = await client.from("employees").select("id,user_id,full_name").eq("id", request.employeeId).maybeSingle();
-      await client.from("notifications").insert({
+      await safeCreateNotification(client, {
         user_id: employee?.user_id || null,
         employee_id: request.employeeId,
-        title: "فتح الموقع وإرسال اللوكيشن",
-        body: "من فضلك افتح صفحة طلبات وسجل المواقع واضغط إرسال موقعي الآن.",
+        title: "ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù†",
+        body: "Ù…Ù† ÙØ¶Ù„Ùƒ Ø§ÙØªØ­ ØµÙØ­Ø© Ø·Ù„Ø¨Ø§Øª ÙˆØ³Ø¬Ù„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹ ÙˆØ§Ø¶ØºØ· Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø¢Ù†.",
         type: "ACTION_REQUIRED",
-        status: "UNREAD",
-        is_read: false,
+        route: "location",
+        data: { route: "location", locationRequestId: request.id || "" },
       });
     } catch (error) {
-      console.warn("تعذر إنشاء إشعار الموقع، تم حفظ الطلب فقط.", error);
+      console.warn("ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø¥Ø´Ø¹Ø§Ø± Ø§Ù„Ù…ÙˆÙ‚Ø¹ØŒ ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø·Ù„Ø¨ ÙÙ‚Ø·.", error);
     }
     return request;
   },
@@ -1577,11 +1634,11 @@ export const supabaseEndpoints = {
     const requestPayload = locationRequestPayload(body);
     delete requestPayload.employee_id;
     const { data, error } = await client.from("location_requests").update(requestPayload).eq("id", id).select("*").single();
-    fail(error, "تعذر تحديث طلب الموقع.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ­Ø¯ÙŠØ« Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹.");
     const employeeId = data.employee_id || body.employeeId;
     if (employeeId && body.latitude != null && body.longitude != null) {
       const { error: locError } = await client.from("employee_locations").insert(locationInsertPayload({ ...body, source: body.source || "location_request_response" }, employeeId));
-      fail(locError, "تم تحديث الطلب لكن تعذر حفظ سجل الموقع.");
+      fail(locError, "ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø·Ù„Ø¨ Ù„ÙƒÙ† ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø³Ø¬Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹.");
     }
     await audit("update", "location_requests", id, data);
     return toCamel(data);
@@ -1594,10 +1651,10 @@ export const supabaseEndpoints = {
       supabaseEndpoints.locations().catch(() => []),
     ]);
     let rows = [
-      ...leaves.map((item) => ({ ...item, kind: "leave", kindLabel: "إجازة", label: item.leaveType?.name || item.leaveType || "إجازة", createdSort: item.createdAt || item.startDate || "" })),
-      ...missions.map((item) => ({ ...item, kind: "mission", kindLabel: "مأمورية", label: item.title || item.destinationName || "مأمورية", createdSort: item.createdAt || item.plannedStart || "" })),
-      ...exceptions.map((item) => ({ ...item, kind: "exception", kindLabel: "استثناء حضور", label: item.title || "استثناء حضور", createdSort: item.createdAt || "" })),
-      ...locations.filter((item) => item.purpose || item.requestReason).map((item) => ({ ...item, kind: "location", kindLabel: "طلب موقع", label: item.purpose || "طلب موقع", createdSort: item.requestedAt || item.createdAt || "" })),
+      ...leaves.map((item) => ({ ...item, kind: "leave", kindLabel: "Ø¥Ø¬Ø§Ø²Ø©", label: item.leaveType?.name || item.leaveType || "Ø¥Ø¬Ø§Ø²Ø©", createdSort: item.createdAt || item.startDate || "" })),
+      ...missions.map((item) => ({ ...item, kind: "mission", kindLabel: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", label: item.title || item.destinationName || "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", createdSort: item.createdAt || item.plannedStart || "" })),
+      ...exceptions.map((item) => ({ ...item, kind: "exception", kindLabel: "Ø§Ø³ØªØ«Ù†Ø§Ø¡ Ø­Ø¶ÙˆØ±", label: item.title || "Ø§Ø³ØªØ«Ù†Ø§Ø¡ Ø­Ø¶ÙˆØ±", createdSort: item.createdAt || "" })),
+      ...locations.filter((item) => item.purpose || item.requestReason).map((item) => ({ ...item, kind: "location", kindLabel: "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹", label: item.purpose || "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹", createdSort: item.requestedAt || item.createdAt || "" })),
     ].sort((a, b) => new Date(b.createdSort || b.createdAt || 0) - new Date(a.createdSort || a.createdAt || 0));
     if (filters.status) rows = rows.filter((item) => item.status === filters.status);
     if (filters.kind) rows = rows.filter((item) => item.kind === filters.kind);
@@ -1625,7 +1682,7 @@ export const supabaseEndpoints = {
     const employeeId = body.employeeId || (await myEmployee()).id;
     const payload = locationInsertPayload(body, employeeId);
     const { data, error } = await client.from("employee_locations").insert(payload).select("*").single();
-    fail(error, "تعذر حفظ الموقع الحالي.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ.");
     await audit("record", "employee_locations", data.id, data);
     return toCamel(data);
   },
@@ -1643,33 +1700,33 @@ export const supabaseEndpoints = {
   auditLogs: async (params = {}) => tableRows("audit_logs", "created_at", false, { limit: params.limit || 100, page: params.page || 0 }).then(toCamel),
   backup: async () => {
     const tables = ["roles", "profiles", "employees", "branches", "departments", "attendance_daily", "leave_requests", "missions", "kpi_evaluations"];
-    const out = { note: "نسخة خفيفة من المتصفح. استخدم Edge Function للنسخ الكامل الثقيل." };
+    const out = { note: "Ù†Ø³Ø®Ø© Ø®ÙÙŠÙØ© Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­. Ø§Ø³ØªØ®Ø¯Ù… Edge Function Ù„Ù„Ù†Ø³Ø® Ø§Ù„ÙƒØ§Ù…Ù„ Ø§Ù„Ø«Ù‚ÙŠÙ„." };
     for (const table of tables) out[table] = await selectAll(table, "*", { limit: 1000 }).catch(() => []);
     return out;
   },
-  restoreBackup: async () => ({ ok: false, message: "الاسترجاع الكامل في Supabase يجب أن يتم عبر SQL/Edge Function بصلاحية service_role." }),
+  restoreBackup: async () => ({ ok: false, message: "Ø§Ù„Ø§Ø³ØªØ±Ø¬Ø§Ø¹ Ø§Ù„ÙƒØ§Ù…Ù„ ÙÙŠ Supabase ÙŠØ¬Ø¨ Ø£Ù† ÙŠØªÙ… Ø¹Ø¨Ø± SQL/Edge Function Ø¨ØµÙ„Ø§Ø­ÙŠØ© service_role." }),
   saveBackupSnapshot: async (body = {}) => {
     const summary = {
       createdAt: now(),
       source: "browser-lightweight",
       tables: ["roles", "profiles", "employees", "branches", "departments", "attendance_daily", "leave_requests", "missions", "kpi_evaluations"],
-      note: "هذه Metadata فقط. النسخ الاحتياطي الكامل يتم من Supabase Backups أو Edge Function بصلاحية service_role."
+      note: "Ù‡Ø°Ù‡ Metadata ÙÙ‚Ø·. Ø§Ù„Ù†Ø³Ø® Ø§Ù„Ø§Ø­ØªÙŠØ§Ø·ÙŠ Ø§Ù„ÙƒØ§Ù…Ù„ ÙŠØªÙ… Ù…Ù† Supabase Backups Ø£Ùˆ Edge Function Ø¨ØµÙ„Ø§Ø­ÙŠØ© service_role."
     };
-    const row = await createOrUpdate("system_backups", { name: body.name || `نسخة احتياطية - ${now().slice(0, 10)}`, backupType: "MANUAL", summary }).catch(() => null);
-    return row ? { ok: true, snapshot: row, message: "تم حفظ سجل النسخة الاحتياطية. نزّل JSON للاحتفاظ بنسخة محلية." } : { ok: false, message: "تعذر حفظ سجل النسخة الاحتياطية؛ استخدم Supabase Backups للإنتاج." };
+    const row = await createOrUpdate("system_backups", { name: body.name || `Ù†Ø³Ø®Ø© Ø§Ø­ØªÙŠØ§Ø·ÙŠØ© - ${now().slice(0, 10)}`, backupType: "MANUAL", summary }).catch(() => null);
+    return row ? { ok: true, snapshot: row, message: "ØªÙ… Ø­ÙØ¸ Ø³Ø¬Ù„ Ø§Ù„Ù†Ø³Ø®Ø© Ø§Ù„Ø§Ø­ØªÙŠØ§Ø·ÙŠØ©. Ù†Ø²Ù‘Ù„ JSON Ù„Ù„Ø§Ø­ØªÙØ§Ø¸ Ø¨Ù†Ø³Ø®Ø© Ù…Ø­Ù„ÙŠØ©." } : { ok: false, message: "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø³Ø¬Ù„ Ø§Ù„Ù†Ø³Ø®Ø© Ø§Ù„Ø§Ø­ØªÙŠØ§Ø·ÙŠØ©Ø› Ø§Ø³ØªØ®Ø¯Ù… Supabase Backups Ù„Ù„Ø¥Ù†ØªØ§Ø¬." };
   },
   importEmployees: async (rows = []) => {
     const client = await sb();
-    const payload = rows.map((row) => toEmployeePayload({ fullName: row.fullName || row.name || row["الاسم"], phone: row.phone || row["الموبايل"], email: row.email || row["البريد"], jobTitle: row.jobTitle || row["الوظيفة"], status: row.status || "ACTIVE" }));
+    const payload = rows.map((row) => toEmployeePayload({ fullName: row.fullName || row.name || row["Ø§Ù„Ø§Ø³Ù…"], phone: row.phone || row["Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„"], email: row.email || row["Ø§Ù„Ø¨Ø±ÙŠØ¯"], jobTitle: row.jobTitle || row["Ø§Ù„ÙˆØ¸ÙŠÙØ©"], status: row.status || "ACTIVE" }));
     const { data, error } = await client.from("employees").insert(payload).select("id");
-    fail(error, "تعذر استيراد الموظفين.");
+    fail(error, "ØªØ¹Ø°Ø± Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.");
     await audit("import", "employees", "bulk", { count: data?.length || 0 });
     return { created: data?.length || 0 };
   },
   uploadAvatar: async (file) => {
-    if (!file || !String(file.type || "").startsWith("image/")) throw new Error("اختر ملف صورة صالح.");
+    if (!file || !String(file.type || "").startsWith("image/")) throw new Error("Ø§Ø®ØªØ± Ù…Ù„Ù ØµÙˆØ±Ø© ØµØ§Ù„Ø­.");
     const uploadable = await compressImageFile(file, { maxSide: 900, quality: 0.82 }).catch(() => file);
-    if (Number(uploadable.size || file.size || 0) > 2 * 1024 * 1024) throw new Error("حجم الصورة أكبر من 2MB حتى بعد الضغط.");
+    if (Number(uploadable.size || file.size || 0) > 2 * 1024 * 1024) throw new Error("Ø­Ø¬Ù… Ø§Ù„ØµÙˆØ±Ø© Ø£ÙƒØ¨Ø± Ù…Ù† 2MB Ø­ØªÙ‰ Ø¨Ø¹Ø¯ Ø§Ù„Ø¶ØºØ·.");
     return uploadFile(CONFIG().storage?.avatarsBucket || "avatars", "avatars", uploadable);
   },
   attachments: async (scope, entityId) => {
@@ -1688,7 +1745,7 @@ export const supabaseEndpoints = {
   },
   aiAnalytics: async () => {
     const [employees, daily] = await Promise.all([supabaseEndpoints.employees(), supabaseEndpoints.attendanceDaily()]);
-    return { generatedAt: now(), note: "تحليل تقديري مبني على سجلات Supabase. لا يتخذ قرارات تلقائية.", rows: employees.map((employee) => { const days = daily.filter((d) => d.employeeId === employee.id); const absences = days.filter((d) => d.status === "ABSENT").length; const lateMinutes = days.reduce((s, d) => s + Number(d.lateMinutes || 0), 0); const riskScore = Math.min(100, absences * 22 + Math.ceil(lateMinutes / 30) * 7); return { employee, employeeId: employee.id, absences, lateMinutes, riskScore, productivityHint: riskScore >= 60 ? "يحتاج متابعة عاجلة" : riskScore >= 30 ? "متوسط المخاطر" : "مستقر" }; }).sort((a, b) => b.riskScore - a.riskScore) };
+    return { generatedAt: now(), note: "ØªØ­Ù„ÙŠÙ„ ØªÙ‚Ø¯ÙŠØ±ÙŠ Ù…Ø¨Ù†ÙŠ Ø¹Ù„Ù‰ Ø³Ø¬Ù„Ø§Øª Supabase. Ù„Ø§ ÙŠØªØ®Ø° Ù‚Ø±Ø§Ø±Ø§Øª ØªÙ„Ù‚Ø§Ø¦ÙŠØ©.", rows: employees.map((employee) => { const days = daily.filter((d) => d.employeeId === employee.id); const absences = days.filter((d) => d.status === "ABSENT").length; const lateMinutes = days.reduce((s, d) => s + Number(d.lateMinutes || 0), 0); const riskScore = Math.min(100, absences * 22 + Math.ceil(lateMinutes / 30) * 7); return { employee, employeeId: employee.id, absences, lateMinutes, riskScore, productivityHint: riskScore >= 60 ? "ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø© Ø¹Ø§Ø¬Ù„Ø©" : riskScore >= 30 ? "Ù…ØªÙˆØ³Ø· Ø§Ù„Ù…Ø®Ø§Ø·Ø±" : "Ù…Ø³ØªÙ‚Ø±" }; }).sort((a, b) => b.riskScore - a.riskScore) };
   },
   integrations: async () => tableRows("integration_settings", "created_at", false).then(toCamel),
   saveIntegration: async (body = {}) => createOrUpdate("integration_settings", body, body.id),
@@ -1710,7 +1767,7 @@ export const supabaseEndpoints = {
       updated_at: now(),
     };
     const { data, error } = await client.from("push_subscriptions").upsert(payload, { onConflict: "endpoint" }).select("*").single();
-    fail(error, "تعذر حفظ اشتراك Web Push. تأكد من تطبيق Patch 040.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ø´ØªØ±Ø§Ùƒ Web Push. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 040.");
     return toCamel(data);
   },
   uploadPunchSelfie: async (body = {}) => {
@@ -1727,7 +1784,7 @@ export const supabaseEndpoints = {
   registerPasskey: async (body = {}) => {
     const client = await sb();
     const { data, error } = await client.functions.invoke("passkey-register", { body });
-    if (error || data?.error) throw new Error(data?.message || data?.error || error?.message || "مفاتيح المرور غير مفعلة بعد.");
+    if (error || data?.error) throw new Error(data?.message || data?.error || error?.message || "Ù…ÙØ§ØªÙŠØ­ Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± Ù…ÙØ¹Ù„Ø© Ø¨Ø¹Ø¯.");
     return data;
   },
   offlineQueue: async () => getQueued(),
@@ -1764,12 +1821,12 @@ export const supabaseEndpoints = {
     return {
       team,
       metrics: [
-        { label: "الفريق", value: team.length, helper: "حسب الصلاحيات" },
-        { label: "حاضر اليوم", value: present, helper: "حضور أو تأخير" },
-        { label: "لم يبصم", value: Math.max(team.length - present, 0), helper: now().slice(0, 10) },
-        { label: "طلبات معلقة", value: team.reduce((sum, item) => sum + item.pendingItems, 0), helper: "متابعة المدير" },
+        { label: "Ø§Ù„ÙØ±ÙŠÙ‚", value: team.length, helper: "Ø­Ø³Ø¨ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª" },
+        { label: "Ø­Ø§Ø¶Ø± Ø§Ù„ÙŠÙˆÙ…", value: present, helper: "Ø­Ø¶ÙˆØ± Ø£Ùˆ ØªØ£Ø®ÙŠØ±" },
+        { label: "Ù„Ù… ÙŠØ¨ØµÙ…", value: Math.max(team.length - present, 0), helper: now().slice(0, 10) },
+        { label: "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", value: team.reduce((sum, item) => sum + item.pendingItems, 0), helper: "Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„Ù…Ø¯ÙŠØ±" },
       ],
-      actions: team.filter((item) => item.todayStatus === "ABSENT").slice(0, 8).map((item) => ({ title: `لم يسجل ${item.fullName} بصمة اليوم`, body: "يمكن إرسال تنبيه من لوحة المدير.", status: "ACTION_REQUIRED" })),
+      actions: team.filter((item) => item.todayStatus === "ABSENT").slice(0, 8).map((item) => ({ title: `Ù„Ù… ÙŠØ³Ø¬Ù„ ${item.fullName} Ø¨ØµÙ…Ø© Ø§Ù„ÙŠÙˆÙ…`, body: "ÙŠÙ…ÙƒÙ† Ø¥Ø±Ø³Ø§Ù„ ØªÙ†Ø¨ÙŠÙ‡ Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ±.", status: "ACTION_REQUIRED" })),
     };
   },
   generateAttendanceAlerts: async () => {
@@ -1791,17 +1848,16 @@ export const supabaseEndpoints = {
     let created = 0;
     for (const employee of employees || []) {
       if (seen.has(employee.id) || already.has(employee.id)) continue;
-      const { error } = await client.from("notifications").insert({
+      const result = await safeCreateNotifications(client, [{
         user_id: employee.userId || null,
         employee_id: employee.id,
-        title: "تذكير بتسجيل البصمة",
-        body: "لم يتم تسجيل بصمة حضور اليوم حتى الآن. افتح صفحة البصمة وسجل حضورك عند الوصول للمجمع.",
+        title: "ØªØ°ÙƒÙŠØ± Ø¨ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©",
+        body: "Ù„Ù… ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ… Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†. Ø§ÙØªØ­ ØµÙØ­Ø© Ø§Ù„Ø¨ØµÙ…Ø© ÙˆØ³Ø¬Ù„ Ø­Ø¶ÙˆØ±Ùƒ Ø¹Ù†Ø¯ Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ù…Ø¬Ù…Ø¹.",
         type: "MISSING_PUNCH",
-        status: "UNREAD",
-        is_read: false,
         route: "punch",
-      });
-      if (!error) created += 1;
+        data: { route: "punch" },
+      }]);
+      if (result.created) created += 1;
     }
     await audit("notify.missing_punch", "attendance", "bulk", { created, pushed: 0, fallback: true }).catch(() => null);
     return { created, pushed: 0, fallback: true };
@@ -1813,7 +1869,7 @@ export const supabaseEndpoints = {
       query = await client.from("attendance_events").select("*, employee:employees(*)").or("status.eq.REJECTED,requires_review.eq.true").order("event_at", { ascending: false }).limit(500);
     }
     const { data, error } = query;
-    fail(error, "تعذر قراءة البصمات المرفوضة.");
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©.");
     return (data || []).map((row) => {
       const { employee, identity_checks: identityChecks = [], ...event } = row;
       const identityCheck = Array.isArray(identityChecks) ? identityChecks[0] : null;
@@ -1826,16 +1882,16 @@ export const supabaseEndpoints = {
       const { data, error } = await client.rpc("review_attendance_identity_check", {
         p_check_id: checkId,
         p_decision: action === "approve" ? "APPROVED" : "REJECTED",
-        p_notes: action === "approve" ? "اعتماد يدوي من لوحة HR" : "رفض يدوي من لوحة HR",
+        p_notes: action === "approve" ? "Ø§Ø¹ØªÙ…Ø§Ø¯ ÙŠØ¯ÙˆÙŠ Ù…Ù† Ù„ÙˆØ­Ø© HR" : "Ø±ÙØ¶ ÙŠØ¯ÙˆÙŠ Ù…Ù† Ù„ÙˆØ­Ø© HR",
       });
       if (!error) return toCamel(data || {});
-      console.warn("تعذر استخدام RPC review_attendance_identity_check؛ سيتم استخدام التحديث القديم", error);
+      console.warn("ØªØ¹Ø°Ø± Ø§Ø³ØªØ®Ø¯Ø§Ù… RPC review_attendance_identity_checkØ› Ø³ÙŠØªÙ… Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù‚Ø¯ÙŠÙ…", error);
     }
     const payload = action === "approve"
       ? { status: "MANUAL_APPROVED", verification_status: "manual_approved", requires_review: false, review_decision: "APPROVED", reviewed_at: now() }
       : { status: "REJECTED_CONFIRMED", requires_review: false, review_decision: "REJECTED", reviewed_at: now() };
     const { data, error } = await client.from("attendance_events").update(payload).eq("id", eventId).select("*").single();
-    fail(error, "تعذر مراجعة البصمة.");
+    fail(error, "ØªØ¹Ø°Ø± Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø©.");
     await audit("review.rejected_punch", "attendance_event", eventId, payload).catch(() => null);
     return mapEvent(data);
   },
@@ -1851,7 +1907,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const payload = body.action === "disable" ? { trusted: false, status: "DEVICE_DISABLED", disabled_at: now() } : { trusted: true, status: "DEVICE_TRUSTED", trusted_at: now() };
     const { data, error } = await client.from("passkey_credentials").update(payload).eq("id", deviceId).select("*").single();
-    fail(error, "تعذر تعديل الجهاز.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ø¬Ù‡Ø§Ø².");
     await audit("device.trust", "passkey_credential", deviceId, payload).catch(() => null);
     return toCamel(data);
   },
@@ -1881,7 +1937,7 @@ export const supabaseEndpoints = {
       };
     });
     const totals = rows.reduce((acc, row) => { acc.checkIns += row.checkIns; acc.checkOuts += row.checkOuts; acc.rejected += row.rejected; acc.lateMinutes += row.lateMinutes; return acc; }, { checkIns: 0, checkOuts: 0, rejected: 0, lateMinutes: 0 });
-    return { month: bounds.month, rows, metrics: [{ label: "الموظفون", value: rows.length, helper: "كل الموظفين" }, { label: "حضور", value: totals.checkIns, helper: "إجمالي الحضور" }, { label: "انصراف", value: totals.checkOuts, helper: "إجمالي الانصراف" }, { label: "مرفوض", value: totals.rejected, helper: "محاولات مرفوضة" }, { label: "دقائق التأخير", value: totals.lateMinutes, helper: "إجمالي الشهر" }] };
+    return { month: bounds.month, rows, metrics: [{ label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", value: rows.length, helper: "ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†" }, { label: "Ø­Ø¶ÙˆØ±", value: totals.checkIns, helper: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø­Ø¶ÙˆØ±" }, { label: "Ø§Ù†ØµØ±Ø§Ù", value: totals.checkOuts, helper: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø§Ù†ØµØ±Ø§Ù" }, { label: "Ù…Ø±ÙÙˆØ¶", value: totals.rejected, helper: "Ù…Ø­Ø§ÙˆÙ„Ø§Øª Ù…Ø±ÙÙˆØ¶Ø©" }, { label: "Ø¯Ù‚Ø§Ø¦Ù‚ Ø§Ù„ØªØ£Ø®ÙŠØ±", value: totals.lateMinutes, helper: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø´Ù‡Ø±" }] };
   },
   securityLog: async () => {
     const rows = await supabaseEndpoints.auditLogs({ limit: 500 }).catch(() => []);
@@ -1889,13 +1945,13 @@ export const supabaseEndpoints = {
   },
   passwordVault: async () => {
     const users = await supabaseEndpoints.users();
-    return users.map((user) => ({ ...user, password: "غير متاحة بعد التفعيل الحقيقي — استخدم إصدار كلمة مؤقتة جديدة", mustChangePassword: user.mustChangePassword }));
+    return users.map((user) => ({ ...user, password: "ØºÙŠØ± Ù…ØªØ§Ø­Ø© Ø¨Ø¹Ø¯ Ø§Ù„ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ â€” Ø§Ø³ØªØ®Ø¯Ù… Ø¥ØµØ¯Ø§Ø± ÙƒÙ„Ù…Ø© Ù…Ø¤Ù‚ØªØ© Ø¬Ø¯ÙŠØ¯Ø©", mustChangePassword: user.mustChangePassword }));
   },
   resetUserPassword: async (userId, password = "") => {
     const tempPassword = password || makeRuntimeTemporaryPassword();
     const client = await sb();
     const { data, error } = await client.functions.invoke("admin-update-user", { body: { id: userId, password: tempPassword, temporaryPassword: true, mustChangePassword: true } });
-    fail(error || (data?.error ? new Error(data.error) : null), "تعذر إعادة تعيين كلمة المرور. تأكد من نشر admin-update-user.");
+    fail(error || (data?.error ? new Error(data.error) : null), "ØªØ¹Ø°Ø± Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±. ØªØ£ÙƒØ¯ Ù…Ù† Ù†Ø´Ø± admin-update-user.");
     return { user: data?.user || data, temporaryPassword: tempPassword };
   },
   executiveReport: async () => {
@@ -1917,13 +1973,13 @@ export const supabaseEndpoints = {
       return { manager, teamCount: team.length, pendingRequests: (requests.rows || []).filter((item) => teamIds.includes(item.employeeId) && item.status === "PENDING").length, openTasks: tasks.filter((task) => teamIds.includes(task.employeeId) && task.status !== "DONE").length };
     });
     const score = Math.round(Math.min(100, Math.max(0, 40 + (employees.length ? 20 : 0) + (requests.summary?.stale ? 0 : 20) + (documentsExpiring.length ? 5 : 20))));
-    return { generatedAt: now(), readiness: { score, grade: score >= 90 ? "ممتاز" : score >= 75 ? "جيد جدًا" : "يحتاج متابعة", parts: [] }, cards: { employees: employees.length, activeEmployees: employees.filter((e) => e.status === "ACTIVE").length, presentToday: events.filter((e) => e.type === "CHECK_IN").length, pendingRequests: requests.summary?.pending || 0, openDisputes: openDisputes.length, overdueTasks: overdueTasks.length, expiringDocuments: documentsExpiring.length }, workflow: requests.summary, openDisputes: openDisputes.slice(0, 8), overdueTasks: overdueTasks.slice(0, 8), documentsExpiring: documentsExpiring.slice(0, 8), managerPerformance: byManager };
+    return { generatedAt: now(), readiness: { score, grade: score >= 90 ? "Ù…Ù…ØªØ§Ø²" : score >= 75 ? "Ø¬ÙŠØ¯ Ø¬Ø¯Ù‹Ø§" : "ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©", parts: [] }, cards: { employees: employees.length, activeEmployees: employees.filter((e) => e.status === "ACTIVE").length, presentToday: events.filter((e) => e.type === "CHECK_IN").length, pendingRequests: requests.summary?.pending || 0, openDisputes: openDisputes.length, overdueTasks: overdueTasks.length, expiringDocuments: documentsExpiring.length }, workflow: requests.summary, openDisputes: openDisputes.slice(0, 8), overdueTasks: overdueTasks.slice(0, 8), documentsExpiring: documentsExpiring.slice(0, 8), managerPerformance: byManager };
   },
   leaveBalances: async () => {
     const client = await sb();
     const employees = await supabaseEndpoints.employees().catch(() => []);
     const { data, error } = await client.from("leave_balances").select("*").limit(5000);
-    fail(error, "تعذر قراءة أرصدة الإجازات. تأكد من تطبيق Patch 020.");
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø£Ø±ØµØ¯Ø© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 020.");
     const byEmployee = new Map((toCamel(data || [])).map((row) => [row.employeeId, row]));
     return employees.map((employee) => {
       const row = byEmployee.get(employee.id) || {};
@@ -1937,7 +1993,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const payload = { employee_id: employeeId, annual_total: Number(body.annualTotal || 21), casual_total: Number(body.casualTotal || 7), sick_total: Number(body.sickTotal || 15), used_days: Number(body.usedDays || 0), remaining_days: Number(body.remainingDays || (Number(body.annualTotal || 21) + Number(body.casualTotal || 7) - Number(body.usedDays || 0))), notes: body.notes || "", updated_at: now() };
     const { data, error } = await client.from("leave_balances").upsert(payload, { onConflict: "employee_id" }).select("*").single();
-    fail(error, "تعذر حفظ رصيد الإجازات.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø±ØµÙŠØ¯ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª.");
     await audit("leave_balance.save", "leave_balance", employeeId, payload).catch(() => null);
     return toCamel(data);
   },
@@ -1947,7 +2003,7 @@ export const supabaseEndpoints = {
     if (filters.status) query = query.eq("status", filters.status);
     if (filters.employeeId) query = query.eq("employee_id", filters.employeeId);
     const { data, error } = await query;
-    fail(error, "تعذر قراءة المهام. تأكد من تطبيق Patch 020.");
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…Ù‡Ø§Ù…. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 020.");
     return (data || []).map(({ employee, ...row }) => ({ ...toCamel(row), employee: employee ? enrichEmployee(employee) : null }));
   },
   myTasks: async () => {
@@ -1957,10 +2013,10 @@ export const supabaseEndpoints = {
   createTask: async (body = {}) => {
     const client = await sb();
     const user = await currentUser();
-    const payload = { employee_id: body.employeeId || user?.employeeId || user?.employee?.id, assigned_by_employee_id: user?.employeeId || null, title: body.title || "مهمة جديدة", description: body.description || "", priority: body.priority || "MEDIUM", status: body.status || "OPEN", due_date: body.dueDate || null, created_at: now(), updated_at: now() };
+    const payload = { employee_id: body.employeeId || user?.employeeId || user?.employee?.id, assigned_by_employee_id: user?.employeeId || null, title: body.title || "Ù…Ù‡Ù…Ø© Ø¬Ø¯ÙŠØ¯Ø©", description: body.description || "", priority: body.priority || "MEDIUM", status: body.status || "OPEN", due_date: body.dueDate || null, created_at: now(), updated_at: now() };
     const { data, error } = await client.from("employee_tasks").insert(payload).select("*, employee:employees(*)").single();
-    fail(error, "تعذر إنشاء المهمة.");
-    await ignoreSupabaseError(client.from("notifications").insert({ employee_id: payload.employee_id, title: "مهمة جديدة", body: payload.title, type: "ACTION_REQUIRED", status: "UNREAD", is_read: false }));
+    fail(error, "ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ù…Ù‡Ù…Ø©.");
+    await safeCreateNotification(client, { employee_id: payload.employee_id, title: "Ù…Ù‡Ù…Ø© Ø¬Ø¯ÙŠØ¯Ø©", body: payload.title, type: "ACTION_REQUIRED", route: "tasks", data: { route: "tasks", taskId: data?.id || "" } }).catch(() => null);
     await audit("task.create", "employee_task", data.id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
@@ -1969,7 +2025,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const payload = compact({ status: body.status, title: body.title, description: body.description, priority: body.priority, due_date: body.dueDate || body.due_date, updated_at: now(), completed_at: body.status === "DONE" ? now() : undefined });
     const { data, error } = await client.from("employee_tasks").update(payload).eq("id", id).select("*, employee:employees(*)").single();
-    fail(error, "تعذر تعديل المهمة.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…Ù‡Ù…Ø©.");
     await audit("task.update", "employee_task", id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
@@ -1980,7 +2036,7 @@ export const supabaseEndpoints = {
     if (filters.employeeId) query = query.eq("employee_id", filters.employeeId);
     if (filters.status) query = query.eq("status", filters.status);
     const { data, error } = await query;
-    fail(error, "تعذر قراءة مستندات الموظفين. تأكد من تطبيق Patch 020.");
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 020.");
     return (data || []).map(({ employee, ...row }) => ({ ...toCamel(row), employee: employee ? enrichEmployee(employee) : null }));
   },
   myDocuments: async () => {
@@ -1989,9 +2045,9 @@ export const supabaseEndpoints = {
   },
   createEmployeeDocument: async (body = {}) => {
     const client = await sb();
-    const payload = { employee_id: body.employeeId, title: body.title || "مستند موظف", document_type: body.documentType || "OTHER", status: body.status || "ACTIVE", file_name: body.fileName || "", file_url: body.fileUrl || "", expires_on: body.expiresOn || null, notes: body.notes || "", created_at: now(), updated_at: now() };
+    const payload = { employee_id: body.employeeId, title: body.title || "Ù…Ø³ØªÙ†Ø¯ Ù…ÙˆØ¸Ù", document_type: body.documentType || "OTHER", status: body.status || "ACTIVE", file_name: body.fileName || "", file_url: body.fileUrl || "", expires_on: body.expiresOn || null, notes: body.notes || "", created_at: now(), updated_at: now() };
     const { data, error } = await client.from("employee_documents").insert(payload).select("*, employee:employees(*)").single();
-    fail(error, "تعذر حفظ المستند.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ù…Ø³ØªÙ†Ø¯.");
     await audit("document.create", "employee_document", data.id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
@@ -2000,7 +2056,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const payload = compact({ title: body.title, document_type: body.documentType, status: body.status, file_name: body.fileName, file_url: body.fileUrl, expires_on: body.expiresOn, notes: body.notes, updated_at: now() });
     const { data, error } = await client.from("employee_documents").update(payload).eq("id", id).select("*, employee:employees(*)").single();
-    fail(error, "تعذر تعديل المستند.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ¹Ø¯ÙŠÙ„ Ø§Ù„Ù…Ø³ØªÙ†Ø¯.");
     await audit("document.update", "employee_document", id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
@@ -2015,7 +2071,7 @@ export const supabaseEndpoints = {
   acknowledgeNotification: async (id) => {
     const client = await sb();
     const { data, error } = await client.from("notifications").update({ is_read: true, status: "READ", read_at: now() }).eq("id", id).select("*").single();
-    fail(error, "تعذر تأكيد قراءة الإشعار.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ£ÙƒÙŠØ¯ Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±.");
     return toCamel(data);
   },
   permissionMatrix: async () => ({ roles: await supabaseEndpoints.roles(), permissions: await supabaseEndpoints.permissions() }),
@@ -2023,7 +2079,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const permissions = Array.isArray(body.permissions) ? body.permissions : [];
     const { data, error } = await client.from("roles").update({ permissions, updated_at: now() }).eq("id", body.roleId).select("*").single();
-    fail(error, "تعذر حفظ صلاحيات الدور.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ø¯ÙˆØ±.");
     await audit("permission_matrix.save", "role", body.roleId, { permissions }).catch(() => null);
     return toCamel(data);
   },
@@ -2039,16 +2095,16 @@ export const supabaseEndpoints = {
     const staleWorkflow = (requests.rows || []).filter((item) => item.status === "PENDING" && item.createdAt && (Date.now() - new Date(item.createdAt).getTime()) > 48 * 36e5);
     const expiringDocuments = (docs || []).filter((doc) => doc.expiresOn && new Date(doc.expiresOn) <= new Date(Date.now() + 30 * 864e5));
     const issues = [
-      ...missingUsers.map((employee) => ({ severity: "HIGH", area: "users", title: "موظف بلا حساب دخول", detail: employee.fullName })),
-      ...staleWorkflow.map((item) => ({ severity: "MEDIUM", area: "workflow", title: "طلب متأخر عن الاعتماد", detail: item.label || item.kindLabel || item.id })),
-      ...expiringDocuments.map((doc) => ({ severity: "MEDIUM", area: "documents", title: "مستند قرب الانتهاء", detail: doc.title || doc.id })),
+      ...missingUsers.map((employee) => ({ severity: "HIGH", area: "users", title: "Ù…ÙˆØ¸Ù Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„", detail: employee.fullName })),
+      ...staleWorkflow.map((item) => ({ severity: "MEDIUM", area: "workflow", title: "Ø·Ù„Ø¨ Ù…ØªØ£Ø®Ø± Ø¹Ù† Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯", detail: item.label || item.kindLabel || item.id })),
+      ...expiringDocuments.map((doc) => ({ severity: "MEDIUM", area: "documents", title: "Ù…Ø³ØªÙ†Ø¯ Ù‚Ø±Ø¨ Ø§Ù„Ø§Ù†ØªÙ‡Ø§Ø¡", detail: doc.title || doc.id })),
     ];
     const score = Math.max(0, Math.min(100, 95 - issues.filter((i) => i.severity === "HIGH").length * 10 - issues.filter((i) => i.severity === "MEDIUM").length * 3));
     const [maintenanceRuns, escalations] = await Promise.all([
       tableRows("maintenance_runs", "created_at", false).catch(() => []),
       tableRows("workflow_escalations", "created_at", false).catch(() => []),
     ]);
-    return { readiness: { score, grade: score >= 90 ? "ممتاز" : score >= 75 ? "جيد جدًا" : "يحتاج متابعة", issues, missingUsers: missingUsers.length, staleWorkflow: staleWorkflow.length, expiringDocuments: expiringDocuments.length }, policy: policiesPayload.summary || {}, maintenanceRuns: toCamel(maintenanceRuns || []), escalations: toCamel(escalations || []) };
+    return { readiness: { score, grade: score >= 90 ? "Ù…Ù…ØªØ§Ø²" : score >= 75 ? "Ø¬ÙŠØ¯ Ø¬Ø¯Ù‹Ø§" : "ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©", issues, missingUsers: missingUsers.length, staleWorkflow: staleWorkflow.length, expiringDocuments: expiringDocuments.length }, policy: policiesPayload.summary || {}, maintenanceRuns: toCamel(maintenanceRuns || []), escalations: toCamel(escalations || []) };
   },
   runMaintenance: async (body = {}) => {
     const client = await sb();
@@ -2058,9 +2114,9 @@ export const supabaseEndpoints = {
       await client.from("leave_balances").upsert({ employee_id: employee.id, annual_total: 21, casual_total: 7, sick_total: 15, remaining_days: 28, updated_at: now() }, { onConflict: "employee_id" }).catch(() => null);
     }
     const after = await supabaseEndpoints.qualityCenter();
-    const payload = { title: body.title || "صيانة Supabase", before_score: before.readiness?.score || 0, after_score: after.readiness?.score || 0, repair: { note: "تم إنشاء أرصدة إجازات ناقصة وفحص الجاهزية. إنشاء الحسابات يتم من Edge Function حفاظًا على الأمان." }, workflow: { checked: after.readiness?.staleWorkflow || 0 }, created_at: now() };
+    const payload = { title: body.title || "ØµÙŠØ§Ù†Ø© Supabase", before_score: before.readiness?.score || 0, after_score: after.readiness?.score || 0, repair: { note: "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø£Ø±ØµØ¯Ø© Ø¥Ø¬Ø§Ø²Ø§Øª Ù†Ø§Ù‚ØµØ© ÙˆÙØ­Øµ Ø§Ù„Ø¬Ø§Ù‡Ø²ÙŠØ©. Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª ÙŠØªÙ… Ù…Ù† Edge Function Ø­ÙØ§Ø¸Ù‹Ø§ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù…Ø§Ù†." }, workflow: { checked: after.readiness?.staleWorkflow || 0 }, created_at: now() };
     const { data, error } = await client.from("maintenance_runs").insert(payload).select("*").single();
-    fail(error, "تعذر حفظ سجل الصيانة. تأكد من تطبيق Patch 021.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø³Ø¬Ù„ Ø§Ù„ØµÙŠØ§Ù†Ø©. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 021.");
     await audit("maintenance.run", "system", data.id, payload).catch(() => null);
     return { run: toCamel(data), readiness: after.readiness };
   },
@@ -2072,7 +2128,7 @@ export const supabaseEndpoints = {
       client.from("employee_policies").select("*").neq("status", "ARCHIVED").order("created_at", { ascending: false }),
       client.from("policy_acknowledgements").select("*").limit(20000),
     ]);
-    fail(pError || aError, "تعذر قراءة السياسات. تأكد من تطبيق Patch 021.");
+    fail(pError || aError, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 021.");
     const rows = toCamel(policies || []).map((policy) => {
       const ack = toCamel(acknowledgements || []).find((row) => row.policyId === policy.id && (!employeeId || row.employeeId === employeeId));
       return { ...policy, acknowledged: Boolean(ack), acknowledgedAt: ack?.acknowledgedAt || "", acknowledgement: ack || null };
@@ -2084,7 +2140,7 @@ export const supabaseEndpoints = {
     return { policies: rows, acknowledgements: toCamel(acknowledgements || []), summary: { policies: active.length, employees: employees.length, totalRequired, signed, missing: Math.max(0, totalRequired - signed), percent: totalRequired ? Math.round((signed / totalRequired) * 100) : 100 } };
   },
   savePolicy: async (body = {}) => {
-    const payload = { title: body.title || "سياسة جديدة", category: body.category || "GENERAL", version: body.version || "1.0", body: body.body || body.description || "", requires_acknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== "false", status: body.status || "ACTIVE", updated_at: now() };
+    const payload = { title: body.title || "Ø³ÙŠØ§Ø³Ø© Ø¬Ø¯ÙŠØ¯Ø©", category: body.category || "GENERAL", version: body.version || "1.0", body: body.body || body.description || "", requires_acknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== "false", status: body.status || "ACTIVE", updated_at: now() };
     const row = await createOrUpdate("employee_policies", payload, body.id);
     await audit("policy.save", "employee_policy", row.id, payload).catch(() => null);
     return row;
@@ -2093,10 +2149,10 @@ export const supabaseEndpoints = {
     const client = await sb();
     const user = await currentUser();
     const employeeId = user?.employeeId || user?.employee?.id;
-    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بالحساب.");
+    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨.");
     const payload = { policy_id: policyId, employee_id: employeeId, user_id: user.id, acknowledged_at: now(), created_at: now() };
     const { data, error } = await client.from("policy_acknowledgements").upsert(payload, { onConflict: "policy_id,employee_id" }).select("*").single();
-    fail(error, "تعذر تأكيد قراءة السياسة.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ£ÙƒÙŠØ¯ Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ø³ÙŠØ§Ø³Ø©.");
     await audit("policy.acknowledge", "employee_policy", policyId, payload).catch(() => null);
     return toCamel(data);
   },
@@ -2105,7 +2161,7 @@ export const supabaseEndpoints = {
     const user = await currentUser().catch(() => null);
     const payload = { case_id: caseId, employee_id: user?.employeeId || null, action_type: body.actionType || "NOTE", decision: body.decision || "", note: body.note || body.committeeDecision || "", created_by_user_id: user?.id || null, created_at: now() };
     const { data, error } = await client.from("committee_actions").insert(payload).select("*").single();
-    fail(error, "تعذر حفظ إجراء اللجنة. تأكد من تطبيق Patch 021.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø¥Ø¬Ø±Ø§Ø¡ Ø§Ù„Ù„Ø¬Ù†Ø©. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 021.");
     if (body.status || body.escalatedToExecutive) {
       await client.from("dispute_cases").update({ status: body.escalatedToExecutive ? "ESCALATED" : body.status, escalated_to_executive: Boolean(body.escalatedToExecutive), escalated_at: body.escalatedToExecutive ? now() : undefined }).eq("id", caseId).catch(() => null);
     }
@@ -2119,7 +2175,7 @@ export const supabaseEndpoints = {
     const payload = { actor_user_id: user?.id || null, actor_employee_id: user?.employeeId || null, action: body.action || "admin.gateway", route: body.route || location.hash || "", result: body.result || "INFO", user_agent: navigator.userAgent || "", metadata: body.metadata || {}, created_at: now() };
     const { data, error } = await client.from("admin_access_logs").insert(payload).select("*").single();
     if (error && ["401", "403", "42501"].includes(String(error.code || error.status || ""))) return null;
-    fail(error, "تعذر حفظ سجل دخول الإدارة. تأكد من تطبيق Patch 023.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø³Ø¬Ù„ Ø¯Ø®ÙˆÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 023.");
     return toCamel(data);
   },
   executiveMobile: async () => {
@@ -2164,37 +2220,39 @@ export const supabaseEndpoints = {
   requestLiveLocation: async (employeeId, body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
-    const payload = { employee_id: employeeId, requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expires_at: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), created_at: now() };
+    const payload = { employee_id: employeeId, requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©", reason: body.reason || "Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ø¨Ø§Ø´Ø±Ø©", status: "PENDING", precision: body.precision || "HIGH", expires_at: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), created_at: now() };
     const { data, error } = await client.from("live_location_requests").insert(payload).select("*").single();
-    fail(error, "تعذر إنشاء طلب الموقع المباشر. تأكد من تطبيق Patch 023.");
+    fail(error, "ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ´ØºÙŠÙ„ Ù…Ù„Ù SQL Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ RUN_IN_SUPABASE_SQL_EDITOR.sql.");
     const targetEmployee = await employeeById(employeeId).catch(() => null);
-    const notificationTitle = "طلب مشاركة موقعك الحالي";
-    const notificationBody = payload.requested_by_name + " يطلب إرسال موقعك المباشر الآن. السبب: " + payload.reason;
-    const baseNotificationPayload = {
-      user_id: targetEmployee?.userId || null,
-      employee_id: employeeId,
-      title: notificationTitle,
-      body: notificationBody,
-      type: "ACTION_REQUIRED",
-      status: "UNREAD",
-      is_read: false,
-      created_at: now(),
-    };
-    const notificationInsert = await client.from("notifications").insert(baseNotificationPayload).select("id").single();
-    if (!notificationInsert.error && notificationInsert.data?.id) {
-      await ignoreSupabaseError(client.from("notifications").update({ route: "location" }).eq("id", notificationInsert.data.id));
-    } else {
-      console.warn("live location notification insert failed", notificationInsert.error?.message || notificationInsert.error);
-    }
-    await client.functions.invoke("send-push-notification", {
+    const notificationTitle = "Ø·Ù„Ø¨ Ù…Ø´Ø§Ø±ÙƒØ© Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ";
+    const notificationBody = payload.requested_by_name + " ÙŠØ·Ù„Ø¨ Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø¢Ù†. Ø§Ù„Ø³Ø¨Ø¨: " + payload.reason;
+    let notificationId = "";
+    // Create notifications through a SECURITY DEFINER RPC to avoid RLS/column-shape 400 errors.
+    // If the SQL patch is not applied yet, the live-location request still remains created and push is attempted.
+    const notificationInsert = await client.rpc("safe_create_notification", {
+      p_user_id: targetEmployee?.userId || null,
+      p_employee_id: employeeId,
+      p_title: notificationTitle,
+      p_body: notificationBody,
+      p_type: "ACTION_REQUIRED",
+      p_route: "location",
+      p_data: { route: "location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
+    });
+    if (!notificationInsert.error && notificationInsert.data) notificationId = String(notificationInsert.data);
+    else console.warn("safe_create_notification skipped; run RUN_IN_SUPABASE_SQL_EDITOR.sql for internal notification rows", notificationInsert.error?.message || notificationInsert.error);
+    await client.functions.invoke("send-push-notifications", {
       body: {
         title: notificationTitle,
         body: notificationBody,
         tag: `live-location-${data.id}`,
         targetEmployeeIds: [employeeId],
-        data: { route: "location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
+        notificationId,
+        data: { route: "location", url: "/employee/#location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
       },
-    }).catch(() => null);
+    }).catch((error) => {
+      console.warn("send-push-notifications failed; internal request was still created", error?.message || error);
+      return null;
+    });
     await audit("live_location.request", "employee", employeeId, payload).catch(() => null);
     return toCamel(data);
   },
@@ -2204,7 +2262,7 @@ export const supabaseEndpoints = {
     const employeeId = user?.employeeId || user?.employee?.id || "";
     if (!employeeId) return [];
     const { data, error } = await client.from("live_location_requests").select("*").or(`employee_id.eq.${employeeId},requested_by_employee_id.eq.${employeeId}`).order("created_at", { ascending: false }).limit(100);
-    fail(error, "تعذر قراءة طلبات الموقع المباشر.");
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.");
     return toCamel(data || []);
   },
   respondLiveLocationRequest: async (id, body = {}) => {
@@ -2214,11 +2272,11 @@ export const supabaseEndpoints = {
     const approved = body.status !== "REJECTED" && body.action !== "reject";
     const update = { status: approved ? "APPROVED" : "REJECTED", responded_at: now(), response_note: body.note || body.reason || "" };
     const { data: request, error } = await client.from("live_location_requests").update(update).eq("id", id).eq("employee_id", employeeId).select("*").maybeSingle();
-    fail(error, "تعذر حفظ رد الموقع المباشر.");
-    if (!request) throw new Error("طلب الموقع غير موجود أو لا يخص هذا الحساب.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø±Ø¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.");
+    if (!request) throw new Error("Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯ Ø£Ùˆ Ù„Ø§ ÙŠØ®Øµ Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨.");
     const responsePayload = { request_id: id, employee_id: employeeId, requested_by_user_id: request.requested_by_user_id, status: update.status, latitude: approved ? Number(body.latitude) : null, longitude: approved ? Number(body.longitude) : null, accuracy_meters: approved ? Number(body.accuracyMeters || body.accuracy || 0) : null, captured_at: body.capturedAt || now(), responded_at: now(), note: update.response_note };
     const { data: response, error: rError } = await client.from("live_location_responses").insert(responsePayload).select("*").single();
-    fail(rError, "تم تحديث الطلب لكن تعذر حفظ الاستجابة.");
+    fail(rError, "ØªÙ… ØªØ­Ø¯ÙŠØ« Ø§Ù„Ø·Ù„Ø¨ Ù„ÙƒÙ† ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø§Ø³ØªØ¬Ø§Ø¨Ø©.");
     if (approved && responsePayload.latitude && responsePayload.longitude) await ignoreSupabaseError(client.from("employee_locations").insert({ employee_id: employeeId, latitude: responsePayload.latitude, longitude: responsePayload.longitude, accuracy_meters: responsePayload.accuracy_meters, source: "live_location_request", status: "LIVE_SHARED", captured_at: responsePayload.captured_at }));
     await audit("live_location.respond", "live_location_request", id, { request, response }).catch(() => null);
     return { request: toCamel(request), response: toCamel(response) };
@@ -2231,9 +2289,9 @@ export const supabaseEndpoints = {
   createSensitiveApproval: async (body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
-    const payload = { action_type: body.actionType || "SENSITIVE_ACTION", target_type: body.targetType || "system", target_id: body.targetId || "", target_employee_id: body.targetEmployeeId || body.employeeId || null, title: body.title || "طلب اعتماد عملية حساسة", summary: body.summary || body.reason || "", payload: body.payload || {}, status: "PENDING", requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "النظام", requested_at: now(), created_at: now() };
+    const payload = { action_type: body.actionType || "SENSITIVE_ACTION", target_type: body.targetType || "system", target_id: body.targetId || "", target_employee_id: body.targetEmployeeId || body.employeeId || null, title: body.title || "Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù…Ù„ÙŠØ© Ø­Ø³Ø§Ø³Ø©", summary: body.summary || body.reason || "", payload: body.payload || {}, status: "PENDING", requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…", requested_at: now(), created_at: now() };
     const { data, error } = await client.from("sensitive_approvals").insert(payload).select("*").single();
-    fail(error, "تعذر إنشاء طلب الاعتماد الحساس. تأكد من تطبيق Patch 024.");
+    fail(error, "ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø·Ù„Ø¨ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø­Ø³Ø§Ø³. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 024.");
     await audit("sensitive_approval.request", payload.target_type, payload.target_id, payload).catch(() => null);
     return toCamel(data);
   },
@@ -2243,9 +2301,9 @@ export const supabaseEndpoints = {
     const decision = body.decision === "reject" || body.status === "REJECTED" ? "REJECTED" : "APPROVED";
     const update = { status: decision, decided_at: now(), decided_by_user_id: user?.id || null, decision_note: body.note || body.reason || "" };
     const { data, error } = await client.from("sensitive_approvals").update(update).eq("id", id).select("*").single();
-    fail(error, "تعذر حفظ قرار الاعتماد الحساس.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ù‚Ø±Ø§Ø± Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø­Ø³Ø§Ø³.");
     await audit("sensitive_approval.decision", "sensitive_approval", id, update).catch(() => null);
-    return { approval: toCamel(data), result: { executed: false, note: "في Supabase الحقيقي يتم تنفيذ العمليات الحساسة عبر Edge Function أو RPC آمن بعد الاعتماد." } };
+    return { approval: toCamel(data), result: { executed: false, note: "ÙÙŠ Supabase Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ ÙŠØªÙ… ØªÙ†ÙÙŠØ° Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ø­Ø³Ø§Ø³Ø© Ø¹Ø¨Ø± Edge Function Ø£Ùˆ RPC Ø¢Ù…Ù† Ø¨Ø¹Ø¯ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯." } };
   },
   executivePresenceSnapshot: async () => {
     const mobile = await supabaseEndpoints.executiveMobile();
@@ -2271,19 +2329,19 @@ export const supabaseEndpoints = {
     const bySlug = (...slugs) => employees.filter((employee) => slugs.includes(employee.role?.slug)).map((employee) => ({ ...employee, teamCount: teamOf(employee.id).length }));
     return {
       metrics: [
-        { label: "إجمالي الموظفين", value: employees.length, helper: "من Supabase" },
-        { label: "مديرون مباشرون", value: managerOptions.length, helper: "مرشحون لإدارة فرق" },
-        { label: "بلا مدير", value: employees.filter((employee) => employee.role?.slug === "employee" && !employee.managerEmployeeId).length, helper: "تحتاج ربط" },
-        { label: "فرق نشطة", value: managerTeams.filter((row) => row.teamCount > 0).length, helper: "لديها أعضاء" },
+        { label: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", value: employees.length, helper: "Ù…Ù† Supabase" },
+        { label: "Ù…Ø¯ÙŠØ±ÙˆÙ† Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†", value: managerOptions.length, helper: "Ù…Ø±Ø´Ø­ÙˆÙ† Ù„Ø¥Ø¯Ø§Ø±Ø© ÙØ±Ù‚" },
+        { label: "Ø¨Ù„Ø§ Ù…Ø¯ÙŠØ±", value: employees.filter((employee) => employee.role?.slug === "employee" && !employee.managerEmployeeId).length, helper: "ØªØ­ØªØ§Ø¬ Ø±Ø¨Ø·" },
+        { label: "ÙØ±Ù‚ Ù†Ø´Ø·Ø©", value: managerTeams.filter((row) => row.teamCount > 0).length, helper: "Ù„Ø¯ÙŠÙ‡Ø§ Ø£Ø¹Ø¶Ø§Ø¡" },
       ],
       employees,
       managerOptions,
       levels: [
-        { key: "executive", label: "المدير التنفيذي", people: bySlug("executive") },
-        { key: "secretary", label: "السكرتير التنفيذي/التقني", people: bySlug("executive-secretary", "admin") },
-        { key: "first-line", label: "الصف الأول من المديرين", people: bySlug("manager", "direct-manager", "operations-manager-1", "operations-manager-2") },
-        { key: "hr", label: "الموارد البشرية", people: bySlug("hr-manager") },
-        { key: "employees", label: "الموظفون", people: bySlug("employee") },
+        { key: "executive", label: "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", people: bySlug("executive") },
+        { key: "secretary", label: "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ/Ø§Ù„ØªÙ‚Ù†ÙŠ", people: bySlug("executive-secretary", "admin") },
+        { key: "first-line", label: "Ø§Ù„ØµÙ Ø§Ù„Ø£ÙˆÙ„ Ù…Ù† Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", people: bySlug("manager", "direct-manager", "operations-manager-1", "operations-manager-2") },
+        { key: "hr", label: "Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©", people: bySlug("hr-manager") },
+        { key: "employees", label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", people: bySlug("employee") },
       ],
       managerTeams,
     };
@@ -2291,12 +2349,12 @@ export const supabaseEndpoints = {
   assignManager: async (body = {}) => {
     const client = await sb();
     const employeeId = body.employeeId;
-    if (!employeeId) throw new Error("اختر الموظف أولًا.");
-    if (body.managerEmployeeId && body.managerEmployeeId === employeeId) throw new Error("لا يمكن جعل الموظف مديرًا لنفسه.");
+    if (!employeeId) throw new Error("Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù Ø£ÙˆÙ„Ù‹Ø§.");
+    if (body.managerEmployeeId && body.managerEmployeeId === employeeId) throw new Error("Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø¬Ø¹Ù„ Ø§Ù„Ù…ÙˆØ¸Ù Ù…Ø¯ÙŠØ±Ù‹Ø§ Ù„Ù†ÙØ³Ù‡.");
     const payload = { manager_employee_id: body.managerEmployeeId || null, manager_assigned_at: now(), manager_assignment_note: body.note || "", updated_at: now() };
     const { data, error } = await client.from("employees").update(payload).eq("id", employeeId).select("*").single();
-    fail(error, "تعذر تحديث المدير المباشر.");
-    if (body.managerEmployeeId) await ignoreSupabaseError(client.from("notifications").insert({ employee_id: body.managerEmployeeId, title: "تم ربط موظف بفريقك", body: `${data.full_name || "موظف"} أصبح ضمن فريقك المباشر.`, type: "INFO", status: "UNREAD", is_read: false, created_at: now() }));
+    fail(error, "ØªØ¹Ø°Ø± ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.");
+    if (body.managerEmployeeId) await ignoreSupabaseError(client.from("notifications").insert({ employee_id: body.managerEmployeeId, title: "ØªÙ… Ø±Ø¨Ø· Ù…ÙˆØ¸Ù Ø¨ÙØ±ÙŠÙ‚Ùƒ", body: `${data.full_name || "Ù…ÙˆØ¸Ù"} Ø£ØµØ¨Ø­ Ø¶Ù…Ù† ÙØ±ÙŠÙ‚Ùƒ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.`, type: "INFO", status: "UNREAD", is_read: false, created_at: now() }));
     await audit("organization.assign_manager", "employee", employeeId, payload).catch(() => null);
     const c = await core({ force: true });
     return enrichEmployee(data, c);
@@ -2321,10 +2379,10 @@ export const supabaseEndpoints = {
     const present = rows.filter((row) => ["PRESENT", "LATE", "CHECK_IN", "MANUAL_APPROVED"].includes(row.todayStatus)).length;
     const pending = (requests.rows || []).filter((item) => rows.some((employee) => employee.id === item.employeeId) && ["PENDING", "IN_REVIEW", "OPEN"].includes(item.status));
     return { manager: employees.find((employee) => employee.id === managerId) || null, team: rows, pending, metrics: [
-      { label: "حجم الفريق", value: rows.length, helper: "حسب الصلاحيات" },
-      { label: "حاضر اليوم", value: present, helper: "حضور/تأخير" },
-      { label: "KPI معلق", value: rows.filter((row) => !["APPROVED", "EXECUTIVE_APPROVED"].includes(row.kpiStatus)).length, helper: "لم يغلق" },
-      { label: "طلبات معلقة", value: pending.length, helper: "تحتاج متابعة" },
+      { label: "Ø­Ø¬Ù… Ø§Ù„ÙØ±ÙŠÙ‚", value: rows.length, helper: "Ø­Ø³Ø¨ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª" },
+      { label: "Ø­Ø§Ø¶Ø± Ø§Ù„ÙŠÙˆÙ…", value: present, helper: "Ø­Ø¶ÙˆØ±/ØªØ£Ø®ÙŠØ±" },
+      { label: "KPI Ù…Ø¹Ù„Ù‚", value: rows.filter((row) => !["APPROVED", "EXECUTIVE_APPROVED"].includes(row.kpiStatus)).length, helper: "Ù„Ù… ÙŠØºÙ„Ù‚" },
+      { label: "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", value: pending.length, helper: "ØªØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©" },
     ] };
   },
   sendTeamReminder: async (body = {}) => {
@@ -2333,11 +2391,11 @@ export const supabaseEndpoints = {
     const managerId = body.managerId || user?.employeeId || "";
     const team = (await supabaseEndpoints.employees().catch(() => [])).filter((employee) => employee.managerEmployeeId === managerId);
     if (!team.length) return { sent: 0, pushed: 0 };
-    const rows = team.map((employee) => ({ employee_id: employee.id, user_id: employee.userId || null, title: "تذكير من المدير المباشر", body: body.message || "يرجى مراجعة الحضور والطلبات وKPI المطلوب.", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false, created_at: now() }));
-    const { error } = await client.from("notifications").insert(rows);
-    fail(error, "تعذر إرسال تذكير الفريق.");
+    const rows = team.map((employee) => ({ employee_id: employee.id, user_id: employee.userId || null, title: "ØªØ°ÙƒÙŠØ± Ù…Ù† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", body: body.message || "ÙŠØ±Ø¬Ù‰ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆKPI Ø§Ù„Ù…Ø·Ù„ÙˆØ¨.", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false, created_at: now() }));
+    const noteResult = await safeCreateNotifications(client, rows, { block: true, message: "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ ØªØ°ÙƒÙŠØ± Ø§Ù„ÙØ±ÙŠÙ‚." });
+    if (!noteResult.created) throw new Error("Ù„Ù… ÙŠØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø£ÙŠ Ø¥Ø´Ø¹Ø§Ø± Ø¯Ø§Ø®Ù„ÙŠ Ù„Ù„ÙØ±ÙŠÙ‚.");
     let pushed = 0;
-    await client.functions.invoke("send-push-notification", { body: { title: "تذكير من المدير المباشر", body: body.message || "يرجى مراجعة الحضور والطلبات وKPI المطلوب.", tag: "team-reminder", targetEmployeeIds: team.map((employee) => employee.id) } })
+    await client.functions.invoke("send-push-notifications", { body: { title: "ØªØ°ÙƒÙŠØ± Ù…Ù† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", body: body.message || "ÙŠØ±Ø¬Ù‰ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆKPI Ø§Ù„Ù…Ø·Ù„ÙˆØ¨.", tag: "team-reminder", targetEmployeeIds: team.map((employee) => employee.id) } })
       .then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); })
       .catch(() => null);
     await audit("team.reminder", "employee", managerId, { sent: rows.length, pushed }).catch(() => null);
@@ -2355,33 +2413,33 @@ export const supabaseEndpoints = {
     const attendanceIssues = employees.map((employee) => {
       const day = todayDaily.find((row) => row.employeeId === employee.id);
       const status = day?.status || "ABSENT";
-      return { employee, employeeId: employee.id, status, title: status === "ABSENT" ? "غياب/لم يسجل حضور" : status, requiresReview: Boolean(day?.requiresReview) || ["ABSENT", "LATE", "MISSING_CHECKOUT", "REVIEW", "EARLY_EXIT"].includes(status), recommendation: "مراجعة HR" };
+      return { employee, employeeId: employee.id, status, title: status === "ABSENT" ? "ØºÙŠØ§Ø¨/Ù„Ù… ÙŠØ³Ø¬Ù„ Ø­Ø¶ÙˆØ±" : status, requiresReview: Boolean(day?.requiresReview) || ["ABSENT", "LATE", "MISSING_CHECKOUT", "REVIEW", "EARLY_EXIT"].includes(status), recommendation: "Ù…Ø±Ø§Ø¬Ø¹Ø© HR" };
     }).filter((row) => row.requiresReview).slice(0, 100);
     const kpiForHr = kpiRows.filter((row) => ["MANAGER_APPROVED", "HR_REVIEWED"].includes(row.status)).slice(0, 100);
     const dataIssues = employees.flatMap((employee) => {
       const issues = [];
-      if (employee.role?.slug === "employee" && !employee.managerEmployeeId) issues.push({ employee, issue: "لا يوجد مدير مباشر" });
-      if (!employee.userId && !users.some((user) => user.employeeId === employee.id)) issues.push({ employee, issue: "لا يوجد حساب دخول مرتبط" });
-      if (!employee.phone && !employee.email) issues.push({ employee, issue: "لا يوجد هاتف أو بريد" });
+      if (employee.role?.slug === "employee" && !employee.managerEmployeeId) issues.push({ employee, issue: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±" });
+      if (!employee.userId && !users.some((user) => user.employeeId === employee.id)) issues.push({ employee, issue: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„ Ù…Ø±ØªØ¨Ø·" });
+      if (!employee.phone && !employee.email) issues.push({ employee, issue: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù‡Ø§ØªÙ Ø£Ùˆ Ø¨Ø±ÙŠØ¯" });
       return issues;
     });
     return { metrics: [
-      { label: "الموظفون", value: employees.length, helper: "داخل HR" },
-      { label: "حضور يحتاج مراجعة", value: attendanceIssues.length, helper: today },
-      { label: "KPI عند HR", value: kpiForHr.length, helper: "بنود HR فقط" },
-      { label: "بيانات ناقصة", value: dataIssues.length, helper: "تحتاج استكمال" },
+      { label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", value: employees.length, helper: "Ø¯Ø§Ø®Ù„ HR" },
+      { label: "Ø­Ø¶ÙˆØ± ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©", value: attendanceIssues.length, helper: today },
+      { label: "KPI Ø¹Ù†Ø¯ HR", value: kpiForHr.length, helper: "Ø¨Ù†ÙˆØ¯ HR ÙÙ‚Ø·" },
+      { label: "Ø¨ÙŠØ§Ù†Ø§Øª Ù†Ø§Ù‚ØµØ©", value: dataIssues.length, helper: "ØªØ­ØªØ§Ø¬ Ø§Ø³ØªÙƒÙ…Ø§Ù„" },
     ], attendanceIssues, kpiForHr, dataIssues };
   },
   disputeWorkflow: async () => {
     const [cases, employees] = await Promise.all([supabaseEndpoints.disputes().catch(() => []), supabaseEndpoints.employees().catch(() => [])]);
     const committeeSlugs = new Set(["executive-secretary", "hr-manager", "operations-manager-1", "operations-manager-2", "admin"]);
-    return { workflowSteps: ["الموظف يقدم الشكوى", "المدير المباشر يراجع", "لجنة حل المشكلات تراجع", "السكرتير التنفيذي ينسق ويرفع", "المدير التنفيذي يعتمد عند التصعيد"], committeeMembers: employees.filter((employee) => committeeSlugs.has(employee.role?.slug)), cases };
+    return { workflowSteps: ["Ø§Ù„Ù…ÙˆØ¸Ù ÙŠÙ‚Ø¯Ù… Ø§Ù„Ø´ÙƒÙˆÙ‰", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙŠØ±Ø§Ø¬Ø¹", "Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´ÙƒÙ„Ø§Øª ØªØ±Ø§Ø¬Ø¹", "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙŠÙ†Ø³Ù‚ ÙˆÙŠØ±ÙØ¹", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙŠØ¹ØªÙ…Ø¯ Ø¹Ù†Ø¯ Ø§Ù„ØªØµØ¹ÙŠØ¯"], committeeMembers: employees.filter((employee) => committeeSlugs.has(employee.role?.slug)), cases };
   },
   advanceDispute: async (id, body = {}) => {
     const client = await sb();
-    const payload = { status: body.status || "IN_REVIEW", committee_decision: body.note || body.committeeDecision || "تمت المراجعة", escalated_to_executive: body.status === "ESCALATED" || body.escalatedToExecutive === true, current_stage: body.currentStage || body.status || "committee_review", updated_at: now(), escalation_reason: body.escalationReason || body.note || "" };
+    const payload = { status: body.status || "IN_REVIEW", committee_decision: body.note || body.committeeDecision || "ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©", escalated_to_executive: body.status === "ESCALATED" || body.escalatedToExecutive === true, current_stage: body.currentStage || body.status || "committee_review", updated_at: now(), escalation_reason: body.escalationReason || body.note || "" };
     const { data, error } = await client.from("dispute_cases").update(payload).eq("id", id).select("*, employee:employees(*)").single();
-    fail(error, "تعذر تحديث مسار الشكوى.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ­Ø¯ÙŠØ« Ù…Ø³Ø§Ø± Ø§Ù„Ø´ÙƒÙˆÙ‰.");
     await audit("dispute.advance", "dispute_case", id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
@@ -2395,40 +2453,40 @@ export const supabaseEndpoints = {
       supabaseEndpoints.hrOperations().catch(() => ({ metrics: [] })),
     ]);
     const rows = [
-      { key: "attendance", title: "تقرير الحضور والانصراف", description: "حضور، انصراف، تأخير، ومراجعات", scope: "HR/مدير", count: attendance.length, generatedAt: now() },
-      { key: "kpi", title: "تقرير KPI الشهري", description: "درجات وتقدم دورة التقييم", scope: "مدير/HR/تنفيذي", count: kpiRows.length, generatedAt: now() },
-      { key: "teams", title: "تقرير الفرق والمديرين", description: "توزيع الموظفين على المديرين", scope: "الإدارة", count: employees.filter((employee) => employees.some((child) => child.managerEmployeeId === employee.id)).length, generatedAt: now() },
-      { key: "disputes", title: "تقرير الشكاوى والتصعيد", description: "الشكاوى حسب المرحلة والقرار", scope: "اللجنة/السكرتير", count: disputes.length, generatedAt: now() },
-      { key: "hr", title: "تقرير HR التشغيلي", description: "بيانات ناقصة وKPI وحضور يحتاج مراجعة", scope: "HR", count: employees.length, generatedAt: now() },
+      { key: "attendance", title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", description: "Ø­Ø¶ÙˆØ±ØŒ Ø§Ù†ØµØ±Ø§ÙØŒ ØªØ£Ø®ÙŠØ±ØŒ ÙˆÙ…Ø±Ø§Ø¬Ø¹Ø§Øª", scope: "HR/Ù…Ø¯ÙŠØ±", count: attendance.length, generatedAt: now() },
+      { key: "kpi", title: "ØªÙ‚Ø±ÙŠØ± KPI Ø§Ù„Ø´Ù‡Ø±ÙŠ", description: "Ø¯Ø±Ø¬Ø§Øª ÙˆØªÙ‚Ø¯Ù… Ø¯ÙˆØ±Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ…", scope: "Ù…Ø¯ÙŠØ±/HR/ØªÙ†ÙÙŠØ°ÙŠ", count: kpiRows.length, generatedAt: now() },
+      { key: "teams", title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙØ±Ù‚ ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", description: "ØªÙˆØ²ÙŠØ¹ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø¹Ù„Ù‰ Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", scope: "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©", count: employees.filter((employee) => employees.some((child) => child.managerEmployeeId === employee.id)).length, generatedAt: now() },
+      { key: "disputes", title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯", description: "Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø­Ø³Ø¨ Ø§Ù„Ù…Ø±Ø­Ù„Ø© ÙˆØ§Ù„Ù‚Ø±Ø§Ø±", scope: "Ø§Ù„Ù„Ø¬Ù†Ø©/Ø§Ù„Ø³ÙƒØ±ØªÙŠØ±", count: disputes.length, generatedAt: now() },
+      { key: "hr", title: "ØªÙ‚Ø±ÙŠØ± HR Ø§Ù„ØªØ´ØºÙŠÙ„ÙŠ", description: "Ø¨ÙŠØ§Ù†Ø§Øª Ù†Ø§Ù‚ØµØ© ÙˆKPI ÙˆØ­Ø¶ÙˆØ± ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©", scope: "HR", count: employees.length, generatedAt: now() },
     ];
-    return { rows, metrics: [{ label: "تقارير جاهزة", value: rows.length, helper: "CSV/Excel/PDF" }, { label: "موظفون", value: employees.length, helper: "ضمن الصلاحيات" }, { label: "KPI", value: kpiRows.length, helper: "كل الدورات" }, { label: "شكاوى", value: disputes.length, helper: "كل الحالات" }], hr };
+    return { rows, metrics: [{ label: "ØªÙ‚Ø§Ø±ÙŠØ± Ø¬Ø§Ù‡Ø²Ø©", value: rows.length, helper: "CSV/Excel/PDF" }, { label: "Ù…ÙˆØ¸ÙÙˆÙ†", value: employees.length, helper: "Ø¶Ù…Ù† Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª" }, { label: "KPI", value: kpiRows.length, helper: "ÙƒÙ„ Ø§Ù„Ø¯ÙˆØ±Ø§Øª" }, { label: "Ø´ÙƒØ§ÙˆÙ‰", value: disputes.length, helper: "ÙƒÙ„ Ø§Ù„Ø­Ø§Ù„Ø§Øª" }], hr };
   },
   exportManagementReport: async (body = {}) => {
     const key = body.key || body.reportKey || "attendance";
-    const titleMap = { attendance: "تقرير الحضور والانصراف", kpi: "تقرير KPI الشهري", teams: "تقرير الفرق والمديرين", disputes: "تقرير الشكاوى والتصعيد", hr: "تقرير HR التشغيلي" };
+    const titleMap = { attendance: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", kpi: "ØªÙ‚Ø±ÙŠØ± KPI Ø§Ù„Ø´Ù‡Ø±ÙŠ", teams: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙØ±Ù‚ ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", disputes: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯", hr: "ØªÙ‚Ø±ÙŠØ± HR Ø§Ù„ØªØ´ØºÙŠÙ„ÙŠ" };
     let headers = [], rows = [];
     if (key === "kpi") {
       const [kpiRows, employees] = await Promise.all([tableRows("kpi_evaluations", "updated_at", false).then(toCamel).catch(() => []), supabaseEndpoints.employees().catch(() => [])]);
-      headers = ["الموظف", "المدير", "الإجمالي", "الحالة", "الدورة"];
+      headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø¯ÙˆØ±Ø©"];
       rows = kpiRows.map((row) => { const emp = employees.find((e) => e.id === row.employeeId); const mgr = employees.find((e) => e.id === row.managerEmployeeId || e.id === emp?.managerEmployeeId); return [emp?.fullName || row.employeeId, mgr?.fullName || "-", row.totalScore || 0, row.status || "DRAFT", row.cycleId || ""]; });
     } else if (key === "teams") {
       const structure = await supabaseEndpoints.managementStructure();
-      headers = ["المدير", "حجم الفريق", "نشط", "KPI معلق", "طلبات معلقة"];
+      headers = ["Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø­Ø¬Ù… Ø§Ù„ÙØ±ÙŠÙ‚", "Ù†Ø´Ø·", "KPI Ù…Ø¹Ù„Ù‚", "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©"];
       rows = structure.managerTeams.map((row) => [row.manager.fullName, row.teamCount, row.activeCount, row.pendingKpi, row.pendingRequests]);
     } else if (key === "disputes") {
       const disputes = await supabaseEndpoints.disputes().catch(() => []);
-      headers = ["العنوان", "الموظف", "الحالة", "الأولوية", "القرار"];
+      headers = ["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø§Ù„Ù‚Ø±Ø§Ø±"];
       rows = disputes.map((row) => [row.title, row.employee?.fullName || "-", row.status || "OPEN", row.severity || row.priority || "MEDIUM", row.committeeDecision || row.resolution || ""]);
     } else if (key === "hr") {
       const hr = await supabaseEndpoints.hrOperations();
-      headers = ["المؤشر", "القيمة", "ملاحظة"];
+      headers = ["Ø§Ù„Ù…Ø¤Ø´Ø±", "Ø§Ù„Ù‚ÙŠÙ…Ø©", "Ù…Ù„Ø§Ø­Ø¸Ø©"];
       rows = (hr.metrics || []).map((m) => [m.label, m.value, m.helper || ""]);
     } else {
       const events = await supabaseEndpoints.attendanceEvents({ limit: 20000 }).catch(() => []);
-      headers = ["الموظف", "النوع", "التاريخ", "المصدر", "الموقع", "ملاحظات"];
+      headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø§Ù„Ù…ØµØ¯Ø±", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"];
       rows = events.map((event) => [event.employee?.fullName || event.employeeId, event.type || event.status || "-", event.eventAt || event.createdAt || "", event.source || "-", event.geofenceStatus || "-", event.notes || ""]);
     }
-    return { title: titleMap[key] || "تقرير", fileName: key + "-report", headers, rows, summaryHtml: `<div class="summary"><div><span>عدد السجلات</span><strong>${rows.length}</strong></div><div><span>تاريخ الإصدار</span><strong>${now().slice(0,10)}</strong></div></div>` };
+    return { title: titleMap[key] || "ØªÙ‚Ø±ÙŠØ±", fileName: key + "-report", headers, rows, summaryHtml: `<div class="summary"><div><span>Ø¹Ø¯Ø¯ Ø§Ù„Ø³Ø¬Ù„Ø§Øª</span><strong>${rows.length}</strong></div><div><span>ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¥ØµØ¯Ø§Ø±</span><strong>${now().slice(0,10)}</strong></div></div>` };
   },
   monthlyEvaluations: async (body = {}) => {
     const client = await sb();
@@ -2438,23 +2496,23 @@ export const supabaseEndpoints = {
     const toInsert = employees.filter((employee) => !existingKeys.has(employee.id)).map((employee) => ({ cycle_id: month, employee_id: employee.id, manager_employee_id: employee.managerEmployeeId || null, status: "DRAFT", evaluation_date: `${month}-20`, created_at: now(), updated_at: now() }));
     if (toInsert.length) await client.from("kpi_evaluations").insert(toInsert).catch(() => null);
     const { data, error } = await client.from("kpi_evaluations").select("*, employee:employees(*), manager:manager_employee_id(*)").eq("cycle_id", month).order("updated_at", { ascending: false }).limit(2000);
-    fail(error, "تعذر قراءة التقييمات الشهرية.");
-    return { month, cycle: { id: month, name: `دورة ${month}` }, evaluations: (data || []).map(({ employee, manager, ...row }) => ({ ...toCamel(row), employee: employee ? enrichEmployee(employee) : null, manager: manager ? enrichEmployee(manager) : null })) };
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„Ø´Ù‡Ø±ÙŠØ©.");
+    return { month, cycle: { id: month, name: `Ø¯ÙˆØ±Ø© ${month}` }, evaluations: (data || []).map(({ employee, manager, ...row }) => ({ ...toCamel(row), employee: employee ? enrichEmployee(employee) : null, manager: manager ? enrichEmployee(manager) : null })) };
   },
   saveMonthlyEvaluation: async (id, body = {}) => {
     const payload = compact({ target_score: body.targetScore, efficiency_score: body.efficiencyScore, attendance_score: body.attendanceScore, conduct_score: body.conductScore, prayer_score: body.prayerScore, quran_circle_score: body.quranCircleScore, initiatives_score: body.initiativesScore, manager_notes: body.managerComment || body.managerNotes, hr_notes: body.hrNotes, status: body.status, updated_at: now() });
     const client = await sb();
     const { data, error } = await client.from("kpi_evaluations").update(payload).eq("id", id).select("*").single();
-    fail(error, "تعذر حفظ التقييم الشهري.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø´Ù‡Ø±ÙŠ.");
     return toCamel(data);
   },
   closeKpiCycle: async (body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
     const cycleId = body.cycleId || now().slice(0, 7);
-    const payload = { id: cycleId, name: body.name || `دورة ${cycleId}`, status: body.status || "CLOSED", locked_at: now(), locked_by_user_id: user?.id || null, final_report_generated_at: now(), updated_at: now() };
+    const payload = { id: cycleId, name: body.name || `Ø¯ÙˆØ±Ø© ${cycleId}`, status: body.status || "CLOSED", locked_at: now(), locked_by_user_id: user?.id || null, final_report_generated_at: now(), updated_at: now() };
     const { data, error } = await client.from("kpi_cycles").upsert(payload, { onConflict: "id" }).select("*").single();
-    fail(error, "تعذر إغلاق دورة KPI. تأكد من تطبيق Patch 038/040.");
+    fail(error, "ØªØ¹Ø°Ø± Ø¥ØºÙ„Ø§Ù‚ Ø¯ÙˆØ±Ø© KPI. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 038/040.");
     await ignoreSupabaseError(client.from("kpi_evaluations").update({ locked_at: now(), locked_by_user_id: user?.id || null }).eq("cycle_id", cycleId));
     return toCamel(data);
   },
@@ -2464,9 +2522,9 @@ export const supabaseEndpoints = {
     const pending = (payload.evaluations || []).filter((row) => !["APPROVED", "EXECUTIVE_APPROVED"].includes(row.status));
     const client = await sb();
     if (!pending.length) return { sent: 0, pushed: 0 };
-    await client.from("notifications").insert(pending.map((row) => ({ employee_id: row.employeeId, title: "تذكير تقييم KPI", body: "يرجى استكمال تقييم الأداء الشهري قبل الإغلاق.", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false, created_at: now() })));
+    await client.from("notifications").insert(pending.map((row) => ({ employee_id: row.employeeId, title: "ØªØ°ÙƒÙŠØ± ØªÙ‚ÙŠÙŠÙ… KPI", body: "ÙŠØ±Ø¬Ù‰ Ø§Ø³ØªÙƒÙ…Ø§Ù„ ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡ Ø§Ù„Ø´Ù‡Ø±ÙŠ Ù‚Ø¨Ù„ Ø§Ù„Ø¥ØºÙ„Ø§Ù‚.", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false, created_at: now() })));
     let pushed = 0;
-    await client.functions.invoke("send-push-notification", { body: { title: "تذكير تقييم KPI", body: "يرجى استكمال تقييم الأداء الشهري قبل الإغلاق.", tag: "kpi-reminder", targetEmployeeIds: pending.map((row) => row.employeeId) } }).then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); }).catch(() => null);
+    await client.functions.invoke("send-push-notifications", { body: { title: "ØªØ°ÙƒÙŠØ± ØªÙ‚ÙŠÙŠÙ… KPI", body: "ÙŠØ±Ø¬Ù‰ Ø§Ø³ØªÙƒÙ…Ø§Ù„ ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡ Ø§Ù„Ø´Ù‡Ø±ÙŠ Ù‚Ø¨Ù„ Ø§Ù„Ø¥ØºÙ„Ø§Ù‚.", tag: "kpi-reminder", targetEmployeeIds: pending.map((row) => row.employeeId) } }).then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); }).catch(() => null);
     return { sent: pending.length, pushed };
   },
   smartAttendanceRules: async () => ({ rules: { absentAfterHour: 12, missingCheckoutAfterHour: 20, duplicateWindowMinutes: 10, maxAccuracyMeters: 90 }, runs: await maybeTableRows("attendance_rule_runs", "created_at", false).then(toCamel), settings: await supabaseEndpoints.settings().catch(() => ({})) }),
@@ -2474,7 +2532,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const value = { absentAfterHour: Number(body.absentAfterHour || 12), missingCheckoutAfterHour: Number(body.missingCheckoutAfterHour || 20), duplicateWindowMinutes: Number(body.duplicateWindowMinutes || 10), maxAccuracyMeters: Number(body.maxAccuracyMeters || 500) };
     const { data, error } = await client.from("settings").upsert({ key: "attendance_rules", value, description: "Smart attendance rules", updated_at: now() }, { onConflict: "key" }).select("*").single();
-    fail(error, "تعذر حفظ قواعد الحضور الذكية. تأكد من تطبيق Patch 040.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠØ©. ØªØ£ÙƒØ¯ Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Patch 040.");
     return { rules: data.value };
   },
   runSmartAttendance: async (body = {}) => {
@@ -2482,7 +2540,7 @@ export const supabaseEndpoints = {
     const date = body.date || now().slice(0, 10);
     const [employees, daily] = await Promise.all([supabaseEndpoints.employees().catch(() => []), supabaseEndpoints.attendanceDaily().catch(() => [])]);
     const dayRows = daily.filter((row) => String(row.date || "").slice(0, 10) === date);
-    const rows = employees.map((employee) => { const row = dayRows.find((item) => item.employeeId === employee.id); const status = row?.status || "ABSENT"; return { employee, employeeId: employee.id, status, title: status === "ABSENT" ? "لم يسجل حضور" : status, severity: ["ABSENT", "MISSING_CHECKOUT"].includes(status) ? "HIGH" : status === "LATE" ? "MEDIUM" : "LOW", requiresReview: !row || Boolean(row.requiresReview) || ["ABSENT", "LATE", "MISSING_CHECKOUT", "EARLY_EXIT", "REVIEW"].includes(status), recommendation: "مراجعة HR عند الحاجة" }; });
+    const rows = employees.map((employee) => { const row = dayRows.find((item) => item.employeeId === employee.id); const status = row?.status || "ABSENT"; return { employee, employeeId: employee.id, status, title: status === "ABSENT" ? "Ù„Ù… ÙŠØ³Ø¬Ù„ Ø­Ø¶ÙˆØ±" : status, severity: ["ABSENT", "MISSING_CHECKOUT"].includes(status) ? "HIGH" : status === "LATE" ? "MEDIUM" : "LOW", requiresReview: !row || Boolean(row.requiresReview) || ["ABSENT", "LATE", "MISSING_CHECKOUT", "EARLY_EXIT", "REVIEW"].includes(status), recommendation: "Ù…Ø±Ø§Ø¬Ø¹Ø© HR Ø¹Ù†Ø¯ Ø§Ù„Ø­Ø§Ø¬Ø©" }; });
     await client.from("attendance_rule_runs").insert({ run_date: date, status: "COMPLETED", total_employees: employees.length, issues_count: rows.filter((row) => row.requiresReview).length, result: { rows }, created_at: now() }).catch(() => null);
     return { date, rows, issues: rows.filter((row) => row.requiresReview), generatedAt: now() };
   },
@@ -2493,7 +2551,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const { data, error } = await client.from("trusted_device_approval_requests").select("*").order("created_at", { ascending: false }).limit(200);
     if (error && ["42P01", "PGRST200", "PGRST204"].includes(error.code)) return [];
-    fail(error, "تعذر قراءة طلبات اعتماد الأجهزة.");
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø·Ù„Ø¨Ø§Øª Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø£Ø¬Ù‡Ø²Ø©.");
     return toCamel(data || []);
   },
   requestTrustedDeviceApproval: async (body = {}) => {
@@ -2509,7 +2567,7 @@ export const supabaseEndpoints = {
       p_accuracy_meters: body.accuracyMeters ?? body.accuracy ?? null,
     });
     if (error && ["42883", "42P01"].includes(error.code)) return { requestId: "LOCAL_PENDING", status: "PENDING" };
-    fail(error, "تعذر إرسال طلب اعتماد الجهاز.");
+    fail(error, "ØªØ¹Ø°Ø± Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¬Ù‡Ø§Ø².");
     return { requestId: data, status: "PENDING" };
   },
   reviewTrustedDeviceApproval: async (body = {}) => {
@@ -2519,11 +2577,11 @@ export const supabaseEndpoints = {
       p_decision: body.decision || "APPROVED",
       p_reason: body.reason || "",
     });
-    fail(error, "تعذر مراجعة اعتماد الجهاز.");
+    fail(error, "ØªØ¹Ø°Ø± Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¬Ù‡Ø§Ø².");
     return toCamel(data || {});
   },
   validateBranchQrChallenge: async (body = {}) => ({ valid: true, status: "DISABLED", challengeId: "", disabled: true, rpc: "validate_branch_qr_challenge" }),
-  createBranchQrChallenge: async (body = {}) => ({ disabled: true, status: "DISABLED", message: "QR متوقف في هذه النسخة ولا يتم إنشاء أكواد فرع." }),
+  createBranchQrChallenge: async (body = {}) => ({ disabled: true, status: "DISABLED", message: "QR Ù…ØªÙˆÙ‚Ù ÙÙŠ Ù‡Ø°Ù‡ Ø§Ù„Ù†Ø³Ø®Ø© ÙˆÙ„Ø§ ÙŠØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø£ÙƒÙˆØ§Ø¯ ÙØ±Ø¹." }),
   attendanceRiskCenter: async () => {
     const client = await sb();
     const { data, error } = await client.from("attendance_risk_center").select("*").limit(500);
@@ -2531,10 +2589,10 @@ export const supabaseEndpoints = {
       const fallback = await supabaseEndpoints.rejectedPunches().catch(() => []);
       return { rows: fallback.map((event) => ({ employeeId: event.employeeId, employee: event.employee, score: event.riskScore || 0, level: event.riskLevel || "MEDIUM", flags: (event.riskFlags || []).map((flag) => ({ label: flag })), events: [event] })), counts: {}, rules: ["Identity Guard fallback"] };
     }
-    fail(error, "تعذر قراءة مركز مخاطر الحضور.");
+    fail(error, "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ù…Ø±ÙƒØ² Ù…Ø®Ø§Ø·Ø± Ø§Ù„Ø­Ø¶ÙˆØ±.");
     const rows = toCamel(data || []);
     const counts = rows.reduce((acc, row) => { const level = row.riskLevel || "LOW"; acc[level] = (acc[level] || 0) + 1; return acc; }, {});
-    return { rows: rows.map((row) => ({ ...row, employee: { fullName: row.employeeName }, score: row.riskScore || 0, level: row.riskLevel || "LOW", flags: [...(row.riskFlags || []), ...(row.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [row] })), counts, rules: ["اعتماد الجهاز", "QR متوقف", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] };
+    return { rows: rows.map((row) => ({ ...row, employee: { fullName: row.employeeName }, score: row.riskScore || 0, level: row.riskLevel || "LOW", flags: [...(row.riskFlags || []), ...(row.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [row] })), counts, rules: ["Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¬Ù‡Ø§Ø²", "QR Ù…ØªÙˆÙ‚Ù", "Ø³ÙŠÙ„ÙÙŠ", "GPS anti-spoofing", "ØªØµØ¹ÙŠØ¯ HR"] };
   },
   acknowledgeAttendancePolicy: async (body = {}) => {
     const client = await sb();
@@ -2546,15 +2604,15 @@ export const supabaseEndpoints = {
       p_user_agent: body.userAgent || "",
     });
     if (error && ["42883", "42P01"].includes(error.code)) return { ok: true, localOnly: true };
-    fail(error, "تعذر حفظ إقرار سياسة الحضور.");
+    fail(error, "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø¥Ù‚Ø±Ø§Ø± Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø­Ø¶ÙˆØ±.");
     return { id: data, ok: true };
   },
   acknowledgeAttendanceIdentityPolicy: async (body = {}) => supabaseEndpoints.acknowledgeAttendancePolicy(body),
   runAutomaticBackup: async (body = {}) => {
     const client = await sb();
     const snapshot = await supabaseEndpoints.exportFullBackup();
-    const { data, error } = await client.from("system_backups").insert({ name: body.title || "نسخة احتياطية تلقائية", title: body.title || "نسخة احتياطية تلقائية", backup_type: "AUTO", summary: { employees: snapshot.employees?.length || 0, users: snapshot.users?.length || 0, attendanceEvents: snapshot.attendanceEvents?.length || 0 }, snapshot, status: "DONE", created_at: now() }).select("*").single();
-    fail(error, "تعذر إنشاء النسخة الاحتياطية.");
+    const { data, error } = await client.from("system_backups").insert({ name: body.title || "Ù†Ø³Ø®Ø© Ø§Ø­ØªÙŠØ§Ø·ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ©", title: body.title || "Ù†Ø³Ø®Ø© Ø§Ø­ØªÙŠØ§Ø·ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ©", backup_type: "AUTO", summary: { employees: snapshot.employees?.length || 0, users: snapshot.users?.length || 0, attendanceEvents: snapshot.attendanceEvents?.length || 0 }, snapshot, status: "DONE", created_at: now() }).select("*").single();
+    fail(error, "ØªØ¹Ø°Ø± Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ù†Ø³Ø®Ø© Ø§Ù„Ø§Ø­ØªÙŠØ§Ø·ÙŠØ©.");
     return toCamel(data);
   },
   databaseMigrationsStatus: async () => {
@@ -2567,19 +2625,19 @@ export const supabaseEndpoints = {
   markMigrationApplied: async (name) => createOrUpdate("database_migration_status", { name, status: "APPLIED", appliedAt: now(), notes: "Marked from admin UI" }).catch(async () => {
     const client = await sb();
     const { data, error } = await client.from("database_migration_status").upsert({ name, status: "APPLIED", applied_at: now(), notes: "Marked from admin UI" }, { onConflict: "name" }).select("*").single();
-    fail(error, "تعذر تعليم migration كمنفذ.");
+    fail(error, "ØªØ¹Ø°Ø± ØªØ¹Ù„ÙŠÙ… migration ÙƒÙ…Ù†ÙØ°.");
     return toCamel(data);
   }),
   supabaseSetupCheck: async () => {
     const cfg = CONFIG();
     const checks = [
-      { label: "Supabase مفعل", ok: Boolean(cfg.enabled), detail: cfg.enabled ? "enabled=true" : "enabled=false" },
-      { label: "Project URL", ok: Boolean(cfg.url), detail: cfg.url ? "موجود" : "غير مضبوط" },
-      { label: "Anon Key", ok: Boolean(cfg.anonKey), detail: cfg.anonKey ? "موجود" : "غير مضبوط" },
+      { label: "Supabase Ù…ÙØ¹Ù„", ok: Boolean(cfg.enabled), detail: cfg.enabled ? "enabled=true" : "enabled=false" },
+      { label: "Project URL", ok: Boolean(cfg.url), detail: cfg.url ? "Ù…ÙˆØ¬ÙˆØ¯" : "ØºÙŠØ± Ù…Ø¶Ø¨ÙˆØ·" },
+      { label: "Anon Key", ok: Boolean(cfg.anonKey), detail: cfg.anonKey ? "Ù…ÙˆØ¬ÙˆØ¯" : "ØºÙŠØ± Ù…Ø¶Ø¨ÙˆØ·" },
       { label: "Strict Mode", ok: cfg.strict !== false, detail: cfg.strict !== false ? "strict" : "fallback" },
       { label: "Patch 040", ok: true, detail: "040_runtime_alignment_fix.sql" },
     ];
-    return { mode: shouldUseSupabase() ? "supabase-configured" : "local-fallback", checks, recommended: "شغّل SQL حتى Patch 040 ثم انشر Edge Functions وخاصة send-push-notification." };
+    return { mode: shouldUseSupabase() ? "supabase-configured" : "local-fallback", checks, recommended: "Ø´ØºÙ‘Ù„ RUN_IN_SUPABASE_SQL_EDITOR.sql Ø«Ù… Ø§Ù†Ø´Ø± Edge Functions ÙˆØ®Ø§ØµØ© send-push-notifications." };
   },
   endOfDayReport: async (body = {}) => {
     const date = body.date || now().slice(0, 10);
@@ -2611,14 +2669,14 @@ export const supabaseEndpoints = {
     ]);
     const notes = notifications.filter((note) => (!note.employeeId || note.employeeId === employeeId || note.userId === user?.id) && !note.isRead).slice(0, 20);
     const actions = [
-      ...liveRequests.filter((item) => item.employeeId === employeeId && item.status === "PENDING").map((item) => ({ id: item.id, type: "LIVE_LOCATION", title: "طلب موقع مباشر", body: item.reason || "الإدارة تطلب موقعك الحالي", route: "location", severity: "HIGH" })),
-      ...tasks.filter((task) => !["DONE", "CLOSED", "CANCELLED"].includes(task.status)).slice(0, 10).map((task) => ({ id: task.id, type: "TASK", title: task.title, body: task.description || "مهمة مفتوحة", route: "tasks", severity: task.priority || "MEDIUM" })),
-      ...docs.filter((doc) => ["EXPIRING_SOON", "EXPIRED", "MISSING", "REQUIRED"].includes(doc.status)).map((doc) => ({ id: doc.id, type: "DOCUMENT", title: "مستند يحتاج متابعة: " + doc.title, body: doc.notes || doc.status, route: "documents", severity: "MEDIUM" })),
-      ...notes.map((note) => ({ id: note.id, type: "NOTIFICATION", title: note.title, body: note.body || "إشعار جديد", route: "notifications", severity: note.type || "LOW" })),
+      ...liveRequests.filter((item) => item.employeeId === employeeId && item.status === "PENDING").map((item) => ({ id: item.id, type: "LIVE_LOCATION", title: "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø±", body: item.reason || "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ØªØ·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ", route: "location", severity: "HIGH" })),
+      ...tasks.filter((task) => !["DONE", "CLOSED", "CANCELLED"].includes(task.status)).slice(0, 10).map((task) => ({ id: task.id, type: "TASK", title: task.title, body: task.description || "Ù…Ù‡Ù…Ø© Ù…ÙØªÙˆØ­Ø©", route: "tasks", severity: task.priority || "MEDIUM" })),
+      ...docs.filter((doc) => ["EXPIRING_SOON", "EXPIRED", "MISSING", "REQUIRED"].includes(doc.status)).map((doc) => ({ id: doc.id, type: "DOCUMENT", title: "Ù…Ø³ØªÙ†Ø¯ ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©: " + doc.title, body: doc.notes || doc.status, route: "documents", severity: "MEDIUM" })),
+      ...notes.map((note) => ({ id: note.id, type: "NOTIFICATION", title: note.title, body: note.body || "Ø¥Ø´Ø¹Ø§Ø± Ø¬Ø¯ÙŠØ¯", route: "notifications", severity: note.type || "LOW" })),
     ];
     return { actions, tasks, documents: docs, notifications: notes, liveRequests, generatedAt: now() };
   },
-  reset: async () => ({ ok: true, message: "إعادة الضبط في Supabase تتم من SQL Editor أو عبر حذف بيانات الجداول." }),
+  reset: async () => ({ ok: true, message: "Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ø¶Ø¨Ø· ÙÙŠ Supabase ØªØªÙ… Ù…Ù† SQL Editor Ø£Ùˆ Ø¹Ø¨Ø± Ø­Ø°Ù Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¬Ø¯Ø§ÙˆÙ„." }),
 };
 
 export async function subscribeSupabaseRealtime(onChange) {

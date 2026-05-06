@@ -41,7 +41,7 @@ LOGIN_RESOLVE_BLOCK_MINUTES
 شغّل ملفات SQL بالترتيب. إن كانت قاعدة البيانات محدثة حتى Patch 050، شغّل فقط:
 
 ```text
-supabase/sql/PRODUCTION_SQL_EDITOR_PATCHES_051_TO_064_ALL.sql
+supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql
 ```
 
 هذا الملف يجمع:
@@ -88,8 +88,7 @@ supabase functions deploy admin-create-user --project-ref <project-ref>
 supabase functions deploy admin-update-user --project-ref <project-ref>
 supabase functions deploy resolve-login-identifier --project-ref <project-ref>
 supabase functions deploy passkey-register --project-ref <project-ref>
-supabase functions deploy send-push-notification --project-ref <project-ref>
-supabase functions deploy employee-register --project-ref <project-ref>
+supabase functions deploy send-push-notifications --project-ref <project-ref>
 ```
 
 ## 5) بعد الرفع مباشرة
@@ -171,3 +170,8 @@ HR يعتمد نهائيًا.
 اللجنة ترى التفاصيل.
 المدير المباشر يرى فقط وجود شكوى في الفريق بدون أسماء أو تفاصيل.
 ```
+
+
+## V27 Clean Supabase Update
+
+استخدم الآن ملف SQL واحد فقط: `supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql`، ثم شغّل `DEPLOY_SUPABASE_PRODUCTION.ps1` أو `DEPLOY_SUPABASE_PRODUCTION.sh`. الملفات القديمة موجودة في `_archive` للرجوع فقط.
