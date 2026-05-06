@@ -1,4 +1,4 @@
-﻿const SUPABASE_CDN = "https://esm.sh/@supabase/supabase-js@2";
+const SUPABASE_CDN = "https://esm.sh/@supabase/supabase-js@2";
 const CONFIG = () => globalThis.HR_SUPABASE_CONFIG || {};
 const clone = (value) => JSON.parse(JSON.stringify(value ?? null));
 const now = () => new Date().toISOString();
@@ -381,9 +381,26 @@ async function currentUser() {
   const { data: profile, error } = await client.from("profiles").select("*").eq("id", authData.user.id).maybeSingle();
   fail(error);
   const enriched = enrichProfile(profile || { id: authData.user.id, email: authData.user.email, full_name: authData.user.email }, c);
+  let emp = null;
   if (enriched.employeeId) {
-    const { data: emp } = await client.from("employees").select("*").eq("id", enriched.employeeId).maybeSingle();
+    const { data } = await client.from("employees").select("*").eq("id", enriched.employeeId).maybeSingle();
+    emp = data || null;
+  }
+  // Production safety: some older databases have employees.user_id linked but profiles.employee_id still empty.
+  // The SQL patch 080 fixes this server-side, and this browser fallback keeps the app functional during rollout.
+  if (!emp) {
+    const byUser = await client.from("employees").select("*").eq("user_id", authData.user.id).maybeSingle().catch(() => ({ data: null }));
+    emp = byUser?.data || null;
+  }
+  if (!emp && authData.user.email) {
+    const byEmail = await client.from("employees").select("*").ilike("email", authData.user.email).maybeSingle().catch(() => ({ data: null }));
+    emp = byEmail?.data || null;
+  }
+  if (emp) {
     enriched.employee = enrichEmployee(emp, c);
+    enriched.employeeId = enriched.employee?.id || enriched.employeeId || "";
+    enriched.role ||= enriched.employee?.role || null;
+    enriched.permissions = enriched.permissions?.length ? enriched.permissions : rolePermissions(enriched.role || enriched.employee?.role);
     if (!enriched.avatarUrl && enriched.employee?.photoUrl) enriched.avatarUrl = enriched.employee.photoUrl;
     if (!enriched.photoUrl && enriched.avatarUrl) enriched.photoUrl = enriched.avatarUrl;
   }
@@ -1770,20 +1787,26 @@ export const supabaseEndpoints = {
   subscribePush: async (body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
+    const keys = body.keys || body.payload?.keys || {};
     const payload = {
       user_id: user?.id || null,
       employee_id: user?.employeeId || user?.employee?.id || null,
       endpoint: body.endpoint,
-      keys: body.keys || {},
+      keys,
       payload: body,
+      p256dh: keys.p256dh || "",
+      auth: keys.auth || "",
       permission: body.permission || globalThis.Notification?.permission || "default",
       user_agent: body.userAgent || navigator.userAgent || "",
       platform: body.platform || navigator.platform || "browser",
       is_active: true,
+      status: "ACTIVE",
+      last_seen_at: now(),
+      last_error: "",
       updated_at: now(),
     };
     const { data, error } = await client.from("push_subscriptions").upsert(payload, { onConflict: "endpoint" }).select("*").single();
-    fail(error, "تعذر حفظ اشتراك Web Push. تأكد من تطبيق Patch 040.");
+    fail(error, "تعذر حفظ اشتراك Web Push. تأكد من تطبيق Patch 080 أو RUN_IN_SUPABASE_SQL_EDITOR.sql.");
     return toCamel(data);
   },
   uploadPunchSelfie: async (body = {}) => {
@@ -2256,7 +2279,7 @@ export const supabaseEndpoints = {
     });
     if (!notificationInsert.error && notificationInsert.data) notificationId = String(notificationInsert.data);
     else console.warn("safe_create_notification skipped; run RUN_IN_SUPABASE_SQL_EDITOR.sql for internal notification rows", notificationInsert.error?.message || notificationInsert.error);
-    await client.functions.invoke("send-push-notifications", {
+    const pushResult = await client.functions.invoke("send-push-notifications", {
       body: {
         title: notificationTitle,
         body: notificationBody,
@@ -2271,7 +2294,7 @@ export const supabaseEndpoints = {
       return null;
     });
     await audit("live_location.request", "employee", employeeId, payload).catch(() => null);
-    return toCamel(data);
+    return { ...toCamel(data), notificationId, push: pushResult?.data || null };
   },
   myLiveLocationRequests: async () => {
     const client = await sb();

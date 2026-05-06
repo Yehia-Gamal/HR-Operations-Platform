@@ -77,10 +77,10 @@ async function callerCanSend(userClient: any, adminClient: any, userId: string) 
       .eq('id', userId)
       .maybeSingle();
     const role = Array.isArray(data?.roles) ? data.roles[0] : data?.roles;
-    const roleSlug = String(role?.slug || data?.permissions?.__role || data?.permissions?.role || '').trim();
+    const roleSlug = String(role?.slug || data?.permissions?.__role || data?.permissions?.role || '').trim().toLowerCase();
     const rolePermissions = Array.isArray(role?.permissions) ? role.permissions : [];
     const jsonPermissions = data?.permissions && typeof data.permissions === 'object' ? Object.keys(data.permissions).filter((k) => data.permissions[k]) : [];
-    const allPermissions = new Set([...rolePermissions, ...jsonPermissions]);
+    const allPermissions = new Set([...rolePermissions, ...jsonPermissions].map((item) => String(item).trim()).filter(Boolean));
     return ['admin', 'executive', 'executive-secretary', 'hr-manager', 'technical-lead'].includes(roleSlug)
       || allPermissions.has('*')
       || scopes.some((scope) => allPermissions.has(scope));

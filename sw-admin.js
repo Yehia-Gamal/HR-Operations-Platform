@@ -1,5 +1,5 @@
-﻿// Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
-const CACHE_NAME = "hr-attendance-v31-production-deploy-ready-keep-dev-files";
+// Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
+const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-080";
 const DEFAULT_OPEN_URL = "./admin/index.html";
 const ASSETS = [
   "./health.html",

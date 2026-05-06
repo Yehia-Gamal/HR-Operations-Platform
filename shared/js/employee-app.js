@@ -1,8 +1,8 @@
-﻿import { endpoints, unwrap } from "./api.js?v=v31-production-deploy-ready-keep-dev-files";
-import { enableWebPushSubscription } from "./push.js?v=v31-production-deploy-ready-keep-dev-files";
-import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch, capturePunchSelfie } from "./attendance-identity.js?v=v31-production-deploy-ready-keep-dev-files";
-import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-production-deploy-ready-keep-dev-files";
-import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-production-deploy-ready-keep-dev-files";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-080";
+import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-080";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch, capturePunchSelfie } from "./attendance-identity.js?v=v31-live-location-alert-fix-080";
+import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-live-location-alert-fix-080";
+import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-live-location-alert-fix-080";
 
 document.documentElement.classList.add("employee-portal-root");
 document.body.classList.add("employee-portal");
@@ -251,7 +251,11 @@ function haptic(pattern) {
 
 
 const NOTIFICATION_SOUND_SEEN_KEY = "hr.employee.seenNotificationIds";
+const LIVE_LOCATION_ALERT_SEEN_KEY = "hr.employee.seenLiveLocationRequestIds";
 let notificationPollTimer = null;
+let liveLocationPollTimer = null;
+let alertAudioContext = null;
+let activeLiveLocationAlertId = "";
 
 function toBase64Url(buffer) {
   return btoa(String.fromCharCode(...new Uint8Array(buffer))).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
@@ -313,20 +317,39 @@ async function requestBrowserPasskeyForAction(label = "تأكيد العملية
   }
 }
 
-function playInternalAlertSound() {
+function unlockAlertAudio() {
   try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
-    if (!AudioContext) return;
-    const ctx = new AudioContext();
-    const gain = ctx.createGain();
-    const osc = ctx.createOscillator();
-    gain.gain.value = 0.06;
-    osc.frequency.value = 880;
-    osc.type = "sine";
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    window.setTimeout(() => { osc.stop(); ctx.close?.(); }, 180);
+    if (!AudioContext) return null;
+    alertAudioContext ||= new AudioContext();
+    if (alertAudioContext.state === "suspended") alertAudioContext.resume?.().catch(() => null);
+    return alertAudioContext;
+  } catch {
+    return null;
+  }
+}
+
+document.addEventListener("pointerdown", unlockAlertAudio, { once: true, passive: true });
+document.addEventListener("keydown", unlockAlertAudio, { once: true });
+
+function playInternalAlertSound({ repeat = 2 } = {}) {
+  try {
+    const ctx = unlockAlertAudio();
+    if (!ctx) return;
+    const startAt = Math.max(ctx.currentTime + 0.03, ctx.currentTime);
+    for (let i = 0; i < repeat; i += 1) {
+      const gain = ctx.createGain();
+      const osc = ctx.createOscillator();
+      gain.gain.setValueAtTime(0.0001, startAt + i * 0.26);
+      gain.gain.exponentialRampToValueAtTime(0.075, startAt + i * 0.26 + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + i * 0.26 + 0.18);
+      osc.frequency.setValueAtTime(i % 2 ? 1040 : 880, startAt + i * 0.26);
+      osc.type = "sine";
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startAt + i * 0.26);
+      osc.stop(startAt + i * 0.26 + 0.2);
+    }
   } catch {}
 }
 
@@ -339,8 +362,76 @@ function saveSeenNotificationIds(ids) {
   try { localStorage.setItem(NOTIFICATION_SOUND_SEEN_KEY, JSON.stringify([...ids].slice(-200))); } catch {}
 }
 
+function seenLiveLocationRequestIds() {
+  try { return new Set(JSON.parse(localStorage.getItem(LIVE_LOCATION_ALERT_SEEN_KEY) || "[]")); }
+  catch { return new Set(); }
+}
+
+function saveSeenLiveLocationRequestIds(ids) {
+  try { localStorage.setItem(LIVE_LOCATION_ALERT_SEEN_KEY, JSON.stringify([...ids].slice(-200))); } catch {}
+}
+
+function pendingLiveLocationRequest(rows = []) {
+  const employeeId = state.user?.employeeId || state.user?.employee?.id || "";
+  return rows
+    .filter((item) => String(item.status || "").toUpperCase() === "PENDING")
+    .filter((item) => !employeeId || !item.employeeId || item.employeeId === employeeId)
+    .sort((a, b) => new Date(b.createdAt || b.requestedAt || 0) - new Date(a.createdAt || a.requestedAt || 0))[0] || null;
+}
+
+async function showBrowserLocalNotificationForLiveRequest(item = {}) {
+  try {
+    if (!("Notification" in window) || Notification.permission !== "granted" || !("serviceWorker" in navigator)) return;
+    const registration = await navigator.serviceWorker.ready;
+    await registration.showNotification("طلب مشاركة موقعك الحالي", {
+      body: `${item.requestedByName || "الإدارة"} يطلب إرسال موقعك الآن. ${item.reason ? `السبب: ${item.reason}` : ""}`.trim(),
+      icon: "../shared/images/icon-192.png",
+      badge: "../shared/images/favicon-64.png",
+      tag: `live-location-${item.id}`,
+      requireInteraction: true,
+      data: { route: "location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: item.id, url: "./index.html#location" },
+    });
+  } catch {}
+}
+
+function showLiveLocationUrgentAlert(item = {}) {
+  if (!item?.id || activeLiveLocationAlertId === item.id) return;
+  activeLiveLocationAlertId = item.id;
+  document.querySelectorAll("[data-live-location-alert]").forEach((node) => node.remove());
+  const overlay = document.createElement("div");
+  overlay.className = "modal-backdrop live-location-alert-backdrop";
+  overlay.dataset.liveLocationAlert = item.id;
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.innerHTML = `
+    <div class="confirm-modal live-location-alert-modal">
+      <div class="panel-head">
+        <div>
+          <div class="panel-kicker">تنبيه عاجل من الإدارة</div>
+          <h2>طلب مشاركة موقعك الحالي</h2>
+          <p>${escapeHtml(item.requestedByName || "الإدارة")} يطلب إرسال موقعك المباشر الآن.</p>
+        </div>
+      </div>
+      <div class="message warning compact">${escapeHtml(item.reason || "متابعة تنفيذية مباشرة")}</div>
+      <div class="form-actions">
+        <button class="button ghost" type="button" data-dismiss-live-alert>إغلاق مؤقت</button>
+        <button class="button primary" type="button" data-open-live-location>فتح وإرسال الموقع</button>
+      </div>
+    </div>
+  `;
+  const cleanup = () => { overlay.remove(); activeLiveLocationAlertId = ""; };
+  overlay.querySelector("[data-dismiss-live-alert]")?.addEventListener("click", cleanup);
+  overlay.querySelector("[data-open-live-location]")?.addEventListener("click", () => {
+    cleanup();
+    location.hash = "location";
+    render();
+  });
+  document.body.appendChild(overlay);
+  overlay.querySelector("[data-open-live-location]")?.focus?.();
+}
+
 async function pollNotificationsForSound() {
-  if (!state.user || document.hidden) return;
+  if (!state.user) return;
   const rows = await endpoints.notifications().then(unwrap).catch(() => []);
   const employeeId = state.user?.employeeId || state.user?.employee?.id;
   const relevant = rows.filter((item) => !item.isRead && (!item.employeeId || item.employeeId === employeeId || item.userId === state.user?.id));
@@ -349,21 +440,61 @@ async function pollNotificationsForSound() {
   if (fresh.length) {
     fresh.forEach((item) => seen.add(item.id));
     saveSeenNotificationIds(seen);
-    playInternalAlertSound();
-    haptic([60, 40, 60]);
-    showToast(fresh[0].title || "وصل تنبيه داخلي جديد", "ok");
+    playInternalAlertSound({ repeat: 2 });
+    haptic([80, 40, 80]);
+    const first = fresh[0];
+    showToast(first.title || "وصل تنبيه داخلي جديد", "ok");
+    if (first.route === "location" || first.data?.route === "location" || first.data?.type === "LIVE_LOCATION_REQUEST") {
+      showLiveLocationUrgentAlert({ id: first.data?.liveLocationRequestId || first.id, requestedByName: "الإدارة", reason: first.body || "طلب موقع مباشر" });
+    }
   }
 }
 
+async function pollLiveLocationRequestsUrgent() {
+  if (!state.user) return;
+  const rows = await endpoints.myLiveLocationRequests().then(unwrap).catch(() => []);
+  const pending = pendingLiveLocationRequest(rows);
+  if (!pending?.id) return;
+  const seen = seenLiveLocationRequestIds();
+  const isFresh = !seen.has(pending.id);
+  if (isFresh) {
+    seen.add(pending.id);
+    saveSeenLiveLocationRequestIds(seen);
+    playInternalAlertSound({ repeat: 4 });
+    haptic([100, 50, 100, 50, 160]);
+    showToast("طلب موقع مباشر من الإدارة — افتح صفحة الموقع الآن", "ok");
+    await showBrowserLocalNotificationForLiveRequest(pending);
+  }
+  if (routeKey() !== "location") showLiveLocationUrgentAlert(pending);
+  if (routeKey() === "action-center" || routeKey() === "notifications") render();
+}
+
 function startNotificationPolling() {
-  if (notificationPollTimer) return;
-  pollNotificationsForSound();
-  notificationPollTimer = window.setInterval(pollNotificationsForSound, 60000);
+  if (!notificationPollTimer) {
+    pollNotificationsForSound();
+    notificationPollTimer = window.setInterval(pollNotificationsForSound, 30000);
+  }
+  startLiveLocationPolling();
+}
+
+function startLiveLocationPolling() {
+  if (liveLocationPollTimer) return;
+  pollLiveLocationRequestsUrgent();
+  liveLocationPollTimer = window.setInterval(pollLiveLocationRequestsUrgent, 10000);
+  window.addEventListener("focus", pollLiveLocationRequestsUrgent);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) pollLiveLocationRequestsUrgent(); });
 }
 
 function stopNotificationPolling() {
   window.clearInterval(notificationPollTimer);
   notificationPollTimer = null;
+  stopLiveLocationPolling();
+}
+
+function stopLiveLocationPolling() {
+  window.clearInterval(liveLocationPollTimer);
+  liveLocationPollTimer = null;
+  window.removeEventListener("focus", pollLiveLocationRequestsUrgent);
 }
 
 
@@ -824,6 +955,7 @@ function shell(content, title = "تطبيق الموظف", subtitle = "") {
   app.querySelector("[data-logout]")?.addEventListener("click", async () => {
     const ok = await confirmAction({ title: "تسجيل الخروج", message: "هل تريد تسجيل الخروج من تطبيق الموظفين؟", confirmLabel: "خروج", danger: true });
     if (!ok) return;
+    stopNotificationPolling();
     await endpoints.logout();
     localStorage.removeItem("hr-attendance.local-db.v7");
     sessionStorage.removeItem("hr.core");
@@ -1317,6 +1449,8 @@ async function renderLocation() {
     const current = await getVerifiedBrowserLocation(employeeId);
     if (current.locationPermission !== "granted") throw new Error("لم يتم السماح بقراءة الموقع. فعّل GPS واسمح للتطبيق بالوصول للموقع.");
     await endpoints.respondLiveLocationRequest(id, { status: "APPROVED", ...current, biometricMethod: "passkey", passkeyCredentialId });
+    document.querySelectorAll("[data-live-location-alert]").forEach((node) => { if (node.dataset.liveLocationAlert === id) node.remove(); });
+    activeLiveLocationAlertId = "";
   };
   app.querySelectorAll("[data-live-send]").forEach((button) => button.addEventListener("click", async () => {
     try { await sendLive(button.dataset.liveSend); setMessage("تم إرسال موقعك المباشر للإدارة.", ""); renderLocation(); } catch (error) { setMessage("", friendlyError(error, "تعذر إرسال الموقع.")); renderLocation(); }

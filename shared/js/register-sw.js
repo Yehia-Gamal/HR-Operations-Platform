@@ -1,6 +1,6 @@
-﻿// Service Worker registration is portal-scoped so employee devices do not cache admin UI.
-const HR_SW_CACHE_NAME = "hr-attendance-v31-production-deploy-ready-keep-dev-files";
-const HR_SW_VERSION = "v31-production-deploy-ready-keep-dev-files";
+// Service Worker registration is portal-scoped so employee devices do not cache admin UI.
+const HR_SW_CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-080";
+const HR_SW_VERSION = "v31-live-location-alert-fix-080";
 
 function portalServiceWorkerConfig() {
   const path = location.pathname.toLowerCase();

@@ -1,4 +1,4 @@
-﻿(function(){
+(function(){
   const cfg = (window.HR_SUPABASE_CONFIG = window.HR_SUPABASE_CONFIG || {});
   cfg.attendance = Object.assign({
     qrRequired:false,
@@ -14,8 +14,8 @@
   }, cfg.attendance || {}, { qrRequired:false });
   cfg.security = Object.assign({ allowLocalFallback:false }, cfg.security || {});
   try { delete cfg.security.allowLocalDemo; } catch {}
-  cfg.cacheVersion = cfg.cacheVersion || 'v31-production-deploy-ready-keep-dev-files';
-  cfg.deployment = Object.assign({}, cfg.deployment || {}, { packageVersion: 'v31-production-deploy-ready-keep-dev-files' });
+  cfg.cacheVersion = cfg.cacheVersion || 'v31-live-location-alert-fix-080';
+  cfg.deployment = Object.assign({}, cfg.deployment || {}, { packageVersion: 'v31-live-location-alert-fix-080' });
   window.HR_QR_REQUIRED = false;
   window.HR_PRIVATE_DEPLOY_BUNDLE = true;
 

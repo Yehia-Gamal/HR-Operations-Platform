@@ -1,4 +1,4 @@
-﻿import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Script } from 'node:vm';
 const root = process.cwd();
@@ -26,7 +26,7 @@ const sw = read('sw.js');
 const reg = read('shared/js/register-sw.js');
 const supabaseApi = read('shared/js/supabase-api.js');
 const finalSql = read('supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql');
-assert(read('package.json').includes('v31-production-deploy-ready-keep-dev-files'), 'Package version must be v31-production-deploy-ready-keep-dev-files.');
+assert(read('package.json').includes('v31-live-location-alert-fix-080'), 'Package version must be v31-live-location-alert-fix-080.');
 assert(existsSync(join(root, 'supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql')), 'Final SQL Editor file must exist.');
 assert(existsSync(join(root, 'supabase/sql/VERIFY_AFTER_SUPABASE_DEPLOY.sql')), 'Post deploy verify SQL must exist.');
 for (const token of ['037_kpi_policy_window_hr_scoring','038_kpi_cycle_control_reports','039_management_hr_reports_workflow','040_runtime_alignment_fix','041_audit_v7_security_mobile_alignment','042_authorized_roster_phone_login_internal_channel','064_attendance_fallback_workflow']) assert(finalSql.includes(token), `${token} must exist in final SQL bundle.`);
@@ -35,7 +35,7 @@ for (const fn of ['managementStructure','assignManager','teamDashboard','hrOpera
 for (const fn of ['managementStructure','assignManager','teamDashboard','hrOperations','disputeWorkflow','reportCenter','exportManagementReport','monthlyEvaluations','runSmartAttendance','databaseMigrationsStatus','myActionCenter','executivePresenceDashboard','attendanceRiskCenter','adminDecisions','monthlyAutoPdfReports']) assert(supabaseApi.includes(`${fn}: async`), `Missing Supabase endpoint ${fn}.`);
 for (const scope of ['organization:manage','team:dashboard','hr:operations','disputes:escalate','reports:pdf','reports:excel','attendance:risk','decisions:manage','reports:monthly-pdf-auto']) assert(api.includes(scope) && db.includes(scope), `Missing permission ${scope}.`);
 assert(app.includes('حضور حلقة الشيخ وليد يوسف الأسبوعية') && app.includes('خاص بـ HR'), 'KPI HR-only fields must remain clear.');
-assert(sw.includes('v31-production-deploy-ready-keep-dev-files') && reg.includes('v31-production-deploy-ready-keep-dev-files'), 'Service worker cache must be v29 version.');
+assert(sw.includes('v31-live-location-alert-fix-080') && reg.includes('v31-live-location-alert-fix-080'), 'Service worker cache must be v29 version.');
 assert(supabaseApi.includes('send-push-notifications') && !supabaseApi.includes('send-push-notification"') && !supabaseApi.includes("send-push-notification'"), 'Runtime must use canonical send-push-notifications only.');
 assert(read('operations-gate/index.html').includes('hr.opsGatewayUnlockedTarget'), 'Operations gate must keep scoped target unlock.');
 assert(read('admin/index.html').includes("unlockedTarget === 'admin'"), 'Admin gate must require admin target.');

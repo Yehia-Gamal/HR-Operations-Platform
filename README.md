@@ -1,5 +1,5 @@
-﻿# Ahla Shabab HR
+# Ahla Shabab HR
 
 نظام ويب إنتاجي لإدارة الموظفين والحضور والطلبات والتقارير، مع بوابات منفصلة للموظف والإدارة والمدير التنفيذي.
 
-الإصدار الحالي: `1.4.0-v31-production-deploy-ready-keep-dev-files
+الإصدار الحالي: `1.4.0-v31-live-location-alert-fix-080

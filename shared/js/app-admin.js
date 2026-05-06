@@ -1,5 +1,5 @@
-import { endpoints, unwrap } from "./api.js?v=v31-production-deploy-ready-keep-dev-files";
-import { enableWebPushSubscription } from "./push.js?v=v31-production-deploy-ready-keep-dev-files";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-080";
+import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-080";
 
 const app = document.querySelector("#app");
 

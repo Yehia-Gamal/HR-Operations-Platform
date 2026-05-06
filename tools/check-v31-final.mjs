@@ -3,7 +3,7 @@ import { join, relative } from 'node:path';
 import { Script } from 'node:vm';
 
 const root = process.cwd();
-const version = 'v31-production-deploy-ready-keep-dev-files';
+const version = 'v31-live-location-alert-fix-080';
 const failures = [];
 const read = (file) => readFileSync(join(root, file), 'utf8');
 const assert = (condition, message) => { if (!condition) failures.push(message); };

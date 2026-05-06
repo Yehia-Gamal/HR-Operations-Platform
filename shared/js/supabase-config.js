@@ -1,4 +1,4 @@
-﻿// Production Supabase configuration.
+// Production Supabase configuration.
 // IMPORTANT: Never put service_role keys or VAPID private keys in browser files.
 // Supabase configuration injected at build time.
 // NOTE: Do not place secrets such as service_role keys in this file. See .env.example for server-only values.
@@ -83,14 +83,14 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     // Last SQL patch expected to be present on the database when this frontend is deployed
     expectedPatch: "074_e2e_test_readiness.sql",
     // Semantic version for the package; bump to force cache invalidation in SW
-    packageVersion: "v31-production-deploy-ready-keep-dev-files",
+    packageVersion: "v31-live-location-alert-fix-080",
   },
   // Used by service workers to invalidate old caches
-  cacheVersion: "v31-production-deploy-ready-keep-dev-files",
+  cacheVersion: "v31-live-location-alert-fix-080",
 });
 
 window.__HR_SUPABASE_CONFIG_LOADED__ = true;
-window.__HR_SUPABASE_CONFIG_VERSION__ = "v31-production-deploy-ready-keep-dev-files";
+window.__HR_SUPABASE_CONFIG_VERSION__ = "v31-live-location-alert-fix-080";
 
 (function markSupabaseMode() {
   const cfg = window.HR_SUPABASE_CONFIG || {};

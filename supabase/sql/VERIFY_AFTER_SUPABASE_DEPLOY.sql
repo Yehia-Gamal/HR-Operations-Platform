@@ -127,4 +127,4 @@ select
     where patch_name = '084_v31_production_deploy_ready_keep_dev_files'
        or name = '084_v31_production_deploy_ready_keep_dev_files'
   ) then 'OK' else 'MISSING' end as status,
-  'v31-production-deploy-ready-keep-dev-files applied' as details;
+  'v31-live-location-alert-fix-080 applied' as details;
