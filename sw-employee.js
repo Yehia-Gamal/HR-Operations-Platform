@@ -79,15 +79,36 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = event.notification.data?.url || DEFAULT_OPEN_URL;
+  const target = notificationTargetUrl(event.notification.data || {});
   event.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+    const targetUrl = new URL(target);
     for (const client of clientList) {
-      if ("focus" in client) return client.focus();
+      const clientUrl = new URL(client.url);
+      const sameApp = clientUrl.origin === targetUrl.origin
+        && clientUrl.pathname.includes("/employee/")
+        && targetUrl.pathname.includes("/employee/");
+      if (sameApp && "navigate" in client) return client.navigate(target).then((focused) => focused?.focus?.() || focused);
+      if (sameApp && "focus" in client) return client.focus();
     }
     if (clients.openWindow) return clients.openWindow(target);
     return undefined;
   }));
 });
+
+function notificationTargetUrl(data = {}) {
+  const raw = String(data.url || "").trim();
+  if (data.route === "location" || data.type === "LIVE_LOCATION_REQUEST") {
+    const basePath = new URL(self.registration.scope).pathname;
+    const path = basePath.includes("/employee/") ? "./index.html#location" : "./employee/index.html#location";
+    return new URL(path, self.registration.scope).href;
+  }
+  if (raw.startsWith("/employee/")) {
+    const hash = raw.includes("#") ? raw.slice(raw.indexOf("#")) : "";
+    const basePath = new URL(self.registration.scope).pathname;
+    return new URL(basePath.includes("/employee/") ? `./index.html${hash}` : `.${raw}`, self.registration.scope).href;
+  }
+  return new URL(raw || DEFAULT_OPEN_URL, self.registration.scope).href;
+}
 
 self.addEventListener("sync", (event) => {
   if (event.tag === "hr-offline-sync") {

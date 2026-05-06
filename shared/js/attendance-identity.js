@@ -125,7 +125,7 @@ async function blobFromVideo(video) {
   return await new Promise((resolve) => canvas.toBlob((blob) => resolve(blob), "image/jpeg", SELFIE_QUALITY));
 }
 
-export async function capturePunchSelfie({ employeeName = "الموظف", stream: providedStream = null } = {}) {
+export async function capturePunchSelfie({ endpoints = null, employeeId = "", employeeName = "الموظف", stream: providedStream = null } = {}) {
   const camera = providedStream ? { ok: true, stream: providedStream } : await requestPunchCameraStream();
   if (!camera.ok) return camera;
   const stream = camera.stream;
@@ -156,7 +156,12 @@ export async function capturePunchSelfie({ employeeName = "الموظف", stream
       overlay.remove();
       if (!blob) return resolve({ ok: false, reason: "SELFIE_CAPTURE_FAILED", message: "تعذر التقاط صورة السيلفي." });
       const file = new File([blob], `punch-selfie-${Date.now()}.jpg`, { type: "image/jpeg" });
-      resolve({ ok: true, file, capturedAt: new Date().toISOString() });
+      let upload = {};
+      if (endpoints?.uploadPunchSelfie) {
+        try { upload = await endpoints.uploadPunchSelfie({ employeeId, file }).then((rows) => rows?.data || rows || {}); }
+        catch (error) { return resolve({ ok: false, reason: "SELFIE_UPLOAD_FAILED", message: error?.message || "تعذر رفع صورة التحقق.", file }); }
+      }
+      resolve({ ok: true, file, capturedAt: new Date().toISOString(), selfieUrl: upload.url || upload.selfieUrl || "" });
     });
   });
 }

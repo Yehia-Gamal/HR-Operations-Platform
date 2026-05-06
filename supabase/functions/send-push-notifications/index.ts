@@ -34,6 +34,33 @@ async function safeInsertLog(adminClient: any, row: Record<string, unknown>) {
   try { await adminClient.from('notification_delivery_log').insert(row); } catch (_) { /* optional table */ }
 }
 
+async function pushRowsForTargets(adminClient: any, targetUserIds: string[], targetEmployeeIds: string[], audience: unknown) {
+  const columns = 'id,user_id,employee_id,endpoint,keys,payload,p256dh,auth,is_active,status';
+  const byId = new Map<string, PushRow>();
+  const collect = (rows: PushRow[] | null | undefined) => {
+    for (const row of rows || []) if (row?.id) byId.set(row.id, row);
+  };
+
+  if (targetUserIds.length) {
+    const { data, error } = await adminClient.from('push_subscriptions').select(columns).in('user_id', targetUserIds).limit(1000);
+    if (error) return { rows: [] as PushRow[], error };
+    collect(data as PushRow[]);
+  }
+  if (targetEmployeeIds.length) {
+    const { data, error } = await adminClient.from('push_subscriptions').select(columns).in('employee_id', targetEmployeeIds).limit(1000);
+    if (error) return { rows: [] as PushRow[], error };
+    collect(data as PushRow[]);
+  }
+  if (!targetUserIds.length && !targetEmployeeIds.length) {
+    if (audience !== 'all') return { rows: [] as PushRow[], error: { message: 'TARGET_REQUIRED', status: 400 } };
+    const { data, error } = await adminClient.from('push_subscriptions').select(columns).limit(1000);
+    if (error) return { rows: [] as PushRow[], error };
+    collect(data as PushRow[]);
+  }
+
+  return { rows: Array.from(byId.values()), error: null };
+}
+
 async function callerCanSend(userClient: any, adminClient: any, userId: string) {
   const scopes = ['alerts:manage', 'notifications:manage', 'users:manage', 'live-location:request', 'executive:report'];
   try {
@@ -115,18 +142,13 @@ Deno.serve(async (req) => {
   const targetEmployeeIds = asArray(body.targetEmployeeIds || (body.employeeId ? [body.employeeId] : []));
   const notificationId = String(body.notificationId || '').trim() || null;
 
-  let query = adminClient
-    .from('push_subscriptions')
-    .select('id,user_id,employee_id,endpoint,keys,payload,p256dh,auth,is_active,status');
-  if (targetUserIds.length) query = query.in('user_id', targetUserIds);
-  else if (targetEmployeeIds.length) query = query.in('employee_id', targetEmployeeIds);
-  else if (body.audience !== 'all') return json(req, { error: 'TARGET_REQUIRED' }, 400);
-
-  const { data: rawRows, error: subError } = await query.limit(1000);
+  const { rows: rawRows, error: subError } = await pushRowsForTargets(adminClient, targetUserIds, targetEmployeeIds, body.audience);
   if (subError) {
+    const subErrorAny = subError as any;
+    if (String(subErrorAny.message || '') === 'TARGET_REQUIRED') return json(req, { error: 'TARGET_REQUIRED' }, 400);
     // Gracefully handle missing push_subscriptions table (not yet created via SQL patches)
-    const code = String(subError.code || '');
-    if (['42P01', 'PGRST200', 'PGRST204', '42703'].includes(code) || String(subError.message || '').includes('does not exist')) {
+    const code = String(subErrorAny.code || '');
+    if (['42P01', 'PGRST200', 'PGRST204', '42703'].includes(code) || String(subErrorAny.message || '').includes('does not exist')) {
       return json(req, {
         ok: true,
         attempted: 0,
@@ -136,7 +158,7 @@ Deno.serve(async (req) => {
         message: 'push_subscriptions table is not available yet; push delivery skipped. Run RUN_IN_SUPABASE_SQL_EDITOR.sql to enable.',
       });
     }
-    return json(req, { error: subError.message }, 400);
+    return json(req, { error: subErrorAny.message }, 400);
   }
   const rows = ((rawRows || []) as PushRow[]).filter(activeRow);
 

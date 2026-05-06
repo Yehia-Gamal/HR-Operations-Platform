@@ -1,6 +1,6 @@
 ﻿import { endpoints, unwrap } from "./api.js?v=v31-production-deploy-ready-keep-dev-files";
 import { enableWebPushSubscription } from "./push.js?v=v31-production-deploy-ready-keep-dev-files";
-import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch } from "./attendance-identity.js?v=v31-production-deploy-ready-keep-dev-files";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch, capturePunchSelfie } from "./attendance-identity.js?v=v31-production-deploy-ready-keep-dev-files";
 import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-production-deploy-ready-keep-dev-files";
 import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-production-deploy-ready-keep-dev-files";
 
@@ -442,7 +442,7 @@ function readForm(form) {
 function normalizeEgyptPhone(value = "") {
   let text = String(value || "").trim();
   const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
+  const fa = "۰۱۲۳۴۵۶۷۸۹";
   text = text.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)));
   let digits = text.replace(/\D/g, "");
   if (digits.startsWith("0020")) digits = digits.slice(2);

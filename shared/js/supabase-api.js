@@ -2262,8 +2262,9 @@ export const supabaseEndpoints = {
         body: notificationBody,
         tag: `live-location-${data.id}`,
         targetEmployeeIds: [employeeId],
+        targetUserIds: targetEmployee?.userId ? [targetEmployee.userId] : [],
         notificationId,
-        data: { route: "location", url: "/employee/#location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
+        data: { route: "location", url: "./employee/index.html#location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
       },
     }).catch((error) => {
       console.warn("send-push-notifications failed; internal request was still created", error?.message || error);

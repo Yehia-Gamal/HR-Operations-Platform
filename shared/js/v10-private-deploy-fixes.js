@@ -31,7 +31,7 @@
     setTimeout(()=>{el.classList.remove('is-visible'); setTimeout(()=>el.remove(),260)},ms);
   }
 
-  function confirmDialog({title='ØªØ£ÙƒÙŠØ¯', message='', confirmLabel='ØªØ£ÙƒÙŠØ¯', cancelLabel='Ù„Ø§Ø­Ù‚Ù‹Ø§'}={}){
+  function confirmDialog({title='تأكيد', message='', confirmLabel='تأكيد', cancelLabel='لاحقًا'}={}){
     return new Promise(resolve=>{
       const overlay=document.createElement('div');
       overlay.className='modal-backdrop v10-confirm-backdrop';
@@ -55,25 +55,25 @@
 
   window.HRToast = toast;
   window.HRExplainAndEnablePush = async function(){
-    if(!('Notification' in window)) { toast('Ù‡Ø°Ø§ Ø§Ù„Ù…ØªØµÙØ­ Ù„Ø§ ÙŠØ¯Ø¹Ù… Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.', 'error'); return false; }
-    if(!('serviceWorker' in navigator) || !('PushManager' in window)) { toast('Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Web Push ØºÙŠØ± Ù…Ø¯Ø¹ÙˆÙ…Ø© Ø¹Ù„Ù‰ Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø².', 'error'); return false; }
+    if(!('Notification' in window)) { toast('هذا المتصفح لا يدعم الإشعارات.', 'error'); return false; }
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)) { toast('إشعارات Web Push غير مدعومة على هذا الجهاز.', 'error'); return false; }
     const ok = await confirmDialog({
-      title:'ØªÙØ¹ÙŠÙ„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª',
-      message:'Ø³ÙŠØªÙ… ØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ø¨ØµÙ…Ø© ÙˆØ·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ© Ø¹Ù„Ù‰ Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø². ÙŠÙ…ÙƒÙ†Ùƒ Ø¥ÙŠÙ‚Ø§ÙÙ‡Ø§ Ù„Ø§Ø­Ù‚Ù‹Ø§ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…ØªØµÙØ­.',
-      confirmLabel:'ØªÙØ¹ÙŠÙ„',
-      cancelLabel:'Ù„Ø§Ø­Ù‚Ù‹Ø§'
+      title:'تفعيل الإشعارات',
+      message:'سيتم تفعيل إشعارات البصمة وطلب الموقع والقرارات الإدارية على هذا الجهاز. يمكنك إيقافها لاحقًا من إعدادات المتصفح.',
+      confirmLabel:'تفعيل',
+      cancelLabel:'لاحقًا'
     });
     if(!ok) return false;
     const perm = await Notification.requestPermission();
-    toast(perm==='granted'?'ØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.':'Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª.', perm==='granted'?'ok':'error');
+    toast(perm==='granted'?'تم السماح بالإشعارات.':'لم يتم السماح بالإشعارات.', perm==='granted'?'ok':'error');
     return perm==='granted';
   };
 
   window.HRExplainAndEnableLocation = async function(){
-    if(!navigator.geolocation) { toast('Ù‡Ø°Ø§ Ø§Ù„Ø¬Ù‡Ø§Ø² Ù„Ø§ ÙŠØ¯Ø¹Ù… ØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ù…ÙˆÙ‚Ø¹.', 'error'); return null; }
+    if(!navigator.geolocation) { toast('هذا الجهاز لا يدعم تحديد الموقع.', 'error'); return null; }
     return new Promise(resolve=>navigator.geolocation.getCurrentPosition(
-      pos=>{ toast('ØªÙ… ØªÙØ¹ÙŠÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆÙ‚Ø±Ø§Ø¡Ø© GPS Ø¨Ù†Ø¬Ø§Ø­.'); resolve(pos); },
-      err=>{ toast('Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ù…ÙˆÙ‚Ø¹. ÙØ¹Ù‘Ù„ ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù…Ù† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù…ØªØµÙØ­.', 'error'); resolve(null); },
+      pos=>{ toast('تم تفعيل الموقع وقراءة GPS بنجاح.'); resolve(pos); },
+      err=>{ toast('لم يتم السماح بالموقع. فعل صلاحية الموقع من إعدادات المتصفح.', 'error'); resolve(null); },
       {enableHighAccuracy:true,timeout:20000,maximumAge:0}
     ));
   };
