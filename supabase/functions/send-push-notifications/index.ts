@@ -123,7 +123,21 @@ Deno.serve(async (req) => {
   else if (body.audience !== 'all') return json(req, { error: 'TARGET_REQUIRED' }, 400);
 
   const { data: rawRows, error: subError } = await query.limit(1000);
-  if (subError) return json(req, { error: subError.message }, 400);
+  if (subError) {
+    // Gracefully handle missing push_subscriptions table (not yet created via SQL patches)
+    const code = String(subError.code || '');
+    if (['42P01', 'PGRST200', 'PGRST204', '42703'].includes(code) || String(subError.message || '').includes('does not exist')) {
+      return json(req, {
+        ok: true,
+        attempted: 0,
+        sent: 0,
+        skipped: true,
+        reason: 'PUSH_TABLE_NOT_READY',
+        message: 'push_subscriptions table is not available yet; push delivery skipped. Run RUN_IN_SUPABASE_SQL_EDITOR.sql to enable.',
+      });
+    }
+    return json(req, { error: subError.message }, 400);
+  }
   const rows = ((rawRows || []) as PushRow[]).filter(activeRow);
 
   webpush.setVapidDetails(vapidSubject, vapidPublicKey, vapidPrivateKey);
