@@ -6359,7 +6359,7 @@ $$;
 do $$
 begin
   if exists (select 1 from pg_extension where extname = 'pg_cron') then
-    perform cron.schedule('ahla-shabab-hr-auto-backup', '0 2 * * *', $$select public.run_auto_backup();$$);
+    perform cron.schedule('ahla-shabab-hr-auto-backup', '0 2 * * *', $cron$select public.run_auto_backup();$cron$);
   end if;
 exception when duplicate_object then
   null;
@@ -6907,17 +6907,20 @@ create table if not exists public.trusted_device_approval_requests (
 
 alter table public.trusted_device_approval_requests enable row level security;
 
-create policy if not exists "employee_create_own_device_request"
+drop policy if exists "employee_create_own_device_request" on public.trusted_device_approval_requests;
+create policy "employee_create_own_device_request"
   on public.trusted_device_approval_requests
   for insert
   with check (auth.uid() = user_id);
 
-create policy if not exists "employee_read_own_device_request"
+drop policy if exists "employee_read_own_device_request" on public.trusted_device_approval_requests;
+create policy "employee_read_own_device_request"
   on public.trusted_device_approval_requests
   for select
   using (auth.uid() = user_id or public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'));
 
-create policy if not exists "reviewers_manage_device_requests"
+drop policy if exists "reviewers_manage_device_requests" on public.trusted_device_approval_requests;
+create policy "reviewers_manage_device_requests"
   on public.trusted_device_approval_requests
   for update
   using (public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'))
@@ -7054,7 +7057,8 @@ create table if not exists public.branch_qr_challenges (
 
 alter table public.branch_qr_challenges enable row level security;
 
-create policy if not exists "reviewers_manage_branch_qr"
+drop policy if exists "reviewers_manage_branch_qr" on public.branch_qr_challenges;
+create policy "reviewers_manage_branch_qr"
   on public.branch_qr_challenges
   for all
   using (public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'))
@@ -7154,7 +7158,8 @@ create table if not exists public.attendance_risk_escalations (
 
 alter table public.attendance_risk_escalations enable row level security;
 
-create policy if not exists "reviewers_read_risk_escalations"
+drop policy if exists "reviewers_read_risk_escalations" on public.attendance_risk_escalations;
+create policy "reviewers_read_risk_escalations"
   on public.attendance_risk_escalations
   for select
   using (public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'));
@@ -7225,12 +7230,14 @@ create table if not exists public.attendance_policy_acknowledgements (
 
 alter table public.attendance_policy_acknowledgements enable row level security;
 
-create policy if not exists "employee_ack_own_policy"
+drop policy if exists "employee_ack_own_policy" on public.attendance_policy_acknowledgements;
+create policy "employee_ack_own_policy"
   on public.attendance_policy_acknowledgements
   for insert
   with check (auth.uid() = user_id);
 
-create policy if not exists "employee_read_own_policy"
+drop policy if exists "employee_read_own_policy" on public.attendance_policy_acknowledgements;
+create policy "employee_read_own_policy"
   on public.attendance_policy_acknowledgements
   for select
   using (auth.uid() = user_id or public.has_app_permission('attendance:review') or public.has_app_permission('users:manage'));

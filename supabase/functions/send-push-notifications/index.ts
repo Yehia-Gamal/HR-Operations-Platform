@@ -74,7 +74,16 @@ Deno.serve(async (req) => {
   const vapidPrivateKey = Deno.env.get('VAPID_PRIVATE_KEY');
   const vapidSubject = Deno.env.get('VAPID_SUBJECT') || 'mailto:admin@example.com';
   if (!supabaseUrl || !anonKey || !serviceKey) return json(req, { error: 'MISSING_SUPABASE_SECRETS' }, 500);
-  if (!vapidPublicKey || !vapidPrivateKey) return json(req, { error: 'MISSING_VAPID_SECRETS' }, 500);
+  if (!vapidPublicKey || !vapidPrivateKey) {
+    return json(req, {
+      ok: true,
+      attempted: 0,
+      sent: 0,
+      skipped: true,
+      reason: 'MISSING_VAPID_SECRETS',
+      message: 'Push notification secrets are not configured; internal notification flow can continue.',
+    });
+  }
 
   let createClient: any;
   let webpush: any;

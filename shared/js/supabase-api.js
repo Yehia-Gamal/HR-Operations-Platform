@@ -177,12 +177,28 @@ async function selectAll(table, query = "*", options = {}) {
 
 let _coreCache = null;
 let _coreExpiry = 0;
+const coreMapKeys = ["roles", "branches", "departments", "governorates", "complexes"];
+function serializeCoreCache(cache = {}) {
+  const out = {};
+  for (const key of coreMapKeys) out[key] = Array.from((cache[key] || new Map()).entries());
+  return out;
+}
+function hydrateCoreCache(cache = {}) {
+  const out = {};
+  for (const key of coreMapKeys) out[key] = cache[key] instanceof Map ? cache[key] : new Map(Array.isArray(cache[key]) ? cache[key] : Object.entries(cache[key] || {}));
+  return out;
+}
+function fromCoreMap(map, id) {
+  if (!map || !id) return null;
+  if (typeof map.get === "function") return map.get(id) || null;
+  return map[id] || null;
+}
 async function core({ force = false } = {}) {
   if (!force && _coreCache && Date.now() < _coreExpiry) return _coreCache;
   try {
     const cached = sessionStorage.getItem("hr.core");
     const expiry = Number(sessionStorage.getItem("hr.core.exp") || 0);
-    if (!force && cached && Date.now() < expiry) return (_coreCache = JSON.parse(cached));
+    if (!force && cached && Date.now() < expiry) return (_coreCache = hydrateCoreCache(JSON.parse(cached)));
   } catch {}
   const [roles, branches, departments, governorates, complexes] = await Promise.all([
     selectAll("roles", "*", { limit: 1000 }),
@@ -201,7 +217,7 @@ async function core({ force = false } = {}) {
   };
   _coreExpiry = Date.now() + 60_000;
   try {
-    sessionStorage.setItem("hr.core", JSON.stringify(_coreCache));
+    sessionStorage.setItem("hr.core", JSON.stringify(serializeCoreCache(_coreCache)));
     sessionStorage.setItem("hr.core.exp", String(_coreExpiry));
   } catch {}
   return _coreCache;
@@ -214,11 +230,11 @@ function enrichEmployee(row, c = {}) {
     ...employee,
     photoUrl: employee.photoUrl || employee.avatarUrl || "",
     isDeleted: Boolean(employee.isDeleted),
-    role: c.roles?.get(employee.roleId) || null,
-    branch: c.branches?.get(employee.branchId) || null,
-    department: c.departments?.get(employee.departmentId) || null,
-    governorate: c.governorates?.get(employee.governorateId) || null,
-    complex: c.complexes?.get(employee.complexId) || null,
+    role: fromCoreMap(c.roles, employee.roleId),
+    branch: fromCoreMap(c.branches, employee.branchId),
+    department: fromCoreMap(c.departments, employee.departmentId),
+    governorate: fromCoreMap(c.governorates, employee.governorateId),
+    complex: fromCoreMap(c.complexes, employee.complexId),
     manager: null,
   };
 }
@@ -226,7 +242,7 @@ function enrichEmployee(row, c = {}) {
 function enrichProfile(row, c = {}) {
   const profile = toCamel(row);
   if (!profile) return null;
-  const role = c.roles?.get(profile.roleId) || null;
+  const role = fromCoreMap(c.roles, profile.roleId);
   return {
     ...profile,
     name: profile.fullName || profile.name || profile.email,
@@ -236,10 +252,10 @@ function enrichProfile(row, c = {}) {
     employeeId: profile.employeeId || "",
     role,
     permissions: rolePermissions(role),
-    branch: c.branches?.get(profile.branchId) || null,
-    department: c.departments?.get(profile.departmentId) || null,
-    governorate: c.governorates?.get(profile.governorateId) || null,
-    complex: c.complexes?.get(profile.complexId) || null,
+    branch: fromCoreMap(c.branches, profile.branchId),
+    department: fromCoreMap(c.departments, profile.departmentId),
+    governorate: fromCoreMap(c.governorates, profile.governorateId),
+    complex: fromCoreMap(c.complexes, profile.complexId),
   };
 }
 
