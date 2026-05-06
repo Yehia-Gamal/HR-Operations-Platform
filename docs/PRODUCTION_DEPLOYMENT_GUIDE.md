@@ -2,13 +2,13 @@
 
 ## 1) SQL Editor
 
-Ø´ØºÙ‘Ù„ Ù…Ù„Ù ÙˆØ§Ø­Ø¯ ÙÙ‚Ø·:
+شغّل ملف واحد فقط:
 
 ```text
 supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql
 ```
 
-Ø¨Ø¹Ø¯ Ù†Ø´Ø± Ø§Ù„Ø¯ÙˆØ§Ù„ Ø´ØºÙ‘Ù„:
+بعد نشر الدوال شغّل:
 
 ```text
 supabase/sql/VERIFY_AFTER_SUPABASE_DEPLOY.sql
@@ -16,19 +16,19 @@ supabase/sql/VERIFY_AFTER_SUPABASE_DEPLOY.sql
 
 ## 2) Edge Functions
 
-Ù…Ù† PowerShell:
+من PowerShell:
 
 ```powershell
 .\DEPLOY_SUPABASE_PRODUCTION.ps1
 ```
 
-Ø£Ùˆ Ù…Ù† Bash:
+أو من Bash:
 
 ```bash
 ./DEPLOY_SUPABASE_PRODUCTION.sh
 ```
 
-Ø§Ù„Ø¯ÙˆØ§Ù„ Ø§Ù„Ù†Ø´Ø·Ø© ÙÙ‚Ø·:
+الدوال النشطة فقط:
 
 ```text
 admin-create-user
@@ -41,18 +41,18 @@ send-push-notifications
 
 ## 3) GitHub Pages
 
-Ø§Ø±ÙØ¹ Ù…Ø­ØªÙˆÙŠØ§Øª Ø­Ø²Ù…Ø©:
+ارفع محتويات حزمة:
 
 ```text
 hr_ahla_shabab_v31_public_pages_upload.zip
 ```
 
-## 4) ØªÙ†Ø¸ÙŠÙ Ø§Ù„ÙƒØ§Ø´ Ø¨Ø¹Ø¯ Ø§Ù„Ø±ÙØ¹
+## 4) تنظيف الكاش بعد الرفع
 
 ```js
 HR_CLEAR_APP_CACHE()
 ```
 
-## 5) Ø§Ù„Ø£Ø±Ø´ÙŠÙ
+## 5) الأرشيف
 
-Ø£ÙŠ Ù…Ù„ÙØ§Øª Ù‚Ø¯ÙŠÙ…Ø© Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙ‚Ø· Ù„Ù„Ø±Ø¬ÙˆØ¹ Ø¯Ø§Ø®Ù„ `_archive`ØŒ ÙˆÙ„Ø§ ÙŠØªÙ… ØªØ´ØºÙŠÙ„Ù‡Ø§ ÙÙŠ Ø§Ù„Ù†Ø´Ø± Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠ.
+أي ملفات قديمة موجودة فقط للرجوع داخل `_archive`، ولا يتم تشغيلها في النشر الطبيعي.

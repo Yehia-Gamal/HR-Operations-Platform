@@ -1,9 +1,9 @@
 ﻿-- =========================================================
 -- HR Ahla Shabab Production SQL Editor FINAL V28
--- Ù…Ù„Ù ÙˆØ§Ø­Ø¯ ÙÙ‚Ø· Ù„Ù„ØªØ´ØºÙŠÙ„ Ù…Ù† Supabase SQL Editor.
--- ÙŠØ¯Ù…Ø¬ 001..079 Ù„ØªÙ‚Ù„ÙŠÙ„ Ø§Ù„ØªØ´ØªØª ÙˆØ¥Ù„ØºØ§Ø¡ ØªØ´ØºÙŠÙ„ Hotfix ÙÙˆÙ‚ Hotfix.
+-- ملف واحد فقط للتشغيل من Supabase SQL Editor.
+-- يدمج 001..079 لتقليل التشتت وإلغاء تشغيل Hotfix فوق Hotfix.
 -- Safe/idempotent where possible: create if not exists / add column if not exists / create or replace.
--- Ø¨Ø¹Ø¯ Ø§Ù„ØªØ´ØºÙŠÙ„ Ø´ØºÙ‘Ù„ VERIFY_AFTER_SUPABASE_DEPLOY.sql Ù„Ù„ØªØ£ÙƒØ¯.
+-- بعد التشغيل شغّل VERIFY_AFTER_SUPABASE_DEPLOY.sql للتأكد.
 -- =========================================================
 
 
@@ -25,9 +25,9 @@
 
 -- =========================================================
 -- HR Attendance Supabase Backend
--- Ø¬Ù…Ø¹ÙŠØ© Ø®ÙˆØ§Ø·Ø± Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨ Ø§Ù„Ø®ÙŠØ±ÙŠØ©
+-- جمعية خواطر أحلى شباب الخيرية
 -- Vanilla Web + Supabase Auth + Postgres + Storage + Realtime
--- Ø´ØºÙ‘Ù„ Ù‡Ø°Ø§ Ø§Ù„Ù…Ù„Ù Ù…Ø±Ø© ÙˆØ§Ø­Ø¯Ø© Ø¯Ø§Ø®Ù„ Supabase SQL Editor.
+-- شغّل هذا الملف مرة واحدة داخل Supabase SQL Editor.
 -- =========================================================
 
 create extension if not exists pgcrypto;
@@ -256,7 +256,7 @@ create table if not exists public.leave_requests (
 create table if not exists public.missions (
   id uuid primary key default gen_random_uuid(),
   employee_id uuid not null references public.employees(id) on delete cascade,
-  title text not null default 'Ù…Ø£Ù…ÙˆØ±ÙŠØ©',
+  title text not null default 'مأمورية',
   destination text default '',
   planned_start timestamptz,
   planned_end timestamptz,
@@ -606,7 +606,7 @@ begin
     full_name = excluded.full_name,
     avatar_url = coalesce(nullif(excluded.avatar_url, ''), public.profiles.avatar_url),
     employee_id = coalesce(public.profiles.employee_id, excluded.employee_id),
-    -- Ø¹Ù†Ø¯ ÙˆØ¬ÙˆØ¯ Ù…ÙˆØ¸Ù Ù…Ø·Ø§Ø¨Ù‚ Ù„Ù„Ø¨Ø±ÙŠØ¯ØŒ Ù†Ø¹ØªÙ…Ø¯ Ø¯ÙˆØ± Ø§Ù„Ù…ÙˆØ¸Ù ÙƒÙ…Ø±Ø¬Ø¹ ØµÙ„Ø§Ø­ÙŠØ§Øª Ø­ØªÙ‰ Ù„Ø§ ÙŠØ¨Ù‚Ù‰ Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¹Ù„Ù‰ Ø¯ÙˆØ± Ù‚Ø¯ÙŠÙ…/Ø®Ø§Ø·Ø¦.
+    -- عند وجود موظف مطابق للبريد، نعتمد دور الموظف كمرجع صلاحيات حتى لا يبقى الحساب على دور قديم/خاطئ.
     role_id = coalesce(excluded.role_id, public.profiles.role_id),
     branch_id = coalesce(excluded.branch_id, public.profiles.branch_id),
     department_id = coalesce(excluded.department_id, public.profiles.department_id),
@@ -915,101 +915,101 @@ end $$;
 -- 12) Seed: roles, org, shifts, people
 -- =========================
 insert into public.permissions (scope, name) values
-('*','ÙƒÙ„ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª'),
-('dashboard:view','Ø¹Ø±Ø¶ Ù„ÙˆØ­Ø© Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø©'),
-('employees:view','Ø¹Ø±Ø¶ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†'),
-('employees:write','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†'),
-('users:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†'),
-('organization:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠ'),
-('attendance:self','Ø¨ØµÙ…Ø© Ø§Ù„Ù…ÙˆØ¸Ù'),
-('attendance:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø­Ø¶ÙˆØ±'),
-('requests:approve','Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø·Ù„Ø¨Ø§Øª'),
-('kpi:self','ØªÙ‚ÙŠÙŠÙ… Ø°Ø§ØªÙŠ'),
-('kpi:team','Ø§Ø¹ØªÙ…Ø§Ø¯ ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„ÙØ±ÙŠÙ‚'),
-('kpi:manage','Ø¥Ø¯Ø§Ø±Ø© ÙƒÙ„ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª'),
-('reports:export','Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± ÙˆØ§Ù„ØªØµØ¯ÙŠØ±'),
-('audit:view','Ø³Ø¬Ù„ Ø§Ù„ØªØ¯Ù‚ÙŠÙ‚'),
-('settings:manage','Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù†Ø¸Ø§Ù…'),
-('realtime:view','Ù„ÙˆØ­Ø© Live'),
-('integrations:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙƒØ§Ù…Ù„Ø§Øª'),
-('payroll:manage','ØªÙƒØ§Ù…Ù„ Ø§Ù„Ø±ÙˆØ§ØªØ¨'),
-('ai:view','ØªØ­Ù„ÙŠÙ„Ø§Øª AI'),
-('access_control:manage','Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© ÙˆØ§Ù„Ø¨ÙˆØ§Ø¨Ø§Øª'),
-('offline:manage','Ù…Ø²Ø§Ù…Ù†Ø© Offline'),
-('executive:report','ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ'),
-('executive:mobile','Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ© Ø§Ù„Ù…Ø®ØªØµØ±Ø©'),
-('executive:presence-map','Ø®Ø±ÙŠØ·Ø© Ø§Ù„ØªÙˆØ§Ø¬Ø¯ Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©'),
-('live-location:request','Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø± Ù…Ù† Ù…ÙˆØ¸Ù'),
-('sensitive-actions:approve','Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª Ø­Ø³Ø§Ø³Ø©'),
-('sensitive-actions:request','Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¥Ø¬Ø±Ø§Ø¡ Ø­Ø³Ø§Ø³'),
-('approvals:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯Ø§Øª'),
-('alerts:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª'),
-('control-room:view','Ø¹Ø±Ø¶ ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ…'),
-('daily-report:review','Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©')
+('*','كل الصلاحيات'),
+('dashboard:view','عرض لوحة المتابعة'),
+('employees:view','عرض الموظفين'),
+('employees:write','إدارة الموظفين'),
+('users:manage','إدارة المستخدمين'),
+('organization:manage','إدارة الهيكل الإداري'),
+('attendance:self','بصمة الموظف'),
+('attendance:manage','إدارة الحضور'),
+('requests:approve','اعتماد الطلبات'),
+('kpi:self','تقييم ذاتي'),
+('kpi:team','اعتماد تقييمات الفريق'),
+('kpi:manage','إدارة كل التقييمات'),
+('reports:export','التقارير والتصدير'),
+('audit:view','سجل التدقيق'),
+('settings:manage','إعدادات النظام'),
+('realtime:view','لوحة Live'),
+('integrations:manage','إدارة التكاملات'),
+('payroll:manage','تكامل الرواتب'),
+('ai:view','تحليلات AI'),
+('access_control:manage','الأجهزة والبوابات'),
+('offline:manage','مزامنة Offline'),
+('executive:report','تقارير المدير التنفيذي'),
+('executive:mobile','المتابعة التنفيذية المختصرة'),
+('executive:presence-map','خريطة التواجد التنفيذية'),
+('live-location:request','طلب موقع مباشر من موظف'),
+('sensitive-actions:approve','اعتماد إجراءات حساسة'),
+('sensitive-actions:request','طلب اعتماد إجراء حساس'),
+('approvals:manage','إدارة الاعتمادات'),
+('alerts:manage','إدارة التنبيهات'),
+('control-room:view','عرض غرفة التحكم'),
+('daily-report:review','مراجعة التقارير اليومية')
 on conflict (scope) do update set name = excluded.name;
 
 insert into public.roles (slug, key, name, permissions) values
-('admin','ADMIN','Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…', array['*']),
-('executive','EXECUTIVE','Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', array['dashboard:view','employees:view','reports:export','executive:report','executive:mobile','executive:presence-map','live-location:request','sensitive-actions:approve','approvals:manage','alerts:manage','control-room:view','daily-report:review']),
-('executive-secretary','EXECUTIVE_SECRETARY','Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', array['dashboard:view','employees:view','reports:export','executive:report','executive:mobile','executive:presence-map','live-location:request','sensitive-actions:request','daily-report:review','alerts:manage']),
-('hr-manager','HR','Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©', array['*']),
-('manager','MANAGER','Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', array['dashboard:view','employees:view','attendance:manage','requests:approve','kpi:team','reports:export','realtime:view']),
-('employee','EMPLOYEE','Ù…ÙˆØ¸Ù', array['dashboard:view','attendance:self','kpi:self'])
+('admin','ADMIN','مدير النظام', array['*']),
+('executive','EXECUTIVE','المدير التنفيذي', array['dashboard:view','employees:view','reports:export','executive:report','executive:mobile','executive:presence-map','live-location:request','sensitive-actions:approve','approvals:manage','alerts:manage','control-room:view','daily-report:review']),
+('executive-secretary','EXECUTIVE_SECRETARY','السكرتير التنفيذي', array['dashboard:view','employees:view','reports:export','executive:report','executive:mobile','executive:presence-map','live-location:request','sensitive-actions:request','daily-report:review','alerts:manage']),
+('hr-manager','HR','الموارد البشرية', array['*']),
+('manager','MANAGER','مدير مباشر', array['dashboard:view','employees:view','attendance:manage','requests:approve','kpi:team','reports:export','realtime:view']),
+('employee','EMPLOYEE','موظف', array['dashboard:view','attendance:self','kpi:self'])
 on conflict (slug) do update set name = excluded.name, permissions = excluded.permissions, active = true;
 
-insert into public.governorates (code, name) values ('GZ','Ø§Ù„Ø¬ÙŠØ²Ø©') on conflict (code) do update set name = excluded.name;
+insert into public.governorates (code, name) values ('GZ','الجيزة') on conflict (code) do update set name = excluded.name;
 
 insert into public.complexes (code, name, governorate_id)
-select 'AHLA-MANIL', 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©', g.id from public.governorates g where g.code='GZ'
+select 'AHLA-MANIL', 'مجمع منيل شيحة', g.id from public.governorates g where g.code='GZ'
 on conflict (code) do update set name = excluded.name, governorate_id = excluded.governorate_id;
 
 insert into public.branches (code, name, address, governorate_id, complex_id, latitude, longitude, geofence_radius_meters, max_accuracy_meters)
-select 'MAIN', 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©', 'Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912', g.id, c.id, 29.951196809090636::numeric, 31.238367688465857::numeric, 300, 500
+select 'MAIN', 'مجمع منيل شيحة', 'شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912', g.id, c.id, 29.951196809090636::numeric, 31.238367688465857::numeric, 300, 500
 from public.governorates g cross join public.complexes c where g.code='GZ' and c.code='AHLA-MANIL'
 on conflict (code) do update set name = excluded.name, address = excluded.address, governorate_id = excluded.governorate_id, complex_id = excluded.complex_id, latitude = excluded.latitude, longitude = excluded.longitude, geofence_radius_meters = excluded.geofence_radius_meters, max_accuracy_meters = excluded.max_accuracy_meters;
 
--- ØªØ«Ø¨ÙŠØª Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø§Ù„ÙØ±Ø¹ Ø§Ù„ÙØ¹Ù„ÙŠØ© Ù„Ù„Ø¨ØµÙ…Ø© Ø§Ù„Ø¬ØºØ±Ø§ÙÙŠØ© Ø­Ø³Ø¨ Google Maps.
+-- تثبيت إحداثيات الفرع الفعلية للبصمة الجغرافية حسب Google Maps.
 update public.branches
 set latitude = 29.951196809090636::numeric,
     longitude = 31.238367688465857::numeric,
     geofence_radius_meters = 300,
     max_accuracy_meters = 500,
-    address = 'Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912'
+    address = 'شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912'
 where code = 'MAIN';
 
 
 insert into public.departments (code, name, branch_id)
 select code, name, (select id from public.branches where code='MAIN') from (values
-('EXEC','Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©'),
-('HR','Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©'),
-('OPS','Ø§Ù„ØªØ´ØºÙŠÙ„'),
-('QURAN','Ø§Ù„Ù‚Ø±Ø¢Ù† ÙˆØ§Ù„ØªØ¬ÙˆÙŠØ¯'),
-('FIN','Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª')
+('EXEC','الإدارة التنفيذية'),
+('HR','الموارد البشرية'),
+('OPS','التشغيل'),
+('QURAN','القرآن والتجويد'),
+('FIN','الحسابات')
 ) as d(code,name)
 on conflict (code) do update set name = excluded.name, branch_id = excluded.branch_id;
 
 insert into public.shifts (branch_id, name, start_time, end_time, grace_minutes, days_mask)
-select b.id, 'ÙˆØ±Ø¯ÙŠØ© 9Øµ Ø¥Ù„Ù‰ 5Ù…', '09:00', '17:00', 15, 'SAT,SUN,MON,TUE,WED,THU' from public.branches b where b.code='MAIN'
+select b.id, 'وردية 9ص إلى 5م', '09:00', '17:00', 15, 'SAT,SUN,MON,TUE,WED,THU' from public.branches b where b.code='MAIN'
 on conflict do nothing;
 insert into public.shifts (branch_id, name, start_time, end_time, grace_minutes, days_mask)
-select b.id, 'ÙˆØ±Ø¯ÙŠØ© 10Øµ Ø¥Ù„Ù‰ 6Ù…', '10:00', '18:00', 15, 'SAT,SUN,MON,TUE,WED,THU' from public.branches b where b.code='MAIN'
+select b.id, 'وردية 10ص إلى 6م', '10:00', '18:00', 15, 'SAT,SUN,MON,TUE,WED,THU' from public.branches b where b.code='MAIN'
 on conflict do nothing;
 
--- Ù…ÙˆØ¸ÙÙˆÙ† Ù…Ø¨Ø¯Ø¦ÙŠÙˆÙ†. Ø£Ù†Ø´Ø¦ Ù…Ø³ØªØ®Ø¯Ù…ÙŠ Auth Ø¨Ù†ÙØ³ Ø§Ù„Ø¥ÙŠÙ…ÙŠÙ„Ø§ØªØŒ ÙˆØ³ÙŠØªÙ… Ø±Ø¨Ø· profile ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§.
+-- موظفون مبدئيون. أنشئ مستخدمي Auth بنفس الإيميلات، وسيتم ربط profile تلقائيًا.
 insert into public.employees (employee_code, full_name, phone, email, job_title, role_id, branch_id, department_id, governorate_id, complex_id, shift_id, status, hire_date)
 select * from (
-  select 'EMP-001' employee_code, 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ' full_name, 'PHONE_PLACEHOLDER_002' phone, 'executive.director@organization.local' email, 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ' job_title, (select id from public.roles where slug='executive') role_id, (select id from public.branches where code='MAIN') branch_id, (select id from public.departments where code='EXEC') department_id, (select id from public.governorates where code='GZ') governorate_id, (select id from public.complexes where code='AHLA-MANIL') complex_id, (select id from public.shifts where name='ÙˆØ±Ø¯ÙŠØ© 9Øµ Ø¥Ù„Ù‰ 5Ù…' limit 1) shift_id, 'ACTIVE' status, current_date hire_date
-  union all select 'EMP-002','Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ','PHONE_PLACEHOLDER_003','executive.secretary@organization.local','Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ',(select id from public.roles where slug='executive-secretary'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='EXEC'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='ÙˆØ±Ø¯ÙŠØ© 9Øµ Ø¥Ù„Ù‰ 5Ù…' limit 1),'ACTIVE',current_date
-  union all select 'EMP-003','Ù…Ø³Ø¤ÙˆÙ„ Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©','PHONE_PLACEHOLDER_004','hr@ahla.local','HR',(select id from public.roles where slug='hr-manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='HR'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='ÙˆØ±Ø¯ÙŠØ© 9Øµ Ø¥Ù„Ù‰ 5Ù…' limit 1),'ACTIVE',current_date
-  union all select 'EMP-004','Ù…Ø¯ÙŠØ± Ø§Ù„ØªØ´ØºÙŠÙ„','PHONE_PLACEHOLDER_005','manager.ops@ahla.local','Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±',(select id from public.roles where slug='manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='ÙˆØ±Ø¯ÙŠØ© 10Øµ Ø¥Ù„Ù‰ 6Ù…' limit 1),'ACTIVE',current_date
-  union all select 'EMP-005','Ù…ÙˆØ¸Ù ØªØ¬Ø±ÙŠØ¨ÙŠ','PHONE_PLACEHOLDER_006','employee@ahla.local','Ù…ÙˆØ¸Ù',(select id from public.roles where slug='employee'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='ÙˆØ±Ø¯ÙŠØ© 10Øµ Ø¥Ù„Ù‰ 6Ù…' limit 1),'ACTIVE',current_date
+  select 'EMP-001' employee_code, 'المدير التنفيذي' full_name, 'PHONE_PLACEHOLDER_002' phone, 'executive.director@organization.local' email, 'المدير التنفيذي' job_title, (select id from public.roles where slug='executive') role_id, (select id from public.branches where code='MAIN') branch_id, (select id from public.departments where code='EXEC') department_id, (select id from public.governorates where code='GZ') governorate_id, (select id from public.complexes where code='AHLA-MANIL') complex_id, (select id from public.shifts where name='وردية 9ص إلى 5م' limit 1) shift_id, 'ACTIVE' status, current_date hire_date
+  union all select 'EMP-002','السكرتير التنفيذي','PHONE_PLACEHOLDER_003','executive.secretary@organization.local','السكرتير التنفيذي',(select id from public.roles where slug='executive-secretary'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='EXEC'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
+  union all select 'EMP-003','مسؤول الموارد البشرية','PHONE_PLACEHOLDER_004','hr@ahla.local','HR',(select id from public.roles where slug='hr-manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='HR'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 9ص إلى 5م' limit 1),'ACTIVE',current_date
+  union all select 'EMP-004','مدير التشغيل','PHONE_PLACEHOLDER_005','manager.ops@ahla.local','مدير مباشر',(select id from public.roles where slug='manager'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
+  union all select 'EMP-005','موظف تجريبي','PHONE_PLACEHOLDER_006','employee@ahla.local','موظف',(select id from public.roles where slug='employee'),(select id from public.branches where code='MAIN'),(select id from public.departments where code='OPS'),(select id from public.governorates where code='GZ'),(select id from public.complexes where code='AHLA-MANIL'),(select id from public.shifts where name='وردية 10ص إلى 6م' limit 1),'ACTIVE',current_date
 ) s
 on conflict (employee_code) do update set full_name = excluded.full_name, email = excluded.email, role_id = excluded.role_id, branch_id = excluded.branch_id, department_id = excluded.department_id, shift_id = excluded.shift_id;
 
 update public.employees e set manager_employee_id = (select id from public.employees where employee_code='EMP-004') where e.employee_code = 'EMP-005';
 
--- Ø¥ØµÙ„Ø§Ø­ ØªÙ„Ù‚Ø§Ø¦ÙŠ Ù„Ù„Ø£Ø¯ÙˆØ§Ø± ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ù„Ù„Ø­Ø³Ø§Ø¨Ø§Øª Ø§Ù„Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„ ÙÙŠ Auth/Profiles.
--- ÙŠØ¹Ø§Ù„Ø¬ Ø­Ø§Ù„Ø© Ø¸Ù‡ÙˆØ± Ø¯ÙˆØ± Ø®Ø§Ø·Ø¦ Ù…Ø«Ù„ "Ø¨Ø§Ø­Ø«/Ù…Ø¯Ø®Ù„ Ø¨ÙŠØ§Ù†Ø§Øª" Ø±ØºÙ… Ø£Ù† Ø§Ù„Ù…ÙˆØ¸Ù ÙÙŠ Ø¬Ø¯ÙˆÙ„ employees Ù„Ù‡ Ø¯ÙˆØ± Ø¥Ø¯Ø§Ø±ÙŠ.
+-- إصلاح تلقائي للأدوار والصلاحيات للحسابات الموجودة بالفعل في Auth/Profiles.
+-- يعالج حالة ظهور دور خاطئ مثل "باحث/مدخل بيانات" رغم أن الموظف في جدول employees له دور إداري.
 update public.profiles p
 set employee_id = e.id,
     full_name = coalesce(nullif(e.full_name, ''), p.full_name),
@@ -1031,12 +1031,12 @@ where lower(p.email) = lower(e.email)
   );
 
 insert into public.integration_settings (key, name, provider, enabled, status, notes) values
-('odoo-payroll','Odoo Payroll','odoo',false,'NEEDS_API_KEY','Ø£Ø¶Ù Ù…ÙØ§ØªÙŠØ­ API Ù…Ù† Edge Function Ø¹Ù†Ø¯ Ø§Ù„ØªÙØ¹ÙŠÙ„'),
-('xero-payroll','Xero Payroll','xero',false,'NEEDS_API_KEY','Ø¬Ø§Ù‡Ø² Ù„Ù„ØªÙƒØ§Ù…Ù„ Ù„Ø§Ø­Ù‚Ù‹Ø§'),
-('access-control','Ø¨ÙˆØ§Ø¨Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„','custom',false,'NEEDS_DEVICE','ÙŠØªØ·Ù„Ø¨ Ø¬Ù‡Ø§Ø² Ø£Ùˆ API Ù…Ù† Ù…Ø²ÙˆØ¯ Ø§Ù„Ø¨ÙˆØ§Ø¨Ø©')
+('odoo-payroll','Odoo Payroll','odoo',false,'NEEDS_API_KEY','أضف مفاتيح API من Edge Function عند التفعيل'),
+('xero-payroll','Xero Payroll','xero',false,'NEEDS_API_KEY','جاهز للتكامل لاحقًا'),
+('access-control','بوابات الدخول','custom',false,'NEEDS_DEVICE','يتطلب جهاز أو API من مزود البوابة')
 on conflict (key) do update set name = excluded.name, provider = excluded.provider, notes = excluded.notes;
 
--- Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ù…Ù„Ù
+-- نهاية الملف
 
 
 -- END PATCH: 001_schema_rls_seed.sql
@@ -1047,9 +1047,9 @@ on conflict (key) do update set name = excluded.name, provider = excluded.provid
 -- =========================================================
 
 -- =========================================================
--- Patch: Ø¥ØµÙ„Ø§Ø­ Ø£Ø¯ÙˆØ§Ø± Profiles ÙˆØ±Ø¨Ø·Ù‡Ø§ Ø¨Ø¬Ø¯ÙˆÙ„ Employees
--- Ø´ØºÙ‘Ù„ Ù‡Ø°Ø§ Ø§Ù„Ù…Ù„Ù ÙÙŠ Supabase SQL Editor Ø¥Ø°Ø§ Ø¸Ù‡Ø± Ù„Ù„Ù…Ø³ØªØ®Ø¯Ù… Ø¯ÙˆØ± Ø®Ø§Ø·Ø¦
--- Ù…Ø«Ù„: Ø¨Ø§Ø­Ø«/Ù…Ø¯Ø®Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø¨Ø¯Ù„Ø§Ù‹ Ù…Ù† Ø§Ù„Ù…Ø¯ÙŠØ±/Ø§Ù„Ø£Ø¯Ù…Ù†.
+-- Patch: إصلاح أدوار Profiles وربطها بجدول Employees
+-- شغّل هذا الملف في Supabase SQL Editor إذا ظهر للمستخدم دور خاطئ
+-- مثل: باحث/مدخل بيانات بدلاً من المدير/الأدمن.
 -- =========================================================
 
 update public.profiles p
@@ -1072,12 +1072,12 @@ where lower(p.email) = lower(e.email)
     or p.department_id is distinct from e.department_id
   );
 
--- ØªØ£ÙƒÙŠØ¯ Ø£Ù† Ø§Ù„Ø£Ø¯ÙˆØ§Ø± Ø§Ù„Ø¹Ù„ÙŠØ§ Ù„Ù‡Ø§ ØµÙ„Ø§Ø­ÙŠØ© ÙƒØ§Ù…Ù„Ø©.
+-- تأكيد أن الأدوار العليا لها صلاحية كاملة.
 update public.roles
 set permissions = array['*'], active = true, updated_at = now()
 where slug in ('admin', 'executive', 'executive-secretary', 'hr-manager');
 
--- ÙØ­Øµ Ø³Ø±ÙŠØ¹ Ø¨Ø¹Ø¯ Ø§Ù„ØªÙ†ÙÙŠØ°.
+-- فحص سريع بعد التنفيذ.
 select p.email,
        p.full_name,
        r.slug as role_slug,
@@ -1097,14 +1097,14 @@ order by p.updated_at desc;
 
 -- =========================================================
 -- Patch 003 â€” User Avatar support
--- Ø´ØºÙ‘Ù„ Ù‡Ø°Ø§ Ø§Ù„Ù…Ù„Ù ÙÙŠ Supabase SQL Editor Ø¹Ù„Ù‰ Ù‚Ø§Ø¹Ø¯Ø© Ù…ÙˆØ¬ÙˆØ¯Ø© Ø¨Ø§Ù„ÙØ¹Ù„.
--- ÙŠØ¶ÙŠÙ avatar_url Ø¥Ù„Ù‰ profiles Ø­ØªÙ‰ ÙŠÙ…ÙƒÙ† Ø­ÙØ¸ ØµÙˆØ±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ø§Ù„Ù…Ø³ØªÙ‚Ù„Ø©.
+-- شغّل هذا الملف في Supabase SQL Editor على قاعدة موجودة بالفعل.
+-- يضيف avatar_url إلى profiles حتى يمكن حفظ صورة المستخدم المستقلة.
 -- =========================================================
 
 alter table public.profiles
   add column if not exists avatar_url text default '';
 
--- Ù…Ø²Ø§Ù…Ù†Ø© Ø£ÙˆÙ„ÙŠØ©: Ù„Ùˆ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ù…Ø±Ø¨ÙˆØ· Ø¨Ù…ÙˆØ¸Ù Ù„Ø¯ÙŠÙ‡ photo_url ÙˆÙ„Ø§ ØªÙˆØ¬Ø¯ ØµÙˆØ±Ø© Ù…Ø³ØªØ®Ø¯Ù…ØŒ Ø§Ø³ØªØ®Ø¯Ù… ØµÙˆØ±Ø© Ø§Ù„Ù…ÙˆØ¸Ù ÙƒØ§ÙØªØ±Ø§Ø¶.
+-- مزامنة أولية: لو المستخدم مربوط بموظف لديه photo_url ولا توجد صورة مستخدم، استخدم صورة الموظف كافتراض.
 update public.profiles p
 set avatar_url = e.photo_url
 from public.employees e
@@ -1112,7 +1112,7 @@ where p.employee_id = e.id
   and coalesce(p.avatar_url, '') = ''
   and coalesce(e.photo_url, '') <> '';
 
--- Ø§Ù„ØªØ£ÙƒØ¯ Ù…Ù† ÙˆØ¬ÙˆØ¯ Bucket avatars ÙˆØ³ÙŠØ§Ø³Ø§Øª Ø§Ù„ØªØ®Ø²ÙŠÙ† Ø§Ù„Ø£Ø³Ø§Ø³ÙŠØ©.
+-- التأكد من وجود Bucket avatars وسياسات التخزين الأساسية.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('avatars', 'avatars', true, 2097152, array['image/png','image/jpeg','image/webp','image/gif'])
 on conflict (id) do update set
@@ -1139,10 +1139,10 @@ with check (bucket_id = 'avatars');
 
 -- =========================================================
 -- 004_emergency_admin_access.sql
--- Ø¥ØµÙ„Ø§Ø­ Ø¯Ø®ÙˆÙ„ Ø£Ø¯Ù…Ù† Ø·Ø§Ø±Ø¦ Ø¨ÙƒØ§Ù…Ù„ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ù„Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ù†Ø¸Ø§Ù…
+-- إصلاح دخول أدمن طارئ بكامل الصلاحيات لاختبار النظام
 --
--- Ù‚Ø¨Ù„ Ø§Ù„ØªØ´ØºÙŠÙ„: ØºÙŠÙ‘Ø± v_email Ùˆ v_password Ø¥Ø°Ø§ Ø£Ø±Ø¯Øª.
--- Ø¨Ø¹Ø¯ Ø§Ù„Ø¯Ø®ÙˆÙ„: ØºÙŠÙ‘Ø± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ÙÙˆØ±Ù‹Ø§ Ù…Ù† Supabase Auth Ø£Ùˆ Ù…Ù† Ø§Ù„Ù†Ø¸Ø§Ù… Ø¨Ø¹Ø¯ Ø§Ù„ØªØ£ÙƒØ¯ Ù…Ù† Ø¹Ù…Ù„ ØµÙØ­Ø© ØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±.
+-- قبل التشغيل: غيّر v_email و v_password إذا أردت.
+-- بعد الدخول: غيّر كلمة المرور فورًا من Supabase Auth أو من النظام بعد التأكد من عمل صفحة تغيير كلمة المرور.
 -- =========================================================
 
 create extension if not exists pgcrypto;
@@ -1151,7 +1151,7 @@ do $$
 declare
   v_email text := 'admin@example.local';
   v_password text := 'ChangeMe_Admin#2026!';
-  v_full_name text := 'Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…';
+  v_full_name text := 'مدير النظام';
   v_user_id uuid;
   v_role_id uuid;
   v_employee_id uuid;
@@ -1160,9 +1160,9 @@ declare
   v_governorate_id uuid;
   v_complex_id uuid;
 begin
-  -- 1) ØªØ£ÙƒÙŠØ¯ ÙˆØ¬ÙˆØ¯ Ø¯ÙˆØ± Ø£Ø¯Ù…Ù† ÙƒØ§Ù…Ù„ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª
+  -- 1) تأكيد وجود دور أدمن كامل الصلاحيات
   insert into public.roles (slug, key, name, permissions, active)
-  values ('admin', 'ADMIN', 'Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…', array['*']::text[], true)
+  values ('admin', 'ADMIN', 'مدير النظام', array['*']::text[], true)
   on conflict (slug) do update set
     key = excluded.key,
     name = excluded.name,
@@ -1175,13 +1175,13 @@ begin
   where slug = 'admin'
   limit 1;
 
-  -- 2) Ø§Ù„ØªÙ‚Ø§Ø· Ù…Ø±Ø§Ø¬Ø¹ Ø§Ø®ØªÙŠØ§Ø±ÙŠØ© Ù„Ù„ÙØ±Ø¹/Ø§Ù„Ù‚Ø³Ù… Ø­ØªÙ‰ ÙŠÙƒÙˆÙ† Ø§Ù„Ø­Ø³Ø§Ø¨ Ù…Ø±Ø¨ÙˆØ·Ù‹Ø§ Ø¨Ø§Ù„Ù†Ø¸Ø§Ù…
+  -- 2) التقاط مراجع اختيارية للفرع/القسم حتى يكون الحساب مربوطًا بالنظام
   select id into v_branch_id from public.branches where code = 'MAIN' limit 1;
   select id into v_department_id from public.departments where code in ('EXEC','HR') order by case when code='EXEC' then 0 else 1 end limit 1;
   select id into v_governorate_id from public.governorates where code = 'GZ' limit 1;
   select id into v_complex_id from public.complexes where code = 'AHLA-MANIL' limit 1;
 
-  -- 3) Ø¥Ù†Ø´Ø§Ø¡ Ø£Ùˆ Ø¥ØµÙ„Ø§Ø­ Ù…Ø³ØªØ®Ø¯Ù… Supabase Auth
+  -- 3) إنشاء أو إصلاح مستخدم Supabase Auth
   select id into v_user_id
   from auth.users
   where lower(email) = lower(v_email)
@@ -1232,7 +1232,7 @@ begin
     where id = v_user_id;
   end if;
 
-  -- 4) ØªØ£ÙƒÙŠØ¯ ÙˆØ¬ÙˆØ¯ Identity email Ø­ØªÙ‰ ÙŠØ³ØªØ·ÙŠØ¹ Supabase Auth ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ø§Ù„Ø¨Ø±ÙŠØ¯/Ø§Ù„Ø¨Ø§Ø³ÙˆØ±Ø¯
+  -- 4) تأكيد وجود Identity email حتى يستطيع Supabase Auth تسجيل الدخول بالبريد/الباسورد
   if exists (select 1 from information_schema.tables where table_schema = 'auth' and table_name = 'identities') then
     if exists (select 1 from auth.identities where user_id = v_user_id and provider = 'email') then
       update auth.identities
@@ -1274,7 +1274,7 @@ begin
     end if;
   end if;
 
-  -- 5) Ø¥Ù†Ø´Ø§Ø¡ Ø£Ùˆ Ø±Ø¨Ø· Employee Ø£Ø¯Ù…Ù†
+  -- 5) إنشاء أو ربط Employee أدمن
   select id into v_employee_id
   from public.employees
   where user_id = v_user_id or lower(email) = lower(v_email)
@@ -1303,7 +1303,7 @@ begin
       v_full_name,
       'PHONE_PLACEHOLDER_001',
       v_email,
-      'Ø£Ø¯Ù…Ù† Ø±Ø¦ÙŠØ³ÙŠ',
+      'أدمن رئيسي',
       v_role_id,
       v_branch_id,
       v_department_id,
@@ -1334,7 +1334,7 @@ begin
     update public.employees
     set full_name = coalesce(nullif(full_name, ''), v_full_name),
         email = v_email,
-        job_title = 'Ø£Ø¯Ù…Ù† Ø±Ø¦ÙŠØ³ÙŠ',
+        job_title = 'أدمن رئيسي',
         role_id = v_role_id,
         branch_id = coalesce(branch_id, v_branch_id),
         department_id = coalesce(department_id, v_department_id),
@@ -1348,7 +1348,7 @@ begin
     where id = v_employee_id;
   end if;
 
-  -- 6) Ø¥Ù†Ø´Ø§Ø¡/Ø¥ØµÙ„Ø§Ø­ Profile ÙˆØ±Ø¨Ø·Ù‡ Ø¨Ø¯ÙˆØ± Ø§Ù„Ø£Ø¯Ù…Ù†
+  -- 6) إنشاء/إصلاح Profile وربطه بدور الأدمن
   insert into public.profiles (
     id,
     employee_id,
@@ -1401,7 +1401,7 @@ begin
     locked_until = null,
     updated_at = now();
 
-  -- 7) Ø¯Ø¹Ù… Ù‚ÙˆØ§Ø¹Ø¯ Ù‚Ø¯ÙŠÙ…Ø© Ù„Ùˆ ÙƒØ§Ù† profiles ÙŠØ­ØªÙˆÙŠ permissions jsonb Ù…Ù† Ù†Ø³Ø®Ø© Ø³Ø§Ø¨Ù‚Ø©
+  -- 7) دعم قواعد قديمة لو كان profiles يحتوي permissions jsonb من نسخة سابقة
   if exists (
     select 1
     from information_schema.columns
@@ -1424,7 +1424,7 @@ begin
   raise notice 'Emergency admin is ready. Email: %, Temporary password: %. Change it immediately after login.', v_email, v_password;
 end $$;
 
--- 8) ÙØ­Øµ Ù†Ù‡Ø§Ø¦ÙŠ Ø³Ø±ÙŠØ¹
+-- 8) فحص نهائي سريع
 select
   u.id as auth_user_id,
   u.email,
@@ -1453,11 +1453,11 @@ where lower(u.email) = lower('admin@example.local');
 -- =========================================================
 
 -- =========================================================
--- Patch 005: ØªØ¨Ø³ÙŠØ· Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ§Ù„Ø¨ØµÙ…Ø©
--- - Ø§Ù„Ø­Ø§Ù„Ø© Ø¯Ø§Ø¦Ù…Ù‹Ø§ ACTIVE
--- - Ù„Ø§ Ù†Ø¹ØªÙ…Ø¯ Ø¹Ù„Ù‰ Ø§Ù„ÙˆØ±Ø¯ÙŠØ© ÙÙŠ Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ø¨ØµÙ…Ø©
--- - ÙˆÙ‚Øª Ø§Ù„Ø¯ÙˆØ§Ù… Ø§Ù„Ø±Ø³Ù…ÙŠ Ù„Ù„ØªÙ‚Ø§Ø±ÙŠØ± ÙÙ‚Ø·: 10:00 Ø¥Ù„Ù‰ 18:00 Ø¨ØªÙˆÙ‚ÙŠØª Ø§Ù„Ù‚Ø§Ù‡Ø±Ø©
--- - Ø¥Ù†Ø´Ø§Ø¡ Ø¹Ù…ÙˆØ¯ passkey_credential_id Ø¥Ù† Ù„Ù… ÙŠÙƒÙ† Ù…ÙˆØ¬ÙˆØ¯Ù‹Ø§ Ù„ØªØ³Ø¬ÙŠÙ„ Ù…Ø±Ø¬Ø¹ Ø¨ØµÙ…Ø© Ø§Ù„Ø¬Ù‡Ø§Ø²
+-- Patch 005: تبسيط بيانات الموظفين والبصمة
+-- - الحالة دائمًا ACTIVE
+-- - لا نعتمد على الوردية في قبول البصمة
+-- - وقت الدوام الرسمي للتقارير فقط: 10:00 إلى 18:00 بتوقيت القاهرة
+-- - إنشاء عمود passkey_credential_id إن لم يكن موجودًا لتسجيل مرجع بصمة الجهاز
 -- =========================================================
 
 alter table public.attendance_events
@@ -1480,7 +1480,7 @@ declare
   start_ts timestamptz;
   tz text := 'Africa/Cairo';
 begin
-  -- Ù„Ø§ Ù†Ø³ØªØ®Ø¯Ù… Ø§Ù„ÙˆØ±Ø¯ÙŠØ§Øª. Ø§Ù„Ø¨Ø¯Ø§ÙŠØ© Ø§Ù„Ø±Ø³Ù…ÙŠØ© 10:00 ØµØ¨Ø§Ø­Ù‹Ø§ Ù„Ù„ØªÙ‚Ø§Ø±ÙŠØ± ÙÙ‚Ø·.
+  -- لا نستخدم الورديات. البداية الرسمية 10:00 صباحًا للتقارير فقط.
   start_ts := ((p_event_at at time zone tz)::date::text || ' 10:00')::timestamp at time zone tz;
   return greatest(0, floor(extract(epoch from (p_event_at - start_ts)) / 60)::integer);
 end;
@@ -1516,59 +1516,59 @@ for each row execute function public.force_employee_active_defaults();
 
 -- =========================================================
 -- Patch 006 â€” Single Branch + Live Location Requests + Complaint Flow
--- ØªØ§Ø±ÙŠØ® Ø§Ù„ØªÙ†ÙÙŠØ°: 27 Ø£Ø¨Ø±ÙŠÙ„ 2026
+-- تاريخ التنفيذ: 27 أبريل 2026
 -- =========================================================
 
--- 1) Ø§Ø¹ØªÙ…Ø§Ø¯ Ù…Ø¬Ù…Ø¹ ÙˆØ§Ø­Ø¯ ÙÙ‚Ø· Ø¨Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© Ø§Ù„ØµØ­ÙŠØ­Ø©
+-- 1) اعتماد مجمع واحد فقط بإحداثيات منيل شيحة الصحيحة
 update public.governorates
-set name = 'Ø§Ù„Ø¬ÙŠØ²Ø©'
-where code in ('GZ', 'GIZ') or name ilike '%Ø¬ÙŠØ²Ø©%';
+set name = 'الجيزة'
+where code in ('GZ', 'GIZ') or name ilike '%جيزة%';
 
 update public.complexes
-set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©'
-where code in ('AHLA-MANIL', 'CX-AHLA-MANIL') or name ilike '%Ù…Ù†ÙŠÙ„%';
+set name = 'مجمع منيل شيحة'
+where code in ('AHLA-MANIL', 'CX-AHLA-MANIL') or name ilike '%منيل%';
 
 update public.branches
-set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
-    address = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©',
+set name = 'مجمع منيل شيحة',
+    address = 'مجمع منيل شيحة - الجيزة',
     latitude = 29.95109939158933,
     longitude = 31.238741920853883,
     geofence_radius_meters = 300,
     max_accuracy_meters = 2000,
     active = true,
     is_deleted = false
-where code in ('MAIN', 'AHLA-MANIL') or name ilike '%Ù…Ù†ÙŠÙ„%';
+where code in ('MAIN', 'AHLA-MANIL') or name ilike '%منيل%';
 
--- 2) ØªØ«Ø¨ÙŠØª Ø£Ù† ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ù†Ø´Ø·ÙˆÙ† ÙˆÙ…Ø±ØªØ¨Ø·ÙˆÙ† Ø¨Ø§Ù„Ù…Ø¬Ù…Ø¹ Ø§Ù„ÙˆØ§Ø­Ø¯
+-- 2) تثبيت أن كل الموظفين نشطون ومرتبطون بالمجمع الواحد
 update public.employees
 set status = 'ACTIVE',
     is_active = true,
-    branch_id = coalesce(branch_id, (select id from public.branches where code in ('MAIN','AHLA-MANIL') or name ilike '%Ù…Ù†ÙŠÙ„%' order by created_at nulls last limit 1)),
-    complex_id = coalesce(complex_id, (select id from public.complexes where code in ('AHLA-MANIL','CX-AHLA-MANIL') or name ilike '%Ù…Ù†ÙŠÙ„%' order by created_at nulls last limit 1)),
-    governorate_id = coalesce(governorate_id, (select id from public.governorates where code in ('GZ','GIZ') or name ilike '%Ø¬ÙŠØ²Ø©%' order by created_at nulls last limit 1)),
+    branch_id = coalesce(branch_id, (select id from public.branches where code in ('MAIN','AHLA-MANIL') or name ilike '%منيل%' order by created_at nulls last limit 1)),
+    complex_id = coalesce(complex_id, (select id from public.complexes where code in ('AHLA-MANIL','CX-AHLA-MANIL') or name ilike '%منيل%' order by created_at nulls last limit 1)),
+    governorate_id = coalesce(governorate_id, (select id from public.governorates where code in ('GZ','GIZ') or name ilike '%جيزة%' order by created_at nulls last limit 1)),
     shift_id = null
 where is_deleted is not true;
 
--- 3) ØªØ¨Ø³ÙŠØ· Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹: Ù„Ø§ Ø³Ø¨Ø¨ ÙˆÙ„Ø§ ØºØ±Ø¶ Ù…Ø·Ù„ÙˆØ¨ Ù…Ù† Ø§Ù„ÙˆØ§Ø¬Ù‡Ø©
+-- 3) تبسيط طلبات المواقع: لا سبب ولا غرض مطلوب من الواجهة
 alter table public.location_requests
-  alter column purpose set default 'ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±',
+  alter column purpose set default 'فتح الموقع وإرسال اللوكيشن المباشر',
   alter column request_reason set default '';
 
 update public.location_requests
-set purpose = 'ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±',
+set purpose = 'فتح الموقع وإرسال اللوكيشن المباشر',
     request_reason = ''
 where purpose is null or trim(purpose) = '' or request_reason is not null;
 
--- 4) ØªÙˆØ­ÙŠØ¯ Ø­Ø§Ù„Ø© Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù„ØªØ°Ù‡Ø¨ Ù„Ù„Ø¬Ù†Ø© Ù…Ø¨Ø§Ø´Ø±Ø©
+-- 4) توحيد حالة الشكاوى الجديدة لتذهب للجنة مباشرة
 alter table public.dispute_cases
   alter column status set default 'IN_REVIEW',
   alter column severity set default 'MEDIUM';
 
--- 5) ØµÙ„Ø§Ø­ÙŠØ§Øª Ø£Ø³Ø§Ø³ÙŠØ© Ù„Ù„Ù…ÙˆØ¸Ù Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹
+-- 5) صلاحيات أساسية للموظف لاستخدام الشكاوى وإرسال الموقع
 insert into public.permissions (scope, name)
 values
-  ('disputes:create', 'ØªØ³Ø¬ÙŠÙ„ Ø´ÙƒÙˆÙ‰ Ø°Ø§ØªÙŠØ©'),
-  ('location:self', 'Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø­Ø§Ù„ÙŠ')
+  ('disputes:create', 'تسجيل شكوى ذاتية'),
+  ('location:self', 'إرسال موقعي الحالي')
 on conflict (scope) do update set name = excluded.name;
 
 update public.roles
@@ -1577,8 +1577,8 @@ set permissions = array(
 )
 where slug = 'employee' or key = 'EMPLOYEE';
 
--- 6) Ù…Ù„Ø§Ø­Ø¸Ø© ØªØ´ØºÙŠÙ„ÙŠØ©:
--- Ø¨Ø¹Ø¯ ØªØ´ØºÙŠÙ„ Ù‡Ø°Ø§ Ø§Ù„Ù…Ù„Ù Ø§ÙØªØ­ tools/reset-cache.html Ù„Ù…Ø³Ø­ Ø§Ù„ÙƒØ§Ø´ Ø«Ù… Ø£Ø¹Ø¯ ÙØªØ­ Ø§Ù„Ù†Ø¸Ø§Ù….
+-- 6) ملاحظة تشغيلية:
+-- بعد تشغيل هذا الملف افتح tools/reset-cache.html لمسح الكاش ثم أعد فتح النظام.
 
 
 -- END PATCH: 006_single_branch_locations_disputes_cleanup.sql
@@ -1593,11 +1593,11 @@ where slug = 'employee' or key = 'EMPLOYEE';
 -- Date: 27 Apr 2026
 -- =========================================================
 
--- ØªÙ†Ø¸ÙŠÙ Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ø¬Ù…Ø¹ Ù…Ù† Ø±Ø§Ø¨Ø· Google Maps Ø§Ù„Ø·ÙˆÙŠÙ„ Ø­ØªÙ‰ Ù„Ø§ ÙŠÙƒØ³Ø± ÙˆØ§Ø¬Ù‡Ø© Ø§Ù„Ø¨ØµÙ…Ø©
--- ÙˆØªÙˆØ³ÙŠØ¹ Ù†Ø·Ø§Ù‚ ÙˆØ¯Ù‚Ø© GPS Ø§Ù„Ù…Ø³Ù…ÙˆØ­Ø© Ù„Ù„Ø§Ø®ØªØ¨Ø§Ø± Ø§Ù„Ø¹Ù…Ù„ÙŠ Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„ ÙˆØ£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…ÙƒØªØ¨.
+-- تنظيف عنوان المجمع من رابط Google Maps الطويل حتى لا يكسر واجهة البصمة
+-- وتوسيع نطاق ودقة GPS المسموحة للاختبار العملي على الموبايل وأجهزة المكتب.
 update public.branches
-set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
-    address = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©',
+set name = 'مجمع منيل شيحة',
+    address = 'مجمع منيل شيحة - الجيزة',
     latitude = 29.95109939158933,
     longitude = 31.238741920853883,
     geofence_radius_meters = 300,
@@ -1606,20 +1606,20 @@ set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
     is_deleted = false,
     updated_at = now()
 where code in ('MAIN', 'AHLA-MANIL')
-   or name ilike '%Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©%';
+   or name ilike '%منيل شيحة%';
 
--- Ø¶Ù…Ø§Ù† Ø£Ù† Ø£ÙŠ Ù…ÙˆØ¸Ù Ø¨Ø¯ÙˆÙ† ÙØ±Ø¹ ÙŠØ¹ÙˆØ¯ Ù„Ù„Ù…Ø¬Ù…Ø¹ Ø§Ù„ÙˆØ§Ø­Ø¯ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯.
+-- ضمان أن أي موظف بدون فرع يعود للمجمع الواحد المعتمد.
 update public.employees e
 set branch_id = b.id,
     is_active = true,
     status = 'ACTIVE',
     updated_at = now()
 from public.branches b
-where b.name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©'
+where b.name = 'مجمع منيل شيحة'
   and (e.branch_id is null or e.is_active is distinct from true or e.status is distinct from 'ACTIVE');
 
--- Ù…Ù„Ø§Ø­Ø¸Ø©:
--- Ø§Ù„Ø¨ØµÙ…Ø© Ø£ØµØ¨Ø­Øª ØªÙ‚Ø¨Ù„ inside_branch_low_accuracy Ø¹Ù†Ø¯ ÙˆØ¬ÙˆØ¯ GPS Ø¶Ø¹ÙŠÙ Ù„ÙƒÙ† Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹ Ù…Ø¹ Ù‡Ø§Ù…Ø´ Ø§Ù„Ø¯Ù‚Ø©.
+-- ملاحظة:
+-- البصمة أصبحت تقبل inside_branch_low_accuracy عند وجود GPS ضعيف لكن الموقع داخل نطاق المجمع مع هامش الدقة.
 
 
 -- END PATCH: 007_login_punch_gps_layout_fix.sql
@@ -1725,11 +1725,11 @@ select pg_notify('pgrst', 'reload schema');
 -- =========================================================
 
 -- =========================================================
--- 010 - ØªØ¨Ø³ÙŠØ· Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† + Ø­Ø°Ù ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ø±ÙˆØ§ØªØ¨ + Ø¶Ø¨Ø· GPS Ù„Ù„Ø¥Ù†ØªØ§Ø¬
--- Ù„Ø§ ÙŠØ­Ø°Ù .git Ø£Ùˆ supabase/.temp Ø£Ùˆ 004_emergency_admin_access.sql
+-- 010 - تبسيط بيانات الموظفين والمستخدمين + حذف صلاحيات الرواتب + ضبط GPS للإنتاج
+-- لا يحذف .git أو supabase/.temp أو 004_emergency_admin_access.sql
 -- =========================================================
 
--- 1) Ø­Ø°Ù ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ø±ÙˆØ§ØªØ¨ Ù…Ù† Ù†Ø¸Ø§Ù… Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ù„Ø£Ù†Ù‡Ø§ Ù„Ù… ØªØ¹Ø¯ Ù…Ø³ØªØ®Ø¯Ù…Ø© ÙÙŠ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø©.
+-- 1) حذف صلاحيات الرواتب من نظام الصلاحيات لأنها لم تعد مستخدمة في الواجهة.
 delete from public.permissions where scope = 'payroll:manage';
 
 do $$
@@ -1762,51 +1762,51 @@ begin
   end if;
 end $$;
 
--- Ø¥Ø²Ø§Ù„Ø© ØªÙƒØ§Ù…Ù„Ø§Øª Ø§Ù„Ø±ÙˆØ§ØªØ¨ Ø§Ù„Ù‚Ø¯ÙŠÙ…Ø© Ù…Ù† Ø´Ø§Ø´Ø© Ø§Ù„ØªÙƒØ§Ù…Ù„Ø§Øª Ø¥Ù† ÙƒØ§Ù†Øª Ù…ÙˆØ¬ÙˆØ¯Ø©.
+-- إزالة تكاملات الرواتب القديمة من شاشة التكاملات إن كانت موجودة.
 delete from public.integration_settings
 where key ilike '%payroll%'
    or provider ilike '%payroll%'
    or name ilike '%Payroll%'
-   or name ilike '%Ø±ÙˆØ§ØªØ¨%';
+   or name ilike '%رواتب%';
 
--- 2) Ø¶Ø¨Ø· GPS Ù„Ù„Ø¥Ù†ØªØ§Ø¬: Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹ 300 Ù…ØªØ±ØŒ ÙˆØ£Ù‚ØµÙ‰ Ø¯Ù‚Ø© GPS Ù…Ù‚Ø¨ÙˆÙ„Ø© 500 Ù…ØªØ±.
+-- 2) ضبط GPS للإنتاج: نطاق المجمع 300 متر، وأقصى دقة GPS مقبولة 500 متر.
 update public.branches
 set
-  name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
-  address = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©',
+  name = 'مجمع منيل شيحة',
+  address = 'مجمع منيل شيحة - الجيزة',
   latitude = 29.95109939158933,
   longitude = 31.238741920853883,
   geofence_radius_meters = 300,
   max_accuracy_meters = 500,
   active = true,
   is_deleted = false
-where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('MAIN', 'AHLA-MANIL');
+where name ilike '%منيل%' or code in ('MAIN', 'AHLA-MANIL');
 
--- Ø¨Ø¹Ø¶ Ø§Ù„Ù†Ø³Ø® Ù„Ø¯ÙŠÙ‡Ø§ Ø£Ø¹Ù…Ø¯Ø© Ø¥Ø¶Ø§ÙÙŠØ© ÙÙŠ complexes Ù…Ù† Patches Ø³Ø§Ø¨Ù‚Ø©Ø› Ù†Ø­Ø¯Ø«Ù‡Ø§ ÙÙ‚Ø· Ù„Ùˆ Ù…ÙˆØ¬ÙˆØ¯Ø©.
+-- بعض النسخ لديها أعمدة إضافية في complexes من Patches سابقة؛ نحدثها فقط لو موجودة.
 do $$
 begin
   update public.complexes
-  set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©', active = true, is_deleted = false
-  where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL');
+  set name = 'مجمع منيل شيحة', active = true, is_deleted = false
+  where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL');
 
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='complexes' and column_name='address') then
-    execute $sql$update public.complexes set address = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©' where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
+    execute $sql$update public.complexes set address = 'مجمع منيل شيحة - الجيزة' where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
   end if;
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='complexes' and column_name='latitude') then
-    execute $sql$update public.complexes set latitude = 29.95109939158933 where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
+    execute $sql$update public.complexes set latitude = 29.95109939158933 where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
   end if;
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='complexes' and column_name='longitude') then
-    execute $sql$update public.complexes set longitude = 31.238741920853883 where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
+    execute $sql$update public.complexes set longitude = 31.238741920853883 where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
   end if;
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='complexes' and column_name='radius_meters') then
-    execute $sql$update public.complexes set radius_meters = 300 where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
+    execute $sql$update public.complexes set radius_meters = 300 where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
   end if;
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='complexes' and column_name='max_accuracy_meters') then
-    execute $sql$update public.complexes set max_accuracy_meters = 500 where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
+    execute $sql$update public.complexes set max_accuracy_meters = 500 where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')$sql$;
   end if;
 end $$;
 
--- 3) Ø¥Ø²Ø§Ù„Ø© Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¹Ù…Ù„ÙŠ Ø¹Ù„Ù‰ ÙƒÙˆØ¯ Ø§Ù„Ù…ÙˆØ¸Ù ÙˆØ§Ù„Ø¯ÙˆØ§Ù… Ø§Ù„Ù…Ù†ÙØµÙ„ ÙÙŠ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©.
+-- 3) إزالة الاعتماد العملي على كود الموظف والدوام المنفصل في البيانات الجديدة.
 alter table if exists public.employees alter column employee_code drop not null;
 update public.employees set employee_code = null where employee_code is not null;
 
@@ -1817,16 +1817,16 @@ begin
   end if;
 end $$;
 
--- 4) ØªØ«Ø¨ÙŠØª Ø§Ù„Ø­Ø§Ù„Ø© Active Ù„ÙƒÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ù„Ø£Ù† Ø§Ù„Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø§Ù„ÙŠ Ù„Ø§ ÙŠØ­ØªØ§Ø¬ Ø­Ø§Ù„Ø§Øª Ù…ØªØ¹Ø¯Ø¯Ø© Ù„Ù„Ù…ÙˆØ¸Ù.
+-- 4) تثبيت الحالة Active لكل الموظفين لأن النظام الحالي لا يحتاج حالات متعددة للموظف.
 update public.employees
 set status = 'ACTIVE', is_active = true, is_deleted = false
 where coalesce(is_deleted, false) = false;
 
--- 5) Ø­Ø°Ù trigger Ù‚Ø¯ÙŠÙ… ÙƒØ§Ù† ÙŠØ¹ÙŠØ¯ ØªÙˆÙ„ÙŠØ¯ employee_code Ø¥Ù† ÙˆÙØ¬Ø¯.
+-- 5) حذف trigger قديم كان يعيد توليد employee_code إن وُجد.
 drop trigger if exists trg_employee_defaults_single_branch on public.employees;
 drop function if exists public.employee_defaults_single_branch();
 
--- 6) ØªØ¨Ø³ÙŠØ· profiles: Ø¥Ø¨Ù‚Ø§Ø¡ Ø§Ù„Ø±Ø¨Ø· ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§ØªØŒ Ø¨Ø¯ÙˆÙ† ÙØ±Ø¶ ÙØ±Ø¹/Ù‚Ø³Ù… Ø¸Ø§Ù‡Ø± Ù„Ù„Ù…Ø³ØªØ®Ø¯Ù….
+-- 6) تبسيط profiles: إبقاء الربط والصلاحيات، بدون فرض فرع/قسم ظاهر للمستخدم.
 update public.profiles
 set status = coalesce(status, 'ACTIVE')
 where id is not null;
@@ -1854,8 +1854,8 @@ end $$;
 -- 1) Single complex/branch production coordinates
 update public.branches
 set
-  name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
-  address = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©',
+  name = 'مجمع منيل شيحة',
+  address = 'مجمع منيل شيحة - الجيزة',
   latitude = 29.95109939158933,
   longitude = 31.238741920853883,
   geofence_radius_meters = 300,
@@ -1866,15 +1866,15 @@ set
 where id = (select id from public.branches order by created_at nulls last limit 1);
 
 insert into public.branches (code, name, address, latitude, longitude, geofence_radius_meters, max_accuracy_meters, active, is_deleted)
-select 'AHLA-MANIL', 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©', 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©', 29.95109939158933, 31.238741920853883, 300, 500, true, false
+select 'AHLA-MANIL', 'مجمع منيل شيحة', 'مجمع منيل شيحة - الجيزة', 29.95109939158933, 31.238741920853883, 300, 500, true, false
 where not exists (select 1 from public.branches);
 
 update public.complexes
-set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©', active = true, is_deleted = false, updated_at = now()
+set name = 'مجمع منيل شيحة', active = true, is_deleted = false, updated_at = now()
 where id = (select id from public.complexes order by created_at nulls last limit 1);
 
 insert into public.complexes (code, name, active, is_deleted)
-select 'CX-AHLA-MANIL', 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©', true, false
+select 'CX-AHLA-MANIL', 'مجمع منيل شيحة', true, false
 where not exists (select 1 from public.complexes);
 
 -- 2) Auto-link profiles to employees by matching e-mail.
@@ -1921,11 +1921,11 @@ where is_deleted is distinct from true;
 
 -- =========================================================
 -- Patch 012 â€” Strong HR Features
--- Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø© + Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø© + Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± + Ø³Ø¬Ù„ Ø§Ù„Ø£Ù…Ø§Ù†
--- ÙŠØ­Ø§ÙØ¸ Ø¹Ù„Ù‰ Ù…Ù„ÙØ§Øª Ø§Ù„Ø§Ø®ØªØ¨Ø§Ø± ÙˆØ§Ù„Ø·ÙˆØ§Ø±Ø¦ ÙˆÙ„Ø§ ÙŠØ­Ø°Ù Ø£ÙŠ Ø¨ÙŠØ§Ù†Ø§Øª.
+-- مراجعة البصمات المرفوضة + الأجهزة المعتمدة + التقارير + سجل الأمان
+-- يحافظ على ملفات الاختبار والطوارئ ولا يحذف أي بيانات.
 -- =========================================================
 
--- 1) ØªÙˆØ³ÙŠØ¹ Ø¬Ø¯ÙˆÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± Ù„Ø¯Ø¹Ù… Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©
+-- 1) توسيع جدول الحضور لدعم مراجعة البصمات المرفوضة
 alter table if exists public.attendance_events
   add column if not exists review_decision text,
   add column if not exists reviewed_at timestamptz,
@@ -1940,7 +1940,7 @@ create index if not exists idx_attendance_events_rejected_review
 create index if not exists idx_attendance_events_month_employee
   on public.attendance_events (employee_id, event_at desc);
 
--- 2) ØªÙˆØ³ÙŠØ¹ passkey_credentials Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©
+-- 2) توسيع passkey_credentials لإدارة الأجهزة المعتمدة
 alter table if exists public.passkey_credentials
   add column if not exists employee_id uuid references public.employees(id) on delete set null,
   add column if not exists label text,
@@ -1955,7 +1955,7 @@ alter table if exists public.passkey_credentials
 create index if not exists idx_passkey_credentials_employee_status
   on public.passkey_credentials (employee_id, status);
 
--- 3) Ø±Ø¨Ø· Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø¨Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…/Ø§Ù„Ù…ÙˆØ¸Ù Ø¥Ù† ÙƒØ§Ù†Øª Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù‚Ø¯ÙŠÙ…Ø© Ù„Ø§ ØªØ­ØªÙˆÙŠ employee_id
+-- 3) ربط الأجهزة بالمستخدم/الموظف إن كانت البيانات القديمة لا تحتوي employee_id
 update public.passkey_credentials pc
 set employee_id = p.employee_id
 from public.profiles p
@@ -1963,18 +1963,18 @@ where pc.employee_id is null
   and pc.user_id = p.id
   and p.employee_id is not null;
 
--- 4) ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„ØµÙØ­Ø§Øª Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©
+-- 4) صلاحيات الصفحات الجديدة
 insert into public.permissions (scope, name, description)
 values
-  ('attendance:review', 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©', 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø£Ùˆ Ø±ÙØ¶ Ù…Ø­Ø§ÙˆÙ„Ø§Øª Ø§Ù„Ø¨ØµÙ…Ø© Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©'),
-  ('devices:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©', 'Ø§Ø¹ØªÙ…Ø§Ø¯ ÙˆØªØ¹Ø·ÙŠÙ„ Ù…ÙØ§ØªÙŠØ­ Ø§Ù„Ù…Ø±ÙˆØ± ÙˆØ£Ø¬Ù‡Ø²Ø© Ø§Ù„Ø¨ØµÙ…Ø©'),
-  ('security:view', 'Ø¹Ø±Ø¶ Ø³Ø¬Ù„ Ø§Ù„Ø£Ù…Ø§Ù†', 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø§Ù„ÙØ§Ø´Ù„ ÙˆØªØºÙŠÙŠØ± ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ±'),
-  ('demo:manage', 'Ø¥Ø¯Ø§Ø±Ø© ÙˆØ¶Ø¹ Ø§Ù„ØªØ¯Ø±ÙŠØ¨', 'ØªØ´ØºÙŠÙ„ ÙˆØ¶Ø¹ ØªØ¯Ø±ÙŠØ¨ Ù…Ø­Ù„ÙŠ Ø¯ÙˆÙ† Ø§Ù„ØªØ£Ø«ÙŠØ± Ø¹Ù„Ù‰ Supabase')
+  ('attendance:review', 'مراجعة البصمات المرفوضة', 'اعتماد أو رفض محاولات البصمة المرفوضة'),
+  ('devices:manage', 'إدارة الأجهزة المعتمدة', 'اعتماد وتعطيل مفاتيح المرور وأجهزة البصمة'),
+  ('security:view', 'عرض سجل الأمان', 'مراجعة الدخول الفاشل وتغيير كلمات المرور'),
+  ('demo:manage', 'إدارة وضع التدريب', 'تشغيل وضع تدريب محلي دون التأثير على Supabase')
 on conflict (scope) do update
 set name = excluded.name,
     description = excluded.description;
 
--- 5) Ù…Ù†Ø­ Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†/HR ØµÙ„Ø§Ø­ÙŠØ© Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§ØªØŒ Ù…Ø¹ ØªØ±Ùƒ Ø§Ù„Ø£Ø¯Ù…Ù† ÙƒÙ…Ø§ Ù‡Ùˆ
+-- 5) منح المديرين/HR صلاحية مراجعة البصمات، مع ترك الأدمن كما هو
 do $$
 declare
   permissions_type text;
@@ -2003,20 +2003,20 @@ begin
   end if;
 end $$;
 
--- 6) Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§ÙØªØ±Ø§Ø¶ÙŠØ© Ù„Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª ÙˆØ§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠ
+-- 6) إعدادات افتراضية للتنبيهات والتقرير الشهري
 insert into public.integration_settings (key, name, provider, enabled, status, notes)
 values
-  ('missing_punch_alerts', 'ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø¹Ø¯Ù… ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©', 'internal', true, 'READY', 'ØªÙ†Ø¨ÙŠÙ‡ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ø°ÙŠÙ† Ù„Ù… ÙŠØ³Ø¬Ù„ÙˆØ§ Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…'),
-  ('monthly_attendance_report', 'Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠ Ø¨ØªØµÙ…ÙŠÙ… Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©', 'internal-print', true, 'READY', 'PDF Ø¹Ø¨Ø± Ù†Ø§ÙØ°Ø© Ø§Ù„Ø·Ø¨Ø§Ø¹Ø© Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­')
+  ('missing_punch_alerts', 'تنبيهات عدم تسجيل البصمة', 'internal', true, 'READY', 'تنبيه الموظفين الذين لم يسجلوا حضور اليوم'),
+  ('monthly_attendance_report', 'التقرير الشهري بتصميم الجمعية', 'internal-print', true, 'READY', 'PDF عبر نافذة الطباعة من المتصفح')
 on conflict (key) do update
 set enabled = excluded.enabled,
     status = excluded.status,
     notes = excluded.notes;
 
--- 7) ØªØ«Ø¨ÙŠØª Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©
+-- 7) تثبيت إحداثيات مجمع منيل شيحة
 update public.branches
-set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
-    address = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©',
+set name = 'مجمع منيل شيحة',
+    address = 'مجمع منيل شيحة - الجيزة',
     latitude = 29.95109939158933,
     longitude = 31.238741920853883,
     geofence_radius_meters = 300,
@@ -2149,8 +2149,8 @@ alter table if exists public.profiles
 -- The frontend now sends accuracy_meters only. This patch intentionally does not add an
 -- accuracy column, so bad payloads keep failing instead of hiding schema drift.
 update public.branches
-set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
-    address = 'Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912',
+set name = 'مجمع منيل شيحة',
+    address = 'شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912',
     latitude = 29.951196809090636,
     longitude = 31.238367688465857,
     geofence_radius_meters = 300,
@@ -2159,27 +2159,27 @@ set name = 'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
     is_deleted = false,
     updated_at = now()
 where code in ('MAIN', 'AHLA-MANIL')
-   or name ilike '%Ù…Ù†ÙŠÙ„%';
+   or name ilike '%منيل%';
 
 insert into public.branches (code, name, address, latitude, longitude, geofence_radius_meters, max_accuracy_meters, active, is_deleted)
 select 'AHLA-MANIL',
-       'Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©',
-       'Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912',
+       'مجمع منيل شيحة',
+       'شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912',
        29.951196809090636,
        31.238367688465857,
        300,
        500,
        true,
        false
-where not exists (select 1 from public.branches where code in ('MAIN', 'AHLA-MANIL') or name ilike '%Ù…Ù†ÙŠÙ„%');
+where not exists (select 1 from public.branches where code in ('MAIN', 'AHLA-MANIL') or name ilike '%منيل%');
 
 do $$
 begin
   if exists (select 1 from information_schema.columns where table_schema='public' and table_name='complexes' and column_name='address') then
     execute $sql$
       update public.complexes
-      set address = 'Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912'
-      where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')
+      set address = 'شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912'
+      where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')
     $sql$;
   end if;
 
@@ -2187,7 +2187,7 @@ begin
     execute $sql$
       update public.complexes
       set latitude = 29.951196809090636
-      where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')
+      where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')
     $sql$;
   end if;
 
@@ -2195,7 +2195,7 @@ begin
     execute $sql$
       update public.complexes
       set longitude = 31.238367688465857
-      where name ilike '%Ù…Ù†ÙŠÙ„%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')
+      where name ilike '%منيل%' or code in ('AHLA-MANIL', 'CX-AHLA-MANIL')
     $sql$;
   end if;
 end $$;
@@ -2264,21 +2264,21 @@ alter table if exists public.attachments
 
 -- =========================================================
 -- 016 Safe Employee Roster Import Template
--- ØªÙ… ØªÙ†Ø¸ÙŠÙ Ù‡Ø°Ø§ Ø§Ù„Ù…Ù„Ù Ù…Ù† Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠØ© ÙˆÙ…Ù† ØµÙŠØºØ© ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…ØªÙˆÙ‚Ø¹Ø©.
--- Ù„Ø§ ØªØ³ØªØ®Ø¯Ù… ÙƒÙ„Ù…Ø§Øª Ù…Ø±ÙˆØ± Ù…Ø¨Ù†ÙŠØ© Ø¹Ù„Ù‰ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ. Ø§Ø³ØªØ®Ø¯Ù… Edge Function admin-create-user
--- Ù„Ø¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª Ø¨ÙƒÙ„Ù…Ø§Øª Ù…Ø±ÙˆØ± Ø¹Ø´ÙˆØ§Ø¦ÙŠØ©ØŒ Ø£Ùˆ Ø£Ø±Ø³Ù„ Ø¯Ø¹ÙˆØ§Øª/Ø±ÙˆØ§Ø¨Ø· Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† Ø¢Ù…Ù†Ø©.
+-- تم تنظيف هذا الملف من بيانات الموظفين الحقيقية ومن صيغة كلمات المرور المتوقعة.
+-- لا تستخدم كلمات مرور مبنية على رقم الهاتف. استخدم Edge Function admin-create-user
+-- لإنشاء الحسابات بكلمات مرور عشوائية، أو أرسل دعوات/روابط إعادة تعيين آمنة.
 -- =========================================================
 
--- Ø·Ø±ÙŠÙ‚Ø© Ø§Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ø¢Ù…Ù†Ø©:
--- 1) Ø§Ø³ØªÙˆØ±Ø¯ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙÙ‚Ø· Ø¥Ù„Ù‰ public.employees Ø¨Ø¹Ø¯ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.
--- 2) Ø£Ù†Ø´Ø¦ Ø­Ø³Ø§Ø¨Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø£Ùˆ Ù…Ù† Edge Function admin-create-user.
--- 3) Ù„Ø§ ØªØ­ÙØ¸ Ù…Ù„Ù Excel Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø³ØªÙˆØ¯Ø¹ Ø£Ùˆ Ù†Ø³Ø®Ø© Ø§Ù„ØªØ³Ù„ÙŠÙ….
+-- طريقة الاستخدام الآمنة:
+-- 1) استورد الموظفين فقط إلى public.employees بعد مراجعة البيانات.
+-- 2) أنشئ حسابات الدخول من لوحة الإدارة أو من Edge Function admin-create-user.
+-- 3) لا تحفظ ملف Excel الحقيقي داخل المستودع أو نسخة التسليم.
 
 create extension if not exists pgcrypto;
 
 alter table if exists public.profiles add column if not exists phone text;
 
--- Ù…Ø«Ø§Ù„ ØªØ¬Ø±ÙŠØ¨ÙŠ ÙÙ‚Ø·. Ø§Ø­Ø°Ù Ù‡Ø°Ø§ Ø§Ù„Ù…Ø«Ø§Ù„ Ù‚Ø¨Ù„ Ø¥Ø¯Ø®Ø§Ù„ Ø¨ÙŠØ§Ù†Ø§Øª Ø­Ù‚ÙŠÙ‚ÙŠØ©.
+-- مثال تجريبي فقط. احذف هذا المثال قبل إدخال بيانات حقيقية.
 insert into public.employees (
   employee_code,
   full_name,
@@ -2298,10 +2298,10 @@ insert into public.employees (
 )
 select
   'EMP-DEMO-001',
-  'Ù…ÙˆØ¸Ù ØªØ¬Ø±Ø¨Ø© Ø¢Ù…Ù†',
+  'موظف تجربة آمن',
   'PHONE_PLACEHOLDER_001',
   'demo.employee@ahla-shabab.local',
-  'Ù…ÙˆØ¸Ù ØªØ¬Ø±Ø¨Ø©',
+  'موظف تجربة',
   (select id from public.roles where slug = 'employee' limit 1),
   (select id from public.branches where code = 'MAIN' limit 1),
   (select id from public.departments where code = 'OPS' limit 1),
@@ -2314,7 +2314,7 @@ select
   current_date
 where not exists (select 1 from public.employees where employee_code = 'EMP-DEMO-001');
 
--- Ø¥Ù†Ø´Ø§Ø¡ Ù…Ø³ØªØ®Ø¯Ù… Auth ÙŠØªÙ… Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© / Edge FunctionØŒ ÙˆÙ„ÙŠØ³ Ù…Ù† SQL Ù…Ø¨Ø§Ø´Ø± Ø¯Ø§Ø®Ù„ auth.users.
+-- إنشاء مستخدم Auth يتم من لوحة الإدارة / Edge Function، وليس من SQL مباشر داخل auth.users.
 
 
 -- END PATCH: 016_import_employee_roster_from_excel.sql
@@ -2405,8 +2405,8 @@ create index if not exists idx_system_backups_created_at on public.system_backup
 
 -- =========================================================
 -- 018 Ahla Shabab Organization Hierarchy
--- Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠ Ø­Ø³Ø¨ ÙˆØµÙ Ø§Ù„Ø¬Ù…Ø¹ÙŠØ©.
--- Ù„Ø§ ÙŠÙ†Ø´Ø¦ Ø­Ø³Ø§Ø¨Ø§Øª Auth ÙˆÙ„Ø§ ÙƒÙ„Ù…Ø§Øª Ù…Ø±ÙˆØ±. Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª ØªÙ†Ø´Ø£ Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©/Edge Function.
+-- الهيكل الإداري حسب وصف الجمعية.
+-- لا ينشئ حسابات Auth ولا كلمات مرور. الحسابات تنشأ من لوحة الإدارة/Edge Function.
 -- =========================================================
 
 create extension if not exists pgcrypto;
@@ -2420,10 +2420,10 @@ alter table if exists public.departments
 insert into public.departments (code, name, branch_id, manager_employee_id)
 select d.code, d.name, b.id, null
 from (values
-  ('EXEC', 'Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©'),
-  ('MGT', 'Ø§Ù„Ø¥Ø´Ø±Ø§Ù ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙˆÙ† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†'),
-  ('OPS', 'ÙØ±Ù‚ Ø§Ù„ØªØ´ØºÙŠÙ„ ÙˆØ§Ù„Ø®Ø¯Ù…Ø§Øª'),
-  ('HR', 'Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©')
+  ('EXEC', 'الإدارة التنفيذية'),
+  ('MGT', 'الإشراف والمديرون المباشرون'),
+  ('OPS', 'فرق التشغيل والخدمات'),
+  ('HR', 'الموارد البشرية')
 ) as d(code, name)
 cross join public.branches b
 where b.code = 'MAIN'
@@ -2431,29 +2431,29 @@ on conflict (code) do update set name = excluded.name, branch_id = excluded.bran
 
 with roster(employee_code, full_name, phone, email, job_title, role_slug, department_code, manager_code, hire_date) as (
   values
-  ('EMP-001', 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'PHONE_PLACEHOLDER_021', 'executive.director@organization.local', 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'executive', 'EXEC', '', '2020-01-01'),
-  ('EMP-002', 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'PHONE_PLACEHOLDER_022', 'executive.secretary@organization.local', 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
-  ('EMP-003', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø±Ø§Ø¨Ø¹', 'PHONE_PLACEHOLDER_023', 'direct.manager.04@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-004', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø£ÙˆÙ„', 'PHONE_PLACEHOLDER_024', 'direct.manager.01@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-005', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù†Ù', 'PHONE_PLACEHOLDER_025', 'direct.manager.02@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-006', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«', 'PHONE_PLACEHOLDER_026', 'direct.manager.03@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-007', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 01', 'PHONE_PLACEHOLDER_027', 'employee.001@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-008', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'PHONE_PLACEHOLDER_028', 'employee.017@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-009', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 14', 'PHONE_PLACEHOLDER_029', 'direct.manager.07@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-010', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 07', 'PHONE_PLACEHOLDER_030', 'employee.006@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-011', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 08', 'PHONE_PLACEHOLDER_031', 'employee.007@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-012', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 04', 'PHONE_PLACEHOLDER_032', 'direct.manager.08@organization.local', 'Ù…Ø´Ø±Ù Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
-  ('EMP-013', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 05', 'PHONE_PLACEHOLDER_033', 'employee.004@organization.local', 'Ù…ÙˆØ¸Ù ØªØ­Øª Ø¥Ø´Ø±Ø§Ù Ù…Ø¨Ø§Ø´Ø±', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
-  ('EMP-014', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 13', 'PHONE_PLACEHOLDER_034', 'abdullah.hussein@ahla-shabab.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø±Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-015', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 06', 'PHONE_PLACEHOLDER_035', 'employee.005@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø±Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-016', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 16', 'PHONE_PLACEHOLDER_036', 'employee.015@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø³Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-017', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 10', 'PHONE_PLACEHOLDER_037', 'employee.009@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø³Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-018', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 15', 'PHONE_PLACEHOLDER_038', 'employee.014@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø³Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-019', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 17', 'PHONE_PLACEHOLDER_039', 'employee.016@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø£ÙˆÙ„', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
-  ('EMP-020', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 11', 'PHONE_PLACEHOLDER_040', 'employee.010@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-021', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 12', 'PHONE_PLACEHOLDER_041', 'employee.011@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-022', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 03', 'PHONE_PLACEHOLDER_042', 'employee.002@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-023', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 09', 'PHONE_PLACEHOLDER_043', 'tarek.ibrahim@ahla-shabab.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01')
+  ('EMP-001', 'المدير التنفيذي', 'PHONE_PLACEHOLDER_021', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', '', '2020-01-01'),
+  ('EMP-002', 'السكرتير التنفيذي', 'PHONE_PLACEHOLDER_022', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
+  ('EMP-003', 'مدير مباشر رابع', 'PHONE_PLACEHOLDER_023', 'direct.manager.04@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-004', 'مدير مباشر أول', 'PHONE_PLACEHOLDER_024', 'direct.manager.01@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-005', 'مدير مباشر ثانٍ', 'PHONE_PLACEHOLDER_025', 'direct.manager.02@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-006', 'مدير مباشر ثالث', 'PHONE_PLACEHOLDER_026', 'direct.manager.03@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-007', 'موظف تشغيلي 01', 'PHONE_PLACEHOLDER_027', 'employee.001@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-008', 'موظف تشغيلي 18', 'PHONE_PLACEHOLDER_028', 'employee.017@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-009', 'موظف تشغيلي 14', 'PHONE_PLACEHOLDER_029', 'direct.manager.07@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-010', 'موظف تشغيلي 07', 'PHONE_PLACEHOLDER_030', 'employee.006@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-011', 'موظف تشغيلي 08', 'PHONE_PLACEHOLDER_031', 'employee.007@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-012', 'موظف تشغيلي 04', 'PHONE_PLACEHOLDER_032', 'direct.manager.08@organization.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
+  ('EMP-013', 'موظف تشغيلي 05', 'PHONE_PLACEHOLDER_033', 'employee.004@organization.local', 'موظف تحت إشراف مباشر', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
+  ('EMP-014', 'موظف تشغيلي 13', 'PHONE_PLACEHOLDER_034', 'abdullah.hussein@ahla-shabab.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-015', 'موظف تشغيلي 06', 'PHONE_PLACEHOLDER_035', 'employee.005@organization.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-016', 'موظف تشغيلي 16', 'PHONE_PLACEHOLDER_036', 'employee.015@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-017', 'موظف تشغيلي 10', 'PHONE_PLACEHOLDER_037', 'employee.009@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-018', 'موظف تشغيلي 15', 'PHONE_PLACEHOLDER_038', 'employee.014@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-019', 'موظف تشغيلي 17', 'PHONE_PLACEHOLDER_039', 'employee.016@organization.local', 'موظف فريق المدير المباشر الأول', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
+  ('EMP-020', 'موظف تشغيلي 11', 'PHONE_PLACEHOLDER_040', 'employee.010@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-021', 'موظف تشغيلي 12', 'PHONE_PLACEHOLDER_041', 'employee.011@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-022', 'موظف تشغيلي 03', 'PHONE_PLACEHOLDER_042', 'employee.002@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-023', 'موظف تشغيلي 09', 'PHONE_PLACEHOLDER_043', 'tarek.ibrahim@ahla-shabab.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01')
 ), upserted as (
   insert into public.employees (
     employee_code, full_name, phone, email, job_title, role_id, branch_id, department_id,
@@ -2528,7 +2528,7 @@ as $$
   );
 $$;
 
-comment on function public.can_access_employee(uuid) is 'ÙŠØ¹Ø·ÙŠ Ø§Ù„Ù…Ø¯ÙŠØ± ØµÙ„Ø§Ø­ÙŠØ© Ù‚Ø±Ø§Ø¡Ø© ÙØ±ÙŠÙ‚Ù‡ Ø§Ù„ÙƒØ§Ù…Ù„ Ø¹Ø¨Ø± ÙƒÙ„ Ø§Ù„Ù…Ø³ØªÙˆÙŠØ§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©.';
+comment on function public.can_access_employee(uuid) is 'يعطي المدير صلاحية قراءة فريقه الكامل عبر كل المستويات الإدارية.';
 
 
 -- END PATCH: 018_ahla_shabab_org_hierarchy.sql
@@ -2543,13 +2543,13 @@ comment on function public.can_access_employee(uuid) is 'ÙŠØ¹Ø·ÙŠ Ø§Ù
 -- and temporary-password reset support notes.
 -- =========================================================
 
--- Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª Ø­Ø³Ø¨ Ø§Ù„Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠ:
--- Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø« + Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù†Ù + Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø£ÙˆÙ„ + Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ + Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.
--- ÙŠØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ù…Ù† Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¹Ù†Ø¯ Ø¥Ù†Ø´Ø§Ø¡ dispute_casesØŒ ÙˆÙ‡Ø°Ø§ Ø§Ù„Ù€ patch ÙŠØ¶ÙŠÙ Ø­Ù‚ÙˆÙ„Ù‹Ø§ Ù…Ø³Ø§Ø¹Ø¯Ø© Ø¥Ù† Ù„Ù… ØªÙƒÙ† Ù…ÙˆØ¬ÙˆØ¯Ø©.
+-- لجنة حل المشاكل والخلافات حسب الهيكل الإداري:
+-- مدير مباشر ثالث + مدير مباشر ثانٍ + مدير مباشر أول + السكرتير التنفيذي + المدير التنفيذي.
+-- يتم إرسال الإشعارات من التطبيق عند إنشاء dispute_cases، وهذا الـ patch يضيف حقولًا مساعدة إن لم تكن موجودة.
 
 alter table if exists public.dispute_cases
   add column if not exists assigned_committee_employee_ids uuid[] default '{}',
-  add column if not exists escalation_path text default 'Ø§Ù„Ù„Ø¬Ù†Ø© â† Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ â† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ',
+  add column if not exists escalation_path text default 'اللجنة ← السكرتير التنفيذي ← المدير التنفيذي المدير التنفيذي',
   add column if not exists resolved_at timestamptz;
 
 alter table if exists public.leave_requests
@@ -2558,15 +2558,15 @@ alter table if exists public.leave_requests
 alter table if exists public.missions
   add column if not exists workflow jsonb not null default '[]'::jsonb;
 
--- ØªÙˆØ§ÙÙ‚ Ù…Ø¹ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø© Ø¹Ù†Ø¯ Ø¥Ø¯Ø®Ø§Ù„ Ø·Ù„Ø¨Ø§Øª Ø§Ù„Ø¥Ø¬Ø§Ø²Ø© Ø£Ùˆ Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª Ù…Ù† ØªØ·Ø¨ÙŠÙ‚ Ø§Ù„Ù…ÙˆØ¸Ù.
+-- توافق مع الواجهة عند إدخال طلبات الإجازة أو المأموريات من تطبيق الموظف.
 create index if not exists idx_leave_requests_employee_status on public.leave_requests(employee_id, status);
 create index if not exists idx_missions_employee_status on public.missions(employee_id, status);
 create index if not exists idx_dispute_cases_employee_status on public.dispute_cases(employee_id, status);
 
--- Ù…Ù„Ø§Ø­Ø¸Ø© Ø£Ù…Ø§Ù†:
--- Supabase Auth Ù„Ø§ ÙŠØ³Ù…Ø­ Ø¨Ù‚Ø±Ø§Ø¡Ø© ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø£ØµÙ„ÙŠØ©ØŒ ÙˆÙ‡Ø°Ø§ ØµØ­ÙŠØ­ Ø£Ù…Ù†ÙŠÙ‹Ø§.
--- Ø®Ø²Ù†Ø© ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± ÙÙŠ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø© ØªØ¹Ø±Ø¶ ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ© ÙÙŠ Ø§Ù„ÙˆØ¶Ø¹ Ø§Ù„Ù…Ø­Ù„ÙŠ ÙÙ‚Ø·ØŒ
--- Ø£Ù…Ø§ ÙÙŠ Ø§Ù„Ø¥Ù†ØªØ§Ø¬ ÙÙŠØªÙ… Ø¥ØµØ¯Ø§Ø± ÙƒÙ„Ù…Ø© Ù…Ø¤Ù‚ØªØ© Ø¬Ø¯ÙŠØ¯Ø© Ø¹Ø¨Ø± Edge Function admin-update-user.
+-- ملاحظة أمان:
+-- Supabase Auth لا يسمح بقراءة كلمات المرور الأصلية، وهذا صحيح أمنيًا.
+-- خزنة كلمات المرور في الواجهة تعرض كلمات المرور المؤقتة في الوضع المحلي فقط،
+-- أما في الإنتاج فيتم إصدار كلمة مؤقتة جديدة عبر Edge Function admin-update-user.
 
 
 -- END PATCH: 019_stability_passwords_disputes_requests.sql
@@ -2578,22 +2578,22 @@ create index if not exists idx_dispute_cases_employee_status on public.dispute_c
 
 -- =========================================================
 -- 020 Full Operations Pack
--- Ù…Ù‡Ø§Ù… Ø¯Ø§Ø®Ù„ÙŠØ© + Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† + Ø£Ø±ØµØ¯Ø© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª + Ù‚Ø±Ø§Ø¡Ø§Øª Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª
--- Ø´ØºÙ‘Ù„ Ø¨Ø¹Ø¯ 019_stability_passwords_disputes_requests.sql
+-- مهام داخلية + مستندات الموظفين + أرصدة الإجازات + قراءات الإعلانات
+-- شغّل بعد 019_stability_passwords_disputes_requests.sql
 -- =========================================================
 
 create extension if not exists pgcrypto;
 
 insert into public.permissions (scope, name) values
-  ('tasks:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ù‡Ø§Ù… Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠØ©'),
-  ('documents:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†'),
-  ('leave:balance', 'Ø¥Ø¯Ø§Ø±Ø© Ø£Ø±ØµØ¯Ø© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª'),
-  ('announcements:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª ÙˆØ§Ù„Ù‚Ø±Ø§Ø¡Ø©'),
-  ('executive:report', 'Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø§Ù„Ù…Ø®ØªØµØ±'),
-  ('permissions:matrix', 'Ø¥Ø¯Ø§Ø±Ø© Ù…ØµÙÙˆÙØ© Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª'),
-  ('tasks:self', 'Ù…ØªØ§Ø¨Ø¹Ø© Ù…Ù‡Ø§Ù…ÙŠ'),
-  ('documents:self', 'Ù…ØªØ§Ø¨Ø¹Ø© Ù…Ø³ØªÙ†Ø¯Ø§ØªÙŠ'),
-  ('requests:self', 'Ù…ØªØ§Ø¨Ø¹Ø© Ø·Ù„Ø¨Ø§ØªÙŠ')
+  ('tasks:manage', 'إدارة المهام الداخلية'),
+  ('documents:manage', 'إدارة مستندات الموظفين'),
+  ('leave:balance', 'إدارة أرصدة الإجازات'),
+  ('announcements:manage', 'إدارة الإعلانات والقراءة'),
+  ('executive:report', 'التقرير التنفيذي المختصر'),
+  ('permissions:matrix', 'إدارة مصفوفة الصلاحيات'),
+  ('tasks:self', 'متابعة مهامي'),
+  ('documents:self', 'متابعة مستنداتي'),
+  ('requests:self', 'متابعة طلباتي')
 on conflict (scope) do update set name = excluded.name;
 
 update public.roles
@@ -2857,9 +2857,9 @@ for insert with check (public.is_admin() or employee_id = public.current_employe
 
 insert into public.employee_policies (id, title, category, version, body, requires_acknowledgement, status)
 values
-  ('00000000-0000-0000-0000-000000021001', 'Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù', 'ATTENDANCE', '1.0', 'Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù Ù…Ù† Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯ØŒ ÙˆØ£ÙŠ Ø¨ØµÙ…Ø© Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø·Ø§Ù‚ ØªØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©.', true, 'ACTIVE'),
-  ('00000000-0000-0000-0000-000000021002', 'Ø³ÙŠØ§Ø³Ø© Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª', 'DISPUTES', '1.0', 'ØªÙØ±ÙØ¹ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø¥Ù„Ù‰ Ø§Ù„Ù„Ø¬Ù†Ø© Ø§Ù„Ù…Ø®ØªØµØ©ØŒ ÙˆÙŠØªÙ… Ø§Ù„ØªÙ†Ø³ÙŠÙ‚ Ø£Ùˆ Ø§Ù„ØªØµØ¹ÙŠØ¯ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ø¨Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ù†Ø¯ Ø§Ù„Ø­Ø§Ø¬Ø©.', true, 'ACTIVE'),
-  ('00000000-0000-0000-0000-000000021003', 'Ø³ÙŠØ§Ø³Ø© Ø­Ù…Ø§ÙŠØ© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ±', 'SECURITY', '1.0', 'ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ© Ù„Ø§ ØªÙØ´Ø§Ø±Ùƒ Ø¥Ù„Ø§ Ù…Ø¹ ØµØ§Ø­Ø¨ Ø§Ù„Ø­Ø³Ø§Ø¨ØŒ ÙˆÙŠØ¬Ø¨ ØªØºÙŠÙŠØ±Ù‡Ø§ Ø¨Ø¹Ø¯ Ø£ÙˆÙ„ Ø¯Ø®ÙˆÙ„. Ù„Ø§ ÙŠØªÙ… ØªØ¯Ø§ÙˆÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø¸Ø§Ù….', true, 'ACTIVE')
+  ('00000000-0000-0000-0000-000000021001', 'سياسة الحضور والانصراف', 'ATTENDANCE', '1.0', 'الالتزام بتسجيل الحضور والانصراف من الموقع المعتمد، وأي بصمة خارج النطاق تحتاج مراجعة الإدارة.', true, 'ACTIVE'),
+  ('00000000-0000-0000-0000-000000021002', 'سياسة لجنة حل المشاكل والخلافات', 'DISPUTES', '1.0', 'تُرفع الشكاوى إلى اللجنة المختصة، ويتم التنسيق أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي عند الحاجة.', true, 'ACTIVE'),
+  ('00000000-0000-0000-0000-000000021003', 'سياسة حماية البيانات وكلمات المرور', 'SECURITY', '1.0', 'كلمات المرور المؤقتة لا تُشارك إلا مع صاحب الحساب، ويجب تغييرها بعد أول دخول. لا يتم تداول بيانات الموظفين خارج النظام.', true, 'ACTIVE')
 on conflict (id) do update set
   title = excluded.title,
   category = excluded.category,
@@ -3022,7 +3022,7 @@ exception when duplicate_object then null;
 end $$;
 
 insert into public.system_runbooks (title, category, steps, status)
-values ('ØªØ´ØºÙŠÙ„ Ø§Ù„Ù†Ø¸Ø§Ù… Ø£ÙˆÙ„ Ù…Ø±Ø©', 'PRODUCTION', '["ØªØ·Ø¨ÙŠÙ‚ ÙƒÙ„ SQL patches", "Ù†Ø´Ø± Edge Functions", "ØªÙØ¹ÙŠÙ„ supabase-config.js", "ØªØ´ØºÙŠÙ„ Health Check", "ØªØ¬Ø±Ø¨Ø© Ø¯Ø®ÙˆÙ„ Ù…ÙˆØ¸Ù ÙˆØ¥Ø¯Ø§Ø±Ø©"]'::jsonb, 'ACTIVE')
+values ('تشغيل النظام أول مرة', 'PRODUCTION', '["تطبيق كل SQL patches", "نشر Edge Functions", "تفعيل supabase-config.js", "تشغيل Health Check", "تجربة دخول موظف وإدارة"]'::jsonb, 'ACTIVE')
 on conflict do nothing;
 
 
@@ -3050,7 +3050,7 @@ create table if not exists public.live_location_requests (
   requested_by_user_id uuid references auth.users(id) on delete set null,
   requested_by_employee_id uuid references public.employees(id) on delete set null,
   requested_by_name text,
-  reason text not null default 'Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ø¨Ø§Ø´Ø±Ø©',
+  reason text not null default 'متابعة تنفيذية مباشرة',
   precision text not null default 'HIGH',
   status text not null default 'PENDING' check (status in ('PENDING','APPROVED','REJECTED','EXPIRED','CANCELLED')),
   expires_at timestamptz,
@@ -3109,10 +3109,10 @@ create index if not exists idx_executive_views_actor on public.executive_views(a
 -- ---------------------------------------------------------
 insert into public.permissions (scope, name)
 values
-  ('executive:mobile', 'Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ù† Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„'),
-  ('live-location:request', 'Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù'),
-  ('live-location:respond', 'Ø§Ù„Ø±Ø¯ Ø¹Ù„Ù‰ Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±'),
-  ('admin-gateway:access', 'Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù…Ù† Ø¨ÙˆØ§Ø¨Ø© Ø§Ù„ØªØ´ØºÙŠÙ„')
+  ('executive:mobile', 'المتابعة التنفيذية من الموبايل'),
+  ('live-location:request', 'طلب الموقع المباشر من الموظف'),
+  ('live-location:respond', 'الرد على طلب الموقع المباشر'),
+  ('admin-gateway:access', 'الدخول من بوابة التشغيل')
 on conflict (scope) do update set name = excluded.name;
 
 -- Give full-access roles access to the new scopes.
@@ -3123,7 +3123,7 @@ set permissions = (
 )
 where ('*' = any(coalesce(permissions, '{}'::text[])))
    or lower(coalesce(key, slug, name, '')) in ('admin','super-admin','super_admin','executive','executive-secretary','hr-manager')
-   or coalesce(name,'') in ('Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…','Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ','Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ','Ù…Ø¯ÙŠØ± Ù…ÙˆØ§Ø±Ø¯ Ø¨Ø´Ø±ÙŠØ©');
+   or coalesce(name,'') in ('مدير النظام','المدير التنفيذي','السكرتير التنفيذي','مدير موارد بشرية');
 
 -- Employee role can respond to requests that target their own employee profile.
 update public.roles
@@ -3132,7 +3132,7 @@ set permissions = (
   from unnest(coalesce(permissions, '{}'::text[]) || array['attendance:self','location:self','live-location:respond']::text[]) as p
 )
 where lower(coalesce(key, slug, name, '')) in ('employee','role-employee')
-   or coalesce(name,'') = 'Ù…ÙˆØ¸Ù';
+   or coalesce(name,'') = 'موظف';
 
 -- ---------------------------------------------------------
 -- RLS
@@ -3211,7 +3211,7 @@ create table if not exists public.sensitive_approvals (
   target_type text not null default 'system',
   target_id text,
   target_employee_id uuid references public.employees(id) on delete set null,
-  title text not null default 'Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù…Ù„ÙŠØ© Ø­Ø³Ø§Ø³Ø©',
+  title text not null default 'طلب اعتماد عملية حساسة',
   summary text,
   payload jsonb not null default '{}'::jsonb,
   status text not null default 'PENDING' check (status in ('PENDING','APPROVED','REJECTED','EXECUTED','CANCELLED')),
@@ -3321,9 +3321,9 @@ exception when duplicate_object then null; end $$;
 insert into public.permissions (scope, name)
 select scope, name
 from (values
-  ('sensitive-actions:approve', 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ø­Ø³Ø§Ø³Ø©'),
-  ('sensitive-actions:request', 'Ø·Ù„Ø¨ ØªÙ†ÙÙŠØ° Ø¹Ù…Ù„ÙŠØ© Ø­Ø³Ø§Ø³Ø©'),
-  ('executive:presence-map', 'Ø¹Ø±Ø¶ Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©')
+  ('sensitive-actions:approve', 'اعتماد العمليات الحساسة'),
+  ('sensitive-actions:request', 'طلب تنفيذ عملية حساسة'),
+  ('executive:presence-map', 'عرض خريطة الحضور التنفيذية')
 ) as v(scope, name)
 where exists (select 1 from information_schema.tables where table_schema='public' and table_name='permissions')
 on conflict (scope) do nothing;
@@ -3394,15 +3394,15 @@ alter table public.attendance_events add column if not exists reviewed_at timest
 
 insert into public.permissions (scope, name)
 values
-  ('attendance:rules', 'Ø¥Ø¯Ø§Ø±Ø© Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠØ©'),
-  ('attendance:smart', 'ØªØ´ØºÙŠÙ„ ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠ'),
-  ('employee:archive', 'Ø¹Ø±Ø¶ Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„ÙƒØ§Ù…Ù„'),
-  ('manager:suite', 'Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ù…ØªÙ‚Ø¯Ù…Ø©'),
-  ('kpi:monthly', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø´Ù‡Ø±ÙŠ'),
-  ('supabase:diagnostics', 'ÙØ­Øµ Ø¥Ø¹Ø¯Ø§Ø¯ Supabase'),
-  ('database:migrations', 'Ù…ØªØ§Ø¨Ø¹Ø© ØªØ­Ø¯ÙŠØ«Ø§Øª Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª'),
-  ('backup:auto', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù†Ø³Ø® Ø§Ù„Ø§Ø­ØªÙŠØ§Ø·ÙŠ Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ'),
-  ('action-center:self', 'ØµÙØ­Ø© Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†ÙŠ Ø§Ù„Ø¢Ù† Ù„Ù„Ù…ÙˆØ¸Ù')
+  ('attendance:rules', 'إدارة قواعد الحضور الذكية'),
+  ('attendance:smart', 'تشغيل تحليل الحضور الذكي'),
+  ('employee:archive', 'عرض أرشيف الموظف الكامل'),
+  ('manager:suite', 'لوحة المدير المباشر المتقدمة'),
+  ('kpi:monthly', 'إدارة التقييم الشهري'),
+  ('supabase:diagnostics', 'فحص إعداد Supabase'),
+  ('database:migrations', 'متابعة تحديثات قاعدة البيانات'),
+  ('backup:auto', 'إدارة النسخ الاحتياطي التلقائي'),
+  ('action-center:self', 'صفحة مطلوب مني الآن للموظف')
 on conflict (scope) do nothing;
 
 create or replace function public.has_any_permission(scopes text[])
@@ -3446,19 +3446,19 @@ create policy "database_migration_status_admin" on public.database_migration_sta
 -- =========================================================
 
 -- =========================================================
--- 026 - Ø¥ØµÙ„Ø§Ø­ Ø§Ù„Ø¯ÙˆØ§Ù„ Ø§Ù„Ù…ÙÙ‚ÙˆØ¯Ø© Ø§Ù„Ø­Ø±Ø¬Ø©
--- ÙŠØµÙ„Ø­ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ Ø§Ù„ØªØ§Ù„ÙŠØ©:
---   1. Ø¥Ø¶Ø§ÙØ© has_any_permission() Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…Ø© ÙÙŠ patch 025 ÙˆÙ„Ù… ØªÙƒÙ† Ù…ÙˆØ¬ÙˆØ¯Ø©.
---   2. Ø¥Ø¶Ø§ÙØ© resolve_login_identifier() Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…Ø© ÙÙŠ Edge Function.
---   3. Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹Ø±ÙŠÙ policies Ø§Ù„Ù€ 4 ÙÙŠ patch 025 Ø¨Ø·Ø±ÙŠÙ‚Ø© ØµØ­ÙŠØ­Ø©.
---   4. Ø¥Ø¶Ø§ÙØ© Ø¯ÙˆØ§Ù„ Ù…Ø³Ø§Ø¹Ø¯Ø© Ø¥Ø¶Ø§ÙÙŠØ© Ù„Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ø£Ø¯ÙˆØ§Ø±.
---   5. Ø¥Ø¶Ø§ÙØ© smart_alerts table (Ù…Ø°ÙƒÙˆØ±Ø© ÙÙŠ supabase-api.js Ù„ÙƒÙ† ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙŠ schema).
--- Ø¢Ù…Ù† Ù„Ù„ØªØ´ØºÙŠÙ„ Ø¹Ù„Ù‰ Ù‚Ø§Ø¹Ø¯Ø© Ø¨ÙŠØ§Ù†Ø§Øª ÙŠØ¹Ù…Ù„ Ø¹Ù„ÙŠÙ‡Ø§ 001-025.
+-- 026 - إصلاح الدوال المفقودة الحرجة
+-- يصلح المشاكل التالية:
+--   1. إضافة has_any_permission() المستخدمة في patch 025 ولم تكن موجودة.
+--   2. إضافة resolve_login_identifier() المستخدمة في Edge Function.
+--   3. إعادة تعريف policies الـ 4 في patch 025 بطريقة صحيحة.
+--   4. إضافة دوال مساعدة إضافية للتحقق من الأدوار.
+--   5. إضافة smart_alerts table (مذكورة في supabase-api.js لكن غير موجودة في schema).
+-- آمن للتشغيل على قاعدة بيانات يعمل عليها 001-025.
 -- =========================================================
 
 -- =========================
 -- 1) has_any_permission(scopes text[])
--- ØªØªØ­Ù‚Ù‚ Ø¥Ø°Ø§ ÙƒØ§Ù† Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… Ù„Ø¯ÙŠÙ‡ Ø£ÙŠ Ù…Ù† Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ù…Ø¹Ø·Ø§Ø©.
+-- تتحقق إذا كان المستخدم لديه أي من الصلاحيات المعطاة.
 -- =========================
 create or replace function public.has_any_permission(scopes text[])
 returns boolean
@@ -3477,9 +3477,9 @@ $$;
 
 -- =========================
 -- 2) resolve_login_identifier(login_identifier text)
--- ØªÙØ±Ø¬Ø¹ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù„Ù…ÙˆØ¸Ù Ø¹Ø¨Ø± Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ø£Ùˆ Ø§Ù„Ø¨Ø±ÙŠØ¯ Ù…Ø¨Ø§Ø´Ø±Ø©Ù‹.
--- ØªÙØ³ØªØ®Ø¯Ù… Ù…Ù† Edge Function resolve-login-identifier.
--- Ù…Ù‚ÙŠÙ‘Ø¯Ø© Ø¨Ù€ authenticated Ùˆ service_role ÙÙ‚Ø· (Ø±Ø§Ø¬Ø¹ patch 015).
+-- تُرجع البريد الإلكتروني لموظف عبر رقم الهاتف أو البريد مباشرةً.
+-- تُستخدم من Edge Function resolve-login-identifier.
+-- مقيّدة بـ authenticated و service_role فقط (راجع patch 015).
 -- =========================
 create or replace function public.resolve_login_identifier(login_identifier text)
 returns text
@@ -3492,13 +3492,13 @@ declare
   resolved_email text;
   normalized_phone text;
 begin
-  -- ØªØ·Ø¨ÙŠØ¹ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ø§Ù„Ù…ØµØ±ÙŠ
+  -- تطبيع رقم الهاتف المصري
   normalized_phone := regexp_replace(login_identifier, '[^0-9]', '', 'g');
   if length(normalized_phone) = 10 and left(normalized_phone, 1) = '1' then
     normalized_phone := '0' || normalized_phone;
   end if;
 
-  -- 1) Ø¨Ø­Ø« ÙÙŠ Ø¬Ø¯ÙˆÙ„ employees
+  -- 1) بحث في جدول employees
   select e.email into resolved_email
   from public.employees e
   where
@@ -3514,7 +3514,7 @@ begin
     return lower(trim(resolved_email));
   end if;
 
-  -- 2) Ø¨Ø­Ø« ÙÙŠ Ø¬Ø¯ÙˆÙ„ profiles
+  -- 2) بحث في جدول profiles
   select p.email into resolved_email
   from public.profiles p
   where
@@ -3527,7 +3527,7 @@ begin
 end;
 $$;
 
--- ØªÙ‚ÙŠÙŠØ¯ Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù€ resolve_login_identifier ÙƒÙ…Ø§ ÙÙŠ patch 015
+-- تقييد الوصول لـ resolve_login_identifier كما في patch 015
 revoke all on function public.resolve_login_identifier(text) from public;
 revoke execute on function public.resolve_login_identifier(text) from anon;
 grant execute on function public.resolve_login_identifier(text) to authenticated;
@@ -3535,7 +3535,7 @@ grant execute on function public.resolve_login_identifier(text) to service_role;
 
 -- =========================
 -- 3) smart_alerts table
--- Ù…Ø°ÙƒÙˆØ±Ø© ÙÙŠ supabase-api.js (maybeTableRows("smart_alerts")) Ù„ÙƒÙ† ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙŠ 001.
+-- مذكورة في supabase-api.js (maybeTableRows("smart_alerts")) لكن غير موجودة في 001.
 -- =========================
 create table if not exists public.smart_alerts (
   id uuid primary key default gen_random_uuid(),
@@ -3563,7 +3563,7 @@ create policy "smart_alerts_admin" on public.smart_alerts
 
 -- =========================
 -- 4) daily_reports table
--- Ù…Ø°ÙƒÙˆØ±Ø© ÙÙŠ supabase-api.js Ù„ÙƒÙ† ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙŠ 001.
+-- مذكورة في supabase-api.js لكن غير موجودة في 001.
 -- =========================
 create table if not exists public.daily_reports (
   id uuid primary key default gen_random_uuid(),
@@ -3607,13 +3607,13 @@ create policy "daily_reports_self_write" on public.daily_reports
     or employee_id = public.current_employee_id()
   );
 
--- audit trigger Ø¹Ù„Ù‰ daily_reports
+-- audit trigger على daily_reports
 drop trigger if exists audit_row_change_daily_reports on public.daily_reports;
 create trigger audit_row_change_daily_reports
   after insert or update or delete on public.daily_reports
   for each row execute function public.audit_row_change();
 
--- updated_at trigger Ø¹Ù„Ù‰ daily_reports
+-- updated_at trigger على daily_reports
 drop trigger if exists set_updated_at_daily_reports on public.daily_reports;
 create trigger set_updated_at_daily_reports
   before update on public.daily_reports
@@ -3621,7 +3621,7 @@ create trigger set_updated_at_daily_reports
 
 -- =========================
 -- 5) import_batches table
--- Ù…Ø°ÙƒÙˆØ±Ø© ÙÙŠ supabase-api.js (maybeTableRows("import_batches"))
+-- مذكورة في supabase-api.js (maybeTableRows("import_batches"))
 -- =========================
 create table if not exists public.import_batches (
   id uuid primary key default gen_random_uuid(),
@@ -3646,7 +3646,7 @@ create policy "import_batches_admin" on public.import_batches
 
 -- =========================
 -- 6) system_backups table
--- Ù…Ø°ÙƒÙˆØ±Ø© ÙÙŠ supabase-api.js (maybeTableRows("system_backups"))
+-- مذكورة في supabase-api.js (maybeTableRows("system_backups"))
 -- =========================
 create table if not exists public.system_backups (
   id uuid primary key default gen_random_uuid(),
@@ -3668,8 +3668,8 @@ create policy "system_backups_admin" on public.system_backups
   with check (public.has_any_permission(array['backup:auto','settings:manage']));
 
 -- =========================
--- 7) Ø¥ØµÙ„Ø§Ø­ policies patch 025 Ø§Ù„ØªÙŠ Ø§Ø³ØªØ®Ø¯Ù…Øª has_any_permission Ù‚Ø¨Ù„ ØªØ¹Ø±ÙŠÙÙ‡Ø§
--- Ù†Ø¹ÙŠØ¯ Ø¥Ù†Ø´Ø§Ø¡Ù‡Ø§ Ø¨Ø´ÙƒÙ„ Ø¢Ù…Ù† Ø§Ù„Ø¢Ù†
+-- 7) إصلاح policies patch 025 التي استخدمت has_any_permission قبل تعريفها
+-- نعيد إنشاءها بشكل آمن الآن
 -- =========================
 drop policy if exists "attendance_rule_runs_admin" on public.attendance_rule_runs;
 create policy "attendance_rule_runs_admin" on public.attendance_rule_runs
@@ -3696,26 +3696,26 @@ create policy "database_migration_status_admin" on public.database_migration_sta
   with check (public.has_any_permission(array['database:migrations','settings:manage']));
 
 -- =========================
--- 8) Ø¥Ø¶Ø§ÙØ© permissions seed Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ø¬Ø¯Ø§ÙˆÙ„ Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø©
+-- 8) إضافة permissions seed الجديدة للجداول الجديدة
 -- =========================
 insert into public.permissions (scope, name) values
-  ('control-room:view',   'ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ… ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©'),
-  ('data-center:manage',  'Ø¥Ø¯Ø§Ø±Ø© Ù…Ø±ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆØ§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯'),
-  ('daily-report:self',   'Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ'),
-  ('daily-report:review', 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©')
+  ('control-room:view',   'غرفة التحكم والتنبيهات الذكية'),
+  ('data-center:manage',  'إدارة مركز البيانات والاستيراد'),
+  ('daily-report:self',   'إرسال التقرير اليومي'),
+  ('daily-report:review', 'مراجعة التقارير اليومية')
 on conflict (scope) do update set name = excluded.name;
 
--- ØªØ³Ø¬ÙŠÙ„ Ù‡Ø°Ø§ Ø§Ù„Ù€ patch ÙÙŠ migration_status
+-- تسجيل هذا الـ patch في migration_status
 insert into public.database_migration_status (id, name, status, notes)
 values (
   gen_random_uuid()::text,
   '026_missing_functions_fix.sql',
   'APPLIED',
-  'Ø£Ø¶Ø§Ù has_any_permission, resolve_login_identifier, smart_alerts, daily_reports, import_batches, system_backups'
+  'أضاف has_any_permission, resolve_login_identifier, smart_alerts, daily_reports, import_batches, system_backups'
 )
 on conflict (name) do update set status = 'APPLIED', applied_at = now();
 
--- Ù†Ù‡Ø§ÙŠØ© patch 026
+-- نهاية patch 026
 
 
 -- END PATCH: 026_missing_functions_fix.sql
@@ -3743,12 +3743,12 @@ alter table if exists public.departments
 -- Required roles and permissions.
 insert into public.roles (slug, key, name, permissions, active)
 values
-  ('admin', 'ADMIN', 'Ù…Ø¯ÙŠØ± Ø§Ù„Ù†Ø¸Ø§Ù…', array['*']::text[], true),
-  ('executive', 'EXECUTIVE', 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', array['*']::text[], true),
-  ('executive-secretary', 'EXECUTIVE_SECRETARY', 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', array['*']::text[], true),
-  ('hr-manager', 'HR_MANAGER', 'Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©', array['*']::text[], true),
-  ('manager', 'DIRECT_MANAGER', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', array['dashboard:view','employees:view','attendance:manage','requests:approve','kpi:team','reports:export','realtime:view','attendance:review']::text[], true),
-  ('employee', 'EMPLOYEE', 'Ù…ÙˆØ¸Ù', array['dashboard:view','attendance:self','kpi:self','disputes:create','location:self','requests:self','tasks:self']::text[], true)
+  ('admin', 'ADMIN', 'مدير النظام', array['*']::text[], true),
+  ('executive', 'EXECUTIVE', 'المدير التنفيذي', array['*']::text[], true),
+  ('executive-secretary', 'EXECUTIVE_SECRETARY', 'السكرتير التنفيذي', array['*']::text[], true),
+  ('hr-manager', 'HR_MANAGER', 'الموارد البشرية', array['*']::text[], true),
+  ('manager', 'DIRECT_MANAGER', 'مدير مباشر', array['dashboard:view','employees:view','attendance:manage','requests:approve','kpi:team','reports:export','realtime:view','attendance:review']::text[], true),
+  ('employee', 'EMPLOYEE', 'موظف', array['dashboard:view','attendance:self','kpi:self','disputes:create','location:self','requests:self','tasks:self']::text[], true)
 on conflict (slug) do update set
   key = excluded.key,
   name = excluded.name,
@@ -3760,10 +3760,10 @@ on conflict (slug) do update set
 insert into public.departments (code, name, branch_id, active)
 select d.code, d.name, b.id, true
 from (values
-  ('EXEC', 'Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©'),
-  ('MGT', 'Ø§Ù„Ø¥Ø´Ø±Ø§Ù ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙˆÙ† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†'),
-  ('OPS', 'ÙØ±Ù‚ Ø§Ù„ØªØ´ØºÙŠÙ„ ÙˆØ§Ù„Ø®Ø¯Ù…Ø§Øª'),
-  ('HR', 'Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©')
+  ('EXEC', 'الإدارة التنفيذية'),
+  ('MGT', 'الإشراف والمديرون المباشرون'),
+  ('OPS', 'فرق التشغيل والخدمات'),
+  ('HR', 'الموارد البشرية')
 ) as d(code, name)
 cross join lateral (select id from public.branches order by created_at nulls last, id limit 1) b
 on conflict (code) do update set
@@ -3788,29 +3788,29 @@ truncate tmp_ahla_roster_027;
 
 insert into tmp_ahla_roster_027 (employee_code, full_name, phone, email, job_title, role_slug, department_code, manager_code, hire_date)
 values
-  ('EMP-001', 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'PHONE_PLACEHOLDER_021', 'executive.director@organization.local', 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'executive', 'EXEC', null, '2020-01-01'),
-  ('EMP-002', 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'PHONE_PLACEHOLDER_022', 'executive.secretary@organization.local', 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
-  ('EMP-003', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø±Ø§Ø¨Ø¹', 'PHONE_PLACEHOLDER_023', 'ahmed.mahgoob@ahla.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-004', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø£ÙˆÙ„', 'PHONE_PLACEHOLDER_024', 'direct.manager.01@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-005', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù†Ù', 'PHONE_PLACEHOLDER_025', 'direct.manager.02@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-006', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«', 'PHONE_PLACEHOLDER_026', 'direct.manager.03@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-007', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 01', 'PHONE_PLACEHOLDER_027', 'direct.manager.05@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-008', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'PHONE_PLACEHOLDER_028', 'direct.manager.06@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-009', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 14', 'PHONE_PLACEHOLDER_029', 'direct.manager.07@organization.local', 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
-  ('EMP-010', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 07', 'PHONE_PLACEHOLDER_030', 'employee.006@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-011', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 08', 'PHONE_PLACEHOLDER_031', 'employee.007@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
-  ('EMP-012', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 04', 'PHONE_PLACEHOLDER_032', 'direct.manager.08@organization.local', 'Ù…Ø´Ø±Ù Ù…Ø¨Ø§Ø´Ø±', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
-  ('EMP-013', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 05', 'PHONE_PLACEHOLDER_033', 'employee.005@organization.local', 'Ù…ÙˆØ¸Ù ØªØ­Øª Ø¥Ø´Ø±Ø§Ù Ù…Ø¨Ø§Ø´Ø±', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
-  ('EMP-014', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 13', 'PHONE_PLACEHOLDER_034', 'abdullah.hussein@ahla.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø±Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-015', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 06', 'PHONE_PLACEHOLDER_035', 'employee.006@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø±Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
-  ('EMP-016', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 16', 'PHONE_PLACEHOLDER_036', 'employee.016@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø³Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-017', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 10', 'PHONE_PLACEHOLDER_037', 'employee.010@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø³Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-018', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 15', 'PHONE_PLACEHOLDER_038', 'employee.015@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø³Ø§Ø¨Ø¹', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
-  ('EMP-019', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 17', 'PHONE_PLACEHOLDER_039', 'employee.017@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø£ÙˆÙ„', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
-  ('EMP-020', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 11', 'PHONE_PLACEHOLDER_040', 'employee.011@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-021', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 12', 'PHONE_PLACEHOLDER_041', 'employee.012@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-022', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 03', 'PHONE_PLACEHOLDER_042', 'employee.003@organization.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
-  ('EMP-023', 'Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 09', 'PHONE_PLACEHOLDER_043', 'tarek.ibrahim@ahla.local', 'Ù…ÙˆØ¸Ù ÙØ±ÙŠÙ‚ Ù…ÙˆØ¸Ù ØªØ´ØºÙŠÙ„ÙŠ 18', 'employee', 'OPS', 'EMP-008', '2022-01-01');
+  ('EMP-001', 'المدير التنفيذي', 'PHONE_PLACEHOLDER_021', 'executive.director@organization.local', 'المدير التنفيذي', 'executive', 'EXEC', null, '2020-01-01'),
+  ('EMP-002', 'السكرتير التنفيذي', 'PHONE_PLACEHOLDER_022', 'executive.secretary@organization.local', 'السكرتير التنفيذي', 'executive-secretary', 'EXEC', 'EMP-001', '2021-01-01'),
+  ('EMP-003', 'مدير مباشر رابع', 'PHONE_PLACEHOLDER_023', 'ahmed.mahgoob@ahla.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-004', 'مدير مباشر أول', 'PHONE_PLACEHOLDER_024', 'direct.manager.01@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-005', 'مدير مباشر ثانٍ', 'PHONE_PLACEHOLDER_025', 'direct.manager.02@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-006', 'مدير مباشر ثالث', 'PHONE_PLACEHOLDER_026', 'direct.manager.03@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-007', 'موظف تشغيلي 01', 'PHONE_PLACEHOLDER_027', 'direct.manager.05@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-008', 'موظف تشغيلي 18', 'PHONE_PLACEHOLDER_028', 'direct.manager.06@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-009', 'موظف تشغيلي 14', 'PHONE_PLACEHOLDER_029', 'direct.manager.07@organization.local', 'مدير مباشر', 'manager', 'MGT', 'EMP-001', '2021-02-01'),
+  ('EMP-010', 'موظف تشغيلي 07', 'PHONE_PLACEHOLDER_030', 'employee.006@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-011', 'موظف تشغيلي 08', 'PHONE_PLACEHOLDER_031', 'employee.007@organization.local', 'موظف فريق مدير مباشر ثالث', 'employee', 'OPS', 'EMP-006', '2022-01-01'),
+  ('EMP-012', 'موظف تشغيلي 04', 'PHONE_PLACEHOLDER_032', 'direct.manager.08@organization.local', 'مشرف مباشر', 'manager', 'MGT', 'EMP-006', '2022-01-01'),
+  ('EMP-013', 'موظف تشغيلي 05', 'PHONE_PLACEHOLDER_033', 'employee.005@organization.local', 'موظف تحت إشراف مباشر', 'employee', 'OPS', 'EMP-012', '2022-01-01'),
+  ('EMP-014', 'موظف تشغيلي 13', 'PHONE_PLACEHOLDER_034', 'abdullah.hussein@ahla.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-015', 'موظف تشغيلي 06', 'PHONE_PLACEHOLDER_035', 'employee.006@organization.local', 'موظف فريق مدير مباشر رابع', 'employee', 'OPS', 'EMP-003', '2022-01-01'),
+  ('EMP-016', 'موظف تشغيلي 16', 'PHONE_PLACEHOLDER_036', 'employee.016@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-017', 'موظف تشغيلي 10', 'PHONE_PLACEHOLDER_037', 'employee.010@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-018', 'موظف تشغيلي 15', 'PHONE_PLACEHOLDER_038', 'employee.015@organization.local', 'موظف فريق المدير المباشر السابع', 'employee', 'OPS', 'EMP-009', '2022-01-01'),
+  ('EMP-019', 'موظف تشغيلي 17', 'PHONE_PLACEHOLDER_039', 'employee.017@organization.local', 'موظف فريق المدير المباشر الأول', 'employee', 'OPS', 'EMP-004', '2022-01-01'),
+  ('EMP-020', 'موظف تشغيلي 11', 'PHONE_PLACEHOLDER_040', 'employee.011@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-021', 'موظف تشغيلي 12', 'PHONE_PLACEHOLDER_041', 'employee.012@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-022', 'موظف تشغيلي 03', 'PHONE_PLACEHOLDER_042', 'employee.003@organization.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01'),
+  ('EMP-023', 'موظف تشغيلي 09', 'PHONE_PLACEHOLDER_043', 'tarek.ibrahim@ahla.local', 'موظف فريق موظف تشغيلي 18', 'employee', 'OPS', 'EMP-008', '2022-01-01');
 
 -- Upsert the canonical roster.
 insert into public.employees (
@@ -3880,7 +3880,7 @@ where e.full_name = r.full_name
 update public.profiles p
 set employee_id = emp.id,
     role_id = role.id,
-    full_name = 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ',
+    full_name = 'السكرتير التنفيذي',
     phone = coalesce(p.phone, emp.phone),
     branch_id = emp.branch_id,
     department_id = emp.department_id,
@@ -4043,9 +4043,9 @@ where e.id not in (select id from canonical)
     e.employee_code in ('EMP-192404E9','EMP-F9889BBE')
     or
     lower(coalesce(e.email, '')) in ('legacy.secretary.01@removed.local','legacy.secretary.02@removed.local')
-    or e.full_name in ('Ø§Ø³Ù… ØªÙ†ÙÙŠØ°ÙŠ Ù‚Ø¯ÙŠÙ…','Ø§Ø³Ù… Ø³ÙƒØ±ØªØ§Ø±ÙŠØ© Ù‚Ø¯ÙŠÙ…')
-    or (e.full_name like '%Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¬Ù…Ø§Ù„%' and e.employee_code <> 'EMP-002')
-    or (e.full_name like '%Ø§Ø³Ù… ØªÙ†ÙÙŠØ°ÙŠ Ù‚Ø¯ÙŠÙ…%' and e.employee_code <> 'EMP-001')
+    or e.full_name in ('اسم تنفيذي قديم','اسم سكرتارية قديم')
+    or (e.full_name like '%السكرتير التنفيذي جمال%' and e.employee_code <> 'EMP-002')
+    or (e.full_name like '%اسم تنفيذي قديم%' and e.employee_code <> 'EMP-001')
   );
 
 with root as (
@@ -4337,7 +4337,7 @@ set permissions = array[
     'control-room:view',
     'daily-report:review'
   ]::text[],
-  description = coalesce(nullif(description, ''), 'Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© ÙˆÙ‚Ø±Ø§Ø±Ø§Øª Ø­Ø³Ø§Ø³Ø© Ø¨Ø¯ÙˆÙ† Ø£Ø¯ÙˆØ§Øª Ø§Ù„Ø£Ø¯Ù…Ù† Ø§Ù„ØªÙ‚Ù†ÙŠØ©'),
+  description = coalesce(nullif(description, ''), 'متابعة تنفيذية وقرارات حساسة بدون أدوات الأدمن التقنية'),
   updated_at = now()
 where slug = 'executive' or key = 'EXECUTIVE';
 
@@ -4354,7 +4354,7 @@ set permissions = array[
     'daily-report:review',
     'alerts:manage'
   ]::text[],
-  description = coalesce(nullif(description, ''), 'Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© ÙˆØªØ¬Ù‡ÙŠØ² ØªÙ‚Ø§Ø±ÙŠØ± ÙˆØ·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ø¨Ø¯ÙˆÙ† Ø­Ø°Ù Ø£Ùˆ Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ØªÙ‚Ù†ÙŠØ©'),
+  description = coalesce(nullif(description, ''), 'متابعة تنفيذية وتجهيز تقارير وطلب موقع بدون حذف أو إعدادات تقنية'),
   updated_at = now()
 where slug = 'executive-secretary' or key = 'EXECUTIVE_SECRETARY';
 
@@ -4494,16 +4494,16 @@ end $$;
 -- =========================================================
 
 insert into public.permissions (scope, name) values
-('executive:report','ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ'),
-('executive:mobile','Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ© Ø§Ù„Ù…Ø®ØªØµØ±Ø©'),
-('executive:presence-map','Ø®Ø±ÙŠØ·Ø© Ø§Ù„ØªÙˆØ§Ø¬Ø¯ Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©'),
-('live-location:request','Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø± Ù…Ù† Ù…ÙˆØ¸Ù'),
-('sensitive-actions:approve','Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¥Ø¬Ø±Ø§Ø¡Ø§Øª Ø­Ø³Ø§Ø³Ø©'),
-('sensitive-actions:request','Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¥Ø¬Ø±Ø§Ø¡ Ø­Ø³Ø§Ø³'),
-('approvals:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯Ø§Øª'),
-('alerts:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª'),
-('control-room:view','Ø¹Ø±Ø¶ ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ…'),
-('daily-report:review','Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©')
+('executive:report','تقارير المدير التنفيذي'),
+('executive:mobile','المتابعة التنفيذية المختصرة'),
+('executive:presence-map','خريطة التواجد التنفيذية'),
+('live-location:request','طلب موقع مباشر من موظف'),
+('sensitive-actions:approve','اعتماد إجراءات حساسة'),
+('sensitive-actions:request','طلب اعتماد إجراء حساس'),
+('approvals:manage','إدارة الاعتمادات'),
+('alerts:manage','إدارة التنبيهات'),
+('control-room:view','عرض غرفة التحكم'),
+('daily-report:review','مراجعة التقارير اليومية')
 on conflict (scope) do update set name = excluded.name;
 
 update public.roles
@@ -4611,10 +4611,10 @@ end $$;
 -- =========================================================
 
 insert into public.permissions(scope, name, description) values
-  ('executive:mobile', 'Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ© Ø§Ù„Ù…Ø®ØªØµØ±Ø©', 'ÙØªØ­ Ø´Ø§Ø´Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø§Ù„Ù…Ø®ØªØµØ±Ø© ÙÙ‚Ø·'),
-  ('live-location:request', 'Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±', 'Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø± Ù„Ù„Ù…ÙˆØ¸Ù'),
-  ('users:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†', 'Ø¥Ù†Ø´Ø§Ø¡ ÙˆØªØ¹Ø¯ÙŠÙ„ Ø­Ø³Ø§Ø¨Ø§Øª Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ†'),
-  ('settings:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù†Ø¸Ø§Ù…', 'ØªØ¹Ø¯ÙŠÙ„ Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª Ø§Ù„Ù†Ø¸Ø§Ù… Ø§Ù„ØªÙ‚Ù†ÙŠØ©')
+  ('executive:mobile', 'المتابعة التنفيذية المختصرة', 'فتح شاشة المدير التنفيذي المختصرة فقط'),
+  ('live-location:request', 'طلب الموقع المباشر', 'إرسال طلب موقع مباشر للموظف'),
+  ('users:manage', 'إدارة المستخدمين', 'إنشاء وتعديل حسابات المستخدمين'),
+  ('settings:manage', 'إدارة إعدادات النظام', 'تعديل إعدادات النظام التقنية')
 on conflict (scope) do update set
   name = excluded.name,
   description = excluded.description;
@@ -4783,12 +4783,12 @@ set permissions = array_remove(coalesce(permissions, array[]::text[]), 'demo:man
 where 'demo:manage' = any(coalesce(permissions, array[]::text[]));
 
 -- 2) Keep seed names generic in packaged SQL/demo data.
-update public.employees set full_name = 'Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', email = 'executive.director@organization.local' where employee_code = 'EMP-001';
-update public.employees set full_name = 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', email = 'executive.secretary@organization.local' where employee_code = 'EMP-002';
-update public.employees set full_name = 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø±Ø§Ø¨Ø¹', email = 'direct.manager.04@organization.local' where employee_code = 'EMP-003';
-update public.employees set full_name = 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø£ÙˆÙ„', email = 'direct.manager.01@organization.local' where employee_code = 'EMP-004';
-update public.employees set full_name = 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù†Ù', email = 'direct.manager.02@organization.local' where employee_code = 'EMP-005';
-update public.employees set full_name = 'Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø± Ø«Ø§Ù„Ø«', email = 'direct.manager.03@organization.local' where employee_code = 'EMP-006';
+update public.employees set full_name = 'المدير التنفيذي', email = 'executive.director@organization.local' where employee_code = 'EMP-001';
+update public.employees set full_name = 'السكرتير التنفيذي', email = 'executive.secretary@organization.local' where employee_code = 'EMP-002';
+update public.employees set full_name = 'مدير مباشر رابع', email = 'direct.manager.04@organization.local' where employee_code = 'EMP-003';
+update public.employees set full_name = 'مدير مباشر أول', email = 'direct.manager.01@organization.local' where employee_code = 'EMP-004';
+update public.employees set full_name = 'مدير مباشر ثانٍ', email = 'direct.manager.02@organization.local' where employee_code = 'EMP-005';
+update public.employees set full_name = 'مدير مباشر ثالث', email = 'direct.manager.03@organization.local' where employee_code = 'EMP-006';
 
 -- 3) Real Web Push readiness. The Edge Function that sends notifications
 -- must use VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY / VAPID_SUBJECT secrets.
@@ -4883,22 +4883,22 @@ end $$;
 -- 1) Permission catalog additions.
 insert into public.permissions (scope, name)
 values
-  ('manager:team', 'Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙÙ‚Ø·'),
-  ('kpi:hr', 'Ø¥Ø¯Ø®Ø§Ù„ ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©'),
-  ('kpi:final-approve', 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù†ØªÙŠØ¬Ø© Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠØ© Ù„Ù„ØªÙ‚ÙŠÙŠÙ…'),
-  ('kpi:executive', 'Ø¹Ø±Ø¶ ÙˆØ§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©'),
-  ('disputes:committee', 'Ø¹Ø¶ÙˆÙŠØ© Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª'),
-  ('notifications:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©'),
-  ('live-location:respond', 'Ø§Ù„Ø±Ø¯ Ø¹Ù„Ù‰ Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±'),
-  ('employee:self-register', 'ØªØ³Ø¬ÙŠÙ„ Ù…ÙˆØ¸Ù Ø°Ø§ØªÙŠÙ‹Ø§')
+  ('manager:team', 'متابعة الفريق المباشر فقط'),
+  ('kpi:hr', 'إدخال تقييم الموارد البشرية'),
+  ('kpi:final-approve', 'اعتماد النتيجة النهائية للتقييم'),
+  ('kpi:executive', 'عرض واعتماد التقييمات التنفيذية'),
+  ('disputes:committee', 'عضوية لجنة حل المشاكل والخلافات'),
+  ('notifications:manage', 'إدارة إشعارات الموارد البشرية'),
+  ('live-location:respond', 'الرد على طلب الموقع المباشر'),
+  ('employee:self-register', 'تسجيل موظف ذاتيًا')
 on conflict (scope) do update set name = excluded.name;
 
 alter table if exists public.roles add column if not exists description text;
 -- 2) Role permission alignment.
 update public.roles
 set permissions = array['*']::text[],
-    name = 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙˆØ§Ù„ØªÙ‚Ù†ÙŠ',
-    description = 'ØµÙ„Ø§Ø­ÙŠØ§Øª ÙƒØ§Ù…Ù„Ø© Ø¹Ù„Ù‰ Ø§Ù„Ù†Ø¸Ø§Ù… Ù…Ø¹ Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© ÙˆØªÙ‚Ù†ÙŠØ©'
+    name = 'السكرتير التنفيذي والتقني',
+    description = 'صلاحيات كاملة على النظام مع متابعة تنفيذية وتقنية'
 where slug in ('executive-secretary') or key = 'EXECUTIVE_SECRETARY';
 
 update public.roles
@@ -4909,7 +4909,7 @@ set permissions = array[
   'kpi:hr', 'kpi:monthly', 'kpi:manage', 'daily-report:review',
   'disputes:committee', 'disputes:manage', 'notifications:manage', 'policies:self'
 ]::text[],
-    description = 'ØµÙ„Ø§Ø­ÙŠØ§Øª Ù…ÙˆØ§Ø±Ø¯ Ø¨Ø´Ø±ÙŠØ© ÙÙ‚Ø· Ø¨Ø¯ÙˆÙ† Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ØªÙ‚Ù†ÙŠØ© Ø£Ùˆ Supabase Ø£Ùˆ Backup'
+    description = 'صلاحيات موارد بشرية فقط بدون إعدادات تقنية أو Supabase أو Backup'
 where slug in ('hr-manager') or key = 'HR_MANAGER';
 
 update public.roles
@@ -4918,7 +4918,7 @@ set permissions = array[
   'attendance:manage', 'requests:approve', 'reports:export', 'kpi:team',
   'daily-report:review', 'disputes:manage', 'realtime:view'
 ]::text[],
-    description = 'ÙŠØ±Ù‰ ÙØ±ÙŠÙ‚Ù‡ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙÙ‚Ø· ÙˆÙŠØ¹ØªÙ…Ø¯ ØªÙ‚ÙŠÙŠÙ…Ø§ØªÙ‡Ù…'
+    description = 'يرى فريقه المباشر فقط ويعتمد تقييماتهم'
 where slug in ('manager', 'direct-manager') or key in ('MANAGER', 'DIRECT_MANAGER');
 
 update public.roles
@@ -4959,7 +4959,7 @@ begin
 
   if hr_role_id is not null and not exists (select 1 from public.employees where email = 'hr.manager@organization.local') then
     insert into public.employees (full_name, employee_code, phone, email, job_title, role_id, branch_id, department_id, governorate_id, complex_id, manager_employee_id, status, hire_date)
-    values ('Ù…Ø¯ÙŠØ± Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©', 'EMP-HR', 'PHONE_PLACEHOLDER_044', 'hr.manager@organization.local', 'Ù…Ø¯ÙŠØ± Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©', hr_role_id, branch_id, dept_id, gov_id, complex_id, secretary_employee_id, 'ACTIVE', current_date);
+    values ('مدير الموارد البشرية', 'EMP-HR', 'PHONE_PLACEHOLDER_044', 'hr.manager@organization.local', 'مدير الموارد البشرية', hr_role_id, branch_id, dept_id, gov_id, complex_id, secretary_employee_id, 'ACTIVE', current_date);
   end if;
 end $$;
 
@@ -5020,8 +5020,8 @@ end $$;
 
 -- =========================================================
 -- 037 KPI Policy Window + HR-only scoring fields
--- ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡ Ø§Ù„Ø´Ù‡Ø±ÙŠ: Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ ÙŠÙˆÙ… 25
--- HR ÙÙ‚Ø·: Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§ÙØŒ Ø§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯ØŒ Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ ÙŠÙˆØ³Ù Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ÙŠØ© Ù„ØªØ¯Ø±ÙŠØ³ Ø§Ù„Ù‚Ø±Ø¢Ù† ÙˆØ§Ù„ØªØ¬ÙˆÙŠØ¯
+-- تقييم الأداء الشهري: من يوم 20 إلى يوم 25
+-- HR فقط: الحضور والانصراف، الصلاة في المسجد، حلقة الشيخ وليد يوسف الأسبوعية لتدريس القرآن والتجويد
 -- =========================================================
 
 alter table if exists public.kpi_evaluations
@@ -5070,7 +5070,7 @@ on conflict (id) do update set
   hr_only_codes = excluded.hr_only_codes,
   updated_at = now();
 
--- Ù…Ø±Ø¬Ø¹ Ù…Ø¹Ø§ÙŠÙŠØ± KPI Ø§Ù„Ø±Ø³Ù…ÙŠ Ø¯Ø§Ø®Ù„ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ù„Ù…Ù† ÙŠØ±ÙŠØ¯ Ø§Ø³ØªØ®Ø¯Ø§Ù…Ù‡ ÙÙŠ Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±.
+-- مرجع معايير KPI الرسمي داخل قاعدة البيانات لمن يريد استخدامه في التقارير.
 create table if not exists public.kpi_criteria_policy (
   code text primary key,
   name text not null,
@@ -5080,20 +5080,20 @@ create table if not exists public.kpi_criteria_policy (
 );
 
 insert into public.kpi_criteria_policy (code, name, max_score, scoring_owner, sort_order) values
-  ('TARGET', 'ØªØ­Ù‚ÙŠÙ‚ Ø§Ù„Ø£Ù‡Ø¯Ø§Ù', 40, 'employee_manager', 1),
-  ('TASK_EFFICIENCY', 'Ø§Ù„ÙƒÙØ§Ø¡Ø© ÙÙŠ Ø£Ø¯Ø§Ø¡ Ø§Ù„Ù…Ù‡Ø§Ù…', 20, 'employee_manager', 2),
-  ('ATTENDANCE_COMMITMENT', 'Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨Ù…ÙˆØ§Ø¹ÙŠØ¯ Ø§Ù„Ø¹Ù…Ù„ Ø­Ø¶ÙˆØ±Ù‹Ø§ ÙˆØ§Ù†ØµØ±Ø§ÙÙ‹Ø§', 20, 'hr_only', 3),
-  ('CONDUCT', 'Ø­Ø³Ù† Ø§Ù„ØªØ¹Ø§Ù…Ù„ ÙˆØ§Ù„Ø³Ù„ÙˆÙƒ Ù…Ø¹ Ø§Ù„Ø²Ù…Ù„Ø§Ø¡ ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†', 5, 'employee_manager', 4),
-  ('MOSQUE_PRAYER', 'Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨Ø§Ù„ØµÙ„Ø§Ø© ÙÙŠ Ø§Ù„Ù…Ø³Ø¬Ø¯', 5, 'hr_only', 5),
-  ('QURAN_CIRCLE', 'Ø­Ø¶ÙˆØ± Ø­Ù„Ù‚Ø© Ø§Ù„Ø´ÙŠØ® ÙˆÙ„ÙŠØ¯ ÙŠÙˆØ³Ù Ø§Ù„Ø£Ø³Ø¨ÙˆØ¹ÙŠØ© Ù„ØªØ¯Ø±ÙŠØ³ Ø§Ù„Ù‚Ø±Ø¢Ù† ÙˆØ§Ù„ØªØ¬ÙˆÙŠØ¯', 5, 'hr_only', 6),
-  ('INITIATIVES_DONATIONS', 'Ø§Ù„Ù…Ø´Ø§Ø±ÙƒØ© ÙÙŠ Ø§Ù„ØªØ¨Ø±Ø¹Ø§Øª ÙˆØ§Ù„Ù…Ø¨Ø§Ø¯Ø±Ø§Øª', 5, 'employee_manager', 7)
+  ('TARGET', 'تحقيق الأهداف', 40, 'employee_manager', 1),
+  ('TASK_EFFICIENCY', 'الكفاءة في أداء المهام', 20, 'employee_manager', 2),
+  ('ATTENDANCE_COMMITMENT', 'الالتزام بمواعيد العمل حضورًا وانصرافًا', 20, 'hr_only', 3),
+  ('CONDUCT', 'حسن التعامل والسلوك مع الزملاء والمديرين', 5, 'employee_manager', 4),
+  ('MOSQUE_PRAYER', 'الالتزام بالصلاة في المسجد', 5, 'hr_only', 5),
+  ('QURAN_CIRCLE', 'حضور حلقة الشيخ وليد يوسف الأسبوعية لتدريس القرآن والتجويد', 5, 'hr_only', 6),
+  ('INITIATIVES_DONATIONS', 'المشاركة في التبرعات والمبادرات', 5, 'employee_manager', 7)
 on conflict (code) do update set
   name = excluded.name,
   max_score = excluded.max_score,
   scoring_owner = excluded.scoring_owner,
   sort_order = excluded.sort_order;
 
--- ØªØ£ÙƒÙŠØ¯ ØµÙ„Ø§Ø­ÙŠØ© Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ Ù„Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª.
+-- تأكيد صلاحية اعتماد المدير التنفيذي النهائي للتقييمات.
 update public.roles
 set permissions = (
   select array_agg(distinct permission)
@@ -5101,7 +5101,7 @@ set permissions = (
 )
 where slug in ('executive') or key = 'EXECUTIVE';
 
--- ØªØ£ÙƒÙŠØ¯ ØµÙ„Ø§Ø­ÙŠØ§Øª HR Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø¨Ù†ÙˆØ¯Ù‡ ÙÙ‚Ø·ØŒ ÙˆØ§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ù„Ø¨Ù†ÙˆØ¯ Ø§Ù„ÙØ±ÙŠÙ‚.
+-- تأكيد صلاحيات HR لمراجعة بنوده فقط، والمدير المباشر لبنود الفريق.
 update public.roles
 set permissions = (
   select array_agg(distinct permission)
@@ -5116,8 +5116,8 @@ set permissions = (
 )
 where slug in ('manager', 'direct-manager', 'operations-manager-1', 'operations-manager-2') or key in ('MANAGER', 'DIRECT_MANAGER');
 
-comment on table public.kpi_policy is 'Ø§Ù„Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø±Ø³Ù…ÙŠØ© Ù„ØªÙ‚ÙŠÙŠÙ… KPI: Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ 25ØŒ Ø¢Ø®Ø± ØªØ³Ù„ÙŠÙ… ÙŠÙˆÙ… 25ØŒ ÙˆØ¥Ø¬Ù…Ø§Ù„ÙŠ 100 Ø¯Ø±Ø¬Ø©.';
-comment on table public.kpi_criteria_policy is 'ØªØ¹Ø±ÙŠÙ Ù…Ø¹Ø§ÙŠÙŠØ± KPI Ø§Ù„Ø±Ø³Ù…ÙŠØ© ÙˆØªØ­Ø¯ÙŠØ¯ Ø§Ù„Ø¨Ù†ÙˆØ¯ Ø§Ù„Ø®Ø§ØµØ© Ø¨Ù€ HR ÙÙ‚Ø·.';
+comment on table public.kpi_policy is 'السياسة الرسمية لتقييم KPI: من يوم 20 إلى 25، آخر تسليم يوم 25، وإجمالي 100 درجة.';
+comment on table public.kpi_criteria_policy is 'تعريف معايير KPI الرسمية وتحديد البنود الخاصة بـ HR فقط.';
 
 
 -- END PATCH: 037_kpi_policy_window_hr_scoring.sql
@@ -5129,12 +5129,12 @@ comment on table public.kpi_criteria_policy is 'ØªØ¹Ø±ÙŠÙ Ù…Ø¹Ø
 
 -- =========================================================
 -- 038 KPI Cycle Control + Stage Reports
--- Ù†Ø³Ø®Ø© Ø§Ù„ÙˆÙŠØ¨: v1.2.2-kpi-cycle-control
--- Ø§Ù„Ù‡Ø¯Ù:
--- 1) ØªØ«Ø¨ÙŠØª Ù†Ø§ÙØ°Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ù…Ù† ÙŠÙˆÙ… 20 Ø¥Ù„Ù‰ 25.
--- 2) Ø¥Ø¶Ø§ÙØ© Ø£Ø¹Ù…Ø¯Ø© Ø¥ØºÙ„Ø§Ù‚/Ù‚ÙÙ„ Ø¯ÙˆØ±Ø© KPI.
--- 3) Ø¥Ø¶Ø§ÙØ© View Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ù…Ø±Ø§Ø­Ù„ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù Ø­ØªÙ‰ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.
--- 4) Ø¥Ø¶Ø§ÙØ© Ù…Ø¤Ø´Ø±Ø§Øª ØªÙ†Ø¨ÙŠÙ‡ Ù„Ù„Ù…ØªØ£Ø®Ø±ÙŠÙ† Ø­Ø³Ø¨ Ø§Ù„Ù…Ø±Ø­Ù„Ø©.
+-- نسخة الويب: v1.2.2-kpi-cycle-control
+-- الهدف:
+-- 1) تثبيت نافذة التقييم من يوم 20 إلى 25.
+-- 2) إضافة أعمدة إغلاق/قفل دورة KPI.
+-- 3) إضافة View لمتابعة مراحل الاعتماد من الموظف حتى المدير التنفيذي.
+-- 4) إضافة مؤشرات تنبيه للمتأخرين حسب المرحلة.
 -- =========================================================
 
 create table if not exists public.kpi_cycles (
@@ -5207,14 +5207,14 @@ select
   m.full_name as manager_name,
   ke.status,
   case ke.status
-    when 'DRAFT' then 'Ù„Ù… ÙŠØ¨Ø¯Ø£'
-    when 'SELF_SUBMITTED' then 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±'
-    when 'MANAGER_APPROVED' then 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± HR'
-    when 'HR_REVIEWED' then 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ'
-    when 'SECRETARY_REVIEWED' then 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ'
-    when 'EXECUTIVE_APPROVED' then 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ù†Ù‡Ø§Ø¦ÙŠ'
-    when 'APPROVED' then 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ù†Ù‡Ø§Ø¦ÙŠ'
-    else coalesce(ke.status, 'Ù…Ø³ÙˆØ¯Ø©')
+    when 'DRAFT' then 'لم يبدأ'
+    when 'SELF_SUBMITTED' then 'بانتظار المدير المباشر'
+    when 'MANAGER_APPROVED' then 'بانتظار HR'
+    when 'HR_REVIEWED' then 'بانتظار السكرتير التنفيذي'
+    when 'SECRETARY_REVIEWED' then 'بانتظار المدير التنفيذي'
+    when 'EXECUTIVE_APPROVED' then 'اعتماد نهائي'
+    when 'APPROVED' then 'اعتماد نهائي'
+    else coalesce(ke.status, 'مسودة')
   end as stage_label,
   ke.total_score,
   ke.grade,
@@ -5246,8 +5246,8 @@ begin
   end if;
 end $$;
 
--- Ù…Ù„Ø§Ø­Ø¸Ø©: Ù…Ù†Ø¹ Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆØ¸Ù/Ø§Ù„Ù…Ø¯ÙŠØ± Ø®Ø§Ø±Ø¬ Ù†Ø§ÙØ°Ø© 20-25 Ù…Ø·Ø¨Ù‚ ÙÙŠ Ø·Ø¨Ù‚Ø© Ø§Ù„ÙˆÙŠØ¨ØŒ
--- ÙˆØ¹Ù†Ø¯ Ø§Ù„Ø¥Ù†ØªØ§Ø¬ ÙŠÙ…ÙƒÙ† Ø¥Ø¶Ø§ÙØ© RPC/Trigger ØµØ§Ø±Ù… Ø¥Ø°Ø§ Ø±ØºØ¨Øª ÙÙŠ Ù…Ù†Ø¹ Ø£ÙŠ ÙƒØªØ§Ø¨Ø© Ù…Ø¨Ø§Ø´Ø±Ø© Ù…Ù† Ø®Ø§Ø±Ø¬ Ø§Ù„ÙˆØ§Ø¬Ù‡Ø©.
+-- ملاحظة: منع إرسال الموظف/المدير خارج نافذة 20-25 مطبق في طبقة الويب،
+-- وعند الإنتاج يمكن إضافة RPC/Trigger صارم إذا رغبت في منع أي كتابة مباشرة من خارج الواجهة.
 
 
 -- END PATCH: 038_kpi_cycle_control_reports.sql
@@ -5259,22 +5259,22 @@ end $$;
 
 -- =========================================================
 -- 039 Management Structure + HR Operations + Reports Workflow
--- Ù†Ø³Ø®Ø© Ø§Ù„ÙˆÙŠØ¨: v1.3.0-management-hr-reports
--- Ø§Ù„Ù‡Ø¯Ù:
--- 1) ØªØ«Ø¨ÙŠØª ØµÙ„Ø§Ø­ÙŠØ§Øª Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ÙˆØ§Ù„ÙØ±Ù‚.
--- 2) Ø¥Ø¶Ø§ÙØ© Ù…Ø³Ø§Ø± ÙˆØ§Ø¶Ø­ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙˆØ¹Ù…Ù„ÙŠØ§Øª HR.
--- 3) ØªÙ‚ÙˆÙŠØ© Workflow Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯.
--- 4) ØªØ¬Ù‡ÙŠØ² Views Ù„Ù„ØªÙ‚Ø§Ø±ÙŠØ± ÙˆØ§Ù„ØªØµØ¯ÙŠØ±.
+-- نسخة الويب: v1.3.0-management-hr-reports
+-- الهدف:
+-- 1) تثبيت صلاحيات هيكل الإدارة والفرق.
+-- 2) إضافة مسار واضح للمدير المباشر وعمليات HR.
+-- 3) تقوية Workflow الشكاوى والتصعيد.
+-- 4) تجهيز Views للتقارير والتصدير.
 -- =========================================================
 
 insert into public.permissions (scope, name)
 values
-  ('organization:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ÙˆØ§Ù„ÙØ±Ù‚'),
-  ('team:dashboard', 'Ù„ÙˆØ­Ø© Ø§Ù„ÙØ±ÙŠÙ‚ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±'),
-  ('hr:operations', 'Ù„ÙˆØ­Ø© Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©'),
-  ('disputes:escalate', 'ØªØµØ¹ÙŠØ¯ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ù„Ù„Ø³ÙƒØ±ØªÙŠØ± ÙˆØ§Ù„ØªÙ†ÙÙŠØ°ÙŠ'),
-  ('reports:pdf', 'ØªØµØ¯ÙŠØ± ØªÙ‚Ø§Ø±ÙŠØ± PDF/HTML'),
-  ('reports:excel', 'ØªØµØ¯ÙŠØ± ØªÙ‚Ø§Ø±ÙŠØ± Excel/CSV')
+  ('organization:manage', 'إدارة هيكل الإدارة والفرق'),
+  ('team:dashboard', 'لوحة الفريق للمدير المباشر'),
+  ('hr:operations', 'لوحة عمليات الموارد البشرية'),
+  ('disputes:escalate', 'تصعيد الشكاوى للسكرتير والتنفيذي'),
+  ('reports:pdf', 'تصدير تقارير PDF/HTML'),
+  ('reports:excel', 'تصدير تقارير Excel/CSV')
 on conflict (scope) do update set name = excluded.name;
 
 update public.roles
@@ -5704,21 +5704,21 @@ commit;
 
 -- =========================================================
 -- 042 Authorized employee roster + phone login policy
--- Generated from: Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.xlsx
+-- Generated from: بيانات الموظفين.xlsx
 -- Purpose:
---   1) Ø§Ø¹ØªÙ…Ø§Ø¯ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ø±Ø³Ù…ÙŠØ© ÙÙ‚Ø·.
---   2) Ø±Ø¨Ø· Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙˆØ±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ÙˆØ§Ù„Ù…Ø³Ù…Ù‰ Ø§Ù„ÙˆØ¸ÙŠÙÙŠ ÙˆØ§Ù„ØµÙˆØ±Ø©.
---   3) ØªÙØ¹ÙŠÙ„ Ø³ÙŠØ§Ø³Ø© Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø¨Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙØŒ ÙˆÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ© = Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ/Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø´Ø®ØµÙŠ.
---   4) Ø¥Ø¶Ø§ÙØ© Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª ÙˆÙ‚Ù†Ø§Ø© Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ Ù„Ù„ØªØ°ÙƒÙŠØ±Ø§Øª.
+--   1) اعتماد قائمة الموظفين الرسمية فقط.
+--   2) ربط المدير المباشر ورقم الهاتف والمسمى الوظيفي والصورة.
+--   3) تفعيل سياسة دخول الموظفين برقم الهاتف، وكلمة المرور الافتراضية = رقم الهاتف/الرقم الشخصي.
+--   4) إضافة لجنة حل المشاكل والخلافات وقناة التواصل الداخلي للتذكيرات.
 -- =========================================================
 
 begin;
 
 insert into public.permissions (scope, name)
 values
-  ('announcements:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ù‚Ù†Ø§Ø© Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ'),
-  ('disputes:committee', 'Ø¹Ø¶ÙˆÙŠØ© Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª'),
-  ('disputes:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆÙØ¶ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª')
+  ('announcements:manage', 'إدارة قناة التواصل الداخلي'),
+  ('disputes:committee', 'عضوية لجنة حل المشاكل والخلافات'),
+  ('disputes:manage', 'إدارة الشكاوى وفض الخلافات')
 on conflict (scope) do update set name = excluded.name;
 
 alter table public.employees add column if not exists roster_source text default '';
@@ -5735,40 +5735,40 @@ create table if not exists public.authorized_employee_roster (
   department_code text not null default 'OPS',
   manager_employee_code text default '',
   initial_password_policy text not null default 'PHONE_AS_PASSWORD',
-  source_file text not null default 'Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.xlsx',
+  source_file text not null default 'بيانات الموظفين.xlsx',
   updated_at timestamptz not null default now()
 );
 
 with roster(employee_code, full_name, phone, email, photo_url, job_title, role_slug, department_code, manager_employee_code) as (
   values
-    ('AHS-001', 'Ø§Ù„Ø´ÙŠØ® Ù…Ø­Ù…Ø¯ ÙŠÙˆØ³Ù', 'PHONE_PLACEHOLDER_010', 'emp.demo010@ahla.local', 'employee-avatars/emp-executive-director.png', 'Ø§Ù„Ù…Ø¯ÙŠØ± Ù„ØªÙ†ÙÙŠØ°ÙŠ Ù„Ù„Ø¬Ù…Ø¹ÙŠØ©', 'executive', 'EXEC', ''),
-    ('AHS-002', 'ÙŠØ­ÙŠÙŠ Ø¬Ù…Ø§Ù„ Ø§Ù„Ø³Ø¨Ø¹', 'PHONE_PLACEHOLDER_083', 'emp.demo083@ahla.local', 'employee-avatars/emp-executive-secretary.png', 'Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ + ØªÙƒÙ†ÙˆÙ„ÙˆØ¬ÙŠØ§ Ø§Ù„Ù…Ø¹Ù„ÙˆÙ…Ø§Øª (IT) ÙˆØ§Ù„Ø¨Ø±Ù…Ø¬Ø©', 'executive-secretary', 'EXEC', 'AHS-001'),
-    ('AHS-003', 'Ù…Ø­Ù…Ø¯ Ø§Ø¨Ùˆ Ø¹Ù…Ø§Ø±', 'PHONE_PLACEHOLDER_084', 'emp.demo084@ahla.local', 'employee-avatars/emp-direct-manager-01.png', 'Ù…Ø¯ÙŠØ± ØªØ´ØºÙŠÙ„ 1', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-004', 'Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯Ø§Ù„Ø¹Ø¸ÙŠÙ… Ù…Ø­Ù…Ø¯', 'PHONE_PLACEHOLDER_072', 'emp.demo072@ahla.local', 'employee-avatars/emp-xlsx-004.png', 'Ù…Ø³Ø¤ÙˆÙ„ Ø§Ù„Ù„Ø¬Ù†Ø© Ø§Ù„Ø·Ø¨ÙŠØ©', 'direct-manager', 'MGT', 'AHS-003'),
-    ('AHS-005', 'Ø¨Ù„Ø§Ù„ Ù…Ø­Ù…Ø¯ Ø§Ù„Ø´Ø§ÙƒØ±', 'PHONE_PLACEHOLDER_046', 'emp.demo046@ahla.local', 'employee-avatars/emp-hr-manager.png', 'Ù…Ø³Ø¤ÙˆÙ„ Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ© + Ø§Ù„Ø§Ø¹Ù„Ø§Ù…', 'hr-manager', 'HR', 'AHS-001'),
-    ('AHS-006', 'ÙŠØ§Ø³Ø± ÙØªØ­ÙŠ Ù†ÙˆØ± Ø§Ù„Ø¯ÙŠÙ†', 'PHONE_PLACEHOLDER_082', 'emp.demo082@ahla.local', 'employee-avatars/emp-direct-manager-06.png', 'Ù…Ø¯ÙŠØ± ØªØ´ØºÙŠÙ„ 2', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-007', 'Ù…ØµØ·ÙÙŠ ÙØ§ÙŠØ¯', 'PHONE_PLACEHOLDER_014', 'emp.demo014@ahla.local', 'employee-avatars/emp-xlsx-007.png', 'Ù…Ø¯ÙŠØ± Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-008', 'Ø­Ø§Ù…Ø¯ Ù…Ø­Ù…ÙˆØ¯ Ø§Ù„Ø¹Ù…Ø¯Ø©', 'PHONE_PLACEHOLDER_013', 'emp.demo013@ahla.local', 'employee-avatars/emp-direct-manager-02.png', 'Ù…Ø³Ø¤ÙˆÙ„ Ù„Ø¬Ù†Ø© Ø£Ø³Ø±Ø© ÙƒØ±ÙŠÙ…Ø©', 'direct-manager', 'MGT', 'AHS-003'),
-    ('AHS-009', 'Ù…ØµØ·ÙÙŠ Ø§Ø­Ù…Ø¯', 'PHONE_PLACEHOLDER_075', 'emp.demo075@ahla.local', 'employee-avatars/emp-direct-manager-03.png', 'Ø§Ø¯Ø§Ø±Ø© Ø§Ù„Ù„ÙˆØ¬ÙŠØ³ØªÙƒ', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-010', 'Ù…Ø­Ù…Ø¯ Ø³ÙŠØ¯', 'PHONE_PLACEHOLDER_019', 'emp.demo019@ahla.local', 'employee-avatars/emp-xlsx-010.png', 'Ù…ÙˆØ¸Ù Ù…Ø´ØªØ±ÙŠØ§Øª', 'employee', 'OPS', 'AHS-009'),
-    ('AHS-011', 'Ø­Ø§ØªÙ… Ù…Ø­Ù…Ø¯ Ø³Ø§Ù„Ù…', 'PHONE_PLACEHOLDER_074', 'emp.demo074@ahla.local', 'employee-avatars/emp-xlsx-011.png', 'Ø³Ø§Ø¦Ù‚ Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© Ø¹Ø²ÙŠØ²Ø©', 'employee', 'OPS', 'AHS-009'),
-    ('AHS-012', 'Ø±Ø¨ÙŠØ¹ Ù…Ø­Ù…Ø¯ Ø§Ø¨Ùˆ Ø²ÙŠØ¯', 'PHONE_PLACEHOLDER_081', 'emp.demo081@ahla.local', '', 'Ø³Ø§Ø¦Ù‚ Ø§Ù„Ø¹Ø±Ø¨ÙŠØ© Ù…Ø³Ùƒ', 'employee', 'OPS', 'AHS-009'),
-    ('AHS-013', 'Ø·Ø§Ø±Ù‚ Ø³ÙŠØ¯ Ø¥Ø¨Ø±Ø§Ù‡ÙŠÙ…', 'PHONE_PLACEHOLDER_012', 'emp.demo012@ahla.local', 'employee-avatars/emp-xlsx-013.png', 'Ù…Ø¯ÙŠØ± Ø§Ù„Ø­Ø±ÙƒØ© Ø³Ø§Ø¦Ù‚ + Ù…Ø·Ø¨Ø® Ø§Ù„Ù…ØªØ¹Ø¹ÙÙŠÙ† 2', 'direct-manager', 'MGT', 'AHS-009'),
-    ('AHS-014', 'Ø¹Ù…Ø§Ø± Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯Ø§Ù„Ø¨Ø§Ø³Ø·', 'PHONE_PLACEHOLDER_078', 'emp.demo078@ahla.local', '', 'Ø¬Ø±Ø§ÙÙŠÙƒ Ø¯ÙŠØ²Ø§ÙŠÙ†Ø±', 'employee', 'OPS', 'AHS-005'),
-    ('AHS-015', 'Ø§Ø­Ù…Ø¯ Ù…Ø­Ù…Ø¯ Ù…Ø­Ø¬ÙˆØ¨', 'PHONE_PLACEHOLDER_047', 'emp.demo047@ahla.local', 'employee-avatars/emp-direct-manager-04.png', 'Ù…Ø¯ÙŠØ± Ø§Ù„Ø´Ø¤ÙˆÙ† Ø§Ù„Ø§Ø¯Ø§Ø±ÙŠØ©', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-016', 'Ø¹Ø¨Ø¯Ø§Ù„Ù„Ù‡ Ø­Ø³ÙŠÙ† Ø­Ø§ÙØ¸', 'PHONE_PLACEHOLDER_076', 'emp.demo076@ahla.local', 'employee-avatars/emp-xlsx-016.png', 'Ø´Ø¤ÙˆÙ† Ø§Ø¯Ø§Ø±ÙŠØ©', 'direct-manager', 'MGT', 'AHS-015'),
-    ('AHS-017', 'Ø¹Ø¨Ø¯ Ø§Ù„Ù‚Ø§Ø¯Ø± Ø¬Ù…Ø§Ù„', 'PHONE_PLACEHOLDER_045', 'emp.demo045@ahla.local', 'employee-avatars/emp-xlsx-017.png', 'Ø´Ø¤ÙˆÙ† Ø¥Ø¯Ø§Ø±ÙŠØ©', 'direct-manager', 'MGT', 'AHS-015'),
-    ('AHS-018', 'Ù‡Ø§Ù†ÙŠ Ø§Ø­Ù…Ø¯ Ù†ØµÙŠØ±', 'PHONE_PLACEHOLDER_018', 'emp.demo018@ahla.local', 'employee-avatars/emp-xlsx-018.png', 'Ù…Ø³Ø¤ÙˆÙ„ Ø§Ù„Ù…Ø´Ø±ÙˆØ¹Ø§Øª Ùˆ Ø·Ù„Ø§Ø¨ Ø§Ù„Ø¹Ù„Ù…', 'direct-manager', 'MGT', 'AHS-003'),
-    ('AHS-019', 'ÙŠÙˆØ³Ù Ø±Ø³Ù…ÙŠ Ø´Ø¹Ø¨Ø§Ù†', 'PHONE_PLACEHOLDER_007', 'emp.demo007@ahla.local', '', 'Ø§Ù„Ù…Ø´Ø±Ù Ø§Ù„ÙÙ†ÙŠ Ù„Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-020', 'Ø§Ø³Ù…Ø§Ø¹ÙŠÙ„ Ø¹Ø¨Ø¯Ø§Ù„Ù„Ù‡', 'PHONE_PLACEHOLDER_073', 'emp.demo073@ahla.local', 'employee-avatars/emp-xlsx-020.png', 'Ù…ÙˆØ¸Ù Ø¨Ø§Ù„Ù…Ø¬Ù…Ø¹', 'employee', 'OPS', 'AHS-019'),
-    ('AHS-021', 'Ø¹Ø¨Ø¯Ø§Ù„Ø±Ø­Ù…Ù† Ø­Ø³ÙŠÙ† Ù…Ø±Ø¹ÙŠ', 'PHONE_PLACEHOLDER_079', 'emp.demo079@ahla.local', 'employee-avatars/emp-xlsx-021.png', 'Ù…ÙˆØ¸Ù Ù„Ø¬Ù†Ø© Ø£Ø³Ø±Ø© ÙƒØ±ÙŠÙ…Ø©', 'employee', 'OPS', 'AHS-008'),
-    ('AHS-022', 'Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯Ù‡ Ù…Ø²Ø§Ø±', 'PHONE_PLACEHOLDER_011', 'emp.demo011@ahla.local', '', 'Ø·Ø¨Ø§Ø® Ø¨Ù…Ø¬Ù…Ø¹ Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨', 'employee', 'OPS', 'AHS-019'),
-    ('AHS-023', 'Ø­Ø³Ø§Ù… Ø¹ÙÙŠÙÙŠ Ø¬Ù…Ø¹Ø©', 'PHONE_PLACEHOLDER_009', 'emp.demo009@ahla.local', '', 'Ù…ÙˆØ¸Ù Ø¨Ø§Ù„Ù…Ø¬Ù…Ø¹', 'employee', 'OPS', 'AHS-019'),
-    ('AHS-024', 'Ù…Ø­Ù…Ø¯ Ø§Ù„Ø§Ù†Ø¯ÙˆÙ†ÙŠØ³ÙŠ', 'PHONE_PLACEHOLDER_077', 'emp.demo077@ahla.local', 'employee-avatars/emp-xlsx-024.png', 'Ù…Ø³Ø¤ÙˆÙ„ Ø§Ù„Ø¯Ø¹Ø§ÙŠØ§', 'direct-manager', 'MGT', 'AHS-006'),
-    ('AHS-025', 'ÙŠØ§Ø³ÙŠÙ† Ø·Ø§Ø±Ù‚ Ø§Ù„Ø¨Ø§Ø³Ù„', 'PHONE_PLACEHOLDER_080', 'emp.demo080@ahla.local', '', 'Ù…Ø³Ø¤ÙˆÙ„ Ø§Ù„Ø¯Ø¹Ø§ÙŠØ§', 'direct-manager', 'MGT', 'AHS-006'),
-    ('AHS-026', 'Ø¹Ø¨Ø¯ Ø§Ù„Ø¹Ø²ÙŠØ² Ø·Ø§Ø±Ù‚ Ø§Ù„Ø¨Ø§Ø³Ù„', 'PHONE_PLACEHOLDER_008', 'emp.demo008@ahla.local', 'employee-avatars/emp-xlsx-026.png', 'Ù…Ø³Ø¤ÙˆÙ„ Ø³ÙÙŠØ± + Ù…Ø·ÙŠØ® Ø§Ù„Ù…ØªØ¹ÙÙÙŠÙ† 3', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-027', 'Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯ Ø§Ù„Ù…Ù†Ø¹Ù…', 'PHONE_PLACEHOLDER_015', 'emp.demo015@ahla.local', '', 'Ù…Ø³Ø¤ÙˆÙ„ Ø§Ù„Ø§Ø³ØªÙƒØ´Ø§Ù', 'direct-manager', 'MGT', 'AHS-001'),
-    ('AHS-028', 'Ø¹Ø¨Ø¯Ø§Ø§Ù„Ù„Ù‡ Ù†ØµØ±', 'PHONE_PLACEHOLDER_020', 'emp.demo020@ahla.local', '', 'Ø£Ø¯Ø§Ø±Ø© Ø§Ù„Ù…ØªØ·ÙˆØ¹ÙŠÙ†', 'direct-manager', 'MGT', 'AHS-006')
+    ('AHS-001', 'الشيخ محمد يوسف', 'PHONE_PLACEHOLDER_010', 'emp.demo010@ahla.local', 'employee-avatars/emp-executive-director.png', 'المدير لتنفيذي للجمعية', 'executive', 'EXEC', ''),
+    ('AHS-002', 'يحيي جمال السبع', 'PHONE_PLACEHOLDER_083', 'emp.demo083@ahla.local', 'employee-avatars/emp-executive-secretary.png', 'السكرتير التنفيذي + تكنولوجيا المعلومات (IT) والبرمجة', 'executive-secretary', 'EXEC', 'AHS-001'),
+    ('AHS-003', 'محمد ابو عمار', 'PHONE_PLACEHOLDER_084', 'emp.demo084@ahla.local', 'employee-avatars/emp-direct-manager-01.png', 'مدير تشغيل 1', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-004', 'محمد عبدالعظيم محمد', 'PHONE_PLACEHOLDER_072', 'emp.demo072@ahla.local', 'employee-avatars/emp-xlsx-004.png', 'مسؤول اللجنة الطبية', 'direct-manager', 'MGT', 'AHS-003'),
+    ('AHS-005', 'بلال محمد الشاكر', 'PHONE_PLACEHOLDER_046', 'emp.demo046@ahla.local', 'employee-avatars/emp-hr-manager.png', 'مسؤول الموارد البشرية + الاعلام', 'hr-manager', 'HR', 'AHS-001'),
+    ('AHS-006', 'ياسر فتحي نور الدين', 'PHONE_PLACEHOLDER_082', 'emp.demo082@ahla.local', 'employee-avatars/emp-direct-manager-06.png', 'مدير تشغيل 2', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-007', 'مصطفي فايد', 'PHONE_PLACEHOLDER_014', 'emp.demo014@ahla.local', 'employee-avatars/emp-xlsx-007.png', 'مدير الحسابات', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-008', 'حامد محمود العمدة', 'PHONE_PLACEHOLDER_013', 'emp.demo013@ahla.local', 'employee-avatars/emp-direct-manager-02.png', 'مسؤول لجنة أسرة كريمة', 'direct-manager', 'MGT', 'AHS-003'),
+    ('AHS-009', 'مصطفي احمد', 'PHONE_PLACEHOLDER_075', 'emp.demo075@ahla.local', 'employee-avatars/emp-direct-manager-03.png', 'ادارة اللوجيستك', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-010', 'محمد سيد', 'PHONE_PLACEHOLDER_019', 'emp.demo019@ahla.local', 'employee-avatars/emp-xlsx-010.png', 'موظف مشتريات', 'employee', 'OPS', 'AHS-009'),
+    ('AHS-011', 'حاتم محمد سالم', 'PHONE_PLACEHOLDER_074', 'emp.demo074@ahla.local', 'employee-avatars/emp-xlsx-011.png', 'سائق العربية عزيزة', 'employee', 'OPS', 'AHS-009'),
+    ('AHS-012', 'ربيع محمد ابو زيد', 'PHONE_PLACEHOLDER_081', 'emp.demo081@ahla.local', '', 'سائق العربية مسك', 'employee', 'OPS', 'AHS-009'),
+    ('AHS-013', 'طارق سيد إبراهيم', 'PHONE_PLACEHOLDER_012', 'emp.demo012@ahla.local', 'employee-avatars/emp-xlsx-013.png', 'مدير الحركة سائق + مطبخ المتععفين 2', 'direct-manager', 'MGT', 'AHS-009'),
+    ('AHS-014', 'عمار محمد عبدالباسط', 'PHONE_PLACEHOLDER_078', 'emp.demo078@ahla.local', '', 'جرافيك ديزاينر', 'employee', 'OPS', 'AHS-005'),
+    ('AHS-015', 'احمد محمد محجوب', 'PHONE_PLACEHOLDER_047', 'emp.demo047@ahla.local', 'employee-avatars/emp-direct-manager-04.png', 'مدير الشؤون الادارية', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-016', 'عبدالله حسين حافظ', 'PHONE_PLACEHOLDER_076', 'emp.demo076@ahla.local', 'employee-avatars/emp-xlsx-016.png', 'شؤون ادارية', 'direct-manager', 'MGT', 'AHS-015'),
+    ('AHS-017', 'عبد القادر جمال', 'PHONE_PLACEHOLDER_045', 'emp.demo045@ahla.local', 'employee-avatars/emp-xlsx-017.png', 'شؤون إدارية', 'direct-manager', 'MGT', 'AHS-015'),
+    ('AHS-018', 'هاني احمد نصير', 'PHONE_PLACEHOLDER_018', 'emp.demo018@ahla.local', 'employee-avatars/emp-xlsx-018.png', 'مسؤول المشروعات و طلاب العلم', 'direct-manager', 'MGT', 'AHS-003'),
+    ('AHS-019', 'يوسف رسمي شعبان', 'PHONE_PLACEHOLDER_007', 'emp.demo007@ahla.local', '', 'المشرف الفني لمجمع منيل شيحة', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-020', 'اسماعيل عبدالله', 'PHONE_PLACEHOLDER_073', 'emp.demo073@ahla.local', 'employee-avatars/emp-xlsx-020.png', 'موظف بالمجمع', 'employee', 'OPS', 'AHS-019'),
+    ('AHS-021', 'عبدالرحمن حسين مرعي', 'PHONE_PLACEHOLDER_079', 'emp.demo079@ahla.local', 'employee-avatars/emp-xlsx-021.png', 'موظف لجنة أسرة كريمة', 'employee', 'OPS', 'AHS-008'),
+    ('AHS-022', 'محمد عبده مزار', 'PHONE_PLACEHOLDER_011', 'emp.demo011@ahla.local', '', 'طباخ بمجمع أحلى شباب', 'employee', 'OPS', 'AHS-019'),
+    ('AHS-023', 'حسام عفيفي جمعة', 'PHONE_PLACEHOLDER_009', 'emp.demo009@ahla.local', '', 'موظف بالمجمع', 'employee', 'OPS', 'AHS-019'),
+    ('AHS-024', 'محمد الاندونيسي', 'PHONE_PLACEHOLDER_077', 'emp.demo077@ahla.local', 'employee-avatars/emp-xlsx-024.png', 'مسؤول الدعايا', 'direct-manager', 'MGT', 'AHS-006'),
+    ('AHS-025', 'ياسين طارق الباسل', 'PHONE_PLACEHOLDER_080', 'emp.demo080@ahla.local', '', 'مسؤول الدعايا', 'direct-manager', 'MGT', 'AHS-006'),
+    ('AHS-026', 'عبد العزيز طارق الباسل', 'PHONE_PLACEHOLDER_008', 'emp.demo008@ahla.local', 'employee-avatars/emp-xlsx-026.png', 'مسؤول سفير + مطيخ المتعففين 3', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-027', 'محمد عبد المنعم', 'PHONE_PLACEHOLDER_015', 'emp.demo015@ahla.local', '', 'مسؤول الاستكشاف', 'direct-manager', 'MGT', 'AHS-001'),
+    ('AHS-028', 'عبداالله نصر', 'PHONE_PLACEHOLDER_020', 'emp.demo020@ahla.local', '', 'أدارة المتطوعين', 'direct-manager', 'MGT', 'AHS-006')
 )
 insert into public.authorized_employee_roster (
   employee_code, full_name, phone, email, photo_url, job_title, role_slug, department_code, manager_employee_code
@@ -5785,7 +5785,7 @@ on conflict (employee_code) do update set
   department_code = excluded.department_code,
   manager_employee_code = excluded.manager_employee_code,
   initial_password_policy = 'PHONE_AS_PASSWORD',
-  source_file = 'Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.xlsx',
+  source_file = 'بيانات الموظفين.xlsx',
   updated_at = now();
 
 with roster as (
@@ -5818,7 +5818,7 @@ select
   true,
   false,
   current_date,
-  'Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.xlsx',
+  'بيانات الموظفين.xlsx',
   true
 from roster r
 cross join default_scope ds
@@ -5838,7 +5838,7 @@ on conflict (employee_code) do update set
   status = 'ACTIVE',
   is_active = true,
   is_deleted = false,
-  roster_source = 'Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.xlsx',
+  roster_source = 'بيانات الموظفين.xlsx',
   phone_login_enabled = true,
   updated_at = now();
 
@@ -5852,7 +5852,7 @@ from roster r
 left join public.employees manager on manager.employee_code = nullif(r.manager_employee_code, '')
 where e.employee_code = r.employee_code;
 
--- Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ø±Ø³Ù…ÙŠØ© ÙÙ‚Ø·: Ø£ÙŠ employee_code Ø®Ø§Ø±Ø¬ Ø§Ù„Ù‚Ø§Ø¦Ù…Ø© ÙŠØªÙ… ØªØ¹Ø·ÙŠÙ„Ù‡ Ù…Ù†Ø·Ù‚ÙŠÙ‹Ø§ ÙˆÙ„Ø§ ÙŠØ­Ø°Ù Ø³Ø¬Ù„Ù‡ Ø§Ù„ØªØ§Ø±ÙŠØ®ÙŠ.
+-- اعتماد القائمة الرسمية فقط: أي employee_code خارج القائمة يتم تعطيله منطقيًا ولا يحذف سجله التاريخي.
 update public.employees
 set is_deleted = true,
     is_active = false,
@@ -5861,7 +5861,7 @@ set is_deleted = true,
 where employee_code is not null
   and employee_code not in ('AHS-001', 'AHS-002', 'AHS-003', 'AHS-004', 'AHS-005', 'AHS-006', 'AHS-007', 'AHS-008', 'AHS-009', 'AHS-010', 'AHS-011', 'AHS-012', 'AHS-013', 'AHS-014', 'AHS-015', 'AHS-016', 'AHS-017', 'AHS-018', 'AHS-019', 'AHS-020', 'AHS-021', 'AHS-022', 'AHS-023', 'AHS-024', 'AHS-025', 'AHS-026', 'AHS-027', 'AHS-028');
 
--- Ø±Ø¨Ø· Ø§Ù„ØµÙˆØ± ÙˆØ§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø¨Ø£ÙŠ profiles Ù…ÙˆØ¬ÙˆØ¯Ø© Ù…Ø³Ø¨Ù‚Ù‹Ø§ Ø¨Ù†ÙØ³ Ø§Ù„Ù‡Ø§ØªÙ/Ø§Ù„Ø¨Ø±ÙŠØ¯.
+-- ربط الصور والبيانات بأي profiles موجودة مسبقًا بنفس الهاتف/البريد.
 update public.profiles p
 set employee_id = e.id,
     full_name = e.full_name,
@@ -5881,7 +5881,7 @@ from public.employees e
 where (p.phone = e.phone or lower(p.email) = lower(e.email))
   and e.employee_code in ('AHS-001', 'AHS-002', 'AHS-003', 'AHS-004', 'AHS-005', 'AHS-006', 'AHS-007', 'AHS-008', 'AHS-009', 'AHS-010', 'AHS-011', 'AHS-012', 'AHS-013', 'AHS-014', 'AHS-015', 'AHS-016', 'AHS-017', 'AHS-018', 'AHS-019', 'AHS-020', 'AHS-021', 'AHS-022', 'AHS-023', 'AHS-024', 'AHS-025', 'AHS-026', 'AHS-027', 'AHS-028');
 
--- Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ØªÙˆØ¶Ø­ Ø§Ù„Ø³ÙŠØ§Ø³Ø© Ù„Ù„Ø¥Ø¯Ø§Ø±Ø© ÙˆØ§Ù„ÙˆØ§Ø¬Ù‡Ø©.
+-- إعدادات توضح السياسة للإدارة والواجهة.
 create table if not exists public.settings (
   key text primary key,
   value jsonb not null default '{}'::jsonb,
@@ -5891,8 +5891,8 @@ create table if not exists public.settings (
 
 insert into public.settings (key, value, description)
 values
-  ('employee_login_policy', '{"identifier":"phone","initialPassword":"same_as_phone","selfRegistration":false,"source":"Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†.xlsx"}'::jsonb, 'Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø© Ø¨Ø¹Ø¯ Ø§Ø³ØªÙŠØ±Ø§Ø¯ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†'),
-  ('internal_communication_channel', '{"enabled":true,"push":true,"inAppSound":true,"audience":"all"}'::jsonb, 'Ù‚Ù†Ø§Ø© Ø§Ù„ØªÙˆØ§ØµÙ„ Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠ Ù„Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª ÙˆØ§Ù„ØªØ°ÙƒÙŠØ±Ø§Øª ÙˆØ§Ù„ØªØ¹Ù„ÙŠÙ…Ø§Øª')
+  ('employee_login_policy', '{"identifier":"phone","initialPassword":"same_as_phone","selfRegistration":false,"source":"بيانات الموظفين.xlsx"}'::jsonb, 'سياسة الدخول المعتمدة بعد استيراد قائمة الموظفين'),
+  ('internal_communication_channel', '{"enabled":true,"push":true,"inAppSound":true,"audience":"all"}'::jsonb, 'قناة التواصل الداخلي للإعلانات والتذكيرات والتعليمات')
 on conflict (key) do update set value = excluded.value, description = excluded.description, updated_at = now();
 
 create table if not exists public.dispute_committee_settings (
@@ -5904,7 +5904,7 @@ create table if not exists public.dispute_committee_settings (
 insert into public.dispute_committee_settings (key, value)
 values (
   'main_committee',
-  '{"name":"Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª","members":["Ø§Ù„Ø´ÙŠØ® Ù…Ø­Ù…Ø¯ ÙŠÙˆØ³Ù","ÙŠØ­ÙŠÙŠ Ø¬Ù…Ø§Ù„ Ø§Ù„Ø³Ø¨Ø¹","Ù…Ø­Ù…Ø¯ Ø§Ø¨Ùˆ Ø¹Ù…Ø§Ø±","Ø¨Ù„Ø§Ù„ Ù…Ø­Ù…Ø¯ Ø§Ù„Ø´Ø§ÙƒØ±","ÙŠØ§Ø³Ø± ÙØªØ­ÙŠ Ù†ÙˆØ± Ø§Ù„Ø¯ÙŠÙ†"],"executiveEscalationTo":"Ø§Ù„Ø´ÙŠØ® Ù…Ø­Ù…Ø¯ ÙŠÙˆØ³Ù","secretary":"ÙŠØ­ÙŠÙŠ Ø¬Ù…Ø§Ù„ Ø§Ù„Ø³Ø¨Ø¹"}'::jsonb
+  '{"name":"لجنة حل المشاكل والخلافات","members":["الشيخ محمد يوسف","يحيي جمال السبع","محمد ابو عمار","بلال محمد الشاكر","ياسر فتحي نور الدين"],"executiveEscalationTo":"الشيخ محمد يوسف","secretary":"يحيي جمال السبع"}'::jsonb
 )
 on conflict (key) do update set value = excluded.value, updated_at = now();
 
@@ -5921,12 +5921,12 @@ commit;
 -- =========================================================
 -- 043 Executive live presence + attendance risk + decisions + committee minutes + monthly PDF queue
 -- Purpose:
---   1) Ù„ÙˆØ­Ø© Ø­Ø¶ÙˆØ± Ù„Ø­Ø¸ÙŠØ© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ù…Ø¹ Ø®Ø±ÙŠØ·Ø© ÙˆÙ…ÙˆÙ‚Ø¹.
---   2) Ù†Ø¸Ø§Ù… ØªÙ‚ÙŠÙŠÙ… Ø®Ø·Ø± Ø§Ù„Ø¨ØµÙ…Ø© ÙˆØ§Ù„ØªÙ„Ø§Ø¹Ø¨.
---   3) Ø³Ø¬Ù„ Ù‚Ø±Ø§Ø±Ø§Øª Ø¥Ø¯Ø§Ø±ÙŠØ© Ø±Ø³Ù…ÙŠ Ù…Ø¹ ØªÙˆÙ‚ÙŠØ¹ Ø§Ø·Ù„Ø§Ø¹ Ù„ÙƒÙ„ Ù…ÙˆØ¸Ù.
---   4) Ù…Ø­Ø§Ø¶Ø± Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª.
---   5) ØµÙ„Ø§Ø­ÙŠØ§Øª Ø£Ø¯Ù‚ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±: ÙŠØ±Ù‰ ÙØ±ÙŠÙ‚Ù‡ ÙÙ‚Ø· Ø¹Ø¨Ø± RLS.
---   6) Ø³Ø¬Ù„ ØªØ´ØºÙŠÙ„ ØªÙ‚Ø§Ø±ÙŠØ± PDF Ø´Ù‡Ø±ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ©.
+--   1) لوحة حضور لحظية للمدير التنفيذي مع خريطة وموقع.
+--   2) نظام تقييم خطر البصمة والتلاعب.
+--   3) سجل قرارات إدارية رسمي مع توقيع اطلاع لكل موظف.
+--   4) محاضر لجنة حل المشاكل والخلافات.
+--   5) صلاحيات أدق للمدير المباشر: يرى فريقه فقط عبر RLS.
+--   6) سجل تشغيل تقارير PDF شهرية تلقائية.
 -- =========================================================
 
 begin;
@@ -5937,13 +5937,13 @@ alter table public.attendance_events add column if not exists source text defaul
 
 insert into public.permissions (scope, name)
 values
-  ('executive:presence-map', 'Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ù„Ø­Ø¸ÙŠØ© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ'),
-  ('attendance:risk', 'Ù…Ø±ÙƒØ² ØªÙ‚ÙŠÙŠÙ… Ø®Ø·Ø± Ø§Ù„Ø¨ØµÙ…Ø©'),
-  ('decisions:manage', 'Ø¥Ø¯Ø§Ø±Ø© Ø³Ø¬Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©'),
-  ('decisions:acknowledge', 'ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø§Ø·Ù„Ø§Ø¹ Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª'),
-  ('disputes:minutes', 'Ù…Ø­Ø§Ø¶Ø± Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª'),
-  ('reports:monthly-pdf-auto', 'ØªÙ‚Ø§Ø±ÙŠØ± PDF Ø´Ù‡Ø±ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ©'),
-  ('manager:team-only', 'Ù‚ØµØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø¹Ù„Ù‰ ÙØ±ÙŠÙ‚Ù‡ ÙÙ‚Ø·')
+  ('executive:presence-map', 'خريطة الحضور اللحظية للمدير التنفيذي'),
+  ('attendance:risk', 'مركز تقييم خطر البصمة'),
+  ('decisions:manage', 'إدارة سجل القرارات الإدارية'),
+  ('decisions:acknowledge', 'تأكيد الاطلاع على القرارات'),
+  ('disputes:minutes', 'محاضر لجنة حل المشاكل والخلافات'),
+  ('reports:monthly-pdf-auto', 'تقارير PDF شهرية تلقائية'),
+  ('manager:team-only', 'قصر المدير المباشر على فريقه فقط')
 on conflict (scope) do update set name = excluded.name;
 
 update public.roles
@@ -6234,9 +6234,9 @@ with check (public.current_has_any_scope(array['reports:monthly-pdf-auto','repor
 
 insert into public.settings (key, value, description)
 values
-  ('executive_presence_live', '{"enabled":true,"map":true,"missingLocationAlert":true}'::jsonb, 'Ù„ÙˆØ­Ø© Ø­Ø¶ÙˆØ± Ù„Ø­Ø¸ÙŠØ© ÙˆØ®Ø±ÙŠØ·Ø© Ù…Ø¨Ø§Ø´Ø±Ø© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ'),
-  ('attendance_risk_scoring', '{"enabled":true,"duplicateWindowMinutes":10,"farDistanceMeters":1000,"newDevicePoints":20}'::jsonb, 'Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª ØªÙ‚ÙŠÙŠÙ… Ø®Ø·Ø± Ø§Ù„Ø¨ØµÙ…Ø©'),
-  ('monthly_pdf_reports', '{"enabled":true,"frequency":"monthly","include":["attendance","late","absence","kpi","disputes","requests"],"printToPdf":true}'::jsonb, 'ØªÙ‚Ø§Ø±ÙŠØ± PDF Ø´Ù‡Ø±ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ©')
+  ('executive_presence_live', '{"enabled":true,"map":true,"missingLocationAlert":true}'::jsonb, 'لوحة حضور لحظية وخريطة مباشرة للمدير التنفيذي'),
+  ('attendance_risk_scoring', '{"enabled":true,"duplicateWindowMinutes":10,"farDistanceMeters":1000,"newDevicePoints":20}'::jsonb, 'إعدادات تقييم خطر البصمة'),
+  ('monthly_pdf_reports', '{"enabled":true,"frequency":"monthly","include":["attendance","late","absence","kpi","disputes","requests"],"printToPdf":true}'::jsonb, 'تقارير PDF شهرية تلقائية')
 on conflict (key) do update set value = excluded.value, description = excluded.description, updated_at = now();
 
 commit;
@@ -6445,7 +6445,7 @@ returns void language sql security definer as $$
 $$;
 
 comment on table public.trusted_devices is
-  'Ø£Ø¬Ù‡Ø²Ø© Ù…ÙˆØ«ÙˆÙ‚Ø© Ù„ØªØ¬Ø§ÙˆØ² MFA Ù„Ù…Ø¯Ø© 30 ÙŠÙˆÙ… Ù„Ù„Ø£Ø¯ÙˆØ§Ø± Ø§Ù„Ø­Ø³Ø§Ø³Ø©';
+  'أجهزة موثوقة لتجاوز MFA لمدة 30 يوم للأدوار الحساسة';
 
 commit;
 -- =========================================================
@@ -7024,7 +7024,7 @@ end;
 $$;
 
 comment on table public.trusted_device_approval_requests is
-  'Ø·Ù„Ø¨Ø§Øª Ø§Ø¹ØªÙ…Ø§Ø¯ Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ù‚Ø¨Ù„ Ø§Ù„Ø³Ù…Ø§Ø­ Ø¨Ø§Ù„Ø¨ØµÙ…Ø© Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠØ©. Ø£ÙŠ Ø¬Ù‡Ø§Ø² Ø¬Ø¯ÙŠØ¯ ÙŠØªØ­ÙˆÙ„ Ø¥Ù„Ù‰ Ù…Ø±Ø§Ø¬Ø¹Ø© HR.';
+  'طلبات اعتماد أجهزة الحضور قبل السماح بالبصمة التلقائية. أي جهاز جديد يتحول إلى مراجعة HR.';
 
 commit;
 
@@ -7110,7 +7110,7 @@ end;
 $$;
 
 comment on table public.branch_qr_challenges is
-  'Ø£ÙƒÙˆØ§Ø¯ QR Ù…ØªØºÙŠØ±Ø© Ø¯Ø§Ø®Ù„ Ø§Ù„ÙØ±Ø¹Ø› Ø§Ù„Ù…ÙˆØ¸Ù ÙŠØ«Ø¨Øª Ø­Ø¶ÙˆØ±Ù‡ ÙØ¹Ù„ÙŠÙ‹Ø§ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…ÙƒØ§Ù† Ø¨Ù…Ø³Ø­ ÙƒÙˆØ¯ ØµØ§Ù„Ø­ Ù‚ØµÙŠØ± Ø§Ù„Ù…Ø¯Ø©.';
+  'أكواد QR متغيرة داخل الفرع؛ الموظف يثبت حضوره فعليًا داخل المكان بمسح كود صالح قصير المدة.';
 
 commit;
 
@@ -7313,7 +7313,7 @@ end;
 $$;
 
 comment on view public.attendance_risk_center is
-  'Ù…Ø±ÙƒØ² Ù…ÙƒØ§ÙØ­Ø© Ø§Ù„ØªÙ„Ø§Ø¹Ø¨: ÙŠØ¹Ø±Ø¶ ÙƒÙ„ Ø¨ØµÙ…Ø© ØªØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø£Ùˆ ØªØ­Ù…Ù„ Ø¥Ø´Ø§Ø±Ø§Øª Ø®Ø·Ø± Ø£Ùˆ Anti-spoofing.';
+  'مركز مكافحة التلاعب: يعرض كل بصمة تحتاج مراجعة أو تحمل إشارات خطر أو Anti-spoofing.';
 
 commit;
 
@@ -7434,7 +7434,7 @@ alter table if exists public.dispute_cases
   add column if not exists repeated_before boolean default false,
   add column if not exists repeated_with_same_person boolean default false,
   add column if not exists privacy_level text default 'committee_only',
-  add column if not exists public_update text default 'Ù‚ÙŠØ¯ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ù„Ø¬Ù†Ø©',
+  add column if not exists public_update text default 'قيد مراجعة اللجنة',
   add column if not exists escalated_to_secretary_at timestamptz,
   add column if not exists secretary_extended_until timestamptz,
   add column if not exists escalated_to_executive_at timestamptz,
@@ -7642,7 +7642,7 @@ create table if not exists public.branch_qr_station_settings (
   branch_id uuid primary key references public.branches(id) on delete cascade,
   rotate_seconds integer not null default 60 check (rotate_seconds between 30 and 300),
   require_qr_for_punch boolean not null default true,
-  station_label text not null default 'Ø´Ø§Ø´Ø© QR Ø§Ù„ÙØ±Ø¹',
+  station_label text not null default 'شاشة QR الفرع',
   is_active boolean not null default true,
   last_challenge_id uuid,
   updated_at timestamptz not null default now(),
@@ -7673,7 +7673,7 @@ select
   b.name as branch_name,
   coalesce(s.rotate_seconds, 60) as rotate_seconds,
   coalesce(s.require_qr_for_punch, true) as require_qr_for_punch,
-  coalesce(s.station_label, 'Ø´Ø§Ø´Ø© QR Ø§Ù„ÙØ±Ø¹') as station_label,
+  coalesce(s.station_label, 'شاشة QR الفرع') as station_label,
   coalesce(s.is_active, true) as is_active,
   c.id as challenge_id,
   c.challenge_code,
@@ -8047,9 +8047,9 @@ create table if not exists public.smart_alert_events (
 
 insert into public.smart_alert_rules(code,title,description,target_role,severity,schedule_hint)
 values
-('MISSING_PUNCH_0930','ØªØ°ÙƒÙŠØ± Ø¨ØµÙ…Ø© 9:30','ØªÙ†Ø¨ÙŠÙ‡ Ù„Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ø°ÙŠÙ† Ù„Ù… ÙŠØ³Ø¬Ù„ÙˆØ§ Ø­Ø¶ÙˆØ±Ù‡Ù… Ø­ØªÙ‰ 9:30','employee','WARNING','daily 09:30'),
-('HIGH_RISK_ATTENDANCE','Ø¨ØµÙ…Ø© Ø¹Ø§Ù„ÙŠØ© Ø§Ù„Ø®Ø·ÙˆØ±Ø©','ØªØµØ¹ÙŠØ¯ Ø¨ØµÙ…Ø§Øª Ø§Ù„Ø­Ø¶ÙˆØ± Ø°Ø§Øª Ø¯Ø±Ø¬Ø© Ø®Ø·Ø± Ø¹Ø§Ù„ÙŠØ©','hr','CRITICAL','realtime'),
-('PENDING_MANAGER_APPROVAL','Ù…ÙˆØ§ÙÙ‚Ø§Øª Ù…Ø¯ÙŠØ± Ù…Ø¹Ù„Ù‚Ø©','ØªÙ†Ø¨ÙŠÙ‡ Ø§Ù„Ù…Ø¯ÙŠØ± Ø¨Ø·Ù„Ø¨Ø§Øª ÙØ±ÙŠÙ‚Ù‡ Ø§Ù„Ù…Ø¹Ù„Ù‚Ø©','direct_manager','WARNING','hourly')
+('MISSING_PUNCH_0930','تذكير بصمة 9:30','تنبيه للموظفين الذين لم يسجلوا حضورهم حتى 9:30','employee','WARNING','daily 09:30'),
+('HIGH_RISK_ATTENDANCE','بصمة عالية الخطورة','تصعيد بصمات الحضور ذات درجة خطر عالية','hr','CRITICAL','realtime'),
+('PENDING_MANAGER_APPROVAL','موافقات مدير معلقة','تنبيه المدير بطلبات فريقه المعلقة','direct_manager','WARNING','hourly')
 on conflict (code) do update set title=excluded.title, description=excluded.description, target_role=excluded.target_role, severity=excluded.severity, schedule_hint=excluded.schedule_hint;
 
 commit;
@@ -8104,12 +8104,12 @@ create table if not exists public.permission_catalog (
 
 insert into public.permission_catalog(permission_key,title_ar,category,is_sensitive)
 values
-('employees:read','Ø¹Ø±Ø¶ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†','employees',false),
-('employees:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†','employees',true),
-('attendance:review','Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø­Ø¶ÙˆØ±','attendance',true),
-('reports:export','ØªØµØ¯ÙŠØ± Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ±','reports',true),
-('settings:manage','Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª','settings',true),
-('disputes:committee','Ù„Ø¬Ù†Ø© Ø§Ù„Ø®Ù„Ø§ÙØ§Øª','disputes',true)
+('employees:read','عرض الموظفين','employees',false),
+('employees:manage','إدارة الموظفين','employees',true),
+('attendance:review','مراجعة الحضور','attendance',true),
+('reports:export','تصدير التقارير','reports',true),
+('settings:manage','إدارة الإعدادات','settings',true),
+('disputes:committee','لجنة الخلافات','disputes',true)
 on conflict (permission_key) do update set title_ar=excluded.title_ar, category=excluded.category, is_sensitive=excluded.is_sensitive;
 
 commit;
@@ -8409,7 +8409,7 @@ begin
   if to_regclass('public.branch_qr_station_settings') is not null then
     update public.branch_qr_station_settings
        set require_qr_for_punch = false,
-           station_label = coalesce(nullif(station_label, ''), 'QR Ù…ØªÙˆÙ‚Ù'),
+           station_label = coalesce(nullif(station_label, ''), 'QR متوقف'),
            updated_at = now()
      where coalesce(require_qr_for_punch, true) = true;
   end if;
@@ -8469,8 +8469,8 @@ begin
   ), inserted as (
     insert into public.notifications(user_id, employee_id, title, body, type, status, is_read, route)
     select user_id, id,
-           'ØªØ°ÙƒÙŠØ± Ø¨ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©',
-           'Ù„Ù… ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ… Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†. Ø§ÙØªØ­ ØµÙØ­Ø© Ø§Ù„Ø¨ØµÙ…Ø© ÙˆØ³Ø¬Ù„ Ø­Ø¶ÙˆØ±Ùƒ Ø¹Ù†Ø¯ Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ù…Ø¬Ù…Ø¹.',
+           'تذكير بتسجيل البصمة',
+           'لم يتم تسجيل بصمة حضور اليوم حتى الآن. افتح صفحة البصمة وسجل حضورك عند الوصول للمجمع.',
            'MISSING_PUNCH', 'UNREAD', false, 'punch'
     from targets
     returning id
@@ -8480,8 +8480,8 @@ begin
 
   if to_regclass('public.smart_alert_events') is not null then
     insert into public.smart_alert_events(rule_code, title, body, severity, status, payload, sent_at)
-    values ('MISSING_PUNCH_0930', 'ØªØ´ØºÙŠÙ„ ØªØ°ÙƒÙŠØ± Ø¨ØµÙ…Ø© 9:30',
-            'ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ ' || v_created || ' Ø¥Ø´Ø¹Ø§Ø± Ø¯Ø§Ø®Ù„ÙŠ. Ø¥Ø±Ø³Ø§Ù„ Push ÙŠØªÙ… Ø¹Ø¨Ø± Edge Function send-attendance-reminders.',
+    values ('MISSING_PUNCH_0930', 'تشغيل تذكير بصمة 9:30',
+            'تم إنشاء ' || v_created || ' إشعار داخلي. إرسال Push يتم عبر Edge Function send-attendance-reminders.',
             'WARNING', 'SENT', jsonb_build_object('date', p_for_date, 'created', v_created, 'targets', v_target), now());
   end if;
 
@@ -8533,7 +8533,7 @@ declare
   digits text;
 begin
   if input_phone is null then return null; end if;
-  digits := translate(input_phone, 'Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹', '01234567890123456789');
+  digits := translate(input_phone, '٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', '01234567890123456789');
   digits := regexp_replace(digits, '\D', '', 'g');
   if digits = '' then return null; end if;
   if left(digits, 4) = '0020' then digits := substring(digits from 3); end if;
@@ -8639,7 +8639,7 @@ begin
   end if;
 
   if conflict_name is not null then
-    raise exception 'DUPLICATE_PHONE: Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ Ù…Ø³ØªØ®Ø¯Ù… Ø¨Ø§Ù„ÙØ¹Ù„ Ù„Ø¯Ù‰ %', conflict_name;
+    raise exception 'DUPLICATE_PHONE: رقم الهاتف مستخدم بالفعل لدى %', conflict_name;
   end if;
   return new;
 end;
@@ -8662,32 +8662,32 @@ declare
   secretary_id uuid;
   manager_id uuid;
 begin
-  select id into exec_id from public.employees where full_name ilike '%Ù…Ø­Ù…Ø¯ ÙŠÙˆØ³Ù%' or full_name ilike '%Ø§Ù„Ø´ÙŠØ® Ù…Ø­Ù…Ø¯%' order by created_at limit 1;
-  select id into secretary_id from public.employees where full_name ilike '%ÙŠØ­ÙŠ%Ø¬Ù…Ø§Ù„%Ø§Ù„Ø³Ø¨Ø¹%' or full_name ilike '%Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ%' order by created_at limit 1;
+  select id into exec_id from public.employees where full_name ilike '%محمد يوسف%' or full_name ilike '%الشيخ محمد%' order by created_at limit 1;
+  select id into secretary_id from public.employees where full_name ilike '%يحي%جمال%السبع%' or full_name ilike '%السكرتير التنفيذي%' order by created_at limit 1;
 
   if exec_id is not null then
     update public.employees set manager_employee_id = null where id = exec_id;
     if secretary_id is not null then update public.employees set manager_employee_id = exec_id where id = secretary_id; end if;
-    update public.employees set manager_employee_id = exec_id where full_name in ('Ø£Ø­Ù…Ø¯ Ù…Ø­Ø¬ÙˆØ¨','Ø¨Ù„Ø§Ù„ Ù…Ø­Ù…Ø¯ Ø§Ù„Ø´Ø§ÙƒØ±','ÙŠØ§Ø³Ø± ÙØªØ­ÙŠ Ù†ÙˆØ± Ø§Ù„Ø¯ÙŠÙ†','Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯ Ø§Ù„Ø¨Ø§Ø³Ø·','Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯ Ø§Ù„Ø¨Ø§Ø³Ø· (Ø£Ø¨Ùˆ Ø¹Ù…Ø§Ø±)','Ù…ØµØ·ÙÙŠ ÙØ§ÙŠØ¯','Ù…ØµØ·ÙÙ‰ ÙØ§ÙŠØ¯','Ù…ØµØ·ÙÙ‰ Ø£Ø­Ù…Ø¯','ÙŠÙˆØ³Ù Ø±Ø³Ù…ÙŠ Ø´Ø¹Ø¨Ø§Ù†') and id <> exec_id;
+    update public.employees set manager_employee_id = exec_id where full_name in ('أحمد محجوب','بلال محمد الشاكر','ياسر فتحي نور الدين','محمد عبد الباسط','محمد عبد الباسط (أبو عمار)','مصطفي فايد','مصطفى فايد','مصطفى أحمد','يوسف رسمي شعبان') and id <> exec_id;
   end if;
 
-  select id into manager_id from public.employees where full_name in ('Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯ Ø§Ù„Ø¨Ø§Ø³Ø·','Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯ Ø§Ù„Ø¨Ø§Ø³Ø· (Ø£Ø¨Ùˆ Ø¹Ù…Ø§Ø±)') order by created_at limit 1;
+  select id into manager_id from public.employees where full_name in ('محمد عبد الباسط','محمد عبد الباسط (أبو عمار)') order by created_at limit 1;
   if manager_id is not null then
-    update public.employees set manager_employee_id = manager_id where full_name in ('Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯ Ø§Ù„Ø¹Ø¸ÙŠÙ…','Ù‡Ø§Ù†ÙŠ Ø§Ø­Ù…Ø¯ Ù†ØµÙŠØ±','Ù‡Ø§Ù†ÙŠ Ø£Ø­Ù…Ø¯ Ù†ØµÙŠØ±','Ø­Ø§Ù…Ø¯ Ù…Ø­Ù…ÙˆØ¯ Ø§Ù„Ø¹Ù…Ø¯Ø©');
-    update public.employees set manager_employee_id = (select id from public.employees where full_name = 'Ø­Ø§Ù…Ø¯ Ù…Ø­Ù…ÙˆØ¯ Ø§Ù„Ø¹Ù…Ø¯Ø©' limit 1) where full_name = 'Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø­Ù…Ù† Ø­Ø³ÙŠÙ†' and exists (select 1 from public.employees where full_name = 'Ø­Ø§Ù…Ø¯ Ù…Ø­Ù…ÙˆØ¯ Ø§Ù„Ø¹Ù…Ø¯Ø©');
+    update public.employees set manager_employee_id = manager_id where full_name in ('محمد عبد العظيم','هاني احمد نصير','هاني أحمد نصير','حامد محمود العمدة');
+    update public.employees set manager_employee_id = (select id from public.employees where full_name = 'حامد محمود العمدة' limit 1) where full_name = 'عبد الرحمن حسين' and exists (select 1 from public.employees where full_name = 'حامد محمود العمدة');
   end if;
 
-  select id into manager_id from public.employees where full_name = 'Ø£Ø­Ù…Ø¯ Ù…Ø­Ø¬ÙˆØ¨' order by created_at limit 1;
-  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name in ('Ø¹Ø¨Ø¯Ø§Ù„Ù„Ù‡ Ø­Ø³ÙŠÙ† Ø­Ø§ÙØ¸','Ø¹Ø¨Ø¯ Ø§Ù„Ù„Ù‡ Ø­Ø³ÙŠÙ† Ø­Ø§ÙØ¸','Ø¹Ø¨Ø¯ Ø§Ù„Ù‚Ø§Ø¯Ø± Ø¬Ù…Ø§Ù„'); end if;
+  select id into manager_id from public.employees where full_name = 'أحمد محجوب' order by created_at limit 1;
+  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name in ('عبدالله حسين حافظ','عبد الله حسين حافظ','عبد القادر جمال'); end if;
 
-  select id into manager_id from public.employees where full_name = 'ÙŠÙˆØ³Ù Ø±Ø³Ù…ÙŠ Ø´Ø¹Ø¨Ø§Ù†' order by created_at limit 1;
-  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name in ('Ø¥Ø³Ù…Ø§Ø¹ÙŠÙ„ Ø¹Ø¨Ø¯Ø§Ù„Ù„Ù‡','Ø§Ø³Ù…Ø§Ø¹ÙŠÙ„ Ø¹Ø¨Ø¯Ø§Ù„Ù„Ù‡','Ø­Ø³Ø§Ù… Ø¹ÙÙŠÙÙŠ','Ù…Ø­Ù…Ø¯ Ø¹Ø¨Ø¯Ù‡ Ù…Ø²Ø§Ø±'); end if;
+  select id into manager_id from public.employees where full_name = 'يوسف رسمي شعبان' order by created_at limit 1;
+  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name in ('إسماعيل عبدالله','اسماعيل عبدالله','حسام عفيفي','محمد عبده مزار'); end if;
 
-  select id into manager_id from public.employees where full_name = 'Ø¨Ù„Ø§Ù„ Ù…Ø­Ù…Ø¯ Ø§Ù„Ø´Ø§ÙƒØ±' order by created_at limit 1;
-  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name = 'Ø¹Ù…Ø§Ø± Ù…Ø­Ù…Ø¯'; end if;
+  select id into manager_id from public.employees where full_name = 'بلال محمد الشاكر' order by created_at limit 1;
+  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name = 'عمار محمد'; end if;
 
-  select id into manager_id from public.employees where full_name = 'Ù…ØµØ·ÙÙ‰ Ø£Ø­Ù…Ø¯' or full_name = 'Ù…ØµØ·ÙÙŠ Ø£Ø­Ù…Ø¯' order by created_at limit 1;
-  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name in ('Ù…Ø­Ù…Ø¯ Ø³ÙŠØ¯','Ø±Ø¨ÙŠØ¹ Ù…Ø­Ù…Ø¯','Ø­Ø§ØªÙ… Ù…Ø­Ù…Ø¯ Ø³Ø§Ù„Ù…','Ø·Ø§Ø±Ù‚ Ø³ÙŠØ¯ Ø¥Ø¨Ø±Ø§Ù‡ÙŠÙ…'); end if;
+  select id into manager_id from public.employees where full_name = 'مصطفى أحمد' or full_name = 'مصطفي أحمد' order by created_at limit 1;
+  if manager_id is not null then update public.employees set manager_employee_id = manager_id where full_name in ('محمد سيد','ربيع محمد','حاتم محمد سالم','طارق سيد إبراهيم'); end if;
 end $$;
 
 -- 5) Attendance / GPS production setting marker.
@@ -8907,7 +8907,7 @@ create index if not exists idx_notifications_user_created
 create or replace function public.safe_create_notification(
   p_user_id uuid default null,
   p_employee_id uuid default null,
-  p_title text default 'ØªÙ†Ø¨ÙŠÙ‡',
+  p_title text default 'تنبيه',
   p_body text default '',
   p_type text default 'INFO',
   p_route text default '',
@@ -9119,7 +9119,7 @@ begin
     ) values (
       v_user_id,
       v_employee_id,
-      nullif(coalesce(v_item ->> 'title', 'ØªÙ†Ø¨ÙŠÙ‡'), ''),
+      nullif(coalesce(v_item ->> 'title', 'تنبيه'), ''),
       coalesce(v_item ->> 'body', ''),
       coalesce(nullif(v_item ->> 'type', ''), 'INFO'),
       coalesce(nullif(v_item ->> 'status', ''), 'UNREAD'),

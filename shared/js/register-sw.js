@@ -52,7 +52,7 @@ async function registerPortalServiceWorker(swUrl, scope) {
       await registration.update().catch(() => null);
       return registration;
     } catch (retryError) {
-      console.info("ØªØ£Ø¬ÙŠÙ„ ØªØ³Ø¬ÙŠÙ„ Service Worker Ù„Ù‡Ø°Ù‡ Ø§Ù„Ø²ÙŠØ§Ø±Ø© Ø¨Ø¹Ø¯ ØªØ¶Ø§Ø±Ø¨ ØªØ­Ø¯ÙŠØ« Ù…Ø¤Ù‚Øª.", retryError?.message || retryError);
+      console.info("تأجيل تسجيل Service Worker لهذه الزيارة بعد تضارب تحديث مؤقت.", retryError?.message || retryError);
       return existing || null;
     }
   }
@@ -67,7 +67,7 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
       await unregisterLegacyRootWorkers(cfg.url);
       await registerPortalServiceWorker(swUrl, cfg.scope);
     } catch (error) {
-      console.info("ØªØ¹Ø°Ø± ØªØ­Ø¯ÙŠØ« Service Worker Ù…Ø¤Ù‚ØªØ§Ù‹ØŒ Ø³ÙŠØ¹Ù…Ù„ Ø§Ù„ØªØ·Ø¨ÙŠÙ‚ Ø¨Ø¯ÙˆÙ† ÙƒØ§Ø´ Ù…Ø­Ø¯Ø« ÙÙŠ Ù‡Ø°Ù‡ Ø§Ù„Ø²ÙŠØ§Ø±Ø©.", error?.message || error);
+      console.info("تعذر تحديث Service Worker مؤقتاً، سيعمل التطبيق بدون كاش محدث في هذه الزيارة.", error?.message || error);
     }
   });
 }

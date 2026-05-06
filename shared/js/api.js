@@ -6,8 +6,8 @@ const LEGACY_KEYS = ["hr-attendance.local-db.v14", "hr-attendance.local-db.v13",
 const SESSION_KEY = "hr-attendance.session-user";
 const clone = (value) => JSON.parse(JSON.stringify(value ?? null));
 const DEFAULT_COMPLEX = {
-  name: "Ù…Ø¬Ù…Ø¹ Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø©",
-  address: "Ø´Ø§Ø±Ø¹ Ù…Ø²Ù„Ù‚Ø§Ù† Ø§Ù„Ø¹Ø±Ø¨, Manil Shihah, Abu El Numrus, Giza Governorate 12912",
+  name: "مجمع منيل شيحة",
+  address: "شارع مزلقان العرب, Manil Shihah, Abu El Numrus, Giza Governorate 12912",
   latitude: 29.950738592862045,
   longitude: 31.238094542328678,
   radiusMeters: 180,
@@ -35,10 +35,10 @@ function normalizeEmail(value = "") {
 }
 
 function normalizePhone(value = "") {
-  const ar = "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©";
+  const ar = "٠١٢٣٤٥٦٧٨٩";
   const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
   return String(value || "")
-    .replace(/[Ù -Ù©]/g, (d) => String(ar.indexOf(d)))
+    .replace(/[٠-٩]/g, (d) => String(ar.indexOf(d)))
     .replace(/[Û°-Û¹]/g, (d) => String(fa.indexOf(d)))
     .replace(/\s+/g, "")
     .trim();
@@ -107,63 +107,63 @@ function normalizeDb(db) {
   }
   merged.meta = { ...(base.meta || {}), ...(merged.meta || {}), normalizedAt: now() };
   merged.permissions ||= clone(base.permissions);
-  if (!merged.permissions.some((permission) => permission.scope === "attendance:self")) merged.permissions.push({ id: "perm-attendance-self", scope: "attendance:self", name: "ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø§Ù„Ù…ÙˆØ¸Ù" });
-  if (!merged.permissions.some((permission) => permission.scope === "kpi:self")) merged.permissions.push({ id: "perm-kpi-self", scope: "kpi:self", name: "ØªÙ‚ÙŠÙŠÙ… Ø°Ø§ØªÙŠ Ù„Ù„Ù…ÙˆØ¸Ù" });
-  if (!merged.permissions.some((permission) => permission.scope === "kpi:team")) merged.permissions.push({ id: "perm-kpi-team", scope: "kpi:team", name: "Ø§Ø¹ØªÙ…Ø§Ø¯ ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„ÙØ±ÙŠÙ‚ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±" });
+  if (!merged.permissions.some((permission) => permission.scope === "attendance:self")) merged.permissions.push({ id: "perm-attendance-self", scope: "attendance:self", name: "تسجيل بصمة الموظف" });
+  if (!merged.permissions.some((permission) => permission.scope === "kpi:self")) merged.permissions.push({ id: "perm-kpi-self", scope: "kpi:self", name: "تقييم ذاتي للموظف" });
+  if (!merged.permissions.some((permission) => permission.scope === "kpi:team")) merged.permissions.push({ id: "perm-kpi-team", scope: "kpi:team", name: "اعتماد تقييمات الفريق المباشر" });
   for (const [scope, name] of [
-  ["realtime:view", "Ø¹Ø±Ø¶ Ø§Ù„Ù„ÙˆØ­Ø© Ø§Ù„Ù„Ø­Ø¸ÙŠØ©"],
-  ["integrations:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙƒØ§Ù…Ù„Ø§Øª"],
-  ["ai:view", "ØªØ­Ù„ÙŠÙ„Ø§Øª Ø§Ù„Ø°ÙƒØ§Ø¡ Ø§Ù„Ø§ØµØ·Ù†Ø§Ø¹ÙŠ"],
-  ["access_control:manage", "ØªÙƒØ§Ù…Ù„ Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ø¨ÙˆØ§Ø¨Ø§Øª"],
-  ["offline:manage", "Ù…Ø²Ø§Ù…Ù†Ø© Offline"],
-  ["attendance:review", "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª Ø§Ù„Ù…Ø±ÙÙˆØ¶Ø©"],
-  ["devices:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø£Ø¬Ù‡Ø²Ø© Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©"],
-  ["security:view", "Ø¹Ø±Ø¶ Ø³Ø¬Ù„ Ø§Ù„Ø£Ù…Ø§Ù†"],
-  ["tasks:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù…Ù‡Ø§Ù… Ø§Ù„Ø¯Ø§Ø®Ù„ÙŠØ©"],
-  ["documents:manage", "Ø¥Ø¯Ø§Ø±Ø© Ù…Ø³ØªÙ†Ø¯Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†"],
-  ["leave:balance", "Ø¥Ø¯Ø§Ø±Ø© Ø£Ø±ØµØ¯Ø© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø§Øª"],
-  ["announcements:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¥Ø¹Ù„Ø§Ù†Ø§Øª ÙˆØ§Ù„Ù‚Ø±Ø§Ø¡Ø©"],
-  ["executive:report", "Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø§Ù„Ù…Ø®ØªØµØ±"],
-  ["permissions:matrix", "Ø¥Ø¯Ø§Ø±Ø© Ù…ØµÙÙˆÙØ© Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª"],
-  ["maintenance:run", "ØªØ´ØºÙŠÙ„ Ù…Ø±ÙƒØ² Ø§Ù„Ø¬ÙˆØ¯Ø© ÙˆØ§Ù„Ø¥ØµÙ„Ø§Ø­"],
-  ["workflow:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø£ØªÙ…ØªØ© ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯"],
-  ["policies:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª ÙˆØ§Ù„ØªÙˆÙ‚ÙŠØ¹Ø§Øª"],
-  ["policies:self", "Ù‚Ø±Ø§Ø¡Ø© ÙˆØªÙˆÙ‚ÙŠØ¹ Ø§Ù„Ø³ÙŠØ§Ø³Ø§Øª"],
-  ["sla:view", "Ù…ØªØ§Ø¨Ø¹Ø© Ø§ØªÙØ§Ù‚ÙŠØ§Øª Ù…Ø³ØªÙˆÙ‰ Ø§Ù„Ø®Ø¯Ù…Ø©"],
-  ["control-room:view", "ØºØ±ÙØ© Ø§Ù„ØªØ­ÙƒÙ… ÙˆØ§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©"],
-  ["data-center:manage", "Ø¥Ø¯Ø§Ø±Ø© Ù…Ø±ÙƒØ² Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆØ§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯"],
-  ["daily-report:self", "Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ"],
-  ["daily-report:review", "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠØ©"],
-  ["executive:mobile", "Ø§Ù„Ù…ØªØ§Ø¨Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ù† Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„"],
-  ["live-location:request", "Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±"],
-  ["live-location:respond", "Ø§Ù„Ø±Ø¯ Ø¹Ù„Ù‰ Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±"],
-  ["admin-gateway:access", "Ø§Ù„Ø¯Ø®ÙˆÙ„ Ù…Ù† Ø¨ÙˆØ§Ø¨Ø© Ø§Ù„ØªØ´ØºÙŠÙ„"],
-  ["sensitive-actions:approve", "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ø­Ø³Ø§Ø³Ø©"],
-  ["sensitive-actions:request", "Ø·Ù„Ø¨ ØªÙ†ÙÙŠØ° Ø¹Ù…Ù„ÙŠØ© Ø­Ø³Ø§Ø³Ø©"],
-  ["executive:presence-map", "Ø¹Ø±Ø¶ Ø®Ø±ÙŠØ·Ø© Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©"],
-  ["attendance:risk", "Ù…Ø±ÙƒØ² ØªÙ‚ÙŠÙŠÙ… Ø®Ø·Ø± Ø§Ù„Ø¨ØµÙ…Ø©"],
-  ["decisions:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø³Ø¬Ù„ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª Ø§Ù„Ø¥Ø¯Ø§Ø±ÙŠØ©"],
-  ["decisions:acknowledge", "ØªØ£ÙƒÙŠØ¯ Ø§Ù„Ø§Ø·Ù„Ø§Ø¹ Ø¹Ù„Ù‰ Ø§Ù„Ù‚Ø±Ø§Ø±Ø§Øª"],
-  ["disputes:minutes", "Ù…Ø­Ø§Ø¶Ø± Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª"],
-  ["reports:monthly-pdf-auto", "ØªÙ‚Ø§Ø±ÙŠØ± PDF Ø´Ù‡Ø±ÙŠØ© ØªÙ„Ù‚Ø§Ø¦ÙŠØ©"],
-  ["manager:team-only", "Ù‚ØµØ± Ø§Ù„Ù…Ø¯ÙŠØ± Ø¹Ù„Ù‰ ÙØ±ÙŠÙ‚Ù‡ ÙÙ‚Ø·"],
-  ["approvals:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯Ø§Øª Ø§Ù„Ø­Ø³Ø§Ø³Ø©"],
-  ["alerts:manage", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø°ÙƒÙŠØ©"],
-  ["attendance:rules", "Ø¥Ø¯Ø§Ø±Ø© Ù‚ÙˆØ§Ø¹Ø¯ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠØ©"],
-  ["attendance:smart", "ØªØ´ØºÙŠÙ„ ØªØ­Ù„ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± Ø§Ù„Ø°ÙƒÙŠ"],
-  ["employee:archive", "Ø¹Ø±Ø¶ Ø£Ø±Ø´ÙŠÙ Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„ÙƒØ§Ù…Ù„"],
-  ["manager:suite", "Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ù…ØªÙ‚Ø¯Ù…Ø©"],
-  ["kpi:monthly", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø´Ù‡Ø±ÙŠ"],
-  ["supabase:diagnostics", "ÙØ­Øµ Ø¥Ø¹Ø¯Ø§Ø¯ Supabase"],
-  ["database:migrations", "Ù…ØªØ§Ø¨Ø¹Ø© ØªØ­Ø¯ÙŠØ«Ø§Øª Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª"],
-  ["backup:auto", "Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ù†Ø³Ø® Ø§Ù„Ø§Ø­ØªÙŠØ§Ø·ÙŠ Ø§Ù„ØªÙ„Ù‚Ø§Ø¦ÙŠ"],
-  ["action-center:self", "ØµÙØ­Ø© Ù…Ø·Ù„ÙˆØ¨ Ù…Ù†ÙŠ Ø§Ù„Ø¢Ù† Ù„Ù„Ù…ÙˆØ¸Ù"],
-  ["hr:operations", "Ù„ÙˆØ­Ø© Ø¹Ù…Ù„ÙŠØ§Øª Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©"],
-  ["organization:manage", "Ø¥Ø¯Ø§Ø±Ø© Ù‡ÙŠÙƒÙ„ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ÙˆØ§Ù„ÙØ±Ù‚"],
-  ["team:dashboard", "Ù„ÙˆØ­Ø© Ø§Ù„ÙØ±ÙŠÙ‚ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±"],
-  ["disputes:escalate", "ØªØµØ¹ÙŠØ¯ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ù„Ù„Ø³ÙƒØ±ØªÙŠØ± ÙˆØ§Ù„ØªÙ†ÙÙŠØ°ÙŠ"],
-  ["reports:pdf", "ØªØµØ¯ÙŠØ± ØªÙ‚Ø§Ø±ÙŠØ± PDF/HTML"],
-  ["reports:excel", "ØªØµØ¯ÙŠØ± ØªÙ‚Ø§Ø±ÙŠØ± Excel/CSV"],
+  ["realtime:view", "عرض اللوحة اللحظية"],
+  ["integrations:manage", "إدارة التكاملات"],
+  ["ai:view", "تحليلات الذكاء الاصطناعي"],
+  ["access_control:manage", "تكامل أجهزة البوابات"],
+  ["offline:manage", "مزامنة Offline"],
+  ["attendance:review", "مراجعة البصمات المرفوضة"],
+  ["devices:manage", "إدارة الأجهزة المعتمدة"],
+  ["security:view", "عرض سجل الأمان"],
+  ["tasks:manage", "إدارة المهام الداخلية"],
+  ["documents:manage", "إدارة مستندات الموظفين"],
+  ["leave:balance", "إدارة أرصدة الإجازات"],
+  ["announcements:manage", "إدارة الإعلانات والقراءة"],
+  ["executive:report", "التقرير التنفيذي المختصر"],
+  ["permissions:matrix", "إدارة مصفوفة الصلاحيات"],
+  ["maintenance:run", "تشغيل مركز الجودة والإصلاح"],
+  ["workflow:manage", "إدارة الأتمتة والتصعيد"],
+  ["policies:manage", "إدارة السياسات والتوقيعات"],
+  ["policies:self", "قراءة وتوقيع السياسات"],
+  ["sla:view", "متابعة اتفاقيات مستوى الخدمة"],
+  ["control-room:view", "غرفة التحكم والتنبيهات الذكية"],
+  ["data-center:manage", "إدارة مركز البيانات والاستيراد"],
+  ["daily-report:self", "إرسال التقرير اليومي"],
+  ["daily-report:review", "مراجعة التقارير اليومية"],
+  ["executive:mobile", "المتابعة التنفيذية من الموبايل"],
+  ["live-location:request", "طلب الموقع المباشر"],
+  ["live-location:respond", "الرد على طلب الموقع المباشر"],
+  ["admin-gateway:access", "الدخول من بوابة التشغيل"],
+  ["sensitive-actions:approve", "اعتماد العمليات الحساسة"],
+  ["sensitive-actions:request", "طلب تنفيذ عملية حساسة"],
+  ["executive:presence-map", "عرض خريطة الحضور التنفيذية"],
+  ["attendance:risk", "مركز تقييم خطر البصمة"],
+  ["decisions:manage", "إدارة سجل القرارات الإدارية"],
+  ["decisions:acknowledge", "تأكيد الاطلاع على القرارات"],
+  ["disputes:minutes", "محاضر لجنة حل الخلافات"],
+  ["reports:monthly-pdf-auto", "تقارير PDF شهرية تلقائية"],
+  ["manager:team-only", "قصر المدير على فريقه فقط"],
+  ["approvals:manage", "إدارة الاعتمادات الحساسة"],
+  ["alerts:manage", "إدارة التنبيهات الذكية"],
+  ["attendance:rules", "إدارة قواعد الحضور الذكية"],
+  ["attendance:smart", "تشغيل تحليل الحضور الذكي"],
+  ["employee:archive", "عرض أرشيف الموظف الكامل"],
+  ["manager:suite", "لوحة المدير المباشر المتقدمة"],
+  ["kpi:monthly", "إدارة التقييم الشهري"],
+  ["supabase:diagnostics", "فحص إعداد Supabase"],
+  ["database:migrations", "متابعة تحديثات قاعدة البيانات"],
+  ["backup:auto", "إدارة النسخ الاحتياطي التلقائي"],
+  ["action-center:self", "صفحة مطلوب مني الآن للموظف"],
+  ["hr:operations", "لوحة عمليات الموارد البشرية"],
+  ["organization:manage", "إدارة هيكل الإدارة والفرق"],
+  ["team:dashboard", "لوحة الفريق للمدير المباشر"],
+  ["disputes:escalate", "تصعيد الشكاوى للسكرتير والتنفيذي"],
+  ["reports:pdf", "تصدير تقارير PDF/HTML"],
+  ["reports:excel", "تصدير تقارير Excel/CSV"],
   ]) {
     if (!merged.permissions.some((permission) => permission.scope === scope)) merged.permissions.push({ id: `perm-${scope.replace(/[^a-z0-9]+/gi, "-")}`, scope, name });
   }
@@ -215,15 +215,15 @@ function normalizeDb(db) {
   }
   if (!findById(merged.employees || [], "emp-hr-manager")) {
     merged.employees.push({
-      id: "emp-hr-manager", employeeCode: "EMP-HR", fullName: "Ù…Ø¯ÙŠØ± Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©", phone: "PHONE_PLACEHOLDER_044",
-      email: "hr.manager@organization.local", photoUrl: "", jobTitle: "Ù…Ø¯ÙŠØ± Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©", roleId: "role-hr",
+      id: "emp-hr-manager", employeeCode: "EMP-HR", fullName: "مدير الموارد البشرية", phone: "PHONE_PLACEHOLDER_044",
+      email: "hr.manager@organization.local", photoUrl: "", jobTitle: "مدير الموارد البشرية", roleId: "role-hr",
       branchId: "b-ahla-manil", departmentId: "d-hr", governorateId: "gov-giza", complexId: "cx-ahla-manil",
       managerEmployeeId: "emp-executive-secretary", status: "ACTIVE", isDeleted: false, hireDate: "2021-01-01", userId: "u-hr-manager"
     });
   }
   if (!findById(merged.users || [], "u-hr-manager")) {
     merged.users.push({
-      id: "u-hr-manager", name: "Ù…Ø¯ÙŠØ± Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©", fullName: "Ù…Ø¯ÙŠØ± Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©", email: "hr.manager@organization.local",
+      id: "u-hr-manager", name: "مدير الموارد البشرية", fullName: "مدير الموارد البشرية", email: "hr.manager@organization.local",
       phone: "PHONE_PLACEHOLDER_044", password: "LocalLoginDisabled#RotateInSupabase2026!", roleId: "role-hr", employeeId: "emp-hr-manager",
       branchId: "b-ahla-manil", departmentId: "d-hr", governorateId: "gov-giza", complexId: "cx-ahla-manil",
       status: "ACTIVE", temporaryPassword: true, mustChangePassword: true, passkeyEnabled: false, failedLogins: 0, lastLoginAt: ""
@@ -231,11 +231,11 @@ function normalizeDb(db) {
   }
   merged.disputeCommittee = {
     ...(merged.disputeCommittee || {}),
-    members: ["Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", "Ù…Ø¯ÙŠØ± ØªØ´ØºÙŠÙ„ 1", "Ù…Ø¯ÙŠØ± ØªØ´ØºÙŠÙ„ 2", "Ù…Ø¯ÙŠØ± Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©"],
+    members: ["السكرتير التنفيذي", "مدير تشغيل 1", "مدير تشغيل 2", "مدير الموارد البشرية"],
     employeeIds: ["emp-executive-secretary", "emp-direct-manager-01", "emp-direct-manager-02", "emp-hr-manager"],
-    executiveEscalationTo: "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ",
+    executiveEscalationTo: "المدير التنفيذي",
     executiveSecretaryEmployeeId: "emp-executive-secretary",
-    mandate: "ÙŠØªÙ… Ø§Ø³ØªÙ‚Ø¨Ø§Ù„ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø¯Ø§Ø®Ù„ Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§ØªØŒ Ø«Ù… Ø§Ù„ØªÙ†Ø³ÙŠÙ‚ Ø£Ùˆ Ø§Ù„ØªØµØ¹ÙŠØ¯ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ù† Ø·Ø±ÙŠÙ‚ Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.",
+    mandate: "يتم استقبال الشكاوى داخل لجنة حل المشاكل والخلافات، ثم التنسيق أو التصعيد للمدير التنفيذي عن طريق السكرتير التنفيذي.",
   };
   merged.auditLogs ||= [];
   merged.attendanceDaily ||= [];
@@ -278,9 +278,9 @@ function normalizeDb(db) {
   merged.sensitiveApprovals ||= clone(base.sensitiveApprovals || []);
   merged.executivePresenceSnapshots ||= clone(base.executivePresenceSnapshots || []);
   merged.employeePolicies ||= clone(base.employeePolicies || [
-    { id: "pol-attendance", title: "Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", category: "ATTENDANCE", version: "1.0", body: "Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ø¨ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù Ù…Ù† Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯ØŒ ÙˆØ£ÙŠ Ø¨ØµÙ…Ø© Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø·Ø§Ù‚ ØªØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©.", requiresAcknowledgement: true, status: "ACTIVE", createdAt: "2026-04-29T00:00:00.000Z" },
-    { id: "pol-disputes", title: "Ø³ÙŠØ§Ø³Ø© Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª", category: "DISPUTES", version: "1.0", body: "ØªÙØ±ÙØ¹ Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø¥Ù„Ù‰ Ø§Ù„Ù„Ø¬Ù†Ø© Ø§Ù„Ù…Ø®ØªØµØ©ØŒ ÙˆÙŠØªÙ… Ø§Ù„ØªÙ†Ø³ÙŠÙ‚ Ø£Ùˆ Ø§Ù„ØªØµØ¹ÙŠØ¯ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ø¨Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø¹Ù†Ø¯ Ø§Ù„Ø­Ø§Ø¬Ø©.", requiresAcknowledgement: true, status: "ACTIVE", createdAt: "2026-04-29T00:00:00.000Z" },
-    { id: "pol-data", title: "Ø³ÙŠØ§Ø³Ø© Ø­Ù…Ø§ÙŠØ© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª ÙˆÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ±", category: "SECURITY", version: "1.0", body: "ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ© Ù„Ø§ ØªÙØ´Ø§Ø±Ùƒ Ø¥Ù„Ø§ Ù…Ø¹ ØµØ§Ø­Ø¨ Ø§Ù„Ø­Ø³Ø§Ø¨ØŒ ÙˆÙŠØ¬Ø¨ ØªØºÙŠÙŠØ±Ù‡Ø§ Ø¨Ø¹Ø¯ Ø£ÙˆÙ„ Ø¯Ø®ÙˆÙ„. Ù„Ø§ ÙŠØªÙ… ØªØ¯Ø§ÙˆÙ„ Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø¸Ø§Ù….", requiresAcknowledgement: true, status: "ACTIVE", createdAt: "2026-04-29T00:00:00.000Z" },
+    { id: "pol-attendance", title: "سياسة الحضور والانصراف", category: "ATTENDANCE", version: "1.0", body: "الالتزام بتسجيل الحضور والانصراف من الموقع المعتمد، وأي بصمة خارج النطاق تحتاج مراجعة الإدارة.", requiresAcknowledgement: true, status: "ACTIVE", createdAt: "2026-04-29T00:00:00.000Z" },
+    { id: "pol-disputes", title: "سياسة لجنة حل المشاكل والخلافات", category: "DISPUTES", version: "1.0", body: "تُرفع الشكاوى إلى اللجنة المختصة، ويتم التنسيق أو التصعيد للمدير التنفيذي عبر السكرتير التنفيذي عند الحاجة.", requiresAcknowledgement: true, status: "ACTIVE", createdAt: "2026-04-29T00:00:00.000Z" },
+    { id: "pol-data", title: "سياسة حماية البيانات وكلمات المرور", category: "SECURITY", version: "1.0", body: "كلمات المرور المؤقتة لا تُشارك إلا مع صاحب الحساب، ويجب تغييرها بعد أول دخول. لا يتم تداول بيانات الموظفين خارج النظام.", requiresAcknowledgement: true, status: "ACTIVE", createdAt: "2026-04-29T00:00:00.000Z" },
   ]);
   merged.maintenanceRuns ||= clone(base.maintenanceRuns || []);
   merged.committeeActions ||= clone(base.committeeActions || []);
@@ -340,7 +340,7 @@ function saveDb(db) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
   } catch (error) {
     const isQuota = error?.name === "QuotaExceededError" || String(error?.message || "").toLowerCase().includes("quota");
-    if (isQuota) throw new Error("ØªØ¹Ø°Ø± Ø§Ù„Ø­ÙØ¸ Ù„Ø£Ù† Ù…Ø³Ø§Ø­Ø© Ø§Ù„ØªØ®Ø²ÙŠÙ† Ø§Ù„Ù…Ø­Ù„ÙŠØ© Ø§Ù…ØªÙ„Ø£Øª. Ù‚Ù„Ù‘Ù„ Ø­Ø¬Ù… Ø§Ù„ØµÙˆØ± Ø£Ùˆ Ø§Ø³ØªØ®Ø¯Ù… Ù†Ø³Ø®Ø© Supabase/Ø§Ù„Ø®Ø§Ø¯Ù… Ù„Ù„Ø­ÙØ¸ Ø§Ù„Ø¯Ø§Ø¦Ù….");
+    if (isQuota) throw new Error("تعذر الحفظ لأن مساحة التخزين المحلية امتلأت. قلّل حجم الصور أو استخدم نسخة Supabase/الخادم للحفظ الدائم.");
     throw error;
   }
 }
@@ -542,7 +542,7 @@ function distanceMeters(a, b) {
 }
 
 function statusFromTime(db, employee, when = new Date()) {
-  // Ù„Ø§ Ù†Ø¹ØªÙ…Ø¯ Ø¹Ù„Ù‰ Ø¬Ø¯ÙˆÙ„ Ø¯ÙˆØ§Ù… Ù…Ù†ÙØµÙ„. ÙˆÙ‚Øª Ø§Ù„Ø¯ÙˆØ§Ù… Ø§Ù„Ø±Ø³Ù…ÙŠ Ù„Ù„Ù…ØªØ§Ø¨Ø¹Ø© ÙÙ‚Ø·: 10:00 ØµØ¨Ø§Ø­Ù‹Ø§ Ø¥Ù„Ù‰ 6:00 Ù…Ø³Ø§Ø¡Ù‹ØŒ ÙˆÙ„Ø§ ÙŠÙ…Ù†Ø¹ Ø§Ù„Ø¨ØµÙ…Ø© Ù‚Ø¨Ù„/Ø¨Ø¹Ø¯ Ø§Ù„ÙˆÙ‚Øª Ø·Ø§Ù„Ù…Ø§ Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ø¬Ù…Ø¹.
+  // لا نعتمد على جدول دوام منفصل. وقت الدوام الرسمي للمتابعة فقط: 10:00 صباحًا إلى 6:00 مساءً، ولا يمنع البصمة قبل/بعد الوقت طالما داخل المجمع.
   const start = new Date(when);
   start.setHours(10, 0, 0, 0);
   const lateMinutes = Math.max(0, Math.round((when - start) / 60000));
@@ -565,14 +565,14 @@ function branchTarget(branch) {
 }
 
 function geofenceMessage(evaluation = {}) {
-  if (evaluation.geofenceStatus === "inside_branch") return "Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¯Ø§Ø®Ù„ Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ø­Ø¯Ø¯ ÙˆÙŠÙ…ÙƒÙ† ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©.";
-  if (evaluation.geofenceStatus === "inside_branch_low_accuracy") return "ØªÙ… Ù‚Ø¨ÙˆÙ„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø¯Ø§Ø®Ù„ Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø¬Ù…Ø¹ Ù…Ø¹ Ø¯Ù‚Ø© GPS Ø¶Ø¹ÙŠÙØ©. ÙŠÙØ¶Ù„ ØªØ´ØºÙŠÙ„ GPS/Location Ø¹Ø§Ù„ÙŠ Ø§Ù„Ø¯Ù‚Ø©.";
-  if (evaluation.geofenceStatus === "outside_branch") return "Ø£Ù†Øª Ø®Ø§Ø±Ø¬ Ù†Ø·Ø§Ù‚ Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ø§Ù„Ù…Ø­Ø¯Ø¯. Ø§Ù„Ù…Ø³Ø§ÙØ© Ø§Ù„Ø­Ø§Ù„ÙŠØ© " + (evaluation.distanceFromBranchMeters ?? "ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙØ©") + " Ù…ØªØ±ØŒ ÙˆØ§Ù„Ù†Ø·Ø§Ù‚ Ø§Ù„Ù…Ø³Ù…ÙˆØ­ " + (evaluation.radiusMeters ?? "-") + " Ù…ØªØ±.";
-  if (evaluation.geofenceStatus === "location_low_accuracy") return "Ø¯Ù‚Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± ÙƒØ§ÙÙŠØ©. Ø§Ù„Ø¯Ù‚Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ© " + (evaluation.accuracyMeters ?? "-") + " Ù…ØªØ±ØŒ ÙˆØ§Ù„Ø­Ø¯ Ø§Ù„Ø£Ù‚ØµÙ‰ " + (evaluation.maxAccuracyMeters ?? "-") + " Ù…ØªØ±.";
-  if (evaluation.geofenceStatus === "branch_location_missing") return "Ù„Ù… ÙŠØªÙ… Ø¶Ø¨Ø· Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø§Ù„ÙØ±Ø¹/Ø§Ù„Ø¹Ù†ÙˆØ§Ù† Ù„Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¸Ù. Ø§Ø¶Ø¨Ø· Latitude Ùˆ Longitude ÙˆÙ†Ø·Ø§Ù‚ Ø§Ù„Ø­Ø¶ÙˆØ± Ù…Ù† ØµÙØ­Ø© Ø§Ù„ÙØ±ÙˆØ¹.";
-  if (evaluation.geofenceStatus === "branch_unknown") return "Ø§Ù„Ù…ÙˆØ¸Ù ØºÙŠØ± Ù…Ø±Ø¨ÙˆØ· Ø¨ÙØ±Ø¹ Ù„Ù‡ Ø¹Ù†ÙˆØ§Ù† Ø­Ø¶ÙˆØ±.";
-  if (evaluation.geofenceStatus === "permission_denied") return "ØªÙ… Ø±ÙØ¶ ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„Ù…ÙˆÙ‚Ø¹. ÙŠØ¬Ø¨ Ø§Ù„Ø³Ù…Ø§Ø­ Ù„Ù„Ù…ØªØµÙØ­ Ø¨Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ù‚Ø¨Ù„ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©.";
-  return "ØªØ¹Ø°Ø± Ù‚Ø±Ø§Ø¡Ø© Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ø­Ø§Ù„ÙŠ. ÙØ¹Ù‘Ù„ GPS/Location Ø«Ù… Ø­Ø§ÙˆÙ„ Ù…Ø±Ø© Ø£Ø®Ø±Ù‰.";
+  if (evaluation.geofenceStatus === "inside_branch") return "الموقع داخل العنوان المحدد ويمكن تسجيل البصمة.";
+  if (evaluation.geofenceStatus === "inside_branch_low_accuracy") return "تم قبول الموقع داخل نطاق المجمع مع دقة GPS ضعيفة. يفضل تشغيل GPS/Location عالي الدقة.";
+  if (evaluation.geofenceStatus === "outside_branch") return "أنت خارج نطاق العنوان المحدد. المسافة الحالية " + (evaluation.distanceFromBranchMeters ?? "غير معروفة") + " متر، والنطاق المسموح " + (evaluation.radiusMeters ?? "-") + " متر.";
+  if (evaluation.geofenceStatus === "location_low_accuracy") return "دقة الموقع غير كافية. الدقة الحالية " + (evaluation.accuracyMeters ?? "-") + " متر، والحد الأقصى " + (evaluation.maxAccuracyMeters ?? "-") + " متر.";
+  if (evaluation.geofenceStatus === "branch_location_missing") return "لم يتم ضبط إحداثيات الفرع/العنوان لهذا الموظف. اضبط Latitude و Longitude ونطاق الحضور من صفحة الفروع.";
+  if (evaluation.geofenceStatus === "branch_unknown") return "الموظف غير مربوط بفرع له عنوان حضور.";
+  if (evaluation.geofenceStatus === "permission_denied") return "تم رفض صلاحية الموقع. يجب السماح للمتصفح بالموقع قبل تسجيل البصمة.";
+  return "تعذر قراءة الموقع الحالي. فعّل GPS/Location ثم حاول مرة أخرى.";
 }
 
 function attendanceAddressForEmployee(db, employeeId) {
@@ -729,7 +729,7 @@ function regenerateDailyLocal(db, body = {}) {
 function applyEmployeePayload(db, target, body = {}) {
   const branch = findById(db.branches, body.branchId || target.branchId);
   Object.assign(target, {
-    fullName: String(body.fullName ?? target.fullName ?? "Ù…ÙˆØ¸Ù Ø¬Ø¯ÙŠØ¯").trim() || "Ù…ÙˆØ¸Ù Ø¬Ø¯ÙŠØ¯",
+    fullName: String(body.fullName ?? target.fullName ?? "موظف جديد").trim() || "موظف جديد",
     phone: normalizePhone(body.phone ?? target.phone ?? ""),
     email: normalizeEmail(body.email ?? target.email ?? ""),
     photoUrl: body.photoUrl || body.avatarUrl || target.photoUrl || "",
@@ -751,8 +751,8 @@ function applyEmployeePayload(db, target, body = {}) {
 function createUserRecord(db, body = {}) {
   const employee = findById(db.employees, body.employeeId);
   const email = inferEmail(db, body, employee);
-  if (!email) throw new Error("ÙŠØ¬Ø¨ Ø¥Ø¯Ø®Ø§Ù„ Ø¨Ø±ÙŠØ¯ Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ø£Ùˆ Ø±Ù‚Ù… Ù‡Ø§ØªÙ ØµØ§Ù„Ø­ Ù„Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„.");
-  if ((db.users || []).some((user) => normalizeEmail(user.email) === email)) throw new Error("Ø§Ù„Ø¨Ø±ÙŠØ¯ Ø§Ù„Ø¥Ù„ÙƒØªØ±ÙˆÙ†ÙŠ Ù…Ø³ØªØ®Ø¯Ù… Ø¨Ø§Ù„ÙØ¹Ù„.");
+  if (!email) throw new Error("يجب إدخال بريد إلكتروني أو رقم هاتف صالح لإنشاء حساب دخول.");
+  if ((db.users || []).some((user) => normalizeEmail(user.email) === email)) throw new Error("البريد الإلكتروني مستخدم بالفعل.");
   const generatedPassword = body.password ? String(body.password) : (normalizePhone(body.phone || employee?.phone || "") || makeStrongPassword());
   const user = {
     id: makeId("u"),
@@ -778,10 +778,10 @@ function createUserRecord(db, body = {}) {
   };
   db.users.unshift(user);
   db.credentialVault ||= [];
-  db.credentialVault.unshift({ id: makeId("cred"), userId: user.id, employeeId: user.employeeId, email: user.email, temporaryPassword: generatedPassword, status: "ISSUED", createdAt: now(), createdBy: currentUser(db)?.id || "system", note: "ÙƒÙ„Ù…Ø© Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠØ© Ø­Ø³Ø¨ Ø³ÙŠØ§Ø³Ø© Ø§Ù„Ø¬Ù…Ø¹ÙŠØ© Ù‡ÙŠ Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ/Ø§Ù„Ø±Ù‚Ù… Ø§Ù„Ø´Ø®ØµÙŠ Ø§Ù„Ù…Ø³Ø¬Ù„ ÙÙŠ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø§Ù„Ù…Ø¹ØªÙ…Ø¯Ø©." });
+  db.credentialVault.unshift({ id: makeId("cred"), userId: user.id, employeeId: user.employeeId, email: user.email, temporaryPassword: generatedPassword, status: "ISSUED", createdAt: now(), createdBy: currentUser(db)?.id || "system", note: "كلمة الدخول الافتراضية حسب سياسة الجمعية هي رقم الهاتف/الرقم الشخصي المسجل في قائمة الموظفين المعتمدة." });
   db.credentialVault = db.credentialVault.slice(0, 500);
   audit(db, "create", "user", user.id, null, { ...user, password: "***" });
-  notify(db, `ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ù…Ø³ØªØ®Ø¯Ù… ${user.name}`, "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„ Ø¨Ø±Ù‚Ù… Ø§Ù„Ù‡Ø§ØªÙ ÙˆÙƒÙ„Ù…Ø© Ù…Ø±ÙˆØ± Ù…Ø·Ø§Ø¨Ù‚Ø© Ù„Ù„Ø±Ù‚Ù… Ø§Ù„Ù…Ø³Ø¬Ù„.", "SUCCESS");
+  notify(db, `تم إنشاء مستخدم ${user.name}`, "تم إنشاء حساب دخول برقم الهاتف وكلمة مرور مطابقة للرقم المسجل.", "SUCCESS");
   return user;
 }
 
@@ -810,18 +810,18 @@ function dashboard(db) {
   return {
     executive: { readiness, workflow, rejectedReviews, unlinkedEmployees },
     metrics: [
-      { label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ† Ø§Ù„Ù†Ø´Ø·ÙˆÙ†", value: activeEmployees, helper: `${employees.length} Ù…Ù„Ù Ù…ÙˆØ¸Ù` },
-      { label: "Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ…", value: todayEvents.filter((event) => ["PRESENT", "LATE", "MISSION"].includes(event.type)).length, helper: "Ø­Ø¶ÙˆØ± ÙˆØªØ£Ø®ÙŠØ± ÙˆÙ…Ø£Ù…ÙˆØ±ÙŠØ§Øª" },
-      { label: "Ø·Ù„Ø¨Ø§Øª Ù…ÙØªÙˆØ­Ø©", value: openRequests, helper: "Ø¥Ø¬Ø§Ø²Ø§Øª ÙˆÙ…Ø£Ù…ÙˆØ±ÙŠØ§Øª ÙˆØ§Ø³ØªØ«Ù†Ø§Ø¡Ø§Øª" },
-      { label: "Ø¬Ø§Ù‡Ø²ÙŠØ© Ø§Ù„Ù†Ø¸Ø§Ù…", value: `${healthScore}%`, helper: readiness.grade },
-      { label: "Ø¨ØµÙ…Ø§Øª Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©", value: rejectedReviews, helper: "Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø·Ø§Ù‚ Ø£Ùˆ Ø¯Ù‚Ø© Ø¶Ø¹ÙŠÙØ©" },
-      { label: "Ù…ÙˆØ¸ÙÙˆÙ† Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨", value: unlinkedEmployees, helper: "ÙŠØ­ØªØ§Ø¬ÙˆÙ† Ø±Ø¨Ø· Ø¯Ø®ÙˆÙ„" },
+      { label: "الموظفون النشطون", value: activeEmployees, helper: `${employees.length} ملف موظف` },
+      { label: "حضور اليوم", value: todayEvents.filter((event) => ["PRESENT", "LATE", "MISSION"].includes(event.type)).length, helper: "حضور وتأخير ومأموريات" },
+      { label: "طلبات مفتوحة", value: openRequests, helper: "إجازات ومأموريات واستثناءات" },
+      { label: "جاهزية النظام", value: `${healthScore}%`, helper: readiness.grade },
+      { label: "بصمات للمراجعة", value: rejectedReviews, helper: "خارج النطاق أو دقة ضعيفة" },
+      { label: "موظفون بلا حساب", value: unlinkedEmployees, helper: "يحتاجون ربط دخول" },
     ],
     attendanceBreakdown: [
-      { label: "Ø­Ø§Ø¶Ø±", value: todayEvents.filter((event) => event.type === "PRESENT").length },
-      { label: "Ù…ØªØ£Ø®Ø±", value: todayEvents.filter((event) => event.type === "LATE").length },
-      { label: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", value: todayEvents.filter((event) => event.type === "MISSION").length },
-      { label: "ØºÙŠØ§Ø¨", value: todayEvents.filter((event) => event.type === "ABSENT").length },
+      { label: "حاضر", value: todayEvents.filter((event) => event.type === "PRESENT").length },
+      { label: "متأخر", value: todayEvents.filter((event) => event.type === "LATE").length },
+      { label: "مأمورية", value: todayEvents.filter((event) => event.type === "MISSION").length },
+      { label: "غياب", value: todayEvents.filter((event) => event.type === "ABSENT").length },
     ],
     attendanceTrends: byDepartment,
     latestEvents: db.attendanceEvents.filter((event) => allowedIds.has(event.employeeId)).map((event) => enrichByEmployee(db, event)).sort((a, b) => new Date(b.eventAt) - new Date(a.eventAt)).slice(0, 8),
@@ -855,19 +855,19 @@ function createSensitiveApprovalRecord(db, body = {}) {
     targetType: body.targetType || 'system',
     targetId: body.targetId || '',
     targetEmployeeId: body.targetEmployeeId || body.employeeId || '',
-    title: body.title || 'Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù…Ù„ÙŠØ© Ø­Ø³Ø§Ø³Ø©',
+    title: body.title || 'طلب اعتماد عملية حساسة',
     summary: body.summary || body.reason || '',
     payload: body.payload || {},
     status: 'PENDING',
     requestedByUserId: actor?.id || 'system',
     requestedByEmployeeId: actor?.employeeId || '',
-    requestedByName: actor?.fullName || actor?.name || 'Ø§Ù„Ù†Ø¸Ø§Ù…',
+    requestedByName: actor?.fullName || actor?.name || 'النظام',
     requestedAt: now(),
     createdAt: now(),
-    workflow: [{ at: now(), by: actor?.fullName || actor?.name || 'Ø§Ù„Ù†Ø¸Ø§Ù…', action: 'created', note: body.summary || body.reason || '' }],
+    workflow: [{ at: now(), by: actor?.fullName || actor?.name || 'النظام', action: 'created', note: body.summary || body.reason || '' }],
   };
   db.sensitiveApprovals.unshift(item);
-  notifyManyEmployees(db, ['emp-executive-director', 'emp-executive-secretary'], 'Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù…Ù„ÙŠØ© Ø­Ø³Ø§Ø³Ø©', item.title, 'ACTION_REQUIRED');
+  notifyManyEmployees(db, ['emp-executive-director', 'emp-executive-secretary'], 'طلب اعتماد عملية حساسة', item.title, 'ACTION_REQUIRED');
   audit(db, 'sensitive_approval.request', item.targetType, item.targetId || item.id, null, item);
   return item;
 }
@@ -878,7 +878,7 @@ function executeApprovedSensitiveAction(db, approval) {
   let result = { executed: false };
   if (approval.actionType === 'DELETE_EMPLOYEE' && approval.targetEmployeeId) {
     const employee = findById(db.employees || [], approval.targetEmployeeId);
-    if (!employee) throw new Error('Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„Ù…Ø·Ù„ÙˆØ¨ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.');
+    if (!employee) throw new Error('الموظف المطلوب غير موجود.');
     const employeeBefore = clone(employee);
     employee.isDeleted = true;
     employee.status = 'INACTIVE';
@@ -889,7 +889,7 @@ function executeApprovedSensitiveAction(db, approval) {
     result = { executed: true, employeeId: employee.id };
   } else if (approval.actionType === 'DISABLE_USER' && approval.targetId) {
     const user = findById(db.users || [], approval.targetId);
-    if (!user) throw new Error('Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.');
+    if (!user) throw new Error('المستخدم غير موجود.');
     const userBefore = clone(user);
     user.status = 'DISABLED';
     audit(db, 'sensitive_approval.execute.disable_user', 'user', user.id, userBefore, user);
@@ -898,7 +898,7 @@ function executeApprovedSensitiveAction(db, approval) {
   approval.status = result.executed ? 'EXECUTED' : approval.status;
   approval.executedAt = result.executed ? now() : approval.executedAt;
   approval.workflow ||= [];
-  approval.workflow.unshift({ at: now(), by: currentUser(db)?.name || 'Ø§Ù„Ù†Ø¸Ø§Ù…', action: result.executed ? 'executed' : 'skipped', note: result.reason || '' });
+  approval.workflow.unshift({ at: now(), by: currentUser(db)?.name || 'النظام', action: result.executed ? 'executed' : 'skipped', note: result.reason || '' });
   audit(db, 'sensitive_approval.execute', 'sensitive_approval', approval.id, before, approval);
   return result;
 }
@@ -985,13 +985,13 @@ async function apiRequest(path, options = {}) {
     });
   } catch (error) {
     if (!["GET", "HEAD"].includes(method.toUpperCase()) && !String(path).includes("/auth/")) {
-      return { queued: true, offline: true, item: queueOfflineRequest(path, options), message: "ØªÙ… Ø­ÙØ¸ Ø§Ù„Ø·Ù„Ø¨ ÙÙŠ Ù‚Ø§Ø¦Ù…Ø© Ø§Ù„Ù…Ø²Ø§Ù…Ù†Ø© Ù„Ø­ÙŠÙ† Ø¹ÙˆØ¯Ø© Ø§Ù„Ø§ØªØµØ§Ù„." };
+      return { queued: true, offline: true, item: queueOfflineRequest(path, options), message: "تم حفظ الطلب في قائمة المزامنة لحين عودة الاتصال." };
     }
     throw error;
   }
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || payload?.ok === false || payload?.success === false) {
-    throw new Error(payload?.error?.message || payload?.message || "ØªØ¹Ø°Ø± ØªÙ†ÙÙŠØ° Ø§Ù„Ø·Ù„Ø¨ Ù…Ù† Ø§Ù„Ø®Ø§Ø¯Ù….");
+    throw new Error(payload?.error?.message || payload?.message || "تعذر تنفيذ الطلب من الخادم.");
   }
   return payload?.data ?? payload?.items ?? payload;
 }
@@ -1042,7 +1042,7 @@ function analyticsRows(db) {
     const lateMinutes = days.reduce((sum, day) => sum + Number(day.lateMinutes || 0), 0);
     const last = latestLocations(db).find((loc) => loc.employeeId === employee.id);
     const riskScore = Math.min(100, absences * 22 + Math.ceil(lateMinutes / 30) * 7);
-    return { employee, employeeId: employee.id, today, absences, lateMinutes, riskScore, productivityHint: riskScore >= 60 ? "ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø© Ø¹Ø§Ø¬Ù„Ø©" : riskScore >= 30 ? "Ù…ØªÙˆØ³Ø· Ø§Ù„Ù…Ø®Ø§Ø·Ø±" : "Ù…Ø³ØªÙ‚Ø±", lastLocation: last || null };
+    return { employee, employeeId: employee.id, today, absences, lateMinutes, riskScore, productivityHint: riskScore >= 60 ? "يحتاج متابعة عاجلة" : riskScore >= 30 ? "متوسط المخاطر" : "مستقر", lastLocation: last || null };
   }).sort((a, b) => b.riskScore - a.riskScore);
 }
 
@@ -1078,7 +1078,7 @@ const remoteEndpoints = {
   checkOut: (body) => apiRequest("/attendance/check-out", { method: "POST", body }),
   recordAttendance: (body = {}) => {
     const action = String(body.eventType || body.type || body.action || "").toLowerCase();
-    const out = ["out", "checkout", "check_out", "Ø§Ù†ØµØ±Ø§Ù"].includes(action);
+    const out = ["out", "checkout", "check_out", "انصراف"].includes(action);
     return apiRequest("/employee/attendance", { method: "POST", body: { ...(body || {}), action: out ? "check_out" : "check_in" } });
   },
   selfCheckIn: (body) => apiRequest("/employee/attendance", { method: "POST", body: { ...(body || {}), action: "check_in" } }),
@@ -1154,7 +1154,7 @@ const remoteEndpoints = {
   registerPasskey: (body) => apiRequest("/passkeys/register/verify", { method: "POST", body }),
   offlineQueue: () => apiRequest("/offline/queue"),
   syncOfflineQueue: () => apiRequest("/offline/sync", { method: "POST" }),
-  reset: () => Promise.resolve({ ok: true, message: "Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„Ø¶Ø¨Ø· Ù…ØªØ§Ø­Ø© ÙÙŠ ÙˆØ¶Ø¹ Live Server Ø§Ù„Ù…Ø­Ù„ÙŠ ÙÙ‚Ø·." }),
+  reset: () => Promise.resolve({ ok: true, message: "إعادة الضبط متاحة في وضع Live Server المحلي فقط." }),
 };
 
 const orgKeyMap = {
@@ -1169,7 +1169,7 @@ function saveOrgLocal(db, kind, body) {
   db[key] ||= [];
   if (body.id) {
     const item = findById(db[key], body.id);
-    if (!item) throw new Error("Ø§Ù„Ø¹Ù†ØµØ± ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!item) throw new Error("العنصر غير موجود.");
     const before = clone(item);
     Object.assign(item, body, { updatedAt: now() });
     audit(db, "update", key, item.id, before, item);
@@ -1178,11 +1178,11 @@ function saveOrgLocal(db, kind, body) {
   const item = { id: makeId(key.slice(0, 3)), active: true, createdAt: now(), ...body };
   db[key].unshift(item);
   audit(db, "create", key, item.id, null, item);
-  notify(db, `ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ ${item.name || item.code || "Ø¹Ù†ØµØ± ØªÙ†Ø¸ÙŠÙ…ÙŠ"}`, "", "SUCCESS");
+  notify(db, `تم إنشاء ${item.name || item.code || "عنصر تنظيمي"}`, "", "SUCCESS");
   return item;
 }
 
-function requestWorkflow(item, action, actor = "Ø§Ù„Ù†Ø¸Ø§Ù…") {
+function requestWorkflow(item, action, actor = "النظام") {
   item.workflow ||= [];
   item.workflow.push({ at: now(), by: actor, action });
 }
@@ -1204,11 +1204,11 @@ function kpiGrade(total) {
 
 function kpiRating(total) {
   const score = Number(total || 0);
-  if (score >= 90) return "Ù…Ù…ØªØ§Ø²";
-  if (score >= 80) return "Ø¬ÙŠØ¯ Ø¬Ø¯Ù‹Ø§";
-  if (score >= 70) return "Ø¬ÙŠØ¯";
-  if (score >= 60) return "Ù…Ù‚Ø¨ÙˆÙ„";
-  return "ÙŠØ­ØªØ§Ø¬ ØªØ­Ø³ÙŠÙ†";
+  if (score >= 90) return "ممتاز";
+  if (score >= 80) return "جيد جدًا";
+  if (score >= 70) return "جيد";
+  if (score >= 60) return "مقبول";
+  return "يحتاج تحسين";
 }
 
 function currentKpiCycle(db) {
@@ -1223,7 +1223,7 @@ function currentKpiCycle(db) {
   if (!cycle || cycle.id !== id) {
     cycle = {
       id,
-      name: `ØªÙ‚ÙŠÙŠÙ… Ø£Ø¯Ø§Ø¡ ${today.toLocaleDateString("ar-EG", { month: "long", year: "numeric" })}`,
+      name: `تقييم أداء ${today.toLocaleDateString("ar-EG", { month: "long", year: "numeric" })}`,
       periodType: "monthly",
       startsOn: startsOn.toISOString().slice(0, 10),
       endsOn: endsOn.toISOString().slice(0, 10),
@@ -1322,11 +1322,11 @@ function monthlyAttendanceSummary(db, month) {
     month: monthBounds(month).month,
     rows,
     metrics: [
-      { label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", value: rows.length, helper: "Ø¯Ø§Ø®Ù„ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ø­Ø§Ù„ÙŠØ©" },
-      { label: "Ø­Ø¶ÙˆØ±", value: totals.checkIns, helper: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø­Ø¶ÙˆØ±" },
-      { label: "Ø§Ù†ØµØ±Ø§Ù", value: totals.checkOuts, helper: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø§Ù†ØµØ±Ø§Ù" },
-      { label: "Ù…Ø±ÙÙˆØ¶", value: totals.rejected, helper: "ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©" },
-      { label: "Ø¯Ù‚Ø§Ø¦Ù‚ Ø§Ù„ØªØ£Ø®ÙŠØ±", value: totals.lateMinutes, helper: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø´Ù‡Ø±" },
+      { label: "الموظفون", value: rows.length, helper: "داخل الصلاحيات الحالية" },
+      { label: "حضور", value: totals.checkIns, helper: "إجمالي الحضور" },
+      { label: "انصراف", value: totals.checkOuts, helper: "إجمالي الانصراف" },
+      { label: "مرفوض", value: totals.rejected, helper: "يحتاج متابعة" },
+      { label: "دقائق التأخير", value: totals.lateMinutes, helper: "إجمالي الشهر" },
     ],
   };
 }
@@ -1422,7 +1422,7 @@ function analyseAttendanceForEmployee(db, employee, date = dateKey()) {
   const approvedMission = (db.missions || []).find((item) => item.employeeId === employee.id && ["APPROVED", "IN_PROGRESS", "COMPLETED"].includes(item.status) && isDateCovered(item, date));
   const flags = [];
   let status = "ABSENT_PENDING";
-  let title = "Ù„Ù… ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø­Ø¶ÙˆØ± Ø¨Ø¹Ø¯";
+  let title = "لم يتم تسجيل حضور بعد";
   let severity = "LOW";
   let lateMinutes = 0;
   let earlyExitMinutes = 0;
@@ -1435,14 +1435,14 @@ function analyseAttendanceForEmployee(db, employee, date = dateKey()) {
 
   if (approvedLeave) {
     status = "ON_LEAVE";
-    title = "Ø¥Ø¬Ø§Ø²Ø© Ù…Ø¹ØªÙ…Ø¯Ø©";
+    title = "إجازة معتمدة";
   } else if (approvedMission) {
     status = "ON_MISSION";
-    title = "Ù…Ø£Ù…ÙˆØ±ÙŠØ© Ù…Ø¹ØªÙ…Ø¯Ø©";
+    title = "مأمورية معتمدة";
   } else if (!firstCheckIn) {
     if (!isToday || nowAt >= absentAt) {
       status = isToday ? "ABSENT_TEMP" : "ABSENT";
-      title = isToday ? "ØºØ§Ø¦Ø¨ Ù…Ø¤Ù‚ØªÙ‹Ø§" : "ØºØ§Ø¦Ø¨";
+      title = isToday ? "غائب مؤقتًا" : "غائب";
       severity = "HIGH";
       flags.push("missing_check_in");
     }
@@ -1451,18 +1451,18 @@ function analyseAttendanceForEmployee(db, employee, date = dateKey()) {
     if (inAt > startAt) {
       lateMinutes = Math.max(0, Math.round((inAt - startAt) / 60000));
       status = "LATE";
-      title = "Ù…ØªØ£Ø®Ø± " + lateMinutes + " Ø¯Ù‚ÙŠÙ‚Ø©";
+      title = "متأخر " + lateMinutes + " دقيقة";
       severity = lateMinutes >= 60 ? "HIGH" : "MEDIUM";
       flags.push("late");
     } else {
       status = "PRESENT";
-      title = "Ø­Ø§Ø¶Ø±";
+      title = "حاضر";
     }
     const outside = events.filter((event) => ["outside_branch", "location_low_accuracy", "permission_denied", "location_unavailable"].includes(event.geofenceStatus) || event.requiresReview);
     if (outside.length) {
       flags.push("outside_geofence");
       status = "REVIEW";
-      title = "Ø¨ØµÙ…Ø© ØªØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©";
+      title = "بصمة تحتاج مراجعة";
       severity = "HIGH";
     }
     const duplicateWindow = Number(rules.duplicateWindowMinutes || 10) * 60000;
@@ -1472,7 +1472,7 @@ function analyseAttendanceForEmployee(db, employee, date = dateKey()) {
       if (prev.type === cur.type && Math.abs(new Date(cur.eventAt || cur.createdAt) - new Date(prev.eventAt || prev.createdAt)) <= duplicateWindow) {
         flags.push("duplicate_punch");
         status = "REVIEW";
-        title = "ØªÙƒØ±Ø§Ø± Ø¨ØµÙ…Ø© Ù…Ø´Ø¨ÙˆÙ‡";
+        title = "تكرار بصمة مشبوه";
         severity = "MEDIUM";
         break;
       }
@@ -1484,7 +1484,7 @@ function analyseAttendanceForEmployee(db, employee, date = dateKey()) {
         flags.push("early_exit");
         if (status !== "REVIEW") {
           status = "EARLY_EXIT";
-          title = "Ø®Ø±ÙˆØ¬ Ù…Ø¨ÙƒØ± " + earlyExitMinutes + " Ø¯Ù‚ÙŠÙ‚Ø©";
+          title = "خروج مبكر " + earlyExitMinutes + " دقيقة";
           severity = "MEDIUM";
         }
       }
@@ -1492,7 +1492,7 @@ function analyseAttendanceForEmployee(db, employee, date = dateKey()) {
       flags.push("missing_checkout");
       if (status !== "REVIEW") {
         status = "MISSING_CHECKOUT";
-        title = "Ù†Ø³ÙŠØ§Ù† Ø§Ù†ØµØ±Ø§Ù";
+        title = "نسيان انصراف";
         severity = "MEDIUM";
       }
     }
@@ -1514,7 +1514,7 @@ function analyseAttendanceForEmployee(db, employee, date = dateKey()) {
     requiresReview: flags.some((flag) => ["outside_geofence", "duplicate_punch", "missing_checkout"].includes(flag)) || Boolean(daily?.requiresReview),
     leave: approvedLeave || null,
     mission: approvedMission || null,
-    recommendation: flags.includes("missing_check_in") ? "ØªÙˆØ§ØµÙ„ Ù…Ø¹ Ø§Ù„Ù…ÙˆØ¸Ù Ø£Ùˆ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±" : flags.includes("outside_geofence") ? "Ø§ÙØªØ­ Ù…Ø±ÙƒØ² Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¨ØµÙ…Ø§Øª" : flags.includes("missing_checkout") ? "Ø§Ø·Ù„Ø¨ ØªÙˆØ¶ÙŠØ­ Ø£Ùˆ Ø³Ø¬Ù‘Ù„ Ø§Ù†ØµØ±Ø§Ù ÙŠØ¯ÙˆÙŠ" : "Ù…ØªØ§Ø¨Ø¹Ø© Ø¹Ø§Ø¯ÙŠØ©",
+    recommendation: flags.includes("missing_check_in") ? "تواصل مع الموظف أو المدير المباشر" : flags.includes("outside_geofence") ? "افتح مركز مراجعة البصمات" : flags.includes("missing_checkout") ? "اطلب توضيح أو سجّل انصراف يدوي" : "متابعة عادية",
   };
 }
 
@@ -1559,7 +1559,7 @@ function buildEndOfDayReport(db, body = {}) {
   const counts = smart.counts;
   const reviewRows = rows.filter((row) => row.requiresReview || ["ABSENT_TEMP", "ABSENT", "EARLY_EXIT", "MISSING_CHECKOUT", "REVIEW"].includes(row.status));
   const report = {
-    id: makeId("eod"), date, period: body.period || "daily", title: body.title || "ØªÙ‚Ø±ÙŠØ± Ù†Ù‡Ø§ÙŠØ© Ø§Ù„ÙŠÙˆÙ… " + date,
+    id: makeId("eod"), date, period: body.period || "daily", title: body.title || "تقرير نهاية اليوم " + date,
     counts, totals: { employees: rows.length, review: reviewRows.length, present: (counts.PRESENT || 0) + (counts.LATE || 0), absent: (counts.ABSENT || 0) + (counts.ABSENT_TEMP || 0), leave: counts.ON_LEAVE || 0, mission: counts.ON_MISSION || 0 },
     rows: rows.map((row) => ({ employeeId: row.employeeId, employeeName: row.employee?.fullName || row.employeeId, status: row.status, title: row.title, firstCheckInAt: row.firstCheckInAt, lastCheckOutAt: row.lastCheckOutAt, flags: row.flags, recommendation: row.recommendation })),
     createdAt: now(), createdByUserId: currentUser(db)?.id || "system",
@@ -1573,8 +1573,8 @@ function buildEndOfDayReport(db, body = {}) {
 
 function employeeArchiveLocal(db, employeeId) {
   const employee = findById(db.employees || [], employeeId);
-  if (!employee || employee.isDeleted) throw new Error("Ø§Ù„Ù…ÙˆØ¸Ù ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯ Ø£Ùˆ ØªÙ… Ø­Ø°ÙÙ‡.");
-  if (!canSeeEmployee(db, employeeId) && !isFullAccessUser(db)) throw new Error("Ù„Ø§ ØªÙ…Ù„Ùƒ ØµÙ„Ø§Ø­ÙŠØ© Ø¹Ø±Ø¶ Ø£Ø±Ø´ÙŠÙ Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¸Ù.");
+  if (!employee || employee.isDeleted) throw new Error("الموظف غير موجود أو تم حذفه.");
+  if (!canSeeEmployee(db, employeeId) && !isFullAccessUser(db)) throw new Error("لا تملك صلاحية عرض أرشيف هذا الموظف.");
   const byNew = (a,b) => new Date(b.eventAt || b.createdAt || b.startDate || b.plannedStart || 0) - new Date(a.eventAt || a.createdAt || a.startDate || a.plannedStart || 0);
   const events = (db.attendanceEvents || []).filter((item) => item.employeeId === employeeId).sort(byNew);
   const daily = (db.attendanceDaily || []).filter((item) => item.employeeId === employeeId).sort((a,b) => String(b.date).localeCompare(String(a.date)));
@@ -1593,7 +1593,7 @@ function employeeArchiveLocal(db, employeeId) {
 
 function createAutomaticBackup(db, body = {}) {
   const policy = { keepLast: 30, ...(db.systemSettings?.backupPolicy || {}) };
-  const snapshot = { id: makeId("autobak"), title: body.title || "Backup ØªÙ„Ù‚Ø§Ø¦ÙŠ " + new Date().toLocaleString("ar-EG"), reason: body.reason || "manual", createdAt: now(), createdByUserId: currentUser(db)?.id || "system", counts: { employees: (db.employees || []).length, users: (db.users || []).length, attendance: (db.attendanceEvents || []).length, auditLogs: (db.auditLogs || []).length }, data: clone(db) };
+  const snapshot = { id: makeId("autobak"), title: body.title || "Backup تلقائي " + new Date().toLocaleString("ar-EG"), reason: body.reason || "manual", createdAt: now(), createdByUserId: currentUser(db)?.id || "system", counts: { employees: (db.employees || []).length, users: (db.users || []).length, attendance: (db.attendanceEvents || []).length, auditLogs: (db.auditLogs || []).length }, data: clone(db) };
   db.systemBackups ||= [];
   db.systemBackups.unshift(snapshot);
   db.systemBackups = db.systemBackups.slice(0, Number(policy.keepLast || 30));
@@ -1606,10 +1606,10 @@ function createAutomaticBackup(db, body = {}) {
 
 function workflowItems(db) {
   const rows = [
-    ...(db.leaves || []).map((item) => ({ ...item, kind: "leave", kindLabel: "Ø¥Ø¬Ø§Ø²Ø©", label: item.leaveType?.name || item.leaveType || "Ø¥Ø¬Ø§Ø²Ø©", createdSort: item.createdAt || item.startDate || "" })),
-    ...(db.missions || []).map((item) => ({ ...item, kind: "mission", kindLabel: "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", label: item.title || item.destinationName || "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", createdSort: item.createdAt || item.plannedStart || "" })),
-    ...(db.exceptions || []).map((item) => ({ ...item, kind: "exception", kindLabel: "Ø§Ø³ØªØ«Ù†Ø§Ø¡ Ø­Ø¶ÙˆØ±", label: item.title || "Ø·Ù„Ø¨ ØªØ¹Ø¯ÙŠÙ„ Ø­Ø¶ÙˆØ±", createdSort: item.createdAt || "" })),
-    ...(db.locationRequests || []).map((item) => ({ ...item, kind: "location", kindLabel: "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹", label: item.purpose || "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹", createdSort: item.requestedAt || item.createdAt || "" })),
+    ...(db.leaves || []).map((item) => ({ ...item, kind: "leave", kindLabel: "إجازة", label: item.leaveType?.name || item.leaveType || "إجازة", createdSort: item.createdAt || item.startDate || "" })),
+    ...(db.missions || []).map((item) => ({ ...item, kind: "mission", kindLabel: "مأمورية", label: item.title || item.destinationName || "مأمورية", createdSort: item.createdAt || item.plannedStart || "" })),
+    ...(db.exceptions || []).map((item) => ({ ...item, kind: "exception", kindLabel: "استثناء حضور", label: item.title || "طلب تعديل حضور", createdSort: item.createdAt || "" })),
+    ...(db.locationRequests || []).map((item) => ({ ...item, kind: "location", kindLabel: "طلب موقع", label: item.purpose || "طلب موقع", createdSort: item.requestedAt || item.createdAt || "" })),
   ];
   return scopedRowsByEmployee(db, rows)
     .map((item) => enrichByEmployee(db, item))
@@ -1642,16 +1642,16 @@ function systemReadiness(db) {
   const pendingRejectedPunches = (db.attendanceEvents || []).filter((event) => event.requiresReview || event.status === "REJECTED").length;
   const wf = workflowSummary(db);
   const parts = [
-    { key: "employees", label: "Ù…Ù„ÙØ§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", ok: employees.length > 0, score: employees.length ? 15 : 0, detail: `${employees.length} Ù…Ù„Ù` },
-    { key: "active", label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ† Ø§Ù„Ù†Ø´Ø·ÙˆÙ†", ok: activeEmployees.length > 0, score: employees.length ? Math.round((activeEmployees.length / Math.max(1, employees.length)) * 15) : 0, detail: `${activeEmployees.length}/${employees.length}` },
-    { key: "linked", label: "Ø±Ø¨Ø· Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª", ok: linkedUsers.length === (db.users || []).length, score: (db.users || []).length ? Math.round((linkedUsers.length / Math.max(1, (db.users || []).length)) * 20) : 0, detail: `${linkedUsers.length}/${(db.users || []).length}` },
-    { key: "roles", label: "Ø§Ù„Ø£Ø¯ÙˆØ§Ø± ÙˆØ§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª", ok: rolesWithPermissions.length === (db.roles || []).length, score: (db.roles || []).length ? Math.round((rolesWithPermissions.length / Math.max(1, (db.roles || []).length)) * 15) : 0, detail: `${rolesWithPermissions.length}/${(db.roles || []).length}` },
-    { key: "location", label: "Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹", ok: branchWithLocation, score: branchWithLocation ? 15 : 0, detail: branchWithLocation ? "Ù…Ø¶Ø¨ÙˆØ·Ø©" : "Ù†Ø§Ù‚ØµØ©" },
-    { key: "workflow", label: "Ø·Ù„Ø¨Ø§Øª Ø¹Ø§Ù„Ù‚Ø©", ok: wf.stale === 0, score: wf.stale ? Math.max(0, 10 - wf.stale * 2) : 10, detail: `${wf.stale} Ø·Ù„Ø¨ Ù…ØªØ£Ø®Ø±` },
-    { key: "reviews", label: "Ù…Ø±Ø§Ø¬Ø¹Ø§Øª Ø§Ù„Ø¨ØµÙ…Ø©", ok: pendingRejectedPunches === 0, score: pendingRejectedPunches ? Math.max(0, 10 - pendingRejectedPunches) : 10, detail: `${pendingRejectedPunches} Ù…Ø±Ø§Ø¬Ø¹Ø©` },
+    { key: "employees", label: "ملفات الموظفين", ok: employees.length > 0, score: employees.length ? 15 : 0, detail: `${employees.length} ملف` },
+    { key: "active", label: "الموظفون النشطون", ok: activeEmployees.length > 0, score: employees.length ? Math.round((activeEmployees.length / Math.max(1, employees.length)) * 15) : 0, detail: `${activeEmployees.length}/${employees.length}` },
+    { key: "linked", label: "ربط الحسابات", ok: linkedUsers.length === (db.users || []).length, score: (db.users || []).length ? Math.round((linkedUsers.length / Math.max(1, (db.users || []).length)) * 20) : 0, detail: `${linkedUsers.length}/${(db.users || []).length}` },
+    { key: "roles", label: "الأدوار والصلاحيات", ok: rolesWithPermissions.length === (db.roles || []).length, score: (db.roles || []).length ? Math.round((rolesWithPermissions.length / Math.max(1, (db.roles || []).length)) * 15) : 0, detail: `${rolesWithPermissions.length}/${(db.roles || []).length}` },
+    { key: "location", label: "إحداثيات المجمع", ok: branchWithLocation, score: branchWithLocation ? 15 : 0, detail: branchWithLocation ? "مضبوطة" : "ناقصة" },
+    { key: "workflow", label: "طلبات عالقة", ok: wf.stale === 0, score: wf.stale ? Math.max(0, 10 - wf.stale * 2) : 10, detail: `${wf.stale} طلب متأخر` },
+    { key: "reviews", label: "مراجعات البصمة", ok: pendingRejectedPunches === 0, score: pendingRejectedPunches ? Math.max(0, 10 - pendingRejectedPunches) : 10, detail: `${pendingRejectedPunches} مراجعة` },
   ];
   const score = Math.max(0, Math.min(100, parts.reduce((sum, item) => sum + Number(item.score || 0), 0)));
-  return { score, grade: score >= 90 ? "Ù…Ù…ØªØ§Ø²" : score >= 75 ? "Ø¬ÙŠØ¯ Ø¬Ø¯Ù‹Ø§" : score >= 60 ? "Ø¬ÙŠØ¯" : "ÙŠØ­ØªØ§Ø¬ Ø¶Ø¨Ø·", parts };
+  return { score, grade: score >= 90 ? "ممتاز" : score >= 75 ? "جيد جدًا" : score >= 60 ? "جيد" : "يحتاج ضبط", parts };
 }
 
 function employeeRequestSummary(db, employeeId) {
@@ -1666,9 +1666,9 @@ function employeeRequestSummary(db, employeeId) {
 
 function normalizeLoginPhone(value) {
   let text = String(value || "").trim();
-  const ar = "Ù Ù¡Ù¢Ù£Ù¤Ù¥Ù¦Ù§Ù¨Ù©";
+  const ar = "٠١٢٣٤٥٦٧٨٩";
   const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
-  text = text.replace(/[Ù -Ù©]/g, (d) => String(ar.indexOf(d))).replace(/[Û°-Û¹]/g, (d) => String(fa.indexOf(d)));
+  text = text.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)));
   let digits = text.replace(/\D/g, "");
   if (!digits) return "";
   if (digits.startsWith("0020")) digits = digits.slice(2);
@@ -1761,15 +1761,15 @@ function runWorkflowAutomation(db, options = {}) {
     if (db.workflowEscalations.some((item) => item.fingerprint === fingerprint && item.status !== "CLOSED")) return;
     const employee = findById(db.employees, row.employeeId);
     const targetIds = [employee?.managerEmployeeId, secretaryId, executiveId].filter(Boolean);
-    const escalation = { id: makeId("esc"), fingerprint, sourceKind: row.kind, sourceId: row.id, employeeId: row.employeeId, targetEmployeeIds: [...new Set(targetIds)], reason: `Ø·Ù„Ø¨ Ù…ØªØ£Ø®Ø± Ø£ÙƒØ«Ø± Ù…Ù† ${thresholdHours} Ø³Ø§Ø¹Ø©`, status: "OPEN", createdAt: now(), createdByUserId: actor?.id || "system" };
+    const escalation = { id: makeId("esc"), fingerprint, sourceKind: row.kind, sourceId: row.id, employeeId: row.employeeId, targetEmployeeIds: [...new Set(targetIds)], reason: `طلب متأخر أكثر من ${thresholdHours} ساعة`, status: "OPEN", createdAt: now(), createdByUserId: actor?.id || "system" };
     db.workflowEscalations.unshift(escalation);
     const source = [db.leaves, db.missions, db.exceptions, db.locationRequests].flat().find((item) => item?.id === row.id);
     if (source) {
       source.slaStatus = "OVERDUE";
       source.escalatedAt ||= now();
-      requestWorkflow(source, "sla_escalated", actor?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+      requestWorkflow(source, "sla_escalated", actor?.name || "النظام");
     }
-    notifyManyEmployees(db, targetIds, "Ø·Ù„Ø¨ Ù…ØªØ£Ø®Ø± ÙŠØ­ØªØ§Ø¬ Ù‚Ø±Ø§Ø±", `${employee?.fullName || "Ù…ÙˆØ¸Ù"}: ${row.kindLabel || row.kind}`, "ACTION_REQUIRED");
+    notifyManyEmployees(db, targetIds, "طلب متأخر يحتاج قرار", `${employee?.fullName || "موظف"}: ${row.kindLabel || row.kind}`, "ACTION_REQUIRED");
     escalated += 1;
   });
   audit(db, "workflow.automation", "workflow", "bulk", null, { thresholdHours, escalated });
@@ -1787,25 +1787,25 @@ function runDataRepair(db, options = {}) {
 
   for (const employee of db.employees || []) {
     if (employee.isDeleted) continue;
-    if (!employee.branchId && defaultBranch) { employee.branchId = defaultBranch; fixes.push(`ØªÙ… Ø±Ø¨Ø· ${employee.fullName} Ø¨Ø§Ù„ÙØ±Ø¹ Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ`); }
-    if (!employee.departmentId && defaultDepartment) { employee.departmentId = defaultDepartment; fixes.push(`ØªÙ… Ø±Ø¨Ø· ${employee.fullName} Ø¨Ø§Ù„Ù‚Ø³Ù… Ø§Ù„Ø§ÙØªØ±Ø§Ø¶ÙŠ`); }
-    if (!employee.roleId && defaultRole) { employee.roleId = defaultRole; fixes.push(`ØªÙ… ØªØ¹ÙŠÙŠÙ† Ø¯ÙˆØ± Ø§ÙØªØ±Ø§Ø¶ÙŠ Ù„Ù€ ${employee.fullName}`); }
-    if (employee.managerEmployeeId === employee.id) { employee.managerEmployeeId = ""; fixes.push(`ØªÙ… Ø­Ø°Ù Ù…Ø¯ÙŠØ± Ø°Ø§ØªÙŠ Ø®Ø§Ø·Ø¦ Ù…Ù† ${employee.fullName}`); }
+    if (!employee.branchId && defaultBranch) { employee.branchId = defaultBranch; fixes.push(`تم ربط ${employee.fullName} بالفرع الافتراضي`); }
+    if (!employee.departmentId && defaultDepartment) { employee.departmentId = defaultDepartment; fixes.push(`تم ربط ${employee.fullName} بالقسم الافتراضي`); }
+    if (!employee.roleId && defaultRole) { employee.roleId = defaultRole; fixes.push(`تم تعيين دور افتراضي لـ ${employee.fullName}`); }
+    if (employee.managerEmployeeId === employee.id) { employee.managerEmployeeId = ""; fixes.push(`تم حذف مدير ذاتي خاطئ من ${employee.fullName}`); }
     if (employee.email) {
       const key = normalizeEmail(employee.email);
-      if (emails.has(key)) { employee.email = `emp.${employee.id}@ahla-shabab.local`; fixes.push(`ØªÙ… Ø¥ØµÙ„Ø§Ø­ Ø¨Ø±ÙŠØ¯ Ù…ÙƒØ±Ø± Ù„Ù€ ${employee.fullName}`); }
+      if (emails.has(key)) { employee.email = `emp.${employee.id}@ahla-shabab.local`; fixes.push(`تم إصلاح بريد مكرر لـ ${employee.fullName}`); }
       emails.add(normalizeEmail(employee.email));
     }
     if (employee.phone) {
       const key = normalizePhone(employee.phone);
-      if (phones.has(key)) { employee.phone = `${key}-${employee.id.slice(-4)}`; fixes.push(`ØªÙ… ØªÙ…ÙŠÙŠØ² Ø±Ù‚Ù… Ù‡Ø§ØªÙ Ù…ÙƒØ±Ø± Ù„Ù€ ${employee.fullName}`); }
+      if (phones.has(key)) { employee.phone = `${key}-${employee.id.slice(-4)}`; fixes.push(`تم تمييز رقم هاتف مكرر لـ ${employee.fullName}`); }
       phones.add(normalizePhone(employee.phone));
     }
     const existingUser = (db.users || []).find((user) => user.employeeId === employee.id || user.id === employee.userId);
     if (!existingUser && options.createMissingUsers !== false) {
       const user = createUserRecord(db, { ...employee, employeeId: employee.id, temporaryPassword: true, password: "" });
       employee.userId = user.id;
-      fixes.push(`ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„ Ù…Ø¤Ù‚Øª Ù„Ù€ ${employee.fullName}`);
+      fixes.push(`تم إنشاء حساب دخول مؤقت لـ ${employee.fullName}`);
     } else if (existingUser) {
       employee.userId = existingUser.id;
       existingUser.employeeId = employee.id;
@@ -1820,14 +1820,14 @@ function runDataRepair(db, options = {}) {
   const cycles = detectOrgCycles(db);
   cycles.forEach((employeeId) => {
     const employee = findById(db.employees, employeeId);
-    if (employee) { employee.managerEmployeeId = ""; fixes.push(`ØªÙ… ÙØµÙ„ Ø­Ù„Ù‚Ø© Ø¥Ø¯Ø§Ø±ÙŠØ© Ø®Ø§Ø·Ø¦Ø© Ø¹Ù†Ø¯ ${employee.fullName}`); }
+    if (employee) { employee.managerEmployeeId = ""; fixes.push(`تم فصل حلقة إدارية خاطئة عند ${employee.fullName}`); }
   });
 
   db.users ||= [];
   for (const user of db.users) {
     if (user.employeeId && !findById(db.employees, user.employeeId)) {
       user.status = "DISABLED";
-      fixes.push(`ØªÙ… ØªØ¹Ø·ÙŠÙ„ Ù…Ø³ØªØ®Ø¯Ù… ØºÙŠØ± Ù…Ø±Ø¨ÙˆØ· Ø¨Ù…ÙˆØ¸Ù: ${user.email || user.name}`);
+      fixes.push(`تم تعطيل مستخدم غير مربوط بموظف: ${user.email || user.name}`);
     }
     if (!user.roleId && defaultRole) user.roleId = defaultRole;
   }
@@ -1835,8 +1835,8 @@ function runDataRepair(db, options = {}) {
   db.leaveBalances ||= [];
   for (const employee of (db.employees || []).filter((item) => !item.isDeleted)) {
     if (!db.leaveBalances.some((row) => row.employeeId === employee.id)) {
-      db.leaveBalances.push({ id: makeId("lb"), employeeId: employee.id, annualTotal: 21, casualTotal: 7, sickTotal: 15, usedDays: 0, remainingDays: 28, notes: "ØªÙ… Ø§Ù„Ø¥Ù†Ø´Ø§Ø¡ ØªÙ„Ù‚Ø§Ø¦ÙŠÙ‹Ø§ Ù…Ù† Ù…Ø±ÙƒØ² Ø§Ù„Ø¬ÙˆØ¯Ø©", updatedAt: now() });
-      fixes.push(`ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø±ØµÙŠØ¯ Ø¥Ø¬Ø§Ø²Ø§Øª Ù„Ù€ ${employee.fullName}`);
+      db.leaveBalances.push({ id: makeId("lb"), employeeId: employee.id, annualTotal: 21, casualTotal: 7, sickTotal: 15, usedDays: 0, remainingDays: 28, notes: "تم الإنشاء تلقائيًا من مركز الجودة", updatedAt: now() });
+      fixes.push(`تم إنشاء رصيد إجازات لـ ${employee.fullName}`);
     }
   }
 
@@ -1865,14 +1865,14 @@ function deepReadiness(db) {
   const staleWorkflow = pendingWorkflow.filter((item) => requestAgeHours(item) >= 48);
   const expiringDocs = (db.employeeDocuments || []).filter((doc) => doc.expiresOn && new Date(doc.expiresOn) <= addDays(new Date(), 30));
   const issues = [
-    ...missingUsers.map((employee) => ({ severity: "HIGH", area: "users", title: "Ù…ÙˆØ¸Ù Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„", detail: employee.fullName })),
-    ...cycles.map((employeeId) => ({ severity: "HIGH", area: "org", title: "Ø­Ù„Ù‚Ø© Ø¥Ø¯Ø§Ø±ÙŠØ© Ø®Ø§Ø·Ø¦Ø©", detail: findById(db.employees, employeeId)?.fullName || employeeId })),
-    ...staleWorkflow.map((item) => ({ severity: "MEDIUM", area: "workflow", title: "Ø·Ù„Ø¨ Ù…ØªØ£Ø®Ø± Ø¹Ù† Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯", detail: `${item.kindLabel || item.kind} - ${findById(db.employees, item.employeeId)?.fullName || item.employeeId}` })),
-    ...expiringDocs.map((doc) => ({ severity: "MEDIUM", area: "documents", title: "Ù…Ø³ØªÙ†Ø¯ Ù‚Ø±Ø¨ Ø§Ù„Ø§Ù†ØªÙ‡Ø§Ø¡", detail: `${doc.title} - ${findById(db.employees, doc.employeeId)?.fullName || ""}` })),
-    ...(policy.missing ? [{ severity: "LOW", area: "policies", title: "Ø³ÙŠØ§Ø³Ø§Øª ØºÙŠØ± Ù…ÙˆÙ‚Ø¹Ø© Ø¨Ø§Ù„ÙƒØ§Ù…Ù„", detail: `${policy.signed}/${policy.totalRequired}` }] : []),
+    ...missingUsers.map((employee) => ({ severity: "HIGH", area: "users", title: "موظف بلا حساب دخول", detail: employee.fullName })),
+    ...cycles.map((employeeId) => ({ severity: "HIGH", area: "org", title: "حلقة إدارية خاطئة", detail: findById(db.employees, employeeId)?.fullName || employeeId })),
+    ...staleWorkflow.map((item) => ({ severity: "MEDIUM", area: "workflow", title: "طلب متأخر عن الاعتماد", detail: `${item.kindLabel || item.kind} - ${findById(db.employees, item.employeeId)?.fullName || item.employeeId}` })),
+    ...expiringDocs.map((doc) => ({ severity: "MEDIUM", area: "documents", title: "مستند قرب الانتهاء", detail: `${doc.title} - ${findById(db.employees, doc.employeeId)?.fullName || ""}` })),
+    ...(policy.missing ? [{ severity: "LOW", area: "policies", title: "سياسات غير موقعة بالكامل", detail: `${policy.signed}/${policy.totalRequired}` }] : []),
   ];
   const score = Math.max(0, Math.min(100, base.score - issues.filter((i) => i.severity === "HIGH").length * 8 - issues.filter((i) => i.severity === "MEDIUM").length * 3 - issues.filter((i) => i.severity === "LOW").length));
-  return { ...base, score, grade: score >= 90 ? "Ù…Ù…ØªØ§Ø²" : score >= 75 ? "Ø¬ÙŠØ¯ Ø¬Ø¯Ù‹Ø§" : score >= 60 ? "Ø¬ÙŠØ¯" : "ÙŠØ­ØªØ§Ø¬ Ø¥ØµÙ„Ø§Ø­", issues, policy, missingUsers: missingUsers.length, staleWorkflow: staleWorkflow.length, orgCycles: cycles.length, expiringDocuments: expiringDocs.length };
+  return { ...base, score, grade: score >= 90 ? "ممتاز" : score >= 75 ? "جيد جدًا" : score >= 60 ? "جيد" : "يحتاج إصلاح", issues, policy, missingUsers: missingUsers.length, staleWorkflow: staleWorkflow.length, orgCycles: cycles.length, expiringDocuments: expiringDocs.length };
 }
 
 function defaultLeaveBalance(db, employee) {
@@ -1938,11 +1938,11 @@ function smartAlertRows(db) {
   for (const issue of readiness.issues || []) push(`issue:${issue.area}:${issue.title}:${issue.detail}`, issue.severity || "MEDIUM", issue.title, issue.detail || "", issue.area === "documents" ? "documents" : issue.area === "users" ? "employees" : "quality-center");
   for (const item of workflowItems(db).filter((row) => row.status === "PENDING" && requestAgeHours(row) >= 48)) {
     const emp = findById(db.employees, item.employeeId);
-    push(`sla:${item.kind}:${item.id}`, "HIGH", "Ø·Ù„Ø¨ Ù…ØªØ£Ø®Ø± Ø¹Ù† SLA", `${emp?.fullName || "Ù…ÙˆØ¸Ù"} - ${item.kindLabel || item.kind}`, "requests", [emp?.managerEmployeeId, "emp-executive-secretary", "emp-executive-director"].filter(Boolean));
+    push(`sla:${item.kind}:${item.id}`, "HIGH", "طلب متأخر عن SLA", `${emp?.fullName || "موظف"} - ${item.kindLabel || item.kind}`, "requests", [emp?.managerEmployeeId, "emp-executive-secretary", "emp-executive-director"].filter(Boolean));
   }
   for (const doc of (db.employeeDocuments || []).filter((item) => item.expiresOn && new Date(item.expiresOn) <= new Date(Date.now() + 14 * 864e5))) {
     const emp = findById(db.employees, doc.employeeId);
-    push(`doc-expire:${doc.id}`, "MEDIUM", "Ù…Ø³ØªÙ†Ø¯ ÙŠÙ†ØªÙ‡ÙŠ Ù‚Ø±ÙŠØ¨Ù‹Ø§", `${doc.title || "Ù…Ø³ØªÙ†Ø¯"} - ${emp?.fullName || ""}`, "documents", [doc.employeeId].filter(Boolean));
+    push(`doc-expire:${doc.id}`, "MEDIUM", "مستند ينتهي قريبًا", `${doc.title || "مستند"} - ${emp?.fullName || ""}`, "documents", [doc.employeeId].filter(Boolean));
   }
   const openKeys = new Set(generated.map((row) => row.fingerprint));
   db.smartAlerts = [
@@ -1991,15 +1991,15 @@ function exportPortableData(db) {
 function validatePortableImport(payload = {}) {
   const issues = [];
   const warnings = [];
-  if (!payload || typeof payload !== "object") issues.push("Ø§Ù„Ù…Ù„Ù Ù„ÙŠØ³ JSON ØµØ§Ù„Ø­Ù‹Ø§ Ù„Ù„Ù†Ø¸Ø§Ù….");
-  if (!Array.isArray(payload.employees)) issues.push("Ù„Ø§ ÙŠÙˆØ¬Ø¯ employees[] Ø¯Ø§Ø®Ù„ Ø§Ù„Ù…Ù„Ù.");
-  if (!Array.isArray(payload.users)) warnings.push("Ù„Ø§ ÙŠÙˆØ¬Ø¯ users[]Ø› Ø³ÙŠØªÙ… Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆØ¬ÙˆØ¯ Ø£Ùˆ Ø¥Ù†Ø´Ø§Ø¡ Ø­Ø³Ø§Ø¨Ø§Øª Ù„Ø§Ø­Ù‚Ù‹Ø§.");
+  if (!payload || typeof payload !== "object") issues.push("الملف ليس JSON صالحًا للنظام.");
+  if (!Array.isArray(payload.employees)) issues.push("لا يوجد employees[] داخل الملف.");
+  if (!Array.isArray(payload.users)) warnings.push("لا يوجد users[]؛ سيتم الاعتماد على الموجود أو إنشاء حسابات لاحقًا.");
   const ids = new Set();
   for (const employee of payload.employees || []) {
-    if (!employee.id) warnings.push(`Ù…ÙˆØ¸Ù Ø¨Ø¯ÙˆÙ† ID: ${employee.fullName || employee.name || "ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ"}`);
-    if (employee.id && ids.has(employee.id)) issues.push(`ID Ù…ÙˆØ¸Ù Ù…ÙƒØ±Ø±: ${employee.id}`);
+    if (!employee.id) warnings.push(`موظف بدون ID: ${employee.fullName || employee.name || "غير معروف"}`);
+    if (employee.id && ids.has(employee.id)) issues.push(`ID موظف مكرر: ${employee.id}`);
     if (employee.id) ids.add(employee.id);
-    if (employee.managerEmployeeId && employee.managerEmployeeId === employee.id) issues.push(`Ø§Ù„Ù…ÙˆØ¸Ù Ù…Ø¯ÙŠØ± Ù†ÙØ³Ù‡: ${employee.fullName || employee.id}`);
+    if (employee.managerEmployeeId && employee.managerEmployeeId === employee.id) issues.push(`الموظف مدير نفسه: ${employee.fullName || employee.id}`);
   }
   return { ok: issues.length === 0, issues, warnings, employees: (payload.employees || []).length, users: (payload.users || []).length };
 }
@@ -2052,9 +2052,9 @@ function attendanceRiskForEmployee(db, employee, { days = 7 } = {}) {
     .sort((a, b) => new Date(a.eventAt || a.createdAt || 0) - new Date(b.eventAt || b.createdAt || 0));
   const flags = [];
   const deviceIds = new Set(events.map((event) => event.deviceId || event.deviceFingerprint || event.clientId || event.userAgent).filter(Boolean));
-  if (deviceIds.size > 1) flags.push({ code: "NEW_DEVICE", label: "Ø¬Ù‡Ø§Ø² Ø¬Ø¯ÙŠØ¯ Ø£Ùˆ Ø£ÙƒØ«Ø±", points: 20 });
+  if (deviceIds.size > 1) flags.push({ code: "NEW_DEVICE", label: "جهاز جديد أو أكثر", points: 20 });
   const outside = events.filter((event) => ["outside_branch", "geofence_miss", "location_low_accuracy", "permission_denied", "location_unavailable"].includes(event.geofenceStatus) || event.requiresReview);
-  if (outside.length) flags.push({ code: "OUT_OF_RANGE", label: `Ø¨ØµÙ…Ø§Øª Ø®Ø§Ø±Ø¬ Ø§Ù„Ù†Ø·Ø§Ù‚/Ø¶Ø¹ÙŠÙØ©: ${outside.length}`, points: Math.min(35, outside.length * 10) });
+  if (outside.length) flags.push({ code: "OUT_OF_RANGE", label: `بصمات خارج النطاق/ضعيفة: ${outside.length}`, points: Math.min(35, outside.length * 10) });
   let duplicateCount = 0;
   for (let i = 1; i < events.length; i += 1) {
     const prev = events[i - 1];
@@ -2063,11 +2063,11 @@ function attendanceRiskForEmployee(db, employee, { days = 7 } = {}) {
     const gap = Math.abs(new Date(cur.eventAt || cur.createdAt || 0) - new Date(prev.eventAt || prev.createdAt || 0)) / 60000;
     if (sameType && gap <= 10) duplicateCount += 1;
   }
-  if (duplicateCount) flags.push({ code: "DUPLICATE_PUNCH", label: `ØªÙƒØ±Ø§Ø± Ø¨ØµÙ…Ø© Ø³Ø±ÙŠØ¹: ${duplicateCount}`, points: Math.min(30, duplicateCount * 15) });
+  if (duplicateCount) flags.push({ code: "DUPLICATE_PUNCH", label: `تكرار بصمة سريع: ${duplicateCount}`, points: Math.min(30, duplicateCount * 15) });
   const far = events.filter((event) => Number(event.distanceMeters || event.distanceFromBranchMeters || 0) >= 1000);
-  if (far.length) flags.push({ code: "FAR_DISTANCE", label: `Ø­Ø¶ÙˆØ± Ù…Ù† Ù…Ø³Ø§ÙØ© Ø¨Ø¹ÙŠØ¯Ø©: ${far.length}`, points: Math.min(35, far.length * 12) });
+  if (far.length) flags.push({ code: "FAR_DISTANCE", label: `حضور من مسافة بعيدة: ${far.length}`, points: Math.min(35, far.length * 12) });
   const missingLocation = events.filter((event) => !event.latitude && !event.location?.latitude && ["CHECK_IN", "CHECK_OUT"].includes(event.type || event.action));
-  if (missingLocation.length) flags.push({ code: "MISSING_LOCATION", label: `Ø¨ØµÙ…Ø© Ø¨Ø¯ÙˆÙ† Ù…ÙˆÙ‚Ø¹: ${missingLocation.length}`, points: Math.min(25, missingLocation.length * 8) });
+  if (missingLocation.length) flags.push({ code: "MISSING_LOCATION", label: `بصمة بدون موقع: ${missingLocation.length}`, points: Math.min(25, missingLocation.length * 8) });
   const score = Math.min(100, flags.reduce((sum, flag) => sum + Number(flag.points || 0), 0));
   const level = score >= 70 ? "HIGH" : score >= 35 ? "MEDIUM" : score > 0 ? "LOW" : "CLEAR";
   return { employeeId: employee.id, employee: enrichEmployee(db, employee), score, level, flags, events: events.slice(-12).reverse(), generatedAt: now() };
@@ -2077,7 +2077,7 @@ function buildAttendanceRiskCenter(db, options = {}) {
   const days = Number(options.days || 7);
   const rows = visibleEmployees(db).map((employee) => attendanceRiskForEmployee(db, employee, { days })).sort((a, b) => b.score - a.score);
   const counts = rows.reduce((acc, row) => { acc.total += 1; acc[row.level] = (acc[row.level] || 0) + 1; return acc; }, { total: 0, HIGH: 0, MEDIUM: 0, LOW: 0, CLEAR: 0 });
-  return { days, counts, rows, generatedAt: now(), rules: ["ØªÙƒØ±Ø§Ø± Ø¨ØµÙ…Ø© Ø®Ù„Ø§Ù„ 10 Ø¯Ù‚Ø§Ø¦Ù‚", "Ø®Ø±ÙˆØ¬ Ø¹Ù† Ù†Ø·Ø§Ù‚ Ø§Ù„ÙØ±Ø¹", "Ø¬Ù‡Ø§Ø² Ø¬Ø¯ÙŠØ¯", "Ø­Ø¶ÙˆØ± Ù…Ù† Ù…Ø³Ø§ÙØ© Ø¨Ø¹ÙŠØ¯Ø©", "Ø¨ØµÙ…Ø© Ø¨Ø¯ÙˆÙ† Ù…ÙˆÙ‚Ø¹ GPS"] };
+  return { days, counts, rows, generatedAt: now(), rules: ["تكرار بصمة خلال 10 دقائق", "خروج عن نطاق الفرع", "جهاز جديد", "حضور من مسافة بعيدة", "بصمة بدون موقع GPS"] };
 }
 
 function decisionVisibleToEmployee(decision, employeeId) {
@@ -2110,7 +2110,7 @@ function buildMonthlyAutoPdfReports(db, { month = now().slice(0, 7), scope = "al
       const teamIds = (db.employees || []).filter((employee) => employee.managerEmployeeId === manager.id && !employee.isDeleted).map((employee) => employee.id);
       return { manager, teamCount: teamIds.length, attendanceRows: (attendance.rows || []).filter((row) => teamIds.includes(row.employeeId)), kpiRows: evaluations.filter((row) => teamIds.includes(row.employeeId)), disputes: disputes.filter((row) => teamIds.includes(row.employeeId)), requests: requests.filter((row) => teamIds.includes(row.employeeId)) };
     });
-  return { month, scope, generatedAt: now(), status: "READY", attendance, evaluations, disputes, requests, managers: managerRows, title: `Ø§Ù„ØªÙ‚Ø§Ø±ÙŠØ± Ø§Ù„Ø´Ù‡Ø±ÙŠØ© PDF â€” ${month}` };
+  return { month, scope, generatedAt: now(), status: "READY", attendance, evaluations, disputes, requests, managers: managerRows, title: `التقارير الشهرية PDF — ${month}` };
 }
 
 function liveRequestVisibleToEmployee(request, employeeId) {
@@ -2139,15 +2139,15 @@ function hrCommitteeEmployeeIds(db) {
 
 function kpiStageLabel(status = '') {
   return {
-    DRAFT: 'Ù…Ø³ÙˆØ¯Ø©',
-    SELF_SUBMITTED: 'Ù…Ø±Ø³Ù„ Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù',
-    MANAGER_APPROVED: 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±',
-    HR_REVIEWED: 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©',
-    SECRETARY_REVIEWED: 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ',
-    EXECUTIVE_APPROVED: 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ',
-    REJECTED: 'Ù…Ø±ÙÙˆØ¶/ÙŠØ­ØªØ§Ø¬ ØªØ¹Ø¯ÙŠÙ„',
-    APPROVED: 'Ù…Ø¹ØªÙ…Ø¯ Ù†Ù‡Ø§Ø¦ÙŠÙ‹Ø§',
-  }[status] || status || 'Ù…Ø³ÙˆØ¯Ø©';
+    DRAFT: 'مسودة',
+    SELF_SUBMITTED: 'مرسل من الموظف',
+    MANAGER_APPROVED: 'اعتماد المدير المباشر',
+    HR_REVIEWED: 'مراجعة الموارد البشرية',
+    SECRETARY_REVIEWED: 'مراجعة السكرتير التنفيذي',
+    EXECUTIVE_APPROVED: 'اعتماد المدير التنفيذي',
+    REJECTED: 'مرفوض/يحتاج تعديل',
+    APPROVED: 'معتمد نهائيًا',
+  }[status] || status || 'مسودة';
 }
 
 function kpiWindowInfo(db, cycle = currentKpiCycle(db), at = new Date()) {
@@ -2175,10 +2175,10 @@ function kpiWindowInfo(db, cycle = currentKpiCycle(db), at = new Date()) {
     dueOn: deadlineAt.toISOString().slice(0, 10),
     isBefore, isOpen, isLate, isClosed,
     status: isClosed ? 'CLOSED' : isLate ? 'LATE_REVIEW' : isOpen ? 'OPEN' : 'NOT_OPEN',
-    label: isClosed ? 'Ù…ØºÙ„Ù‚Ø©' : isLate ? 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ù…ØªØ£Ø®Ø±Ø©' : isOpen ? 'Ù…ÙØªÙˆØ­Ø© Ø§Ù„Ø¢Ù†' : `ØªÙØªØ­ Ø¨Ø¹Ø¯ ${daysToStart} ÙŠÙˆÙ…`,
+    label: isClosed ? 'مغلقة' : isLate ? 'مراجعة متأخرة' : isOpen ? 'مفتوحة الآن' : `تفتح بعد ${daysToStart} يوم`,
     daysToStart,
     daysToDeadline,
-    message: isOpen ? `Ø§Ù„ØªÙ‚ÙŠÙŠÙ… Ù…ÙØªÙˆØ­ Ø­ØªÙ‰ ÙŠÙˆÙ… ${deadlineDay} Ù…Ù† Ø§Ù„Ø´Ù‡Ø±.` : isLate ? 'Ø§Ù†ØªÙ‡Ù‰ Ù…ÙˆØ¹Ø¯ ØªØ³Ù„ÙŠÙ… Ø§Ù„Ù…ÙˆØ¸Ù/Ø§Ù„Ù…Ø¯ÙŠØ±ØŒ ÙˆÙ…ØªØ§Ø­ Ø§Ø³ØªÙƒÙ…Ø§Ù„ HR ÙˆØ§Ù„Ø³ÙƒØ±ØªÙŠØ± ÙˆØ§Ù„ØªÙ†ÙÙŠØ°ÙŠ.' : isClosed ? 'Ø§Ù„Ø¯ÙˆØ±Ø© Ù…ØºÙ„Ù‚Ø© ÙˆÙ„Ø§ ÙŠØ±Ø§Ø¬Ø¹Ù‡Ø§ Ø¥Ù„Ø§ ØµØ§Ø­Ø¨ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ© Ø§Ù„ÙƒØ§Ù…Ù„Ø©.' : `Ù†Ø§ÙØ°Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ØªØ¨Ø¯Ø£ ÙŠÙˆÙ… ${startDay} Ù…Ù† Ø§Ù„Ø´Ù‡Ø±.`,
+    message: isOpen ? `التقييم مفتوح حتى يوم ${deadlineDay} من الشهر.` : isLate ? 'انتهى موعد تسليم الموظف/المدير، ومتاح استكمال HR والسكرتير والتنفيذي.' : isClosed ? 'الدورة مغلقة ولا يراجعها إلا صاحب الصلاحية الكاملة.' : `نافذة التقييم تبدأ يوم ${startDay} من الشهر.`,
   };
 }
 
@@ -2186,12 +2186,12 @@ function kpiProgressMetrics(evaluations = [], pendingEmployees = []) {
   const byStatus = (status) => evaluations.filter((item) => String(item.status || 'DRAFT') === status).length;
   const finalCount = evaluations.filter((item) => ['EXECUTIVE_APPROVED', 'APPROVED'].includes(String(item.status || ''))).length;
   return [
-    { label: 'Ù„Ù… ÙŠØ¨Ø¯Ø£ÙˆØ§', value: pendingEmployees.length, helper: 'Ù…ÙˆØ¸ÙÙˆÙ† Ø¨Ù„Ø§ ØªÙ‚ÙŠÙŠÙ… ÙÙŠ Ø§Ù„Ø¯ÙˆØ±Ø©' },
-    { label: 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ù…Ø¯ÙŠØ±', value: byStatus('SELF_SUBMITTED'), helper: 'Ù…Ø±Ø³Ù„ Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù' },
-    { label: 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± HR', value: byStatus('MANAGER_APPROVED'), helper: 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± ØªÙ…' },
-    { label: 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„Ø³ÙƒØ±ØªÙŠØ±', value: byStatus('HR_REVIEWED'), helper: 'Ù…Ø±Ø§Ø¬Ø¹Ø© HR ØªÙ…Øª' },
-    { label: 'Ø¨Ø§Ù†ØªØ¸Ø§Ø± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ', value: byStatus('SECRETARY_REVIEWED'), helper: 'Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± ØªÙ…Øª' },
-    { label: 'Ø§Ø¹ØªÙ…Ø§Ø¯ Ù†Ù‡Ø§Ø¦ÙŠ', value: finalCount, helper: 'ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù†ØªÙŠØ¬Ø©' },
+    { label: 'لم يبدأوا', value: pendingEmployees.length, helper: 'موظفون بلا تقييم في الدورة' },
+    { label: 'بانتظار المدير', value: byStatus('SELF_SUBMITTED'), helper: 'مرسل من الموظف' },
+    { label: 'بانتظار HR', value: byStatus('MANAGER_APPROVED'), helper: 'اعتماد المدير تم' },
+    { label: 'بانتظار السكرتير', value: byStatus('HR_REVIEWED'), helper: 'مراجعة HR تمت' },
+    { label: 'بانتظار التنفيذي', value: byStatus('SECRETARY_REVIEWED'), helper: 'مراجعة السكرتير تمت' },
+    { label: 'اعتماد نهائي', value: finalCount, helper: 'تم اعتماد النتيجة' },
   ];
 }
 
@@ -2199,9 +2199,9 @@ function assertKpiSubmitAllowed(db, mode, cycle = currentKpiCycle(db)) {
   const windowInfo = kpiWindowInfo(db, cycle);
   if (isFullAccessUser(db)) return windowInfo;
   if (mode === 'self' || mode === 'manager') {
-    if (!windowInfo.isOpen) throw new Error(`ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ù…ÙˆØ¸Ù ÙˆØ§Ù„Ù…Ø¯ÙŠØ± Ù…ØªØ§Ø­ ÙÙ‚Ø· Ù…Ù† ÙŠÙˆÙ… ${windowInfo.startDay} Ø¥Ù„Ù‰ ÙŠÙˆÙ… ${windowInfo.deadlineDay} Ù…Ù† ÙƒÙ„ Ø´Ù‡Ø±. Ø§Ù„Ø­Ø§Ù„Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ©: ${windowInfo.label}.`);
+    if (!windowInfo.isOpen) throw new Error(`تقييم الموظف والمدير متاح فقط من يوم ${windowInfo.startDay} إلى يوم ${windowInfo.deadlineDay} من كل شهر. الحالة الحالية: ${windowInfo.label}.`);
   }
-  if (mode === 'hr' && windowInfo.isBefore) throw new Error('Ù…Ø±Ø§Ø¬Ø¹Ø© HR ØªØ¨Ø¯Ø£ Ø¨Ø¹Ø¯ ÙØªØ­ Ø¯ÙˆØ±Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ÙŠÙˆÙ… 20 Ù…Ù† Ø§Ù„Ø´Ù‡Ø±.');
+  if (mode === 'hr' && windowInfo.isBefore) throw new Error('مراجعة HR تبدأ بعد فتح دورة التقييم يوم 20 من الشهر.');
   return windowInfo;
 }
 
@@ -2272,8 +2272,8 @@ const localEndpoints = {
   decideSensitiveApproval: async (id, body = {}) => {
     const db = loadDb();
     const approval = findById(db.sensitiveApprovals || [], id);
-    if (!approval) throw new Error("Ø·Ù„Ø¨ Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
-    if (!isExecutiveAuthority(db)) throw new Error("Ù‡Ø°Ø§ Ø§Ù„Ø¥Ø¬Ø±Ø§Ø¡ ÙŠØ­ØªØ§Ø¬ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ø£Ùˆ Ø§Ù„ØªÙ‚Ù†ÙŠ ØµØ§Ø­Ø¨ Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ©.");
+    if (!approval) throw new Error("طلب الاعتماد غير موجود.");
+    if (!isExecutiveAuthority(db)) throw new Error("هذا الإجراء يحتاج المدير التنفيذي أو التقني صاحب الصلاحية.");
     const before = clone(approval);
     const decision = body.decision === "reject" || body.status === "REJECTED" ? "REJECTED" : "APPROVED";
     approval.status = decision;
@@ -2281,7 +2281,7 @@ const localEndpoints = {
     approval.decidedByUserId = currentUser(db)?.id || "system";
     approval.decisionNote = body.note || body.reason || "";
     approval.workflow ||= [];
-    approval.workflow.unshift({ at: now(), by: currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…", action: decision.toLowerCase(), note: approval.decisionNote });
+    approval.workflow.unshift({ at: now(), by: currentUser(db)?.name || "النظام", action: decision.toLowerCase(), note: approval.decisionNote });
     audit(db, "sensitive_approval.decision", "sensitive_approval", id, before, approval);
     const result = decision === "APPROVED" && body.execute !== false ? executeApprovedSensitiveAction(db, approval) : { executed: false };
     saveDb(db);
@@ -2327,14 +2327,14 @@ const localEndpoints = {
   },
   createAdminDecision: async (body = {}) => {
     const db = loadDb();
-    if (!hasLocalScope(db, "decisions:manage") && !hasLocalScope(db, "notifications:manage") && !hasLocalScope(db, "executive:report")) throw new Error("Ù„Ø§ ØªÙ…Ù„Ùƒ ØµÙ„Ø§Ø­ÙŠØ© Ø¥ØµØ¯Ø§Ø± Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ.");
+    if (!hasLocalScope(db, "decisions:manage") && !hasLocalScope(db, "notifications:manage") && !hasLocalScope(db, "executive:report")) throw new Error("لا تملك صلاحية إصدار قرار إداري.");
     db.adminDecisions ||= [];
     const actor = currentUser(db);
-    const targetEmployeeIds = Array.isArray(body.targetEmployeeIds) ? body.targetEmployeeIds.filter(Boolean) : String(body.targetEmployeeIds || "").split(/[ØŒ,\s]+/).filter(Boolean);
-    const decision = { id: makeId("decision"), title: body.title || "Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ", body: body.body || body.description || "", category: body.category || "ADMINISTRATIVE", priority: body.priority || "MEDIUM", scope: body.scope || (targetEmployeeIds.length ? "SELECTED" : "ALL"), targetEmployeeIds, requiresAcknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== "false", status: body.status || "PUBLISHED", issuedByUserId: actor?.id || "system", issuedByEmployeeId: actor?.employeeId || "", publishedAt: now(), createdAt: now(), updatedAt: now() };
+    const targetEmployeeIds = Array.isArray(body.targetEmployeeIds) ? body.targetEmployeeIds.filter(Boolean) : String(body.targetEmployeeIds || "").split(/[،,\s]+/).filter(Boolean);
+    const decision = { id: makeId("decision"), title: body.title || "قرار إداري", body: body.body || body.description || "", category: body.category || "ADMINISTRATIVE", priority: body.priority || "MEDIUM", scope: body.scope || (targetEmployeeIds.length ? "SELECTED" : "ALL"), targetEmployeeIds, requiresAcknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== "false", status: body.status || "PUBLISHED", issuedByUserId: actor?.id || "system", issuedByEmployeeId: actor?.employeeId || "", publishedAt: now(), createdAt: now(), updatedAt: now() };
     db.adminDecisions.unshift(decision);
     const recipients = decision.scope === "SELECTED" ? targetEmployeeIds : (db.employees || []).filter((employee) => !employee.isDeleted).map((employee) => employee.id);
-    notifyManyEmployees(db, recipients, "Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ Ø¬Ø¯ÙŠØ¯ ÙŠØ­ØªØ§Ø¬ Ø§Ø·Ù„Ø§Ø¹", decision.title, "ACTION_REQUIRED");
+    notifyManyEmployees(db, recipients, "قرار إداري جديد يحتاج اطلاع", decision.title, "ACTION_REQUIRED");
     audit(db, "admin_decision.create", "admin_decision", decision.id, null, decision);
     saveDb(db);
     return ok(decision);
@@ -2344,9 +2344,9 @@ const localEndpoints = {
     const user = currentUser(db);
     const employeeId = user?.employeeId || user?.employee?.id;
     const decision = findById(db.adminDecisions || [], decisionId);
-    if (!decision) throw new Error("Ø§Ù„Ù‚Ø±Ø§Ø± ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
-    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨.");
-    if (!decisionVisibleToEmployee(decision, employeeId)) throw new Error("Ù‡Ø°Ø§ Ø§Ù„Ù‚Ø±Ø§Ø± ØºÙŠØ± Ù…ÙˆØ¬Ù‡ Ù„Ùƒ.");
+    if (!decision) throw new Error("القرار غير موجود.");
+    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بالحساب.");
+    if (!decisionVisibleToEmployee(decision, employeeId)) throw new Error("هذا القرار غير موجه لك.");
     db.adminDecisionAcknowledgements ||= [];
     let ack = db.adminDecisionAcknowledgements.find((item) => item.decisionId === decisionId && item.employeeId === employeeId);
     if (!ack) {
@@ -2364,20 +2364,20 @@ const localEndpoints = {
   },
   saveDisputeMinute: async (body = {}) => {
     const db = loadDb();
-    if (!hasLocalScope(db, "disputes:committee") && !hasLocalScope(db, "disputes:manage") && !hasLocalScope(db, "executive:mobile")) throw new Error("Ù„Ø§ ØªÙ…Ù„Ùƒ ØµÙ„Ø§Ø­ÙŠØ© Ø­ÙØ¸ Ù…Ø­Ø¶Ø± Ø§Ù„Ù„Ø¬Ù†Ø©.");
+    if (!hasLocalScope(db, "disputes:committee") && !hasLocalScope(db, "disputes:manage") && !hasLocalScope(db, "executive:mobile")) throw new Error("لا تملك صلاحية حفظ محضر اللجنة.");
     const caseId = body.caseId || body.disputeId || "";
     const item = findById(db.disputeCases || [], caseId);
-    if (!item) throw new Error("Ù…Ù„Ù Ø§Ù„Ø´ÙƒÙˆÙ‰ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!item) throw new Error("ملف الشكوى غير موجود.");
     db.disputeMinutes ||= [];
     const actor = currentUser(db);
-    const minute = { id: makeId("minute"), caseId, sessionAt: body.sessionAt || now(), members: Array.isArray(body.members) ? body.members : String(body.members || "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØŒ Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØŒ HRØŒ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±").split(/[ØŒ,]/).map((x) => x.trim()).filter(Boolean), decision: body.decision || body.committeeDecision || "", notes: body.notes || body.note || "", attachments: Array.isArray(body.attachments) ? body.attachments : [], signedByUserId: actor?.id || "system", signedByName: actor?.name || actor?.fullName || "Ø§Ù„Ù†Ø¸Ø§Ù…", signatureStatus: "SIGNED", createdAt: now() };
+    const minute = { id: makeId("minute"), caseId, sessionAt: body.sessionAt || now(), members: Array.isArray(body.members) ? body.members : String(body.members || "المدير التنفيذي، السكرتير التنفيذي، HR، المدير المباشر").split(/[،,]/).map((x) => x.trim()).filter(Boolean), decision: body.decision || body.committeeDecision || "", notes: body.notes || body.note || "", attachments: Array.isArray(body.attachments) ? body.attachments : [], signedByUserId: actor?.id || "system", signedByName: actor?.name || actor?.fullName || "النظام", signatureStatus: "SIGNED", createdAt: now() };
     db.disputeMinutes.unshift(minute);
-    item.committeeDecision = minute.decision || item.committeeDecision || "ØªÙ… Ø­ÙØ¸ Ù…Ø­Ø¶Ø± Ù„Ø¬Ù†Ø©.";
+    item.committeeDecision = minute.decision || item.committeeDecision || "تم حفظ محضر لجنة.";
     item.resolution = minute.decision || item.resolution || "";
     item.status = body.status || item.status || "COMMITTEE_REVIEW";
     item.committeeTimeline ||= [];
     item.committeeTimeline.unshift({ at: now(), by: minute.signedByName, action: "minutes", note: minute.decision || minute.notes });
-    notifyManyEmployees(db, [item.employeeId, item.managerEmployeeId].filter(Boolean), "ØªÙ… ØªØ­Ø¯ÙŠØ« Ù…Ø­Ø¶Ø± Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª", item.title || "Ø´ÙƒÙˆÙ‰", "INFO");
+    notifyManyEmployees(db, [item.employeeId, item.managerEmployeeId].filter(Boolean), "تم تحديث محضر لجنة حل الخلافات", item.title || "شكوى", "INFO");
     audit(db, "dispute.minute.save", "dispute_case", caseId, null, minute);
     saveDb(db);
     return ok({ minute, case: enrichByEmployee(db, item) });
@@ -2414,9 +2414,9 @@ const localEndpoints = {
   },
   executiveEmployeeDetail: async (employeeId) => {
     const db = loadDb();
-    if (!canSeeEmployee(db, employeeId)) throw new Error("Ù„Ø§ ØªÙˆØ¬Ø¯ ØµÙ„Ø§Ø­ÙŠØ© Ù„Ø±Ø¤ÙŠØ© Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¸Ù.");
+    if (!canSeeEmployee(db, employeeId)) throw new Error("لا توجد صلاحية لرؤية هذا الموظف.");
     const employee = findById(db.employees || [], employeeId);
-    if (!employee || employee.isDeleted) throw new Error("Ø§Ù„Ù…ÙˆØ¸Ù ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!employee || employee.isDeleted) throw new Error("الموظف غير موجود.");
     const today = executiveTodayForEmployee(db, employeeId);
     const since = new Date(Date.now() - 7 * 864e5).toISOString();
     const attendance = (db.attendanceEvents || []).filter((event) => event.employeeId === employeeId && String(event.eventAt || event.createdAt || "") >= since).sort((a,b) => new Date(b.eventAt || b.createdAt || 0) - new Date(a.eventAt || a.createdAt || 0));
@@ -2432,14 +2432,14 @@ const localEndpoints = {
   },
   requestLiveLocation: async (employeeId, body = {}) => {
     const db = loadDb();
-    if (!canSeeEmployee(db, employeeId)) throw new Error("Ù„Ø§ ØªÙˆØ¬Ø¯ ØµÙ„Ø§Ø­ÙŠØ© Ù„Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¸Ù.");
+    if (!canSeeEmployee(db, employeeId)) throw new Error("لا توجد صلاحية لطلب موقع هذا الموظف.");
     const employee = findById(db.employees || [], employeeId);
-    if (!employee) throw new Error("Ø§Ù„Ù…ÙˆØ¸Ù ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!employee) throw new Error("الموظف غير موجود.");
     const actor = currentUser(db);
     db.liveLocationRequests ||= [];
-    const item = { id: makeId("liveLoc"), employeeId, requestedByUserId: actor?.id || "", requestedByEmployeeId: actor?.employeeId || "", requestedByName: actor?.fullName || actor?.name || "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©", reason: body.reason || "Ù…ØªØ§Ø¨Ø¹Ø© ØªÙ†ÙÙŠØ°ÙŠØ© Ù…Ø¨Ø§Ø´Ø±Ø©", status: "PENDING", precision: body.precision || "HIGH", expiresAt: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), createdAt: now() };
+    const item = { id: makeId("liveLoc"), employeeId, requestedByUserId: actor?.id || "", requestedByEmployeeId: actor?.employeeId || "", requestedByName: actor?.fullName || actor?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expiresAt: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), createdAt: now() };
     db.liveLocationRequests.unshift(item);
-    notifyEmployee(db, employeeId, "Ø·Ù„Ø¨ Ù…Ø´Ø§Ø±ÙƒØ© Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ", item.requestedByName + " ÙŠØ·Ù„Ø¨ Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø§Ù„Ø¢Ù†. Ø§Ù„Ø³Ø¨Ø¨: " + item.reason, "ACTION_REQUIRED");
+    notifyEmployee(db, employeeId, "طلب مشاركة موقعك الحالي", item.requestedByName + " يطلب إرسال موقعك المباشر الآن. السبب: " + item.reason, "ACTION_REQUIRED");
     audit(db, "live_location.request", "employee", employeeId, null, item);
     saveDb(db);
     return ok(enrichByEmployee(db, item));
@@ -2456,7 +2456,7 @@ const localEndpoints = {
     const user = currentUser(db);
     const employeeId = user?.employeeId || user?.employee?.id || "";
     const item = findById(db.liveLocationRequests || [], id);
-    if (!item || item.employeeId !== employeeId) throw new Error("Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯ Ø£Ùˆ Ù„Ø§ ÙŠØ®Øµ Ø­Ø³Ø§Ø¨Ùƒ.");
+    if (!item || item.employeeId !== employeeId) throw new Error("طلب الموقع غير موجود أو لا يخص حسابك.");
     const before = clone(item);
     const approved = body.status !== "REJECTED" && body.action !== "reject";
     item.status = approved ? "APPROVED" : "REJECTED";
@@ -2470,7 +2470,7 @@ const localEndpoints = {
       db.locations.unshift({ id: makeId("loc"), employeeId, liveLocationRequestId: item.id, latitude: response.latitude, longitude: response.longitude, accuracyMeters: response.accuracyMeters, status: "LIVE_SHARED", date: response.capturedAt, source: "live_location_request" });
     }
     const requester = findById(db.users || [], item.requestedByUserId);
-    if (requester?.employeeId) notifyEmployee(db, requester.employeeId, approved ? "ØªÙ… Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±" : "ØªÙ… Ø±ÙØ¶ Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹", (user?.fullName || user?.name || "Ø§Ù„Ù…ÙˆØ¸Ù") + ": " + (approved ? "Ø£Ø±Ø³Ù„ Ø§Ù„Ù…ÙˆÙ‚Ø¹" : (item.responseNote || "Ø±ÙØ¶ Ø§Ù„Ø·Ù„Ø¨")), approved ? "SUCCESS" : "WARNING");
+    if (requester?.employeeId) notifyEmployee(db, requester.employeeId, approved ? "تم إرسال الموقع المباشر" : "تم رفض طلب الموقع", (user?.fullName || user?.name || "الموظف") + ": " + (approved ? "أرسل الموقع" : (item.responseNote || "رفض الطلب")), approved ? "SUCCESS" : "WARNING");
     audit(db, "live_location.respond", "live_location_request", id, before, { request: item, response });
     saveDb(db);
     return ok({ request: enrichByEmployee(db, item), response });
@@ -2492,10 +2492,10 @@ const localEndpoints = {
   resolveSmartAlert: async (id, body = {}) => {
     const db = loadDb();
     const alert = findById(db.smartAlerts || [], id);
-    if (!alert) throw new Error("Ø§Ù„ØªÙ†Ø¨ÙŠÙ‡ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!alert) throw new Error("التنبيه غير موجود.");
     const before = clone(alert);
     alert.status = body.status || "RESOLVED";
-    alert.resolutionNote = body.note || "ØªÙ…Øª Ø§Ù„Ù…Ø¹Ø§Ù„Ø¬Ø©";
+    alert.resolutionNote = body.note || "تمت المعالجة";
     alert.resolvedAt = now();
     alert.resolvedByUserId = currentUser(db)?.id || "system";
     audit(db, "smart_alert.resolve", "smart_alert", id, before, alert);
@@ -2530,7 +2530,7 @@ const localEndpoints = {
     next.importBatches ||= [];
     next.importBatches.unshift({ id: makeId("imp"), employees: validation.employees, users: validation.users, warnings: validation.warnings, createdAt: now(), createdByUserId: currentUser(current)?.id || "system" });
     next.systemBackups ||= [];
-    next.systemBackups.unshift({ id: makeId("bak"), title: "Backup Ù‚Ø¨Ù„ Ø§Ù„Ø§Ø³ØªÙŠØ±Ø§Ø¯", payload: before, createdAt: now() });
+    next.systemBackups.unshift({ id: makeId("bak"), title: "Backup قبل الاستيراد", payload: before, createdAt: now() });
     audit(next, "data.import", "system", "local-db", { counts: validation }, { imported: true });
     saveDb(next);
     return ok({ validation, counts: { employees: next.employees.length, users: next.users.length } });
@@ -2546,7 +2546,7 @@ const localEndpoints = {
     const db = loadDb();
     const user = currentUser(db);
     const employeeId = body.employeeId || user?.employeeId || user?.employee?.id;
-    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨.");
+    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بالحساب.");
     const reportDate = body.reportDate || new Date().toISOString().slice(0, 10);
     db.dailyReports ||= [];
     let report = db.dailyReports.find((row) => row.employeeId === employeeId && row.reportDate === reportDate);
@@ -2565,7 +2565,7 @@ const localEndpoints = {
       updatedAt: now(),
     });
     const employee = findById(db.employees, employeeId);
-    notifyManyEmployees(db, [employee?.managerEmployeeId, "emp-executive-secretary"].filter(Boolean), "ØªÙ‚Ø±ÙŠØ± ÙŠÙˆÙ…ÙŠ Ø¬Ø¯ÙŠØ¯", `${employee?.fullName || "Ù…ÙˆØ¸Ù"} Ø£Ø±Ø³Ù„ ØªÙ‚Ø±ÙŠØ±Ù‡ Ø§Ù„ÙŠÙˆÙ…ÙŠ`, "INFO");
+    notifyManyEmployees(db, [employee?.managerEmployeeId, "emp-executive-secretary"].filter(Boolean), "تقرير يومي جديد", `${employee?.fullName || "موظف"} أرسل تقريره اليومي`, "INFO");
     audit(db, before ? "daily_report.update" : "daily_report.create", "daily_report", report.id, before, report);
     saveDb(db);
     return ok(enrichByEmployee(db, report));
@@ -2573,14 +2573,14 @@ const localEndpoints = {
   reviewDailyReport: async (id, body = {}) => {
     const db = loadDb();
     const report = findById(db.dailyReports || [], id);
-    if (!report) throw new Error("Ø§Ù„ØªÙ‚Ø±ÙŠØ± ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!report) throw new Error("التقرير غير موجود.");
     const before = clone(report);
     report.status = body.status || "REVIEWED";
-    report.managerComment = body.managerComment || body.comment || "ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©";
+    report.managerComment = body.managerComment || body.comment || "تمت المراجعة";
     report.reviewedAt = now();
     report.reviewedByUserId = currentUser(db)?.id || "system";
     audit(db, "daily_report.review", "daily_report", id, before, report);
-    notifyEmployee(db, report.employeeId, "ØªÙ…Øª Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙŠÙˆÙ…ÙŠ", report.managerComment, "SUCCESS");
+    notifyEmployee(db, report.employeeId, "تمت مراجعة التقرير اليومي", report.managerComment, "SUCCESS");
     saveDb(db);
     return ok(enrichByEmployee(db, report));
   },
@@ -2591,7 +2591,7 @@ const localEndpoints = {
     return ok(user ? enrichUser(db, user) : null);
   },
   login: async (identifier, password) => {
-    if (!localFallbackAllowed() && !shouldUseApi() && !shouldUseSupabase()) throw new Error("ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø§Ù„Ù…Ø­Ù„ÙŠ Ù…Ø¹Ø·Ù‘Ù„ ÙÙŠ Ø­Ø²Ù…Ø© Ø§Ù„Ø¥Ù†ØªØ§Ø¬. ÙØ¹Ù‘Ù„ Supabase Ù„Ø§Ø³ØªØ®Ø¯Ø§Ù… Ø§Ù„Ù†Ø¸Ø§Ù….");
+    if (!localFallbackAllowed() && !shouldUseApi() && !shouldUseSupabase()) throw new Error("تسجيل الدخول المحلي معطّل في حزمة الإنتاج. فعّل Supabase لاستخدام النظام.");
     const db = loadDb();
     const user = db.users.find((item) => ["ACTIVE", "INVITED"].includes(item.status) && loginMatches(item, identifier));
     if (!user || user.password !== password) {
@@ -2601,7 +2601,7 @@ const localEndpoints = {
         audit(db, "auth.failed", "user", user.id, null, { failedLogins: user.failedLogins });
         saveDb(db);
       }
-      throw new Error(user?.status === "LOCKED" ? "ØªÙ… Ù‚ÙÙ„ Ø§Ù„Ø­Ø³Ø§Ø¨ Ø¨Ø¹Ø¯ Ù…Ø­Ø§ÙˆÙ„Ø§Øª Ø®Ø§Ø·Ø¦Ø©." : "Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„ ØºÙŠØ± ØµØ­ÙŠØ­Ø© Ø£Ùˆ Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…ÙØ¹Ù„.");
+      throw new Error(user?.status === "LOCKED" ? "تم قفل الحساب بعد محاولات خاطئة." : "بيانات الدخول غير صحيحة أو الحساب غير مفعل.");
     }
     user.failedLogins = 0;
     user.lastLoginAt = now();
@@ -2611,13 +2611,13 @@ const localEndpoints = {
     return ok(enrichUser(db, user));
   },
   employeeRegister: async () => {
-    throw new Error("ØªÙ… Ø¥ÙŠÙ‚Ø§Ù Ø§Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø°Ø§ØªÙŠ. Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† ÙˆØ¥Ù†Ø´Ø§Ø¡ Ø§Ù„Ø­Ø³Ø§Ø¨Ø§Øª ØªØªÙ… Ù…Ù† Ù„ÙˆØ­Ø© HR ÙÙ‚Ø·.");
+    throw new Error("تم إيقاف التسجيل الذاتي. إضافة الموظفين وإنشاء الحسابات تتم من لوحة HR فقط.");
   },
   forgotPassword: async (identifier) => {
     const db = loadDb();
     const user = db.users.find((item) => loginMatches(item, identifier));
     if (user) {
-      notify(db, "Ø·Ù„Ø¨ Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±", `ØªÙ… Ø·Ù„Ø¨ Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ù„Ù„Ø­Ø³Ø§Ø¨ ${user.email || user.name}.`, "INFO");
+      notify(db, "طلب إعادة تعيين كلمة المرور", `تم طلب إعادة تعيين كلمة المرور للحساب ${user.email || user.name}.`, "INFO");
       audit(db, "auth.password_reset_requested", "user", user.id, null, { email: user.email || identifier });
       saveDb(db);
     }
@@ -2630,13 +2630,13 @@ const localEndpoints = {
   changePassword: async (body = {}) => {
     const db = loadDb();
     const user = currentUser(db);
-    if (!user) throw new Error("ÙŠØ¬Ø¨ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø£ÙˆÙ„Ù‹Ø§.");
+    if (!user) throw new Error("يجب تسجيل الدخول أولًا.");
     const raw = findById(db.users, user.id);
-    if (!raw) throw new Error("Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
-    if (!body.newPassword || String(body.newPassword).length < 8) throw new Error("ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø¬Ø¯ÙŠØ¯Ø© ÙŠØ¬Ø¨ Ø£Ù„Ø§ ØªÙ‚Ù„ Ø¹Ù† 8 Ø£Ø­Ø±Ù.");
-    if (body.confirmPassword && body.newPassword !== body.confirmPassword) throw new Error("ØªØ£ÙƒÙŠØ¯ ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± ØºÙŠØ± Ù…Ø·Ø§Ø¨Ù‚.");
+    if (!raw) throw new Error("الحساب غير موجود.");
+    if (!body.newPassword || String(body.newPassword).length < 8) throw new Error("كلمة المرور الجديدة يجب ألا تقل عن 8 أحرف.");
+    if (body.confirmPassword && body.newPassword !== body.confirmPassword) throw new Error("تأكيد كلمة المرور غير مطابق.");
     const recoveryMode = body.recoveryMode === true || body.recoveryMode === "true";
-    if (!recoveryMode && raw.password !== body.currentPassword) throw new Error("ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ø­Ø§Ù„ÙŠØ© ØºÙŠØ± ØµØ­ÙŠØ­Ø©.");
+    if (!recoveryMode && raw.password !== body.currentPassword) throw new Error("كلمة المرور الحالية غير صحيحة.");
     const before = clone(raw);
     raw.password = body.newPassword;
     raw.temporaryPassword = false;
@@ -2662,9 +2662,9 @@ const localEndpoints = {
         auditLogs: db.auditLogs.length,
       },
       checks: [
-        { label: "Ø±Ø¨Ø· Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† Ø¨Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", ok: db.users.every((user) => !user.employeeId || findById(db.employees, user.employeeId)) },
-        { label: "ÙˆØ¬ÙˆØ¯ Ø£Ø¯ÙˆØ§Ø± Ø¨ØµÙ„Ø§Ø­ÙŠØ§Øª", ok: db.roles.every((role) => role.permissions?.length) },
-        { label: "Ø³Ø¬Ù„ ØªØ¯Ù‚ÙŠÙ‚ ÙØ¹Ø§Ù„", ok: Array.isArray(db.auditLogs) },
+        { label: "ربط المستخدمين بالموظفين", ok: db.users.every((user) => !user.employeeId || findById(db.employees, user.employeeId)) },
+        { label: "وجود أدوار بصلاحيات", ok: db.roles.every((role) => role.permissions?.length) },
+        { label: "سجل تدقيق فعال", ok: Array.isArray(db.auditLogs) },
       ],
     });
   },
@@ -2679,13 +2679,13 @@ const localEndpoints = {
       backend: shouldUseApi() ? "API/local fallback" : "localStorage",
       generatedAt: now(),
       checks: [
-        { label: "Ø§Ù„Ø¬Ù„Ø³Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ©", ok: Boolean(currentUser(db)), status: currentUser(db) ? "APPROVED" : "REJECTED", detail: currentUser(db)?.email || "ØºÙŠØ± Ù…Ø³Ø¬Ù„" },
-        { label: "Ø±Ø¨Ø· Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…ÙŠÙ† Ø¨Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", ok: linkedUsers.length === db.users.length, status: linkedUsers.length === db.users.length ? "linked" : "unlinked", detail: String(linkedUsers.length) + "/" + String(db.users.length) },
-        { label: "Ù…ÙˆØ¸ÙÙˆÙ† Ø¨Ù„Ø§ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„", ok: employeesWithoutUsers === 0, status: "INFO", detail: String(employeesWithoutUsers) + " Ù…Ù„Ù" },
-        { label: "Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ø§Ù„Ù…Ø¬Ù…Ø¹", ok: Boolean(address.latitude && address.longitude), status: address.latitude && address.longitude ? "APPROVED" : "REJECTED", detail: String(address.latitude || "-") + ", " + String(address.longitude || "-") },
-        { label: "Ù†Ø·Ø§Ù‚ Ø§Ù„Ø¨ØµÙ…Ø©", ok: Number(address.radiusMeters || 0) >= 50 && Number(address.maxAccuracyMeters || 0) <= 1000, status: "INFO", detail: "Ø§Ù„Ù†Ø·Ø§Ù‚ " + String(address.radiusMeters) + "Ù… / Ø§Ù„Ø¯Ù‚Ø© " + String(address.maxAccuracyMeters) + "Ù…" },
-        { label: "Storage Buckets Ø§Ù„Ù…Ø·Ù„ÙˆØ¨Ø©", ok: true, status: "storage_ok", detail: requiredBuckets.join(" / ") },
-        { label: "RLS/Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª", ok: true, status: "INFO", detail: "Ù…Ø­Ù„ÙŠÙ‹Ø§ ØºÙŠØ± Ù…Ø·Ø¨Ù‚Ø› Ø§ÙØ­ØµÙ‡ ÙÙŠ Supabase Ø¹Ù†Ø¯ Ø§Ù„Ø¥Ù†ØªØ§Ø¬" },
+        { label: "الجلسة الحالية", ok: Boolean(currentUser(db)), status: currentUser(db) ? "APPROVED" : "REJECTED", detail: currentUser(db)?.email || "غير مسجل" },
+        { label: "ربط المستخدمين بالموظفين", ok: linkedUsers.length === db.users.length, status: linkedUsers.length === db.users.length ? "linked" : "unlinked", detail: String(linkedUsers.length) + "/" + String(db.users.length) },
+        { label: "موظفون بلا حساب دخول", ok: employeesWithoutUsers === 0, status: "INFO", detail: String(employeesWithoutUsers) + " ملف" },
+        { label: "إحداثيات المجمع", ok: Boolean(address.latitude && address.longitude), status: address.latitude && address.longitude ? "APPROVED" : "REJECTED", detail: String(address.latitude || "-") + ", " + String(address.longitude || "-") },
+        { label: "نطاق البصمة", ok: Number(address.radiusMeters || 0) >= 50 && Number(address.maxAccuracyMeters || 0) <= 1000, status: "INFO", detail: "النطاق " + String(address.radiusMeters) + "م / الدقة " + String(address.maxAccuracyMeters) + "م" },
+        { label: "Storage Buckets المطلوبة", ok: true, status: "storage_ok", detail: requiredBuckets.join(" / ") },
+        { label: "RLS/الصلاحيات", ok: true, status: "INFO", detail: "محليًا غير مطبق؛ افحصه في Supabase عند الإنتاج" },
       ],
     });
   },
@@ -2738,7 +2738,7 @@ const localEndpoints = {
   bulkEmployeeAction: async (body = {}) => {
     const db = loadDb();
     const ids = Array.isArray(body.ids) ? body.ids : [];
-    if (!ids.length) throw new Error("Ø­Ø¯Ø¯ Ù…ÙˆØ¸ÙÙ‹Ø§ ÙˆØ§Ø­Ø¯Ù‹Ø§ Ø¹Ù„Ù‰ Ø§Ù„Ø£Ù‚Ù„.");
+    if (!ids.length) throw new Error("حدد موظفًا واحدًا على الأقل.");
     let updated = 0;
     let notified = 0;
     const before = ids.map((id) => clone(findById(db.employees, id))).filter(Boolean);
@@ -2761,21 +2761,21 @@ const localEndpoints = {
           for (const key of ["branchId", "departmentId", "roleId", "complexId", "governorateId"]) if (body[key] !== undefined) user[key] = body[key];
         }
       } else if (body.action === "notify") {
-        db.notifications.unshift({ id: makeId("not"), userId: employee.userId || "", employeeId: employee.id, title: body.title || "ØªÙ†Ø¨ÙŠÙ‡ Ù…Ù† Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©", body: body.message || "ÙŠØ±Ø¬Ù‰ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©.", status: "UNREAD", isRead: false, type: body.type || "ACTION_REQUIRED", createdAt: now() });
+        db.notifications.unshift({ id: makeId("not"), userId: employee.userId || "", employeeId: employee.id, title: body.title || "تنبيه من الإدارة", body: body.message || "يرجى مراجعة الإدارة.", status: "UNREAD", isRead: false, type: body.type || "ACTION_REQUIRED", createdAt: now() });
         notified += 1;
       }
       employee.updatedAt = now();
       updated += 1;
     }
     audit(db, `bulk.employee.${body.action || "update"}`, "employee", "bulk", before, { ids, body, updated, notified });
-    if (notified) notify(db, "ØªÙ… Ø¥Ø±Ø³Ø§Ù„ ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø¬Ù…Ø§Ø¹ÙŠØ©", `${notified} Ù…ÙˆØ¸Ù`, "SUCCESS");
+    if (notified) notify(db, "تم إرسال تنبيهات جماعية", `${notified} موظف`, "SUCCESS");
     saveDb(db);
     return ok({ updated, notified });
   },
   employee: async (employeeId) => {
     const db = loadDb();
     const employee = findById(db.employees, employeeId);
-    if (!employee || employee.isDeleted || !canSeeEmployee(db, employeeId)) throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆØ¸Ù Ø£Ùˆ Ù„Ø§ ØªÙ…Ù„Ùƒ ØµÙ„Ø§Ø­ÙŠØ© Ø¹Ø±Ø¶Ù‡.");
+    if (!employee || employee.isDeleted || !canSeeEmployee(db, employeeId)) throw new Error("لم يتم العثور على الموظف أو لا تملك صلاحية عرضه.");
     return ok({
       ...enrichEmployee(db, employee),
       attendanceEvents: db.attendanceEvents.filter((item) => item.employeeId === employeeId).sort((a, b) => new Date(b.eventAt) - new Date(a.eventAt)),
@@ -2796,14 +2796,14 @@ const localEndpoints = {
       const user = createUserRecord(db, { ...body, employeeId: employee.id, name: employee.fullName, email: employee.email, phone: employee.phone, roleId: employee.roleId, branchId: employee.branchId, departmentId: employee.departmentId, governorateId: employee.governorateId, complexId: employee.complexId });
       employee.userId = user.id;
     }
-    notify(db, `ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ù…ÙˆØ¸Ù ${employee.fullName}`, "ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ù…Ù„Ù Ù…ÙˆØ¸Ù Ø¬Ø¯ÙŠØ¯ ÙˆØ­ÙØ¸Ù‡ ÙÙŠ Ø§Ù„ØªØ®Ø²ÙŠÙ† Ø§Ù„Ù…Ø­Ù„ÙŠ.", "SUCCESS");
+    notify(db, `تمت إضافة الموظف ${employee.fullName}`, "تم إنشاء ملف موظف جديد وحفظه في التخزين المحلي.", "SUCCESS");
     saveDb(db);
     return ok(enrichEmployee(db, employee));
   },
   updateEmployee: async (employeeId, body) => {
     const db = loadDb();
     const employee = findById(db.employees, employeeId);
-    if (!employee) throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆØ¸Ù.");
+    if (!employee) throw new Error("لم يتم العثور على الموظف.");
     const before = clone(employee);
     applyEmployeePayload(db, employee, body);
     const user = db.users.find((item) => item.employeeId === employee.id);
@@ -2831,7 +2831,7 @@ const localEndpoints = {
   setEmployeeStatus: async (employeeId, status) => {
     const db = loadDb();
     const employee = findById(db.employees, employeeId);
-    if (!employee) throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆØ¸Ù.");
+    if (!employee) throw new Error("لم يتم العثور على الموظف.");
     const before = clone(employee);
     employee.status = status;
     const user = db.users.find((item) => item.employeeId === employeeId);
@@ -2843,9 +2843,9 @@ const localEndpoints = {
   deleteEmployee: async (employeeId) => {
     const db = loadDb();
     const employee = findById(db.employees, employeeId);
-    if (!employee) throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…ÙˆØ¸Ù.");
+    if (!employee) throw new Error("لم يتم العثور على الموظف.");
     if (!isExecutiveAuthority(db)) {
-      const approval = createSensitiveApprovalRecord(db, { actionType: "DELETE_EMPLOYEE", targetType: "employee", targetId: employeeId, targetEmployeeId: employeeId, title: `Ø·Ù„Ø¨ Ø­Ø°Ù/ØªØ¹Ø·ÙŠÙ„ Ù…ÙˆØ¸Ù: ${employee.fullName || employeeId}`, summary: "ØªÙ… ØªØ­ÙˆÙŠÙ„ Ø§Ù„Ø­Ø°Ù Ø¥Ù„Ù‰ Ø§Ø¹ØªÙ…Ø§Ø¯ ØªÙ†ÙÙŠØ°ÙŠ Ù„Ø­Ù…Ø§ÙŠØ© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª.", payload: { employeeId } });
+      const approval = createSensitiveApprovalRecord(db, { actionType: "DELETE_EMPLOYEE", targetType: "employee", targetId: employeeId, targetEmployeeId: employeeId, title: `طلب حذف/تعطيل موظف: ${employee.fullName || employeeId}`, summary: "تم تحويل الحذف إلى اعتماد تنفيذي لحماية البيانات.", payload: { employeeId } });
       saveDb(db);
       return ok({ ok: true, pendingApproval: true, approval });
     }
@@ -2873,7 +2873,7 @@ const localEndpoints = {
   updateUser: async (userId, body) => {
     const db = loadDb();
     const user = findById(db.users, userId);
-    if (!user) throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù….");
+    if (!user) throw new Error("لم يتم العثور على المستخدم.");
     const before = clone(user);
     Object.assign(user, {
       name: body.name || body.fullName || user.name,
@@ -2908,9 +2908,9 @@ const localEndpoints = {
   updateMyContact: async (body = {}) => {
     const db = loadDb();
     const user = currentUser(db);
-    if (!user) throw new Error("ÙŠØ¬Ø¨ ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø£ÙˆÙ„Ù‹Ø§.");
+    if (!user) throw new Error("يجب تسجيل الدخول أولًا.");
     const raw = findById(db.users, user.id);
-    if (!raw) throw new Error("Ø§Ù„Ø­Ø³Ø§Ø¨ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!raw) throw new Error("الحساب غير موجود.");
     const before = clone(raw);
     if (body.email) raw.email = String(body.email).trim().toLowerCase();
     if (body.phone) raw.phone = String(body.phone).trim();
@@ -2931,7 +2931,7 @@ const localEndpoints = {
   setUserStatus: async (userId, status) => {
     const db = loadDb();
     const user = findById(db.users, userId);
-    if (!user) throw new Error("Ù„Ù… ÙŠØªÙ… Ø§Ù„Ø¹Ø«ÙˆØ± Ø¹Ù„Ù‰ Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù….");
+    if (!user) throw new Error("لم يتم العثور على المستخدم.");
     const before = clone(user);
     user.status = status;
     audit(db, "status", "user", userId, before, user);
@@ -2988,7 +2988,7 @@ const localEndpoints = {
   manualAttendance: async (body) => {
     const db = loadDb();
     const employeeId = body.employeeId || db.employees[0]?.id;
-    const event = { id: makeId("manual"), employeeId, eventAt: body.eventAt || now(), source: "Manual", type: body.type || "MANUAL_ADJUSTMENT", geofenceStatus: "manual_adjustment", verificationStatus: "manual", notes: body.reason || body.notes || "ØªØ¹Ø¯ÙŠÙ„ ÙŠØ¯ÙˆÙŠ", isManual: true, requiresReview: false };
+    const event = { id: makeId("manual"), employeeId, eventAt: body.eventAt || now(), source: "Manual", type: body.type || "MANUAL_ADJUSTMENT", geofenceStatus: "manual_adjustment", verificationStatus: "manual", notes: body.reason || body.notes || "تعديل يدوي", isManual: true, requiresReview: false };
     db.attendanceEvents.unshift(event);
     upsertDailyFromEvent(db, employeeId, event);
     audit(db, "manual_adjustment", "attendance", event.id, null, event);
@@ -3013,7 +3013,7 @@ const localEndpoints = {
       distanceFromBranchMeters: body.distanceFromBranchMeters ?? null,
       verificationStatus: "failed",
       biometricMethod: "session_gps",
-      notes: body.blockReason || body.notes || "Ù…Ø­Ø§ÙˆÙ„Ø© Ø¨ØµÙ…Ø© Ù…Ø±ÙÙˆØ¶Ø©",
+      notes: body.blockReason || body.notes || "محاولة بصمة مرفوضة",
       requiresReview: true,
       riskFlags: ["rejected_punch"],
     };
@@ -3045,27 +3045,27 @@ const localEndpoints = {
   selfCheckIn: async (body = {}) => {
     const db = loadDb();
     const user = currentUser(db);
-    if (!user?.employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø­Ø³Ø§Ø¨Ùƒ.");
+    if (!user?.employeeId) throw new Error("لا يوجد موظف مرتبط بحسابك.");
     return localEndpoints.checkIn({ ...body, employeeId: user.employeeId, verificationStatus: body.verificationStatus || "verified" });
   },
   selfCheckOut: async (body = {}) => {
     const db = loadDb();
     const user = currentUser(db);
-    if (!user?.employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø­Ø³Ø§Ø¨Ùƒ.");
+    if (!user?.employeeId) throw new Error("لا يوجد موظف مرتبط بحسابك.");
     return localEndpoints.checkOut({ ...body, employeeId: user.employeeId, verificationStatus: body.verificationStatus || "verified" });
   },
   recordAttendance: async (body = {}) => {
     const action = String(body.eventType || body.type || body.action || "").toLowerCase();
-    const out = ["out", "checkout", "check_out", "Ø§Ù†ØµØ±Ø§Ù"].includes(action);
+    const out = ["out", "checkout", "check_out", "انصراف"].includes(action);
     return out ? localEndpoints.selfCheckOut(body) : localEndpoints.selfCheckIn(body);
   },
   adjustAttendance: async (body) => {
     const db = loadDb();
-    const item = { id: makeId("exc"), employeeId: body.employeeId, title: body.title || "Ø·Ù„Ø¨ ØªØ¹Ø¯ÙŠÙ„ Ø­Ø¶ÙˆØ±", reason: body.reason || body.notes || "", status: "PENDING", createdAt: now(), workflow: [] };
-    requestWorkflow(item, "created", currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    const item = { id: makeId("exc"), employeeId: body.employeeId, title: body.title || "طلب تعديل حضور", reason: body.reason || body.notes || "", status: "PENDING", createdAt: now(), workflow: [] };
+    requestWorkflow(item, "created", currentUser(db)?.name || "النظام");
     db.exceptions.unshift(item);
     audit(db, "create", "attendance_exception", item.id, null, item);
-    notify(db, "Ø·Ù„Ø¨ ØªØ¹Ø¯ÙŠÙ„ Ø­Ø¶ÙˆØ± Ø¬Ø¯ÙŠØ¯", item.title, "INFO");
+    notify(db, "طلب تعديل حضور جديد", item.title, "INFO");
     saveDb(db);
     return ok(enrichByEmployee(db, item));
   },
@@ -3076,10 +3076,10 @@ const localEndpoints = {
   updateException: async (id, action) => {
     const db = loadDb();
     const item = findById(db.exceptions, id);
-    if (!item) throw new Error("Ø§Ù„Ø·Ù„Ø¨ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!item) throw new Error("الطلب غير موجود.");
     const before = clone(item);
     item.status = action === "reject" ? "REJECTED" : "APPROVED";
-    requestWorkflow(item, item.status.toLowerCase(), currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    requestWorkflow(item, item.status.toLowerCase(), currentUser(db)?.name || "النظام");
     audit(db, "workflow", "attendance_exception", id, before, item);
     saveDb(db);
     return ok(enrichByEmployee(db, item));
@@ -3093,23 +3093,23 @@ const localEndpoints = {
     const user = currentUser(db);
     const employeeId = (isFullAccessUser(db) ? body.employeeId : user?.employeeId) || body.employeeId || user?.employeeId || db.employees[0]?.id;
     const employee = findById(db.employees, employeeId);
-    const item = { id: makeId("mis"), employeeId, title: body.title || "Ù…Ø£Ù…ÙˆØ±ÙŠØ©", destinationName: body.destinationName || body.destination || "", plannedStart: body.plannedStart || "", plannedEnd: body.plannedEnd || "", status: "PENDING", approvalStatus: "pending", managerEmployeeId: employee?.managerEmployeeId || "", workflow: [], createdBy: user?.id || "", createdAt: now() };
-    requestWorkflow(item, "created", user?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    const item = { id: makeId("mis"), employeeId, title: body.title || "مأمورية", destinationName: body.destinationName || body.destination || "", plannedStart: body.plannedStart || "", plannedEnd: body.plannedEnd || "", status: "PENDING", approvalStatus: "pending", managerEmployeeId: employee?.managerEmployeeId || "", workflow: [], createdBy: user?.id || "", createdAt: now() };
+    requestWorkflow(item, "created", user?.name || "النظام");
     db.missions.unshift(item);
     audit(db, "create", "mission", item.id, null, item);
-    notifyEmployee(db, employee?.managerEmployeeId, `Ù…Ø£Ù…ÙˆØ±ÙŠØ© ØªØ­ØªØ§Ø¬ Ø§Ø¹ØªÙ…Ø§Ø¯ Ù…Ù† ${employee?.fullName || "Ù…ÙˆØ¸Ù"}`, item.title, "ACTION_REQUIRED");
-    notify(db, "Ù…Ø£Ù…ÙˆØ±ÙŠØ© Ø¬Ø¯ÙŠØ¯Ø© ØªØ­ØªØ§Ø¬ Ø§Ø¹ØªÙ…Ø§Ø¯", item.title, "INFO");
+    notifyEmployee(db, employee?.managerEmployeeId, `مأمورية تحتاج اعتماد من ${employee?.fullName || "موظف"}`, item.title, "ACTION_REQUIRED");
+    notify(db, "مأمورية جديدة تحتاج اعتماد", item.title, "INFO");
     saveDb(db);
     return ok(enrichByEmployee(db, item));
   },
   updateMission: async (missionId, action) => {
     const db = loadDb();
     const mission = findById(db.missions, missionId);
-    if (!mission) throw new Error("Ø§Ù„Ù…Ø£Ù…ÙˆØ±ÙŠØ© ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø©.");
+    if (!mission) throw new Error("المأمورية غير موجودة.");
     const before = clone(mission);
     mission.status = action === "complete" ? "COMPLETED" : action === "reject" ? "REJECTED" : "APPROVED";
     mission.approvalStatus = mission.status.toLowerCase();
-    requestWorkflow(mission, action, currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    requestWorkflow(mission, action, currentUser(db)?.name || "النظام");
     audit(db, "workflow", "mission", missionId, before, mission);
     saveDb(db);
     return ok(enrichByEmployee(db, mission));
@@ -3122,26 +3122,26 @@ const localEndpoints = {
     const db = loadDb();
     const user = currentUser(db);
     const employeeId = (isFullAccessUser(db) ? body.employeeId : user?.employeeId) || body.employeeId || user?.employeeId || db.employees[0]?.id;
-    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ù‡Ø°Ø§ Ø§Ù„Ø­Ø³Ø§Ø¨ Ù„Ø¥Ø±Ø³Ø§Ù„ Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©.");
-    if (!body.startDate || !body.endDate) throw new Error("Ø­Ø¯Ø¯ ØªØ§Ø±ÙŠØ® Ø¨Ø¯Ø§ÙŠØ© ÙˆÙ†Ù‡Ø§ÙŠØ© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø©.");
-    if (String(body.endDate) < String(body.startDate)) throw new Error("ØªØ§Ø±ÙŠØ® Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø¥Ø¬Ø§Ø²Ø© ÙŠØ¬Ø¨ Ø£Ù† ÙŠÙƒÙˆÙ† Ø¨Ø¹Ø¯ ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¨Ø¯Ø§ÙŠØ©.");
+    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بهذا الحساب لإرسال طلب الإجازة.");
+    if (!body.startDate || !body.endDate) throw new Error("حدد تاريخ بداية ونهاية الإجازة.");
+    if (String(body.endDate) < String(body.startDate)) throw new Error("تاريخ نهاية الإجازة يجب أن يكون بعد تاريخ البداية.");
     const employee = findById(db.employees, employeeId);
-    const item = { id: makeId("lv"), employeeId, leaveType: { name: body.leaveType || body.type || "Ø§Ø¹ØªÙŠØ§Ø¯ÙŠØ©" }, type: body.leaveType || body.type || "Ø§Ø¹ØªÙŠØ§Ø¯ÙŠØ©", startDate: body.startDate, endDate: body.endDate, reason: body.reason || "", status: "PENDING", managerEmployeeId: employee?.managerEmployeeId || "", workflow: [], createdBy: user?.id || "", createdAt: now() };
-    requestWorkflow(item, "created", user?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    const item = { id: makeId("lv"), employeeId, leaveType: { name: body.leaveType || body.type || "اعتيادية" }, type: body.leaveType || body.type || "اعتيادية", startDate: body.startDate, endDate: body.endDate, reason: body.reason || "", status: "PENDING", managerEmployeeId: employee?.managerEmployeeId || "", workflow: [], createdBy: user?.id || "", createdAt: now() };
+    requestWorkflow(item, "created", user?.name || "النظام");
     db.leaves.unshift(item);
     audit(db, "create", "leave", item.id, null, item);
-    notifyEmployee(db, employee?.managerEmployeeId, `Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø© Ù…Ù† ${employee?.fullName || "Ù…ÙˆØ¸Ù"}`, item.reason || item.type, "ACTION_REQUIRED");
-    notify(db, "Ø·Ù„Ø¨ Ø¥Ø¬Ø§Ø²Ø© Ø¬Ø¯ÙŠØ¯", `${employee?.fullName || "Ù…ÙˆØ¸Ù"}: ${item.reason || item.type}`, "INFO");
+    notifyEmployee(db, employee?.managerEmployeeId, `طلب إجازة من ${employee?.fullName || "موظف"}`, item.reason || item.type, "ACTION_REQUIRED");
+    notify(db, "طلب إجازة جديد", `${employee?.fullName || "موظف"}: ${item.reason || item.type}`, "INFO");
     saveDb(db);
     return ok(enrichByEmployee(db, item));
   },
   updateLeave: async (leaveId, action) => {
     const db = loadDb();
     const leave = findById(db.leaves, leaveId);
-    if (!leave) throw new Error("Ø·Ù„Ø¨ Ø§Ù„Ø¥Ø¬Ø§Ø²Ø© ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!leave) throw new Error("طلب الإجازة غير موجود.");
     const before = clone(leave);
     leave.status = action === "reject" ? "REJECTED" : "APPROVED";
-    requestWorkflow(leave, leave.status.toLowerCase(), currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    requestWorkflow(leave, leave.status.toLowerCase(), currentUser(db)?.name || "النظام");
     audit(db, "workflow", "leave", leaveId, before, leave);
     saveDb(db);
     return ok(enrichByEmployee(db, leave));
@@ -3156,21 +3156,21 @@ const localEndpoints = {
     const item = {
       id: makeId("locreq"),
       employeeId: body.employeeId,
-      purpose: body.purpose || "ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù† Ø§Ù„Ù…Ø¨Ø§Ø´Ø±",
+      purpose: body.purpose || "فتح الموقع وإرسال اللوكيشن المباشر",
       requestReason: "",
       status: "PENDING",
       requestedAt: now(),
       expiresAt: body.expiresAt || new Date(Date.now() + 30 * 60000).toISOString(),
       workflow: [],
     };
-    requestWorkflow(item, "created", currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    requestWorkflow(item, "created", currentUser(db)?.name || "النظام");
     db.locationRequests.unshift(item);
     db.notifications.unshift({
       id: makeId("not"),
       userId: employee?.userId || "",
       employeeId: item.employeeId,
-      title: "ÙØªØ­ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ÙˆØ¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù„ÙˆÙƒÙŠØ´Ù†",
-      body: "Ù…Ù† ÙØ¶Ù„Ùƒ Ø§ÙØªØ­ ØµÙØ­Ø© Ø·Ù„Ø¨Ø§Øª ÙˆØ³Ø¬Ù„ Ø§Ù„Ù…ÙˆØ§Ù‚Ø¹ ÙˆØ§Ø¶ØºØ· Ø¥Ø±Ø³Ø§Ù„ Ù…ÙˆÙ‚Ø¹ÙŠ Ø§Ù„Ø¢Ù†.",
+      title: "فتح الموقع وإرسال اللوكيشن",
+      body: "من فضلك افتح صفحة طلبات وسجل المواقع واضغط إرسال موقعي الآن.",
       status: "UNREAD",
       isRead: false,
       type: "ACTION_REQUIRED",
@@ -3183,14 +3183,14 @@ const localEndpoints = {
   updateLocationRequest: async (id, body) => {
     const db = loadDb();
     const item = findById(db.locationRequests, id);
-    if (!item) throw new Error("Ø·Ù„Ø¨ Ø§Ù„Ù…ÙˆÙ‚Ø¹ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!item) throw new Error("طلب الموقع غير موجود.");
     const before = clone(item);
     item.status = body.status || "APPROVED";
     item.lastRespondedAt = now();
     if (body.latitude && body.longitude) {
       db.locations.unshift({ id: makeId("loc"), employeeId: item.employeeId, locationRequestId: id, latitude: Number(body.latitude), longitude: Number(body.longitude), accuracyMeters: Number(body.accuracyMeters || 0), status: item.status, date: now(), source: "response" });
     }
-    requestWorkflow(item, String(item.status).toLowerCase(), currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+    requestWorkflow(item, String(item.status).toLowerCase(), currentUser(db)?.name || "النظام");
     audit(db, "workflow", "location_request", id, before, item);
     saveDb(db);
     return ok(enrichByEmployee(db, item));
@@ -3215,7 +3215,7 @@ const localEndpoints = {
       const before = clone(item);
       item.status = action === "reject" ? "REJECTED" : "APPROVED";
       if (kind === "mission") item.approvalStatus = item.status.toLowerCase();
-      requestWorkflow(item, action, currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…");
+      requestWorkflow(item, action, currentUser(db)?.name || "النظام");
       audit(db, "workflow.bulk", kind, id, before, item);
       updated += 1;
     }
@@ -3236,9 +3236,9 @@ const localEndpoints = {
     const audience = body.audience || "all";
     const employees = visibleEmployees(db).filter((employee) => audience === "all" || employee.departmentId === audience || employee.branchId === audience);
     for (const employee of employees) {
-      db.notifications.unshift({ id: makeId("not"), userId: employee.userId || "", employeeId: employee.id, title: body.title || "Ø¥Ø¹Ù„Ø§Ù† Ø¥Ø¯Ø§Ø±ÙŠ", body: body.body || body.message || "", status: "UNREAD", isRead: false, type: body.type || "ANNOUNCEMENT", createdAt: now() });
+      db.notifications.unshift({ id: makeId("not"), userId: employee.userId || "", employeeId: employee.id, title: body.title || "إعلان إداري", body: body.body || body.message || "", status: "UNREAD", isRead: false, type: body.type || "ANNOUNCEMENT", createdAt: now() });
     }
-    db.employeeAnnouncements.unshift({ id: makeId("ann"), title: body.title || "Ø¥Ø¹Ù„Ø§Ù† Ø¥Ø¯Ø§Ø±ÙŠ", body: body.body || body.message || "", audience, createdAt: now(), createdByUserId: currentUser(db)?.id || "" });
+    db.employeeAnnouncements.unshift({ id: makeId("ann"), title: body.title || "إعلان إداري", body: body.body || body.message || "", audience, createdAt: now(), createdByUserId: currentUser(db)?.id || "" });
     audit(db, "create", "announcement", "bulk", null, { audience, count: employees.length });
     saveDb(db);
     return ok({ created: employees.length });
@@ -3257,44 +3257,44 @@ const localEndpoints = {
   reports: async () => {
     const db = loadDb();
     return ok({ jobs: db.reports, schedules: db.reportSchedules || [], templates: [
-      { key: "attendance", name: "Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù" },
-      { key: "employees", name: "Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†" },
-      { key: "requests", name: "Ø§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆØ§Ù„Ù…ÙˆØ§ÙÙ‚Ø§Øª" },
-      { key: "kpi", name: "ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„Ø£Ø¯Ø§Ø¡" },
-      { key: "security", name: "Ø§Ù„Ø£Ù…Ø§Ù† ÙˆÙ…Ø­Ø§ÙˆÙ„Ø§Øª Ø§Ù„Ø¯Ø®ÙˆÙ„" },
+      { key: "attendance", name: "الحضور والانصراف" },
+      { key: "employees", name: "بيانات الموظفين" },
+      { key: "requests", name: "الطلبات والموافقات" },
+      { key: "kpi", name: "تقييمات الأداء" },
+      { key: "security", name: "الأمان ومحاولات الدخول" },
     ] });
   },
   exportReportData: async (body = {}) => {
     const db = loadDb();
     const key = body.reportKey || "attendance";
     if (key === "employees") {
-      const headers = ["Ø§Ù„Ø§Ø³Ù…", "Ø§Ù„Ù‡Ø§ØªÙ", "Ø§Ù„Ø¨Ø±ÙŠØ¯", "Ø§Ù„Ù…Ø³Ù…Ù‰", "Ø§Ù„Ù‚Ø³Ù…", "Ø§Ù„Ø­Ø§Ù„Ø©"];
+      const headers = ["الاسم", "الهاتف", "البريد", "المسمى", "القسم", "الحالة"];
       const rows = visibleEmployees(db).map((employee) => [employee.fullName, employee.phone, employee.email, employee.jobTitle, employee.department?.name || "", employee.status || ""]);
-      return ok({ title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", headers, rows });
+      return ok({ title: "تقرير الموظفين", headers, rows });
     }
     if (key === "requests") {
-      const headers = ["Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø¢Ø®Ø± ØªØ­Ø¯ÙŠØ«"];
+      const headers = ["النوع", "العنوان", "الموظف", "الحالة", "آخر تحديث"];
       const rows = workflowItems(db).map((item) => [item.kindLabel, item.label, item.employee?.fullName || "", item.status || "", item.workflow?.at(-1)?.at || item.createdSort || ""]);
-      return ok({ title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø·Ù„Ø¨Ø§Øª", headers, rows });
+      return ok({ title: "تقرير الطلبات", headers, rows });
     }
     if (key === "kpi") {
       const payload = kpiSummaryRows(db, currentKpiCycle(db));
-      const headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ", "Ø§Ù„ØªÙ‚Ø¯ÙŠØ±", "Ø§Ù„Ø­Ø§Ù„Ø©"];
+      const headers = ["الموظف", "المدير", "الإجمالي", "التقدير", "الحالة"];
       const rows = payload.map((item) => [item.employee?.fullName || item.employeeId, item.manager?.fullName || "", item.totalScore || "", item.rating || item.grade || "", item.status || ""]);
-      return ok({ title: "ØªÙ‚Ø±ÙŠØ± ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡", headers, rows });
+      return ok({ title: "تقرير تقييم الأداء", headers, rows });
     }
     if (key === "security") {
-      const headers = ["Ø§Ù„Ø¹Ù…Ù„ÙŠØ©", "Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…", "Ø§Ù„ÙƒÙŠØ§Ù†", "Ø§Ù„ÙˆÙ‚Øª"];
+      const headers = ["العملية", "المستخدم", "الكيان", "الوقت"];
       const rows = (db.auditLogs || []).filter((log) => String(log.action || "").startsWith("auth.") || String(log.action || "").includes("device")).slice(0, 500).map((log) => [log.action, log.actor || "", log.entityType || "", log.createdAt || ""]);
-      return ok({ title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø£Ù…Ø§Ù†", headers, rows });
+      return ok({ title: "تقرير الأمان", headers, rows });
     }
-    const headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„ÙˆÙ‚Øª", "Ø§Ù„Ù…ØµØ¯Ø±", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"];
+    const headers = ["الموظف", "النوع", "الحالة", "الوقت", "المصدر", "ملاحظات"];
     const rows = scopedRowsByEmployee(db, db.attendanceEvents || []).map((event) => { const employee = findById(db.employees, event.employeeId); return [employee?.fullName || event.employeeId, event.type || "", event.status || event.geofenceStatus || "", event.eventAt || event.createdAt || "", event.source || "", event.notes || event.blockReason || ""]; });
-    return ok({ title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", headers, rows });
+    return ok({ title: "تقرير الحضور والانصراف", headers, rows });
   },
   saveReportSchedule: async (body = {}) => {
     const db = loadDb();
-    const item = { id: makeId("sch"), title: body.title || "Ø¬Ø¯ÙˆÙ„Ø© ØªÙ‚Ø±ÙŠØ±", reportKey: body.reportKey || "attendance", frequency: body.frequency || "monthly", recipients: body.recipients || "", active: true, createdAt: now() };
+    const item = { id: makeId("sch"), title: body.title || "جدولة تقرير", reportKey: body.reportKey || "attendance", frequency: body.frequency || "monthly", recipients: body.recipients || "", active: true, createdAt: now() };
     db.reportSchedules.unshift(item);
     audit(db, "schedule", "report", item.id, null, item);
     saveDb(db);
@@ -3302,7 +3302,7 @@ const localEndpoints = {
   },
   createReport: async (body) => {
     const db = loadDb();
-    const item = { id: makeId("rep"), title: body.title || "ØªÙ‚Ø±ÙŠØ±", reportKey: body.reportKey || "attendance", format: body.format || "csv", status: "COMPLETED", createdAt: now() };
+    const item = { id: makeId("rep"), title: body.title || "تقرير", reportKey: body.reportKey || "attendance", format: body.format || "csv", status: "COMPLETED", createdAt: now() };
     db.reports.unshift(item);
     audit(db, "create", "report", item.id, null, item);
     saveDb(db);
@@ -3349,18 +3349,18 @@ const localEndpoints = {
       accessMode: isFullAccessUser(db) ? "all" : hasLocalScope(db, "kpi:hr") ? "hr" : hasLocalScope(db, "kpi:team") ? "team" : hasLocalScope(db, "kpi:executive") || hasLocalScope(db, "kpi:final-approve") ? "executive" : "self",
       currentEmployeeId: currentUser(db)?.employeeId || "",
       metrics: [
-        { label: "Ø­Ø§Ù„Ø© Ù†Ø§ÙØ°Ø© KPI", value: windowInfo.label, helper: windowInfo.message },
-        { label: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ø¯Ø±Ø¬Ø©", value: "100", helper: "ÙˆÙÙ‚ Ø§Ù„Ù†Ù…ÙˆØ°Ø¬ Ø§Ù„Ù…Ø¹ØªÙ…Ø¯" },
-        { label: "Ù…ØªÙˆØ³Ø· Ø§Ù„ØªÙ‚ÙŠÙŠÙ…", value: average ? `${average}` : "-", helper: "Ù„Ù„ØªÙ‚ÙŠÙŠÙ…Ø§Øª Ø§Ù„Ù…Ø³Ø¬Ù„Ø©" },
-        { label: "ØªÙ… ØªÙ‚ÙŠÙŠÙ…Ù‡Ù…", value: evaluations.length, helper: "Ø¯Ø§Ø®Ù„ Ø§Ù„Ø¯ÙˆØ±Ø© Ø§Ù„Ø­Ø§Ù„ÙŠØ©" },
-        { label: "Ù„Ù… ÙŠØªÙ… ØªÙ‚ÙŠÙŠÙ…Ù‡Ù…", value: pendingEmployees.length, helper: "Ù‚Ø¨Ù„ Ù…ÙˆØ¹Ø¯ 25 Ù…Ù† Ø§Ù„Ø´Ù‡Ø±" },
+        { label: "حالة نافذة KPI", value: windowInfo.label, helper: windowInfo.message },
+        { label: "إجمالي الدرجة", value: "100", helper: "وفق النموذج المعتمد" },
+        { label: "متوسط التقييم", value: average ? `${average}` : "-", helper: "للتقييمات المسجلة" },
+        { label: "تم تقييمهم", value: evaluations.length, helper: "داخل الدورة الحالية" },
+        { label: "لم يتم تقييمهم", value: pendingEmployees.length, helper: "قبل موعد 25 من الشهر" },
       ],
     });
   },
   saveKpiEvaluation: async (body = {}) => {
     const db = loadDb();
-    if (!body.employeeId) throw new Error("Ø§Ø®ØªØ± Ø§Ù„Ù…ÙˆØ¸Ù Ø£ÙˆÙ„Ù‹Ø§.");
-    if (!canSeeEmployee(db, body.employeeId)) throw new Error("Ù„Ø§ ÙŠÙ…ÙƒÙ†Ùƒ ØªÙ‚ÙŠÙŠÙ… Ù‡Ø°Ø§ Ø§Ù„Ù…ÙˆØ¸Ù.");
+    if (!body.employeeId) throw new Error("اختر الموظف أولًا.");
+    if (!canSeeEmployee(db, body.employeeId)) throw new Error("لا يمكنك تقييم هذا الموظف.");
     const user = currentUser(db);
     const selfOnly = !isFullAccessUser(db) && !hasLocalScope(db, "kpi:team") && !hasLocalScope(db, "kpi:hr");
     const managerReview = hasLocalScope(db, "kpi:team") && !hasLocalScope(db, "kpi:hr") && !isFullAccessUser(db);
@@ -3388,7 +3388,7 @@ const localEndpoints = {
     normalized.grade = kpiGrade(normalized.totalScore);
     normalized.rating = kpiRating(normalized.totalScore);
     normalized.workflow ||= [];
-    normalized.workflow.push({ at: now(), by: user?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…", action: normalized.status, note: kpiStageLabel(normalized.status) });
+    normalized.workflow.push({ at: now(), by: user?.name || "النظام", action: normalized.status, note: kpiStageLabel(normalized.status) });
     if (selfOnly) { normalized.managerNotes = ""; normalized.managerEmployeeId = findById(db.employees, normalized.employeeId)?.managerEmployeeId || ""; }
     if (evaluation) {
       const before = clone(evaluation);
@@ -3401,26 +3401,26 @@ const localEndpoints = {
     }
     const targetEmployee = findById(db.employees, normalized.employeeId);
     const nextIds = normalized.status === "SELF_SUBMITTED" ? [targetEmployee?.managerEmployeeId] : normalized.status === "MANAGER_APPROVED" ? ["emp-hr-manager"] : normalized.status === "HR_REVIEWED" ? ["emp-executive-secretary"] : normalized.status === "SECRETARY_REVIEWED" ? ["emp-executive-director"] : [];
-    notifyManyEmployees(db, nextIds.filter(Boolean), "ØªÙ‚ÙŠÙŠÙ… KPI ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©", `${targetEmployee?.fullName || "Ù…ÙˆØ¸Ù"} â€” ${kpiStageLabel(normalized.status)}`, "ACTION_REQUIRED");
-    notify(db, "ØªÙ… Ø­ÙØ¸ ØªÙ‚ÙŠÙŠÙ… Ø£Ø¯Ø§Ø¡", `${targetEmployee?.fullName || "Ù…ÙˆØ¸Ù"} - ${normalized.totalScore}/100`, "SUCCESS");
+    notifyManyEmployees(db, nextIds.filter(Boolean), "تقييم KPI يحتاج متابعة", `${targetEmployee?.fullName || "موظف"} — ${kpiStageLabel(normalized.status)}`, "ACTION_REQUIRED");
+    notify(db, "تم حفظ تقييم أداء", `${targetEmployee?.fullName || "موظف"} - ${normalized.totalScore}/100`, "SUCCESS");
     saveDb(db);
     return ok({ ...evaluation, employee: enrichEmployee(db, findById(db.employees, evaluation.employeeId)), manager: enrichEmployee(db, findById(db.employees, evaluation.managerEmployeeId)) });
   },
   updateKpiEvaluation: async (id, body = {}) => {
     const db = loadDb();
     const evaluation = findById(db.kpiEvaluations, id);
-    if (!evaluation) throw new Error("Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!evaluation) throw new Error("التقييم غير موجود.");
     const before = clone(evaluation);
-    if (!canSeeEmployee(db, evaluation.employeeId) || (!isFullAccessUser(db) && !hasLocalScope(db, "kpi:team") && !hasLocalScope(db, "kpi:hr") && !hasLocalScope(db, "kpi:manage") && !hasLocalScope(db, "kpi:executive") && !hasLocalScope(db, "kpi:final-approve"))) throw new Error("Ø§Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ù…ØªØ§Ø­ Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± Ø£Ùˆ HR Ø£Ùˆ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ© ÙÙ‚Ø·.");
+    if (!canSeeEmployee(db, evaluation.employeeId) || (!isFullAccessUser(db) && !hasLocalScope(db, "kpi:team") && !hasLocalScope(db, "kpi:hr") && !hasLocalScope(db, "kpi:manage") && !hasLocalScope(db, "kpi:executive") && !hasLocalScope(db, "kpi:final-approve"))) throw new Error("الاعتماد متاح للمدير المباشر أو HR أو الإدارة التنفيذية فقط.");
     const user = currentUser(db);
     Object.assign(evaluation, body, { updatedAt: now(), managerEmployeeId: evaluation.managerEmployeeId || user?.employeeId || "" });
     evaluation.workflow ||= [];
-    if (body.status) evaluation.workflow.push({ at: now(), by: user?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…", action: body.status, note: body.managerNotes || body.hrNotes || body.secretaryNotes || body.executiveNotes || kpiStageLabel(body.status) });
+    if (body.status) evaluation.workflow.push({ at: now(), by: user?.name || "النظام", action: body.status, note: body.managerNotes || body.hrNotes || body.secretaryNotes || body.executiveNotes || kpiStageLabel(body.status) });
     if (["APPROVED", "EXECUTIVE_APPROVED"].includes(body.status)) evaluation.approvedAt = now();
     if (["SUBMITTED", "SELF_SUBMITTED"].includes(body.status)) evaluation.submittedAt = now();
     const targetEmployee = findById(db.employees, evaluation.employeeId);
     const nextIds = body.status === "MANAGER_APPROVED" ? ["emp-hr-manager"] : body.status === "HR_REVIEWED" ? ["emp-executive-secretary"] : body.status === "SECRETARY_REVIEWED" ? ["emp-executive-director"] : [];
-    notifyManyEmployees(db, nextIds.filter(Boolean), "ØªÙ‚ÙŠÙŠÙ… KPI ØªÙ… Ø±ÙØ¹Ù‡", `${targetEmployee?.fullName || "Ù…ÙˆØ¸Ù"} â€” ${kpiStageLabel(body.status)}`, "ACTION_REQUIRED");
+    notifyManyEmployees(db, nextIds.filter(Boolean), "تقييم KPI تم رفعه", `${targetEmployee?.fullName || "موظف"} — ${kpiStageLabel(body.status)}`, "ACTION_REQUIRED");
     audit(db, "workflow", "kpi_evaluation", id, before, evaluation);
     saveDb(db);
     return ok(evaluation);
@@ -3436,7 +3436,7 @@ const localEndpoints = {
       recomputed += 1;
     });
     audit(db, "recompute", "kpi", cycle.id, null, { recomputed, ...body });
-    notify(db, "ØªÙ… ØªØ¬Ù‡ÙŠØ² Ø¯ÙˆØ±Ø© ØªÙ‚ÙŠÙŠÙ… Ø§Ù„Ø£Ø¯Ø§Ø¡", `${recomputed} ØªÙ‚ÙŠÙŠÙ… Ù…Ø¨Ø¯Ø¦ÙŠ`, "SUCCESS");
+    notify(db, "تم تجهيز دورة تقييم الأداء", `${recomputed} تقييم مبدئي`, "SUCCESS");
     saveDb(db);
     return ok({ recomputed, cycleId: cycle.id });
   },
@@ -3450,11 +3450,11 @@ const localEndpoints = {
     const waitingHr = rows.filter((item) => item.status === "MANAGER_APPROVED");
     const waitingSecretary = rows.filter((item) => item.status === "HR_REVIEWED");
     const waitingExecutive = rows.filter((item) => item.status === "SECRETARY_REVIEWED");
-    pending.forEach((employee) => notifyManyEmployees(db, [employee.id], "ØªØ°ÙƒÙŠØ± KPI", "ÙŠØ±Ø¬Ù‰ Ø¥ÙƒÙ…Ø§Ù„ ØªÙ‚ÙŠÙŠÙ…Ùƒ Ø§Ù„Ø°Ø§ØªÙŠ Ø®Ù„Ø§Ù„ Ù†Ø§ÙØ°Ø© 20-25 Ù…Ù† Ø§Ù„Ø´Ù‡Ø±.", "ACTION_REQUIRED"));
-    waitingManagers.forEach((item) => notifyManyEmployees(db, [item.managerEmployeeId], "Ø§Ø¹ØªÙ…Ø§Ø¯ KPI Ù…Ø·Ù„ÙˆØ¨", `${item.employee?.fullName || item.employeeId} Ø£Ø±Ø³Ù„ ØªÙ‚ÙŠÙŠÙ…Ù‡ ÙˆÙŠÙ†ØªØ¸Ø± Ø§Ø¹ØªÙ…Ø§Ø¯Ùƒ.`, "ACTION_REQUIRED"));
-    if (waitingHr.length) notifyManyEmployees(db, ["emp-hr-manager"], "Ù…Ø±Ø§Ø¬Ø¹Ø§Øª HR Ù…Ø·Ù„ÙˆØ¨Ø©", `${waitingHr.length} ØªÙ‚ÙŠÙŠÙ… KPI ÙŠÙ†ØªØ¸Ø± Ø¬Ø²Ø¡ HR.`, "ACTION_REQUIRED");
-    if (waitingSecretary.length) notifyManyEmployees(db, ["emp-executive-secretary"], "Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ù…Ø·Ù„ÙˆØ¨Ø©", `${waitingSecretary.length} ØªÙ‚ÙŠÙŠÙ… Ø¬Ø§Ù‡Ø² Ù„Ù„Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠØ©.`, "ACTION_REQUIRED");
-    if (waitingExecutive.length) notifyManyEmployees(db, ["emp-executive-director"], "Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ Ù…Ø·Ù„ÙˆØ¨", `${waitingExecutive.length} ØªÙ‚ÙŠÙŠÙ… Ø¬Ø§Ù‡Ø² Ù„Ù„Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ù†Ù‡Ø§Ø¦ÙŠ.`, "ACTION_REQUIRED");
+    pending.forEach((employee) => notifyManyEmployees(db, [employee.id], "تذكير KPI", "يرجى إكمال تقييمك الذاتي خلال نافذة 20-25 من الشهر.", "ACTION_REQUIRED"));
+    waitingManagers.forEach((item) => notifyManyEmployees(db, [item.managerEmployeeId], "اعتماد KPI مطلوب", `${item.employee?.fullName || item.employeeId} أرسل تقييمه وينتظر اعتمادك.`, "ACTION_REQUIRED"));
+    if (waitingHr.length) notifyManyEmployees(db, ["emp-hr-manager"], "مراجعات HR مطلوبة", `${waitingHr.length} تقييم KPI ينتظر جزء HR.`, "ACTION_REQUIRED");
+    if (waitingSecretary.length) notifyManyEmployees(db, ["emp-executive-secretary"], "مراجعة السكرتير التنفيذي مطلوبة", `${waitingSecretary.length} تقييم جاهز للمراجعة التنفيذية.`, "ACTION_REQUIRED");
+    if (waitingExecutive.length) notifyManyEmployees(db, ["emp-executive-director"], "اعتماد المدير التنفيذي مطلوب", `${waitingExecutive.length} تقييم جاهز للاعتماد النهائي.`, "ACTION_REQUIRED");
     const sent = pending.length + waitingManagers.length + (waitingHr.length ? 1 : 0) + (waitingSecretary.length ? 1 : 0) + (waitingExecutive.length ? 1 : 0);
     audit(db, "remind", "kpi", cycle.id, null, { sent, pending: pending.length, waitingManagers: waitingManagers.length, waitingHr: waitingHr.length, waitingSecretary: waitingSecretary.length, waitingExecutive: waitingExecutive.length });
     saveDb(db);
@@ -3462,14 +3462,14 @@ const localEndpoints = {
   },
   closeKpiCycle: async () => {
     const db = loadDb();
-    if (!isFullAccessUser(db) && !hasLocalScope(db, "kpi:final-approve")) throw new Error("Ø¥ØºÙ„Ø§Ù‚ Ø¯ÙˆØ±Ø© KPI ÙŠØ­ØªØ§Ø¬ Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ/Ø§Ù„ØªÙ‚Ù†ÙŠ Ø£Ùˆ Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ.");
+    if (!isFullAccessUser(db) && !hasLocalScope(db, "kpi:final-approve")) throw new Error("إغلاق دورة KPI يحتاج السكرتير التنفيذي/التقني أو المدير التنفيذي.");
     const cycle = currentKpiCycle(db);
     const before = clone(cycle);
     cycle.status = "LOCKED";
     cycle.lockedAt = now();
     cycle.lockedByUserId = currentUser(db)?.id || "system";
     audit(db, "lock", "kpi_cycle", cycle.id, before, cycle);
-    notify(db, "ØªÙ… Ø¥ØºÙ„Ø§Ù‚ Ø¯ÙˆØ±Ø© KPI", cycle.name || cycle.id, "SUCCESS");
+    notify(db, "تم إغلاق دورة KPI", cycle.name || cycle.id, "SUCCESS");
     saveDb(db);
     return ok({ cycle, windowInfo: kpiWindowInfo(db, cycle) });
   },
@@ -3483,18 +3483,18 @@ const localEndpoints = {
     const employeeId = body.employeeId || user?.employeeId || "";
     const employee = findById(db.employees, employeeId);
     const committeeIds = disputeCommitteeEmployeeIds(db);
-    const item = { id: makeId("disp"), title: body.title || "Ø´ÙƒÙˆÙ‰ / Ø®Ù„Ø§Ù", employeeId, category: "Ø´ÙƒÙˆÙ‰", priority: body.priority || "MEDIUM", severity: body.severity || "MEDIUM", description: body.description || "", status: "IN_REVIEW", assignedCommittee: db.disputeCommittee?.members || [], assignedCommitteeEmployeeIds: committeeIds, committeeDecision: "", escalatedToExecutive: false, escalationPath: "Ø§Ù„Ù„Ø¬Ù†Ø© â† Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ â† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", workflow: [{ at: now(), by: user?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…", action: "created", note: "ØªÙ… Ø¥Ø®Ø·Ø§Ø± Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´Ø§ÙƒÙ„ ÙˆØ§Ù„Ø®Ù„Ø§ÙØ§Øª" }], createdAt: now() };
+    const item = { id: makeId("disp"), title: body.title || "شكوى / خلاف", employeeId, category: "شكوى", priority: body.priority || "MEDIUM", severity: body.severity || "MEDIUM", description: body.description || "", status: "IN_REVIEW", assignedCommittee: db.disputeCommittee?.members || [], assignedCommitteeEmployeeIds: committeeIds, committeeDecision: "", escalatedToExecutive: false, escalationPath: "اللجنة ← السكرتير التنفيذي ← المدير التنفيذي", workflow: [{ at: now(), by: user?.name || "النظام", action: "created", note: "تم إخطار لجنة حل المشاكل والخلافات" }], createdAt: now() };
     db.disputeCases.unshift(item);
     audit(db, "create", "dispute_case", item.id, null, item);
-    notifyManyEmployees(db, committeeIds, `Ù…Ø´ÙƒÙ„Ø© Ø¬Ø¯ÙŠØ¯Ø© Ù…Ù† ${employee?.fullName || "Ù…ÙˆØ¸Ù"}`, item.title, "ACTION_REQUIRED");
-    notify(db, "Ø´ÙƒÙˆÙ‰ Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ø¬Ù†Ø© ÙØ¶ Ø§Ù„Ø®Ù„Ø§ÙØ§Øª", `${employee?.fullName || "Ù…ÙˆØ¸Ù"}: ${item.title}`, "ACTION_REQUIRED");
+    notifyManyEmployees(db, committeeIds, `مشكلة جديدة من ${employee?.fullName || "موظف"}`, item.title, "ACTION_REQUIRED");
+    notify(db, "شكوى جديدة للجنة فض الخلافات", `${employee?.fullName || "موظف"}: ${item.title}`, "ACTION_REQUIRED");
     saveDb(db);
     return ok(enrichByEmployee(db, item));
   },
   updateDispute: async (id, body = {}) => {
     const db = loadDb();
     const item = findById(db.disputeCases, id);
-    if (!item) throw new Error("Ø§Ù„Ø´ÙƒÙˆÙ‰ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø©.");
+    if (!item) throw new Error("الشكوى غير موجودة.");
     const before = clone(item);
     Object.assign(item, {
       status: body.status || item.status,
@@ -3505,10 +3505,10 @@ const localEndpoints = {
       updatedAt: now(),
     });
     item.workflow ||= [];
-    item.workflow.push({ at: now(), by: currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…", action: item.status });
+    item.workflow.push({ at: now(), by: currentUser(db)?.name || "النظام", action: item.status });
     if (["RESOLVED", "CLOSED"].includes(item.status)) item.resolvedAt = now();
     if (item.escalatedToExecutive) {
-      notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], `ØªÙ… Ø±ÙØ¹ Ù…Ø´ÙƒÙ„Ø© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ`, item.title || item.description || "Ø´ÙƒÙˆÙ‰", "ACTION_REQUIRED");
+      notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], `تم رفع مشكلة للمدير التنفيذي`, item.title || item.description || "شكوى", "ACTION_REQUIRED");
     }
     audit(db, "workflow", "dispute_case", id, before, item);
     saveDb(db);
@@ -3550,7 +3550,7 @@ const localEndpoints = {
     const db = loadDb();
     const key = orgKeyMap[kind] || kind;
     const item = findById(db[key], id);
-    if (!item) throw new Error("Ø§Ù„Ø¹Ù†ØµØ± ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!item) throw new Error("العنصر غير موجود.");
     const before = clone(item);
     item.active = false;
     item.isDeleted = true;
@@ -3563,8 +3563,8 @@ const localEndpoints = {
     return ok(db.attachments.filter((item) => (!scope || item.scope === scope) && (!entityId || item.entityId === entityId || item.employeeId === entityId)));
   },
   uploadAttachment: async (file, body = {}) => {
-    if (!file) throw new Error("Ø§Ø®ØªØ± Ù…Ù„ÙÙ‹Ø§ Ø£ÙˆÙ„Ù‹Ø§.");
-    if (file.size > 8 * 1024 * 1024) throw new Error("Ø§Ù„Ù…Ù„Ù ÙƒØ¨ÙŠØ±. Ø§Ù„Ø­Ø¯ Ø§Ù„Ø­Ø§Ù„ÙŠ 8MB ÙÙŠ Ø§Ù„Ù†Ø³Ø®Ø© Ø§Ù„Ù…Ø­Ù„ÙŠØ©.");
+    if (!file) throw new Error("اختر ملفًا أولًا.");
+    if (file.size > 8 * 1024 * 1024) throw new Error("الملف كبير. الحد الحالي 8MB في النسخة المحلية.");
     const url = await localEndpoints.uploadAvatar(file);
     const db = loadDb();
     const item = { id: makeId("attch"), scope: body.scope || "EMPLOYEE", entityId: body.entityId || body.employeeId || "general", employeeId: body.employeeId || body.entityId || "", fileName: file.name, originalName: file.name, mimeType: file.type, sizeBytes: file.size, url, createdAt: now() };
@@ -3575,8 +3575,8 @@ const localEndpoints = {
   },
   uploadAvatar: async (file) => {
     if (!file) return "";
-    if (!String(file.type || "").startsWith("image/")) throw new Error("Ø§Ø®ØªØ± ØµÙˆØ±Ø© ÙÙ‚Ø·.");
-    if (file.size > 8 * 1024 * 1024) throw new Error("Ø§Ù„ØµÙˆØ±Ø© ÙƒØ¨ÙŠØ±Ø© Ø¬Ø¯Ù‹Ø§. Ø§Ù„Ø­Ø¯ Ø§Ù„Ø£Ù‚ØµÙ‰ 8MB Ù‚Ø¨Ù„ Ø§Ù„Ø¶ØºØ·.");
+    if (!String(file.type || "").startsWith("image/")) throw new Error("اختر صورة فقط.");
+    if (file.size > 8 * 1024 * 1024) throw new Error("الصورة كبيرة جدًا. الحد الأقصى 8MB قبل الضغط.");
     const dataUrl = await new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(reader.result);
@@ -3599,7 +3599,7 @@ const localEndpoints = {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     const compressed = canvas.toDataURL("image/jpeg", 0.76);
-    if (compressed.length > 650_000) throw new Error("ØªØ¹Ø°Ø± Ø¶ØºØ· Ø§Ù„ØµÙˆØ±Ø© Ø¨Ù…Ø§ ÙŠÙƒÙÙŠ Ù„Ù„Ø­ÙØ¸ Ø§Ù„Ù…Ø­Ù„ÙŠ. Ø§Ø³ØªØ®Ø¯Ù… ØµÙˆØ±Ø© Ø£ØµØºØ± Ø£Ùˆ ÙØ¹Ù‘Ù„ Supabase Storage.");
+    if (compressed.length > 650_000) throw new Error("تعذر ضغط الصورة بما يكفي للحفظ المحلي. استخدم صورة أصغر أو فعّل Supabase Storage.");
     return compressed;
   },
   backup: async () => ok(loadDb()),
@@ -3611,7 +3611,7 @@ const localEndpoints = {
   },
   saveBackupSnapshot: async (body = {}) => {
     const db = loadDb();
-    const snapshot = { id: makeId("bak"), title: body.title || `Ù†Ø³Ø®Ø© Ø§Ø­ØªÙŠØ§Ø·ÙŠØ© Ù¢Ù©â€/Ù¤â€/Ù¢Ù Ù¢Ù¦ØŒ Ù¢:Ù¥Ù©:Ù¢Ù¦ Ù…`, createdAt: now(), counts: { employees: (db.employees || []).length, users: (db.users || []).length, attendance: (db.attendanceEvents || []).length }, data: clone(db) };
+    const snapshot = { id: makeId("bak"), title: body.title || `نسخة احتياطية ٢٩‏/٤‏/٢٠٢٦، ٢:٥٩:٢٦ م`, createdAt: now(), counts: { employees: (db.employees || []).length, users: (db.users || []).length, attendance: (db.attendanceEvents || []).length }, data: clone(db) };
     db.systemBackups.unshift(snapshot);
     db.systemBackups = db.systemBackups.slice(0, 10);
     audit(db, "snapshot", "backup", snapshot.id, null, { title: snapshot.title, counts: snapshot.counts });
@@ -3623,10 +3623,10 @@ const localEndpoints = {
     let created = 0;
     rows.forEach((row) => {
       const employee = applyEmployeePayload(db, { id: makeId("emp"), isDeleted: false, userId: "" }, {
-        fullName: row.fullName || row.name || row["Ø§Ù„Ø§Ø³Ù…"],
-        phone: row.phone || row["Ø§Ù„Ù…ÙˆØ¨Ø§ÙŠÙ„"],
-        email: row.email || row["Ø§Ù„Ø¨Ø±ÙŠØ¯"],
-        jobTitle: row.jobTitle || row["Ø§Ù„ÙˆØ¸ÙŠÙØ©"],
+        fullName: row.fullName || row.name || row["الاسم"],
+        phone: row.phone || row["الموبايل"],
+        email: row.email || row["البريد"],
+        jobTitle: row.jobTitle || row["الوظيفة"],
         roleId: row.roleId || "role-employee",
         branchId: row.branchId || db.branches[0]?.id,
         departmentId: row.departmentId || db.departments[0]?.id,
@@ -3645,12 +3645,12 @@ const localEndpoints = {
     const db = loadDb();
     return ok({ dashboard: dashboard(db), locations: latestLocations(db), heatmap: latestLocations(db).map((loc) => ({ employeeId: loc.employeeId, name: loc.employee?.fullName || loc.employeeId, latitude: loc.latitude, longitude: loc.longitude, weight: 1, date: loc.date || loc.createdAt })), realtime: { transport: "local", updatedAt: now() } });
   },
-  aiAnalytics: async () => ok({ generatedAt: now(), rows: analyticsRows(loadDb()), note: "ØªØ­Ù„ÙŠÙ„ ØªÙ‚Ø¯ÙŠØ±ÙŠ Ù…Ø­Ù„ÙŠ ÙŠØ¹ØªÙ…Ø¯ Ø¹Ù„Ù‰ Ø§Ù„ØªØ£Ø®ÙŠØ± ÙˆØ§Ù„ØºÙŠØ§Ø¨ Ø¢Ø®Ø± 30 ÙŠÙˆÙ…Ù‹Ø§ ÙˆÙ„ÙŠØ³ Ø¨Ø¯ÙŠÙ„Ø§Ù‹ Ø¹Ù† Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ." }),
+  aiAnalytics: async () => ok({ generatedAt: now(), rows: analyticsRows(loadDb()), note: "تحليل تقديري محلي يعتمد على التأخير والغياب آخر 30 يومًا وليس بديلاً عن قرار إداري." }),
   integrations: async () => ok(loadDb().integrationSettings || []),
   saveIntegration: async (body = {}) => {
     const db = loadDb();
     let item = (db.integrationSettings || []).find((row) => row.key === body.key || row.id === body.id);
-    if (!item) { item = { id: makeId("int"), key: body.key || makeId("key"), name: body.name || body.key || "ØªÙƒØ§Ù…Ù„", provider: body.provider || "custom", createdAt: now() }; db.integrationSettings.unshift(item); }
+    if (!item) { item = { id: makeId("int"), key: body.key || makeId("key"), name: body.name || body.key || "تكامل", provider: body.provider || "custom", createdAt: now() }; db.integrationSettings.unshift(item); }
     Object.assign(item, { enabled: body.enabled === "on" || body.enabled === true, status: body.status || item.status || "CONFIGURED", notes: body.notes || item.notes || "", updatedAt: now() });
     audit(db, "update", "integration", item.id, null, item);
     saveDb(db);
@@ -3659,7 +3659,7 @@ const localEndpoints = {
   accessControlEvents: async () => ok((loadDb().accessControlEvents || []).map((event) => enrichByEmployee(loadDb(), event))),
   createAccessEvent: async (body = {}) => {
     const db = loadDb();
-    const item = { id: makeId("door"), employeeId: body.employeeId || currentUser(db)?.employeeId || "", deviceId: body.deviceId || "main-gate", direction: body.direction || "ENTRY", decision: body.decision || "ALLOW", reason: body.reason || "ØªØ­Ù‚Ù‚ Ù…Ø²Ø¯ÙˆØ¬: Ø­Ø³Ø§Ø¨ + Ø­Ø¶ÙˆØ±", date: now() };
+    const item = { id: makeId("door"), employeeId: body.employeeId || currentUser(db)?.employeeId || "", deviceId: body.deviceId || "main-gate", direction: body.direction || "ENTRY", decision: body.decision || "ALLOW", reason: body.reason || "تحقق مزدوج: حساب + حضور", date: now() };
     db.accessControlEvents.unshift(item);
     audit(db, "record", "access_control", item.id, null, item);
     saveDb(db);
@@ -3675,7 +3675,7 @@ const localEndpoints = {
     const db = loadDb();
     const item = { id: makeId("push"), userId: currentUser(db)?.id || "local", employeeId: currentUser(db)?.employeeId || currentUser(db)?.employee?.id || "", endpoint: body.endpoint || "local-notification", keys: body.keys || {}, permission: body.permission || globalThis.Notification?.permission || "default", userAgent: body.userAgent || "", platform: body.platform || "browser", isActive: true, createdAt: now() };
     db.pushSubscriptions.unshift(item);
-    notify(db, "ØªÙ… ØªÙØ¹ÙŠÙ„ Ø¥Ø´Ø¹Ø§Ø±Ø§Øª Ø§Ù„Ù…ØªØµÙØ­", "Ø³ØªØ¸Ù‡Ø± ØªÙ†Ø¨ÙŠÙ‡Ø§Øª Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª Ø¹Ù†Ø¯ Ø§Ù„Ø³Ù…Ø§Ø­ Ù…Ù† Ø§Ù„Ù…ØªØµÙØ­.", "SUCCESS");
+    notify(db, "تم تفعيل إشعارات المتصفح", "ستظهر تنبيهات الحضور والانصراف والطلبات عند السماح من المتصفح.", "SUCCESS");
     saveDb(db);
     return ok(item);
   },
@@ -3683,7 +3683,7 @@ const localEndpoints = {
   registerPasskey: async (body = {}) => {
     const db = loadDb();
     const user = currentUser(db);
-    const item = { id: makeId("passkey"), userId: user?.id || "local", employeeId: user?.employeeId || "", label: body.label || "Ù…ÙØªØ§Ø­ Ù…Ø±ÙˆØ± Ø§Ù„Ù…ØªØµÙØ­", credentialId: body.credentialId || makeId("credential"), platform: body.platform || navigator.platform || "browser", deviceFingerprintHash: body.deviceFingerprintHash || "", trusted: body.trusted !== false, status: "DEVICE_TRUSTED", createdAt: now(), lastUsedAt: "", browserSupported: browserSupportsWebAuthn() };
+    const item = { id: makeId("passkey"), userId: user?.id || "local", employeeId: user?.employeeId || "", label: body.label || "مفتاح مرور المتصفح", credentialId: body.credentialId || makeId("credential"), platform: body.platform || navigator.platform || "browser", deviceFingerprintHash: body.deviceFingerprintHash || "", trusted: body.trusted !== false, status: "DEVICE_TRUSTED", createdAt: now(), lastUsedAt: "", browserSupported: browserSupportsWebAuthn() };
     db.passkeyCredentials.unshift(item);
     if (user) { const raw = findById(db.users, user.id); if (raw) raw.passkeyEnabled = true; }
     audit(db, "register", "passkey", item.id, null, { ...item, credentialId: "stored-client-side-demo" });
@@ -3714,7 +3714,7 @@ const localEndpoints = {
     const db = loadDb();
     db.trustedDeviceApprovalRequests ||= [];
     const item = db.trustedDeviceApprovalRequests.find((row) => row.id === (body.requestId || body.id));
-    if (!item) throw new Error("Ø·Ù„Ø¨ Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¬Ù‡Ø§Ø² ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!item) throw new Error("طلب اعتماد الجهاز غير موجود.");
     item.status = body.decision || "APPROVED";
     item.reason = body.reason || "";
     item.reviewedAt = now();
@@ -3723,13 +3723,13 @@ const localEndpoints = {
     return ok(item);
   },
   validateBranchQrChallenge: async (body = {}) => ({ valid: true, status: "DISABLED", challengeId: "", disabled: true }),
-  createBranchQrChallenge: async (body = {}) => ({ disabled: true, status: "DISABLED", message: "QR Ù…ØªÙˆÙ‚Ù ÙÙŠ Ù‡Ø°Ù‡ Ø§Ù„Ù†Ø³Ø®Ø© ÙˆÙ„Ø§ ÙŠØªÙ… Ø¥Ù†Ø´Ø§Ø¡ Ø£ÙƒÙˆØ§Ø¯ ÙØ±Ø¹." }),
+  createBranchQrChallenge: async (body = {}) => ({ disabled: true, status: "DISABLED", message: "QR متوقف في هذه النسخة ولا يتم إنشاء أكواد فرع." }),
   attendanceRiskCenter: async () => {
     const db = loadDb();
     const events = (db.attendanceEvents || []).filter((event) => event.requiresReview || Number(event.riskScore || 0) >= 35 || (event.antiSpoofingFlags || []).length);
     const rows = events.map((event) => { const enriched = enrichByEmployee(db, event); return { ...enriched, employee: enriched.employee, employeeId: enriched.employeeId, score: enriched.riskScore || 0, level: enriched.riskLevel || "MEDIUM", flags: [...(enriched.riskFlags || []), ...(enriched.antiSpoofingFlags || [])].map((flag) => ({ label: flag })), events: [enriched] }; });
     const counts = rows.reduce((acc, row) => { acc[row.level] = (acc[row.level] || 0) + 1; return acc; }, {});
-    return ok({ rows, counts, rules: ["Ø§Ø¹ØªÙ…Ø§Ø¯ Ø§Ù„Ø¬Ù‡Ø§Ø²", "QR Ù…ØªÙˆÙ‚Ù", "Ø³ÙŠÙ„ÙÙŠ", "GPS anti-spoofing", "ØªØµØ¹ÙŠØ¯ HR"] });
+    return ok({ rows, counts, rules: ["اعتماد الجهاز", "QR متوقف", "سيلفي", "GPS anti-spoofing", "تصعيد HR"] });
   },
   acknowledgeAttendancePolicy: async (body = {}) => {
     const db = loadDb();
@@ -3765,18 +3765,18 @@ const localEndpoints = {
     });
     const byRole = (roleId) => employees.filter((employee) => employee.roleId === roleId).map((employee) => ({ ...employee, teamCount: allTeamFor(db, employee.id).length }));
     const levels = [
-      { key: "executive", label: "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", people: byRole("role-executive") },
-      { key: "secretary", label: "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ/Ø§Ù„ØªÙ‚Ù†ÙŠ", people: byRole("role-executive-secretary") },
-      { key: "first-line", label: "Ø§Ù„ØµÙ Ø§Ù„Ø£ÙˆÙ„ Ù…Ù† Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", people: employees.filter((employee) => employee.roleId === "role-manager" && employee.managerEmployeeId === "emp-executive-director").map((employee) => ({ ...employee, teamCount: allTeamFor(db, employee.id).length })) },
-      { key: "hr", label: "Ø§Ù„Ù…ÙˆØ§Ø±Ø¯ Ø§Ù„Ø¨Ø´Ø±ÙŠØ©", people: byRole("role-hr") },
-      { key: "employees", label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", people: employees.filter((employee) => employee.roleId === "role-employee").map((employee) => ({ ...employee, teamCount: 0 })) },
+      { key: "executive", label: "المدير التنفيذي", people: byRole("role-executive") },
+      { key: "secretary", label: "السكرتير التنفيذي/التقني", people: byRole("role-executive-secretary") },
+      { key: "first-line", label: "الصف الأول من المديرين", people: employees.filter((employee) => employee.roleId === "role-manager" && employee.managerEmployeeId === "emp-executive-director").map((employee) => ({ ...employee, teamCount: allTeamFor(db, employee.id).length })) },
+      { key: "hr", label: "الموارد البشرية", people: byRole("role-hr") },
+      { key: "employees", label: "الموظفون", people: employees.filter((employee) => employee.roleId === "role-employee").map((employee) => ({ ...employee, teamCount: 0 })) },
     ];
     return ok({
       metrics: [
-        { label: "Ø¥Ø¬Ù…Ø§Ù„ÙŠ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ†", value: employees.length, helper: "Ø¯Ø§Ø®Ù„ ØµÙ„Ø§Ø­ÙŠØªÙƒ" },
-        { label: "Ù…Ø¯ÙŠØ±ÙˆÙ† Ù…Ø¨Ø§Ø´Ø±ÙˆÙ†", value: candidates.filter((employee) => employee.roleId === "role-manager").length, helper: "ØµÙÙˆÙ Ø¥Ø¯Ø§Ø±Ø©" },
-        { label: "Ø¨Ù„Ø§ Ù…Ø¯ÙŠØ±", value: employees.filter((employee) => employee.roleId === "role-employee" && !employee.managerEmployeeId).length, helper: "ØªØ­ØªØ§Ø¬ Ø±Ø¨Ø·" },
-        { label: "ÙØ±Ù‚ Ù†Ø´Ø·Ø©", value: teamManagers.filter((row) => row.teamCount > 0).length, helper: "Ù„Ø¯ÙŠÙ‡Ø§ Ø£Ø¹Ø¶Ø§Ø¡" },
+        { label: "إجمالي الموظفين", value: employees.length, helper: "داخل صلاحيتك" },
+        { label: "مديرون مباشرون", value: candidates.filter((employee) => employee.roleId === "role-manager").length, helper: "صفوف إدارة" },
+        { label: "بلا مدير", value: employees.filter((employee) => employee.roleId === "role-employee" && !employee.managerEmployeeId).length, helper: "تحتاج ربط" },
+        { label: "فرق نشطة", value: teamManagers.filter((row) => row.teamCount > 0).length, helper: "لديها أعضاء" },
       ],
       employees,
       managerOptions: candidates,
@@ -3787,13 +3787,13 @@ const localEndpoints = {
   assignManager: async (body = {}) => {
     const db = loadDb();
     const employee = findById(db.employees || [], body.employeeId);
-    if (!employee) throw new Error("Ø§Ù„Ù…ÙˆØ¸Ù ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
-    if (body.managerEmployeeId && body.managerEmployeeId === body.employeeId) throw new Error("Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø¬Ø¹Ù„ Ø§Ù„Ù…ÙˆØ¸Ù Ù…Ø¯ÙŠØ±Ù‹Ø§ Ù„Ù†ÙØ³Ù‡.");
+    if (!employee) throw new Error("الموظف غير موجود.");
+    if (body.managerEmployeeId && body.managerEmployeeId === body.employeeId) throw new Error("لا يمكن جعل الموظف مديرًا لنفسه.");
     const before = clone(employee);
     employee.managerEmployeeId = body.managerEmployeeId || "";
     employee.updatedAt = now();
     audit(db, "organization.assign_manager", "employee", employee.id, before, { managerEmployeeId: employee.managerEmployeeId, note: body.note || "" });
-    if (employee.managerEmployeeId) notifyEmployee(db, employee.managerEmployeeId, "ØªÙ… Ø±Ø¨Ø· Ù…ÙˆØ¸Ù Ø¨ÙØ±ÙŠÙ‚Ùƒ", `${employee.fullName} Ø£ØµØ¨Ø­ Ø¶Ù…Ù† ÙØ±ÙŠÙ‚Ùƒ Ø§Ù„Ù…Ø¨Ø§Ø´Ø±.`, "INFO");
+    if (employee.managerEmployeeId) notifyEmployee(db, employee.managerEmployeeId, "تم ربط موظف بفريقك", `${employee.fullName} أصبح ضمن فريقك المباشر.`, "INFO");
     saveDb(db);
     return ok(enrichEmployee(db, employee));
   },
@@ -3803,7 +3803,7 @@ const localEndpoints = {
     const managerId = body.managerId || user?.employeeId || "";
     const manager = findById(db.employees || [], managerId) || findById(db.employees || [], user?.employeeId);
     const full = isFullAccessUser(db);
-    if (!full && manager?.id !== user?.employeeId && !canSeeEmployee(db, manager?.id)) throw new Error("Ù„Ø§ ØªÙ…Ù„Ùƒ ØµÙ„Ø§Ø­ÙŠØ© ÙØªØ­ ÙØ±ÙŠÙ‚ Ù‡Ø°Ø§ Ø§Ù„Ù…Ø¯ÙŠØ±.");
+    if (!full && manager?.id !== user?.employeeId && !canSeeEmployee(db, manager?.id)) throw new Error("لا تملك صلاحية فتح فريق هذا المدير.");
     const team = allTeamFor(db, manager?.id || user?.employeeId || "").filter((employee) => full || scopedEmployeeIds(db).has(employee.id));
     const rows = team.map((employee) => {
       const today = todayStatusForEmployee(db, employee.id);
@@ -3816,10 +3816,10 @@ const localEndpoints = {
       team: rows,
       pending,
       metrics: [
-        { label: "Ø­Ø¬Ù… Ø§Ù„ÙØ±ÙŠÙ‚", value: rows.length, helper: "ÙƒÙ„ Ø§Ù„ØªØ§Ø¨Ø¹ÙŠÙ†" },
-        { label: "Ø­Ø§Ø¶Ø± Ø§Ù„ÙŠÙˆÙ…", value: present, helper: "Ø­Ø¶ÙˆØ±/ØªØ£Ø®ÙŠØ±" },
-        { label: "KPI Ù…Ø¹Ù„Ù‚", value: rows.filter((row) => !["APPROVED", "EXECUTIVE_APPROVED"].includes(row.kpiStatus)).length, helper: "Ù„Ù… ÙŠØºÙ„Ù‚" },
-        { label: "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", value: pending.length, helper: "ØªØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©" },
+        { label: "حجم الفريق", value: rows.length, helper: "كل التابعين" },
+        { label: "حاضر اليوم", value: present, helper: "حضور/تأخير" },
+        { label: "KPI معلق", value: rows.filter((row) => !["APPROVED", "EXECUTIVE_APPROVED"].includes(row.kpiStatus)).length, helper: "لم يغلق" },
+        { label: "طلبات معلقة", value: pending.length, helper: "تحتاج متابعة" },
       ],
     });
   },
@@ -3829,7 +3829,7 @@ const localEndpoints = {
     const managerId = body.managerId || user?.employeeId || "";
     const team = allTeamFor(db, managerId);
     let sent = 0;
-    team.forEach((employee) => { notifyEmployee(db, employee.id, "ØªØ°ÙƒÙŠØ± Ù…Ù† Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø±", body.message || "ÙŠØ±Ø¬Ù‰ Ù…Ø±Ø§Ø¬Ø¹Ø© Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø·Ù„Ø¨Ø§Øª ÙˆKPI Ø§Ù„Ù…Ø·Ù„ÙˆØ¨.", "ACTION_REQUIRED"); sent += 1; });
+    team.forEach((employee) => { notifyEmployee(db, employee.id, "تذكير من المدير المباشر", body.message || "يرجى مراجعة الحضور والطلبات وKPI المطلوب.", "ACTION_REQUIRED"); sent += 1; });
     audit(db, "team.reminder", "employee", managerId, null, { sent });
     saveDb(db);
     return ok({ sent });
@@ -3842,16 +3842,16 @@ const localEndpoints = {
     const kpiForHr = kpiSummaryRows(db).filter((row) => ["MANAGER_APPROVED", "HR_REVIEWED"].includes(row.status)).slice(0, 80);
     const dataIssues = [];
     employees.forEach((employee) => {
-      if (!employee.managerEmployeeId && employee.roleId === "role-employee") dataIssues.push({ employee, issue: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…Ø¯ÙŠØ± Ù…Ø¨Ø§Ø´Ø±" });
-      if (!employee.userId && !employee.user?.id) dataIssues.push({ employee, issue: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ø­Ø³Ø§Ø¨ Ø¯Ø®ÙˆÙ„ Ù…Ø±ØªØ¨Ø·" });
-      if (!employee.phone && !employee.email) dataIssues.push({ employee, issue: "Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù‡Ø§ØªÙ Ø£Ùˆ Ø¨Ø±ÙŠØ¯" });
+      if (!employee.managerEmployeeId && employee.roleId === "role-employee") dataIssues.push({ employee, issue: "لا يوجد مدير مباشر" });
+      if (!employee.userId && !employee.user?.id) dataIssues.push({ employee, issue: "لا يوجد حساب دخول مرتبط" });
+      if (!employee.phone && !employee.email) dataIssues.push({ employee, issue: "لا يوجد هاتف أو بريد" });
     });
     return ok({
       metrics: [
-        { label: "Ø§Ù„Ù…ÙˆØ¸ÙÙˆÙ†", value: employees.length, helper: "Ø¯Ø§Ø®Ù„ HR" },
-        { label: "Ø­Ø¶ÙˆØ± ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©", value: attendanceIssues.length, helper: today },
-        { label: "KPI Ø¹Ù†Ø¯ HR", value: kpiForHr.length, helper: "Ø¨Ù†ÙˆØ¯ HR ÙÙ‚Ø·" },
-        { label: "Ø¨ÙŠØ§Ù†Ø§Øª Ù†Ø§Ù‚ØµØ©", value: dataIssues.length, helper: "ØªØ­ØªØ§Ø¬ Ø§Ø³ØªÙƒÙ…Ø§Ù„" },
+        { label: "الموظفون", value: employees.length, helper: "داخل HR" },
+        { label: "حضور يحتاج مراجعة", value: attendanceIssues.length, helper: today },
+        { label: "KPI عند HR", value: kpiForHr.length, helper: "بنود HR فقط" },
+        { label: "بيانات ناقصة", value: dataIssues.length, helper: "تحتاج استكمال" },
       ],
       attendanceIssues,
       kpiForHr,
@@ -3863,7 +3863,7 @@ const localEndpoints = {
     const committeeMembers = hrCommitteeEmployeeIds(db).map((id) => enrichEmployee(db, findById(db.employees || [], id))).filter(Boolean);
     const cases = (db.disputeCases || []).map((item) => enrichByEmployee(db, item)).sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
     return ok({
-      workflowSteps: ["Ø§Ù„Ù…ÙˆØ¸Ù ÙŠÙ‚Ø¯Ù… Ø§Ù„Ø´ÙƒÙˆÙ‰", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„Ù…Ø¨Ø§Ø´Ø± ÙŠØ±Ø§Ø¬Ø¹", "Ù„Ø¬Ù†Ø© Ø­Ù„ Ø§Ù„Ù…Ø´ÙƒÙ„Ø§Øª ØªØ±Ø§Ø¬Ø¹", "Ø§Ù„Ø³ÙƒØ±ØªÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙŠÙ†Ø³Ù‚ ÙˆÙŠØ±ÙØ¹", "Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ ÙŠØ¹ØªÙ…Ø¯ Ø¹Ù†Ø¯ Ø§Ù„ØªØµØ¹ÙŠØ¯"],
+      workflowSteps: ["الموظف يقدم الشكوى", "المدير المباشر يراجع", "لجنة حل المشكلات تراجع", "السكرتير التنفيذي ينسق ويرفع", "المدير التنفيذي يعتمد عند التصعيد"],
       committeeMembers,
       cases,
     });
@@ -3871,15 +3871,15 @@ const localEndpoints = {
   advanceDispute: async (id, body = {}) => {
     const db = loadDb();
     const item = findById(db.disputeCases || [], id);
-    if (!item) throw new Error("Ø§Ù„Ø´ÙƒÙˆÙ‰ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø©.");
+    if (!item) throw new Error("الشكوى غير موجودة.");
     const before = clone(item);
     item.status = body.status || item.status || "IN_REVIEW";
-    item.committeeDecision = body.note || item.committeeDecision || "ØªÙ…Øª Ø§Ù„Ù…Ø±Ø§Ø¬Ø¹Ø©";
+    item.committeeDecision = body.note || item.committeeDecision || "تمت المراجعة";
     item.escalatedToExecutive = item.status === "ESCALATED" || item.escalatedToExecutive === true;
     item.updatedAt = now();
     item.workflow ||= [];
-    item.workflow.push({ at: now(), by: currentUser(db)?.name || "Ø§Ù„Ù†Ø¸Ø§Ù…", action: item.status, note: body.note || "" });
-    if (item.status === "ESCALATED") notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], "Ø´ÙƒÙˆÙ‰ Ù…ØµØ¹Ø¯Ø© ØªØ­ØªØ§Ø¬ Ù‚Ø±Ø§Ø±", item.title || "Ø´ÙƒÙˆÙ‰", "ACTION_REQUIRED");
+    item.workflow.push({ at: now(), by: currentUser(db)?.name || "النظام", action: item.status, note: body.note || "" });
+    if (item.status === "ESCALATED") notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], "شكوى مصعدة تحتاج قرار", item.title || "شكوى", "ACTION_REQUIRED");
     if (["RESOLVED", "CLOSED"].includes(item.status)) item.resolvedAt = now();
     audit(db, "dispute.advance", "dispute_case", id, before, item);
     saveDb(db);
@@ -3889,30 +3889,30 @@ const localEndpoints = {
     const db = loadDb();
     const employees = visibleEmployees(db);
     const rows = [
-      { key: "attendance", title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", description: "Ø­Ø¶ÙˆØ±ØŒ Ø§Ù†ØµØ±Ø§ÙØŒ ØªØ£Ø®ÙŠØ±ØŒ ÙˆÙ…Ø±Ø§Ø¬Ø¹Ø§Øª", scope: "HR/Ù…Ø¯ÙŠØ±", count: (db.attendanceEvents || []).length, generatedAt: now() },
-      { key: "kpi", title: "ØªÙ‚Ø±ÙŠØ± KPI Ø§Ù„Ø´Ù‡Ø±ÙŠ", description: "Ø¯Ø±Ø¬Ø§Øª ÙˆØªÙ‚Ø¯Ù… Ø¯ÙˆØ±Ø© Ø§Ù„ØªÙ‚ÙŠÙŠÙ…", scope: "Ù…Ø¯ÙŠØ±/HR/ØªÙ†ÙÙŠØ°ÙŠ", count: (db.kpiEvaluations || []).length, generatedAt: now() },
-      { key: "teams", title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙØ±Ù‚ ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", description: "ØªÙˆØ²ÙŠØ¹ Ø§Ù„Ù…ÙˆØ¸ÙÙŠÙ† Ø¹Ù„Ù‰ Ø§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", scope: "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©", count: managerCandidates(db).length, generatedAt: now() },
-      { key: "disputes", title: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯", description: "Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ Ø­Ø³Ø¨ Ø§Ù„Ù…Ø±Ø­Ù„Ø© ÙˆØ§Ù„Ù‚Ø±Ø§Ø±", scope: "Ø§Ù„Ù„Ø¬Ù†Ø©/Ø§Ù„Ø³ÙƒØ±ØªÙŠØ±", count: (db.disputeCases || []).length, generatedAt: now() },
-      { key: "hr", title: "ØªÙ‚Ø±ÙŠØ± HR Ø§Ù„ØªØ´ØºÙŠÙ„ÙŠ", description: "Ø¨ÙŠØ§Ù†Ø§Øª Ù†Ø§Ù‚ØµØ© ÙˆKPI ÙˆØ­Ø¶ÙˆØ± ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©", scope: "HR", count: employees.length, generatedAt: now() },
+      { key: "attendance", title: "تقرير الحضور والانصراف", description: "حضور، انصراف، تأخير، ومراجعات", scope: "HR/مدير", count: (db.attendanceEvents || []).length, generatedAt: now() },
+      { key: "kpi", title: "تقرير KPI الشهري", description: "درجات وتقدم دورة التقييم", scope: "مدير/HR/تنفيذي", count: (db.kpiEvaluations || []).length, generatedAt: now() },
+      { key: "teams", title: "تقرير الفرق والمديرين", description: "توزيع الموظفين على المديرين", scope: "الإدارة", count: managerCandidates(db).length, generatedAt: now() },
+      { key: "disputes", title: "تقرير الشكاوى والتصعيد", description: "الشكاوى حسب المرحلة والقرار", scope: "اللجنة/السكرتير", count: (db.disputeCases || []).length, generatedAt: now() },
+      { key: "hr", title: "تقرير HR التشغيلي", description: "بيانات ناقصة وKPI وحضور يحتاج مراجعة", scope: "HR", count: employees.length, generatedAt: now() },
     ];
     return ok({ rows, metrics: [
-      { label: "ØªÙ‚Ø§Ø±ÙŠØ± Ø¬Ø§Ù‡Ø²Ø©", value: rows.length, helper: "CSV/Excel/PDF" },
-      { label: "Ù…ÙˆØ¸ÙÙˆÙ†", value: employees.length, helper: "Ø¶Ù…Ù† Ø§Ù„ØµÙ„Ø§Ø­ÙŠØ§Øª" },
-      { label: "KPI", value: (db.kpiEvaluations || []).length, helper: "ÙƒÙ„ Ø§Ù„Ø¯ÙˆØ±Ø§Øª" },
-      { label: "Ø´ÙƒØ§ÙˆÙ‰", value: (db.disputeCases || []).length, helper: "ÙƒÙ„ Ø§Ù„Ø­Ø§Ù„Ø§Øª" },
+      { label: "تقارير جاهزة", value: rows.length, helper: "CSV/Excel/PDF" },
+      { label: "موظفون", value: employees.length, helper: "ضمن الصلاحيات" },
+      { label: "KPI", value: (db.kpiEvaluations || []).length, helper: "كل الدورات" },
+      { label: "شكاوى", value: (db.disputeCases || []).length, helper: "كل الحالات" },
     ] });
   },
   exportManagementReport: async (body = {}) => {
     const db = loadDb();
     const key = body.key || "attendance";
-    const titleMap = { attendance: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø­Ø¶ÙˆØ± ÙˆØ§Ù„Ø§Ù†ØµØ±Ø§Ù", kpi: "ØªÙ‚Ø±ÙŠØ± KPI Ø§Ù„Ø´Ù‡Ø±ÙŠ", teams: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„ÙØ±Ù‚ ÙˆØ§Ù„Ù…Ø¯ÙŠØ±ÙŠÙ†", disputes: "ØªÙ‚Ø±ÙŠØ± Ø§Ù„Ø´ÙƒØ§ÙˆÙ‰ ÙˆØ§Ù„ØªØµØ¹ÙŠØ¯", hr: "ØªÙ‚Ø±ÙŠØ± HR Ø§Ù„ØªØ´ØºÙŠÙ„ÙŠ" };
+    const titleMap = { attendance: "تقرير الحضور والانصراف", kpi: "تقرير KPI الشهري", teams: "تقرير الفرق والمديرين", disputes: "تقرير الشكاوى والتصعيد", hr: "تقرير HR التشغيلي" };
     let headers = [], rows = [];
-    if (key === "kpi") { headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø§Ù„Ø¥Ø¬Ù…Ø§Ù„ÙŠ", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø¯ÙˆØ±Ø©"]; rows = kpiSummaryRows(db).map((row) => [row.employee?.fullName || row.employeeId, row.manager?.fullName || "-", row.totalScore || 0, row.status || "DRAFT", row.cycle?.name || row.cycleId]); }
-    else if (key === "teams") { headers = ["Ø§Ù„Ù…Ø¯ÙŠØ±", "Ø­Ø¬Ù… Ø§Ù„ÙØ±ÙŠÙ‚", "Ù†Ø´Ø·", "KPI Ù…Ø¹Ù„Ù‚", "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©"]; rows = managerCandidates(db).map((manager) => { const team = allTeamFor(db, manager.id); return [manager.fullName, team.length, team.filter((e) => e.status === "ACTIVE").length, team.filter((e) => !["APPROVED", "EXECUTIVE_APPROVED"].includes(employeeKpiStatus(db, e.id))).length, team.reduce((sum, e) => sum + pendingCountForEmployee(db, e.id), 0)]; }); }
-    else if (key === "disputes") { headers = ["Ø§Ù„Ø¹Ù†ÙˆØ§Ù†", "Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ø­Ø§Ù„Ø©", "Ø§Ù„Ø£ÙˆÙ„ÙˆÙŠØ©", "Ø§Ù„Ù‚Ø±Ø§Ø±"]; rows = (db.disputeCases || []).map((row) => { const emp = findById(db.employees || [], row.employeeId); return [row.title, emp?.fullName || "-", row.status || "OPEN", row.priority || "MEDIUM", row.committeeDecision || row.resolution || ""]; }); }
-    else if (key === "hr") { const hr = await localEndpoints.hrOperations().then((r) => r.data || r); headers = ["Ø§Ù„Ù…Ø¤Ø´Ø±", "Ø§Ù„Ù‚ÙŠÙ…Ø©", "Ù…Ù„Ø§Ø­Ø¸Ø©"]; rows = (hr.metrics || []).map((m) => [m.label, m.value, m.helper || ""]); }
-    else { headers = ["Ø§Ù„Ù…ÙˆØ¸Ù", "Ø§Ù„Ù†ÙˆØ¹", "Ø§Ù„ØªØ§Ø±ÙŠØ®", "Ø§Ù„Ù…ØµØ¯Ø±", "Ø§Ù„Ù…ÙˆÙ‚Ø¹", "Ù…Ù„Ø§Ø­Ø¸Ø§Øª"]; rows = scopedRowsByEmployee(db, db.attendanceEvents || []).map((event) => [enrichByEmployee(db, event).employee?.fullName || event.employeeId, event.type || event.status || "-", event.eventAt || event.createdAt || "", event.source || "-", event.geofenceStatus || "-", event.notes || ""]); }
-    return ok({ title: titleMap[key] || "ØªÙ‚Ø±ÙŠØ±", fileName: key + "-report", headers, rows, summaryHtml: `<div class="summary"><div><span>Ø¹Ø¯Ø¯ Ø§Ù„Ø³Ø¬Ù„Ø§Øª</span><strong>${rows.length}</strong></div><div><span>ØªØ§Ø±ÙŠØ® Ø§Ù„Ø¥ØµØ¯Ø§Ø±</span><strong>${now().slice(0,10)}</strong></div></div>` });
+    if (key === "kpi") { headers = ["الموظف", "المدير", "الإجمالي", "الحالة", "الدورة"]; rows = kpiSummaryRows(db).map((row) => [row.employee?.fullName || row.employeeId, row.manager?.fullName || "-", row.totalScore || 0, row.status || "DRAFT", row.cycle?.name || row.cycleId]); }
+    else if (key === "teams") { headers = ["المدير", "حجم الفريق", "نشط", "KPI معلق", "طلبات معلقة"]; rows = managerCandidates(db).map((manager) => { const team = allTeamFor(db, manager.id); return [manager.fullName, team.length, team.filter((e) => e.status === "ACTIVE").length, team.filter((e) => !["APPROVED", "EXECUTIVE_APPROVED"].includes(employeeKpiStatus(db, e.id))).length, team.reduce((sum, e) => sum + pendingCountForEmployee(db, e.id), 0)]; }); }
+    else if (key === "disputes") { headers = ["العنوان", "الموظف", "الحالة", "الأولوية", "القرار"]; rows = (db.disputeCases || []).map((row) => { const emp = findById(db.employees || [], row.employeeId); return [row.title, emp?.fullName || "-", row.status || "OPEN", row.priority || "MEDIUM", row.committeeDecision || row.resolution || ""]; }); }
+    else if (key === "hr") { const hr = await localEndpoints.hrOperations().then((r) => r.data || r); headers = ["المؤشر", "القيمة", "ملاحظة"]; rows = (hr.metrics || []).map((m) => [m.label, m.value, m.helper || ""]); }
+    else { headers = ["الموظف", "النوع", "التاريخ", "المصدر", "الموقع", "ملاحظات"]; rows = scopedRowsByEmployee(db, db.attendanceEvents || []).map((event) => [enrichByEmployee(db, event).employee?.fullName || event.employeeId, event.type || event.status || "-", event.eventAt || event.createdAt || "", event.source || "-", event.geofenceStatus || "-", event.notes || ""]); }
+    return ok({ title: titleMap[key] || "تقرير", fileName: key + "-report", headers, rows, summaryHtml: `<div class="summary"><div><span>عدد السجلات</span><strong>${rows.length}</strong></div><div><span>تاريخ الإصدار</span><strong>${now().slice(0,10)}</strong></div></div>` });
   },
   managerDashboard: async () => {
     const db = loadDb();
@@ -3932,16 +3932,16 @@ const localEndpoints = {
       });
     const present = team.filter((item) => ["PRESENT", "LATE", "CHECK_IN"].includes(item.todayStatus)).length;
     const actions = [
-      ...team.filter((item) => item.todayStatus === "ABSENT").slice(0, 5).map((item) => ({ title: `Ù„Ù… ÙŠØ³Ø¬Ù„ ${item.fullName} Ø¨ØµÙ…Ø© Ø§Ù„ÙŠÙˆÙ…`, body: "ÙŠÙ…ÙƒÙ† Ø¥Ø±Ø³Ø§Ù„ ØªÙ†Ø¨ÙŠÙ‡ Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ù…Ø¯ÙŠØ±.", status: "ACTION_REQUIRED" })),
-      ...team.filter((item) => item.pendingItems > 0).slice(0, 5).map((item) => ({ title: `${item.fullName} Ù„Ø¯ÙŠÙ‡ Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©`, body: `${item.pendingItems} Ø·Ù„Ø¨/Ø·Ù„Ø¨Ø§Øª ØªØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©.`, status: "PENDING" })),
+      ...team.filter((item) => item.todayStatus === "ABSENT").slice(0, 5).map((item) => ({ title: `لم يسجل ${item.fullName} بصمة اليوم`, body: "يمكن إرسال تنبيه من لوحة المدير.", status: "ACTION_REQUIRED" })),
+      ...team.filter((item) => item.pendingItems > 0).slice(0, 5).map((item) => ({ title: `${item.fullName} لديه طلبات معلقة`, body: `${item.pendingItems} طلب/طلبات تحتاج متابعة.`, status: "PENDING" })),
     ];
     return ok({
       team,
       metrics: [
-        { label: "Ø§Ù„ÙØ±ÙŠÙ‚", value: team.length, helper: "Ø­Ø³Ø¨ ØµÙ„Ø§Ø­ÙŠØ§Øª Ø§Ù„Ù…Ø¯ÙŠØ±" },
-        { label: "Ø­Ø§Ø¶Ø± Ø§Ù„ÙŠÙˆÙ…", value: present, helper: "Ø­Ø¶ÙˆØ± Ø£Ùˆ ØªØ£Ø®ÙŠØ±" },
-        { label: "Ù„Ù… ÙŠØ¨ØµÙ…", value: Math.max(team.length - present, 0), helper: today },
-        { label: "Ø·Ù„Ø¨Ø§Øª Ù…Ø¹Ù„Ù‚Ø©", value: team.reduce((sum, item) => sum + item.pendingItems, 0), helper: "Ø¥Ø¬Ø§Ø²Ø§Øª/Ù…Ø£Ù…ÙˆØ±ÙŠØ§Øª/ØªØ¹Ø¯ÙŠÙ„Ø§Øª" },
+        { label: "الفريق", value: team.length, helper: "حسب صلاحيات المدير" },
+        { label: "حاضر اليوم", value: present, helper: "حضور أو تأخير" },
+        { label: "لم يبصم", value: Math.max(team.length - present, 0), helper: today },
+        { label: "طلبات معلقة", value: team.reduce((sum, item) => sum + item.pendingItems, 0), helper: "إجازات/مأموريات/تعديلات" },
       ],
       actions,
     });
@@ -3959,8 +3959,8 @@ const localEndpoints = {
         id: makeId("not"),
         userId: employee.userId || "",
         employeeId: employee.id,
-        title: "ØªØ°ÙƒÙŠØ± Ø¨ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¨ØµÙ…Ø©",
-        body: "Ù„Ù… ÙŠØªÙ… ØªØ³Ø¬ÙŠÙ„ Ø¨ØµÙ…Ø© Ø­Ø¶ÙˆØ± Ø§Ù„ÙŠÙˆÙ… Ø­ØªÙ‰ Ø§Ù„Ø¢Ù†. Ø§ÙØªØ­ ØµÙØ­Ø© Ø§Ù„Ø¨ØµÙ…Ø© ÙˆØ³Ø¬Ù„ Ø­Ø¶ÙˆØ±Ùƒ Ø¹Ù†Ø¯ Ø§Ù„ÙˆØµÙˆÙ„ Ù„Ù„Ù…Ø¬Ù…Ø¹.",
+        title: "تذكير بتسجيل البصمة",
+        body: "لم يتم تسجيل بصمة حضور اليوم حتى الآن. افتح صفحة البصمة وسجل حضورك عند الوصول للمجمع.",
         status: "UNREAD",
         isRead: false,
         type: "MISSING_PUNCH",
@@ -3984,7 +3984,7 @@ const localEndpoints = {
   reviewRejectedPunch: async (eventId, action = "approve", checkId = "") => {
     const db = loadDb();
     const event = findById(db.attendanceEvents, eventId);
-    if (!event) throw new Error("Ù…Ø­Ø§ÙˆÙ„Ø© Ø§Ù„Ø¨ØµÙ…Ø© ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø©.");
+    if (!event) throw new Error("محاولة البصمة غير موجودة.");
     const before = clone(event);
     if (action === "approve") {
       event.status = "MANUAL_APPROVED";
@@ -3993,7 +3993,7 @@ const localEndpoints = {
       event.reviewDecision = "APPROVED";
       event.reviewedAt = now();
       event.reviewedByUserId = currentUser(db)?.id || "";
-      event.notes = `${event.notes || ""} â€” ØªÙ… Ø§Ø¹ØªÙ…Ø§Ø¯Ù‡Ø§ ÙŠØ¯ÙˆÙŠÙ‹Ø§`.trim();
+      event.notes = `${event.notes || ""} — تم اعتمادها يدويًا`.trim();
       upsertDailyFromEvent(db, event.employeeId, event);
     } else {
       event.status = "REJECTED_CONFIRMED";
@@ -4018,7 +4018,7 @@ const localEndpoints = {
   updateTrustedDevice: async (deviceId, body = {}) => {
     const db = loadDb();
     const device = findById(db.passkeyCredentials, deviceId);
-    if (!device) throw new Error("Ø§Ù„Ø¬Ù‡Ø§Ø² ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!device) throw new Error("الجهاز غير موجود.");
     const before = clone(device);
     if (body.action === "disable") {
       device.trusted = false;
@@ -4042,7 +4042,7 @@ const localEndpoints = {
   passwordVault: async () => {
     const db = loadDb();
     const actor = currentUser(db);
-    if (!isTechnicalAdmin(actor) && !isFullAccessUser(db)) throw new Error("Ø®Ø²Ù†Ø© ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ© Ù…ØªØ§Ø­Ø© ÙÙ‚Ø· Ù„Ù„ØªÙ‚Ù†ÙŠ Ø£Ùˆ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¹Ù„ÙŠØ§.");
+    if (!isTechnicalAdmin(actor) && !isFullAccessUser(db)) throw new Error("خزنة كلمات المرور المؤقتة متاحة فقط للتقني أو الإدارة العليا.");
     const rows = (db.users || []).map((user) => {
       const employee = findById(db.employees, user.employeeId);
       const issued = (db.credentialVault || []).find((item) => item.userId === user.id);
@@ -4053,18 +4053,18 @@ const localEndpoints = {
   resetUserPassword: async (userId, password = "") => {
     const db = loadDb();
     const actor = currentUser(db);
-    if (!isTechnicalAdmin(actor) && !isFullAccessUser(db)) throw new Error("Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø§Øª Ø§Ù„Ù…Ø±ÙˆØ± Ù…ØªØ§Ø­Ø© ÙÙ‚Ø· Ù„Ù„ØªÙ‚Ù†ÙŠ Ø£Ùˆ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¹Ù„ÙŠØ§.");
+    if (!isTechnicalAdmin(actor) && !isFullAccessUser(db)) throw new Error("إعادة تعيين كلمات المرور متاحة فقط للتقني أو الإدارة العليا.");
     const user = findById(db.users, userId);
-    if (!user) throw new Error("Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù… ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!user) throw new Error("المستخدم غير موجود.");
     const before = clone(user);
     const generatedPassword = password || makeStrongPassword();
     user.password = generatedPassword;
     user.temporaryPassword = true;
     user.mustChangePassword = true;
     db.credentialVault ||= [];
-    db.credentialVault.unshift({ id: makeId("cred"), userId: user.id, employeeId: user.employeeId || "", email: user.email, temporaryPassword: generatedPassword, status: "RESET", createdAt: now(), createdBy: actor?.id || "system", note: "ØªÙ…Øª Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªØ¹ÙŠÙŠÙ† ÙˆÙŠØ¬Ø¨ ØªØºÙŠÙŠØ±Ù‡Ø§ Ù…Ù† Ø§Ù„Ù…ÙˆØ¸Ù Ø¨Ø¹Ø¯ Ø§Ù„Ø¯Ø®ÙˆÙ„." });
+    db.credentialVault.unshift({ id: makeId("cred"), userId: user.id, employeeId: user.employeeId || "", email: user.email, temporaryPassword: generatedPassword, status: "RESET", createdAt: now(), createdBy: actor?.id || "system", note: "تمت إعادة التعيين ويجب تغييرها من الموظف بعد الدخول." });
     audit(db, "auth.password_reset_by_admin", "user", user.id, { ...before, password: "***" }, { ...user, password: "***" });
-    notifyEmployee(db, user.employeeId, "ØªÙ…Øª Ø¥Ø¹Ø§Ø¯Ø© ØªØ¹ÙŠÙŠÙ† ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ±", "Ø±Ø§Ø¬Ø¹ Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ù„Ø§Ø³ØªÙ„Ø§Ù… ÙƒÙ„Ù…Ø© Ø§Ù„Ù…Ø±ÙˆØ± Ø§Ù„Ù…Ø¤Ù‚ØªØ© Ø«Ù… ØºÙŠÙ‘Ø±Ù‡Ø§ Ø¨Ø¹Ø¯ Ø§Ù„Ø¯Ø®ÙˆÙ„.", "ACTION_REQUIRED");
+    notifyEmployee(db, user.employeeId, "تمت إعادة تعيين كلمة المرور", "راجع الإدارة لاستلام كلمة المرور المؤقتة ثم غيّرها بعد الدخول.", "ACTION_REQUIRED");
     saveDb(db);
     return ok({ user: enrichUser(db, user), temporaryPassword: generatedPassword });
   },
@@ -4076,7 +4076,7 @@ const localEndpoints = {
   saveLeaveBalance: async (employeeId, body = {}) => {
     const db = loadDb();
     const employee = findById(db.employees, employeeId);
-    if (!employee) throw new Error("Ø§Ù„Ù…ÙˆØ¸Ù ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!employee) throw new Error("الموظف غير موجود.");
     db.leaveBalances ||= [];
     let row = db.leaveBalances.find((item) => item.employeeId === employeeId);
     const before = clone(row);
@@ -4109,23 +4109,23 @@ const localEndpoints = {
     const db = loadDb();
     const actor = currentUser(db);
     const employeeId = body.employeeId || actor?.employeeId || actor?.employee?.id;
-    if (!employeeId) throw new Error("Ø­Ø¯Ø¯ Ø§Ù„Ù…ÙˆØ¸Ù ØµØ§Ø­Ø¨ Ø§Ù„Ù…Ù‡Ù…Ø©.");
-    const task = { id: makeId("task"), title: body.title || "Ù…Ù‡Ù…Ø© Ø¬Ø¯ÙŠØ¯Ø©", description: body.description || body.notes || "", employeeId, assignedByEmployeeId: actor?.employeeId || "", priority: body.priority || "MEDIUM", status: body.status || "OPEN", dueDate: body.dueDate || "", createdAt: now(), updatedAt: now() };
+    if (!employeeId) throw new Error("حدد الموظف صاحب المهمة.");
+    const task = { id: makeId("task"), title: body.title || "مهمة جديدة", description: body.description || body.notes || "", employeeId, assignedByEmployeeId: actor?.employeeId || "", priority: body.priority || "MEDIUM", status: body.status || "OPEN", dueDate: body.dueDate || "", createdAt: now(), updatedAt: now() };
     db.tasks ||= [];
     db.tasks.unshift(task);
     audit(db, "task.create", "task", task.id, null, task);
-    notifyEmployee(db, employeeId, "Ù…Ù‡Ù…Ø© Ø¬Ø¯ÙŠØ¯Ø©", task.title, "ACTION_REQUIRED");
+    notifyEmployee(db, employeeId, "مهمة جديدة", task.title, "ACTION_REQUIRED");
     saveDb(db);
     return ok(enrichByEmployee(db, task));
   },
   updateTask: async (id, body = {}) => {
     const db = loadDb();
     const task = findById(db.tasks || [], id);
-    if (!task) throw new Error("Ø§Ù„Ù…Ù‡Ù…Ø© ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø©.");
+    if (!task) throw new Error("المهمة غير موجودة.");
     const before = clone(task);
     Object.assign(task, { ...body, updatedAt: now(), completedAt: body.status === "DONE" ? now() : task.completedAt });
     audit(db, "task.update", "task", id, before, task);
-    notifyEmployee(db, task.employeeId, "ØªØ­Ø¯ÙŠØ« Ù…Ù‡Ù…Ø©", `${task.title}: ${task.status}`, "INFO");
+    notifyEmployee(db, task.employeeId, "تحديث مهمة", `${task.title}: ${task.status}`, "INFO");
     saveDb(db);
     return ok(enrichByEmployee(db, task));
   },
@@ -4139,8 +4139,8 @@ const localEndpoints = {
   createEmployeeDocument: async (body = {}) => {
     const db = loadDb();
     const employeeId = body.employeeId || currentUser(db)?.employeeId;
-    if (!employeeId) throw new Error("Ø­Ø¯Ø¯ Ø§Ù„Ù…ÙˆØ¸Ù Ø§Ù„Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ù…Ø³ØªÙ†Ø¯.");
-    const doc = { id: makeId("doc"), employeeId, title: body.title || "Ù…Ø³ØªÙ†Ø¯ Ù…ÙˆØ¸Ù", documentType: body.documentType || "OTHER", status: body.status || "ACTIVE", fileName: body.fileName || "", fileUrl: body.fileUrl || "", expiresOn: body.expiresOn || "", notes: body.notes || "", createdAt: now(), updatedAt: now() };
+    if (!employeeId) throw new Error("حدد الموظف المرتبط بالمستند.");
+    const doc = { id: makeId("doc"), employeeId, title: body.title || "مستند موظف", documentType: body.documentType || "OTHER", status: body.status || "ACTIVE", fileName: body.fileName || "", fileUrl: body.fileUrl || "", expiresOn: body.expiresOn || "", notes: body.notes || "", createdAt: now(), updatedAt: now() };
     db.employeeDocuments ||= [];
     db.employeeDocuments.unshift(doc);
     audit(db, "document.create", "employee_document", doc.id, null, doc);
@@ -4150,7 +4150,7 @@ const localEndpoints = {
   updateEmployeeDocument: async (id, body = {}) => {
     const db = loadDb();
     const doc = findById(db.employeeDocuments || [], id);
-    if (!doc) throw new Error("Ø§Ù„Ù…Ø³ØªÙ†Ø¯ ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!doc) throw new Error("المستند غير موجود.");
     const before = clone(doc);
     Object.assign(doc, { ...body, updatedAt: now() });
     audit(db, "document.update", "employee_document", id, before, doc);
@@ -4166,7 +4166,7 @@ const localEndpoints = {
   acknowledgeNotification: async (id) => {
     const db = loadDb();
     const note = findById(db.notifications || [], id);
-    if (!note) throw new Error("Ø§Ù„Ø¥Ø´Ø¹Ø§Ø± ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!note) throw new Error("الإشعار غير موجود.");
     const before = clone(note);
     note.isRead = true;
     note.status = "READ";
@@ -4184,7 +4184,7 @@ const localEndpoints = {
   savePermissionMatrix: async (body = {}) => {
     const db = loadDb();
     const role = findById(db.roles || [], body.roleId);
-    if (!role) throw new Error("Ø§Ù„Ø¯ÙˆØ± ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!role) throw new Error("الدور غير موجود.");
     const before = clone(role);
     role.permissions = Array.isArray(body.permissions) ? body.permissions : [];
     role.updatedAt = now();
@@ -4202,7 +4202,7 @@ const localEndpoints = {
     const repair = runDataRepair(db, body);
     const workflow = runWorkflowAutomation(db, body);
     const after = deepReadiness(db);
-    const run = { id: makeId("maint"), title: body.title || "ØªØ´ØºÙŠÙ„ ØµÙŠØ§Ù†Ø© Ø´Ø§Ù…Ù„", beforeScore, afterScore: after.score, repair, workflow, createdAt: now(), createdByUserId: currentUser(db)?.id || "system" };
+    const run = { id: makeId("maint"), title: body.title || "تشغيل صيانة شامل", beforeScore, afterScore: after.score, repair, workflow, createdAt: now(), createdByUserId: currentUser(db)?.id || "system" };
     db.maintenanceRuns ||= [];
     db.maintenanceRuns.unshift(run);
     db.maintenanceRuns = db.maintenanceRuns.slice(0, 50);
@@ -4223,9 +4223,9 @@ const localEndpoints = {
       policy = { id: makeId("pol"), createdAt: now() };
       db.employeePolicies.unshift(policy);
     }
-    Object.assign(policy, { title: body.title || policy.title || "Ø³ÙŠØ§Ø³Ø© Ø¬Ø¯ÙŠØ¯Ø©", category: body.category || policy.category || "GENERAL", version: body.version || policy.version || "1.0", body: body.body || policy.body || body.description || "", requiresAcknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== "false", status: body.status || policy.status || "ACTIVE", updatedAt: now() });
+    Object.assign(policy, { title: body.title || policy.title || "سياسة جديدة", category: body.category || policy.category || "GENERAL", version: body.version || policy.version || "1.0", body: body.body || policy.body || body.description || "", requiresAcknowledgement: body.requiresAcknowledgement !== false && body.requiresAcknowledgement !== "false", status: body.status || policy.status || "ACTIVE", updatedAt: now() });
     audit(db, "policy.save", "policy", policy.id, before, policy);
-    if (policy.status === "ACTIVE") notify(db, "Ø³ÙŠØ§Ø³Ø© Ø¬Ø¯ÙŠØ¯Ø©/Ù…Ø­Ø¯Ø«Ø© ØªØ­ØªØ§Ø¬ Ù‚Ø±Ø§Ø¡Ø©", policy.title, "ACTION_REQUIRED");
+    if (policy.status === "ACTIVE") notify(db, "سياسة جديدة/محدثة تحتاج قراءة", policy.title, "ACTION_REQUIRED");
     saveDb(db);
     return ok(policy);
   },
@@ -4233,9 +4233,9 @@ const localEndpoints = {
     const db = loadDb();
     const user = currentUser(db);
     const employeeId = user?.employeeId || user?.employee?.id;
-    if (!employeeId) throw new Error("Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ÙˆØ¸Ù Ù…Ø±ØªØ¨Ø· Ø¨Ø§Ù„Ø­Ø³Ø§Ø¨.");
+    if (!employeeId) throw new Error("لا يوجد موظف مرتبط بالحساب.");
     const policy = findById(db.employeePolicies || [], policyId);
-    if (!policy) throw new Error("Ø§Ù„Ø³ÙŠØ§Ø³Ø© ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø©.");
+    if (!policy) throw new Error("السياسة غير موجودة.");
     db.policyAcknowledgements ||= [];
     let ack = db.policyAcknowledgements.find((row) => row.policyId === policyId && row.employeeId === employeeId);
     if (!ack) {
@@ -4249,7 +4249,7 @@ const localEndpoints = {
   addCommitteeAction: async (caseId, body = {}) => {
     const db = loadDb();
     const item = findById(db.disputeCases || [], caseId);
-    if (!item) throw new Error("Ù…Ù„Ù Ø§Ù„Ù…Ø´ÙƒÙ„Ø© ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!item) throw new Error("ملف المشكلة غير موجود.");
     const actor = currentUser(db);
     db.committeeActions ||= [];
     const action = { id: makeId("committee"), caseId, employeeId: actor?.employeeId || "", actionType: body.actionType || "NOTE", decision: body.decision || "", note: body.note || body.committeeDecision || "", createdAt: now(), createdByUserId: actor?.id || "system" };
@@ -4261,7 +4261,7 @@ const localEndpoints = {
       item.status = "ESCALATED";
       item.escalatedToExecutive = true;
       item.escalatedAt = now();
-      notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], "ØªØµØ¹ÙŠØ¯ Ù…Ø´ÙƒÙ„Ø© Ù„Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ", item.title || "Ù…Ø´ÙƒÙ„Ø©", "ACTION_REQUIRED");
+      notifyManyEmployees(db, ["emp-executive-secretary", "emp-executive-director"], "تصعيد مشكلة للمدير التنفيذي", item.title || "مشكلة", "ACTION_REQUIRED");
     }
     audit(db, "dispute.committee_action", "dispute_case", caseId, null, action);
     saveDb(db);
@@ -4305,10 +4305,10 @@ const localEndpoints = {
   decideAttendanceReview: async (body = {}) => {
     const db = loadDb();
     const event = findById(db.attendanceEvents || [], body.eventId);
-    if (!event) throw new Error("Ø§Ù„Ø¨ØµÙ…Ø© ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯Ø©.");
+    if (!event) throw new Error("البصمة غير موجودة.");
     const before = clone(event);
     if (body.action === "reject") { event.status = "REJECTED_CONFIRMED"; event.reviewDecision = "REJECTED"; event.requiresReview = false; }
-    else if (body.action === "clarify") { event.requiresReview = true; notifyEmployee(db, event.employeeId, "Ù…Ø·Ù„ÙˆØ¨ ØªÙˆØ¶ÙŠØ­ Ø¨Ø®ØµÙˆØµ Ø§Ù„Ø¨ØµÙ…Ø©", body.note || "ÙŠØ±Ø¬Ù‰ ØªÙˆØ¶ÙŠØ­ Ø³Ø¨Ø¨ Ø§Ù„Ø¨ØµÙ…Ø© ØºÙŠØ± Ø§Ù„Ø·Ø¨ÙŠØ¹ÙŠØ©.", "ACTION_REQUIRED"); }
+    else if (body.action === "clarify") { event.requiresReview = true; notifyEmployee(db, event.employeeId, "مطلوب توضيح بخصوص البصمة", body.note || "يرجى توضيح سبب البصمة غير الطبيعية.", "ACTION_REQUIRED"); }
     else { event.status = "MANUAL_APPROVED"; event.verificationStatus = "manual_approved"; event.reviewDecision = "APPROVED"; event.requiresReview = false; upsertDailyFromEvent(db, event.employeeId, event); }
     event.reviewNote = body.note || ""; event.reviewedAt = now(); event.reviewedByUserId = currentUser(db)?.id || "system";
     audit(db, "attendance_review.decision", "attendance_event", event.id, before, event);
@@ -4340,7 +4340,7 @@ const localEndpoints = {
   saveMonthlyEvaluation: async (id, body = {}) => {
     const db = loadDb();
     const evaluation = findById(db.kpiEvaluations || [], id);
-    if (!evaluation) throw new Error("Ø§Ù„ØªÙ‚ÙŠÙŠÙ… ØºÙŠØ± Ù…ÙˆØ¬ÙˆØ¯.");
+    if (!evaluation) throw new Error("التقييم غير موجود.");
     const before = clone(evaluation);
     for (const key of ["attendanceScore", "targetScore", "efficiencyScore", "conductScore", "prayerScore", "quranCircleScore", "initiativesScore"]) if (body[key] !== undefined) evaluation[key] = Number(body[key] || 0);
     evaluation.managerComment = body.managerComment || evaluation.managerComment || ""; evaluation.status = body.status || evaluation.status || "DRAFT";
@@ -4350,13 +4350,13 @@ const localEndpoints = {
   supabaseSetupCheck: async () => {
     const cfg = globalThis.HR_SUPABASE_CONFIG || {}; const enabled = Boolean(cfg.enabled && cfg.url && cfg.anonKey);
     return ok({ mode: enabled ? "supabase-configured" : "local-fallback", checks: [
-      { label: "Supabase Ù…ÙØ¹Ù„", ok: Boolean(cfg.enabled), detail: cfg.enabled ? "enabled=true" : "enabled=false" },
-      { label: "Project URL", ok: Boolean(cfg.url), detail: cfg.url ? "Ù…ÙˆØ¬ÙˆØ¯" : "ØºÙŠØ± Ù…Ø¶Ø¨ÙˆØ·" },
-      { label: "Anon Key", ok: Boolean(cfg.anonKey), detail: cfg.anonKey ? "Ù…ÙˆØ¬ÙˆØ¯" : "ØºÙŠØ± Ù…Ø¶Ø¨ÙˆØ·" },
+      { label: "Supabase مفعل", ok: Boolean(cfg.enabled), detail: cfg.enabled ? "enabled=true" : "enabled=false" },
+      { label: "Project URL", ok: Boolean(cfg.url), detail: cfg.url ? "موجود" : "غير مضبوط" },
+      { label: "Anon Key", ok: Boolean(cfg.anonKey), detail: cfg.anonKey ? "موجود" : "غير مضبوط" },
       { label: "Strict Mode", ok: cfg.strict !== false, detail: cfg.strict !== false ? "strict" : "fallback" },
-      { label: "Storage Buckets", ok: Boolean(cfg.storage), detail: cfg.storage ? Object.values(cfg.storage || {}).join(" / ") : "Ø§Ø¶Ø¨Ø· buckets" },
-      { label: "Ø¢Ø®Ø± Patch Ù…Ø·Ù„ÙˆØ¨", ok: true, detail: "041_audit_v7_security_mobile_alignment.sql" },
-    ], recommended: enabled ? "Ø§Ø®ØªØ¨Ø± Ø§Ù„ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø°Ø§ØªÙŠ Ù„Ù„Ù…ÙˆØ¸Ù ÙˆÙ…Ø³Ø§Ø± KPI Ø§Ù„ÙƒØ§Ù…Ù„ Ù…Ù† Ù…ÙˆØ¸Ù Ø¥Ù„Ù‰ Ù…Ø¯ÙŠØ± ØªÙ†ÙÙŠØ°ÙŠ." : "ÙØ¹Ù‘Ù„ Supabase Ù…Ù† shared/js/supabase-config.js Ø«Ù… Ø´ØºÙ‘Ù„ SQL patches Ø­ØªÙ‰ 041." });
+      { label: "Storage Buckets", ok: Boolean(cfg.storage), detail: cfg.storage ? Object.values(cfg.storage || {}).join(" / ") : "اضبط buckets" },
+      { label: "آخر Patch مطلوب", ok: true, detail: "041_audit_v7_security_mobile_alignment.sql" },
+    ], recommended: enabled ? "اختبر التسجيل الذاتي للموظف ومسار KPI الكامل من موظف إلى مدير تنفيذي." : "فعّل Supabase من shared/js/supabase-config.js ثم شغّل SQL patches حتى 041." });
   },
   databaseMigrationsStatus: async () => {
     const db = loadDb();
@@ -4413,7 +4413,7 @@ const localEndpoints = {
     ];
     db.migrationStatus ||= [];
     const applied = new Set(db.migrationStatus.map((item) => item.name));
-    return ok({ expectedPatch: "064_attendance_fallback_workflow.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: applied.has(name) ? "APPLIED" : (index === expected.length - 1 ? "NEW" : "CHECK_MANUALLY") })), notes: "ÙÙŠ Supabase Ø§Ù„Ø­Ù‚ÙŠÙ‚ÙŠ Ø´ØºÙ‘Ù„ Ù…Ù„ÙØ§Øª SQL Ø¨Ø§Ù„ØªØ±ØªÙŠØ¨ Ù…Ù† SQL EditorØŒ Ø«Ù… Ø¹Ù„Ù‘Ù…Ù‡Ø§ Ù‡Ù†Ø§ ÙƒØªØ°ÙƒÙŠØ± Ù…Ø­Ù„ÙŠ." });
+    return ok({ expectedPatch: "064_attendance_fallback_workflow.sql", rows: expected.map((name, index) => ({ name, order: index + 1, status: applied.has(name) ? "APPLIED" : (index === expected.length - 1 ? "NEW" : "CHECK_MANUALLY") })), notes: "في Supabase الحقيقي شغّل ملفات SQL بالترتيب من SQL Editor، ثم علّمها هنا كتذكير محلي." });
   },
   markMigrationApplied: async (name) => { const db = loadDb(); db.migrationStatus ||= []; if (!db.migrationStatus.some((item) => item.name === name)) db.migrationStatus.unshift({ id: makeId("mig"), name, status: "APPLIED", appliedAt: now(), appliedByUserId: currentUser(db)?.id || "system" }); saveDb(db); return ok({ applied: name }); },
   autoBackupStatus: async () => { const db = loadDb(); return ok({ policy: { keepLast: 30, ...(db.systemSettings?.backupPolicy || {}) }, backups: (db.systemBackups || []).map((item) => ({ ...item, data: undefined })).slice(0, 30), runs: db.autoBackupRuns || [] }); },
@@ -4428,12 +4428,12 @@ const localEndpoints = {
     const unsignedDecisions = decisionRowsForCurrentUser(db).filter((decision) => decision.requiresAcknowledgement !== false && !decision.acknowledged);
     const actions = [];
     if (attendance && ["ABSENT_TEMP", "MISSING_CHECKOUT", "REVIEW"].includes(attendance.status)) actions.push({ id: "att-" + today, type: "ATTENDANCE", title: attendance.title, body: attendance.recommendation, route: "punch", severity: attendance.severity });
-    liveRequests.forEach((item) => actions.push({ id: item.id, type: "LIVE_LOCATION", title: "Ø·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹ Ù…Ø¨Ø§Ø´Ø±", body: item.reason || "Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© ØªØ·Ù„Ø¨ Ù…ÙˆÙ‚Ø¹Ùƒ Ø§Ù„Ø­Ø§Ù„ÙŠ", route: "location", severity: "HIGH" }));
-    tasks.slice(0, 10).forEach((task) => actions.push({ id: task.id, type: "TASK", title: task.title, body: task.description || "Ù…Ù‡Ù…Ø© Ù…ÙØªÙˆØ­Ø©", route: "tasks", severity: task.priority || "MEDIUM" }));
-    unsignedPolicies.forEach((policy) => actions.push({ id: policy.id, type: "POLICY", title: "ØªÙˆÙ‚ÙŠØ¹ Ø³ÙŠØ§Ø³Ø©: " + policy.title, body: policy.category || "Ø³ÙŠØ§Ø³Ø©", route: "policies", severity: "MEDIUM" }));
-    unsignedDecisions.forEach((decision) => actions.push({ id: decision.id, type: "ADMIN_DECISION", title: "Ù‚Ø±Ø§Ø± Ø¥Ø¯Ø§Ø±ÙŠ ÙŠØ­ØªØ§Ø¬ Ø§Ø·Ù„Ø§Ø¹: " + decision.title, body: decision.body || "Ù‚Ø±Ø§Ø± Ø±Ø³Ù…ÙŠ", route: "decisions", severity: decision.priority || "HIGH" }));
-    docs.forEach((doc) => actions.push({ id: doc.id, type: "DOCUMENT", title: "Ù…Ø³ØªÙ†Ø¯ ÙŠØ­ØªØ§Ø¬ Ù…ØªØ§Ø¨Ø¹Ø©: " + doc.title, body: doc.notes || doc.status, route: "documents", severity: "MEDIUM" }));
-    notes.slice(0, 10).forEach((note) => actions.push({ id: note.id, type: "NOTIFICATION", title: note.title, body: note.body || "Ø¥Ø´Ø¹Ø§Ø± Ø¬Ø¯ÙŠØ¯", route: "notifications", severity: note.type || "LOW" }));
+    liveRequests.forEach((item) => actions.push({ id: item.id, type: "LIVE_LOCATION", title: "طلب موقع مباشر", body: item.reason || "الإدارة تطلب موقعك الحالي", route: "location", severity: "HIGH" }));
+    tasks.slice(0, 10).forEach((task) => actions.push({ id: task.id, type: "TASK", title: task.title, body: task.description || "مهمة مفتوحة", route: "tasks", severity: task.priority || "MEDIUM" }));
+    unsignedPolicies.forEach((policy) => actions.push({ id: policy.id, type: "POLICY", title: "توقيع سياسة: " + policy.title, body: policy.category || "سياسة", route: "policies", severity: "MEDIUM" }));
+    unsignedDecisions.forEach((decision) => actions.push({ id: decision.id, type: "ADMIN_DECISION", title: "قرار إداري يحتاج اطلاع: " + decision.title, body: decision.body || "قرار رسمي", route: "decisions", severity: decision.priority || "HIGH" }));
+    docs.forEach((doc) => actions.push({ id: doc.id, type: "DOCUMENT", title: "مستند يحتاج متابعة: " + doc.title, body: doc.notes || doc.status, route: "documents", severity: "MEDIUM" }));
+    notes.slice(0, 10).forEach((note) => actions.push({ id: note.id, type: "NOTIFICATION", title: note.title, body: note.body || "إشعار جديد", route: "notifications", severity: note.type || "LOW" }));
     return ok({ actions, attendance, liveRequests, tasks, unsignedPolicies, unsignedDecisions, documents: docs, notifications: notes, generatedAt: now() });
   },
   reset: async () => {

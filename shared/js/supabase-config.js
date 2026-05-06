@@ -40,9 +40,9 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     gpsSafetyBufferMeters: 90,
     gpsUncertainReviewOnly: true,
     branchLocation: {
-      name: "Ù…Ø¬Ù…Ø¹ Ø£Ø­Ù„Ù‰ Ø´Ø¨Ø§Ø¨",
-      area: "Ù…Ù†ÙŠÙ„ Ø´ÙŠØ­Ø© - Ø§Ù„Ø¬ÙŠØ²Ø©",
-      // Ø§Ø¶Ø¨Ø· Ù‡Ø°Ù‡ Ø§Ù„Ø¥Ø­Ø¯Ø§Ø«ÙŠØ§Øª Ù…Ù† Ù„ÙˆØ­Ø© Ø§Ù„Ø¥Ø¯Ø§Ø±Ø© Ø¥Ø°Ø§ Ø¸Ù‡Ø± Ø§Ù„Ø­ÙƒÙ… Ø¯Ø§Ø®Ù„/Ø®Ø§Ø±Ø¬ Ø§Ù„Ù…Ø¬Ù…Ø¹ Ø¨Ø´ÙƒÙ„ ØºÙŠØ± ØµØ­ÙŠØ­.
+      name: "مجمع أحلى شباب",
+      area: "منيل شيحة - الجيزة",
+      // اضبط هذه الإحداثيات من لوحة الإدارة إذا ظهر الحكم داخل/خارج المجمع بشكل غير صحيح.
       latitude: 29.950738592862045,
       longitude: 31.238094542328678,
       radiusMeters: 180,
@@ -53,7 +53,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
   gateways: {
     admin: {
       enabled: true,
-      label: "Ø¨ÙˆØ§Ø¨Ø© HR / Ø§Ù„Ø¥Ø¯Ø§Ø±Ø©",
+      label: "بوابة HR / الإدارة",
       code: "A7B3C9D4E6F8",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
       allowedPhones: ["01154869616", "010040455849", "01028403239"],
@@ -62,7 +62,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     },
     executive: {
       enabled: true,
-      label: "Ø¨ÙˆØ§Ø¨Ø© Ø§Ù„Ù…Ø¯ÙŠØ± Ø§Ù„ØªÙ†ÙÙŠØ°ÙŠ",
+      label: "بوابة المدير التنفيذي",
       code: "EXEC-AHLA-2026",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
       allowedPhones: ["01154869616", "010040455849"],
