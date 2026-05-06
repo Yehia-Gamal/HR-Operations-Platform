@@ -36,6 +36,7 @@ function repair(text) {
     }
     return line;
   }).join('\n');
+  text = text.replace(/[ÂÃØÙâð][\u0080-\u00ff\u0152\u0153\u0160\u0161\u0178\u017d\u017e\u0192\u02c6\u02dc\u2013\u2014\u2018-\u201e\u2020-\u2026\u2030\u2039\u203a\u20ac\u2122]+/g, (segment) => decodeCp1252Utf8(segment));
   // Repair only runs that contain common Arabic UTF-8 mojibake markers.
   return text.replace(/(?:[A-Za-z0-9 _.,:;!?#"'`()[\]{}<>/=+\-*&|\\\r\n\t$@%،؛؟]*[ØÙÃÂâð][A-Za-z0-9 _.,:;!?#"'`()[\]{}<>/=+\-*&|\\\r\n\t$@%،؛؟ØÙÃÂâð€Œ™œ،؛؟]+)+/g, (segment) => {
     if (!/[ØÙÃÂâ]/.test(segment)) return segment;
