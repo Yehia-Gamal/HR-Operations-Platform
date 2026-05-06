@@ -1,4 +1,4 @@
-﻿import { endpoints, unwrap } from "./api.js?v=v31-production-deploy-ready-keep-dev-files";
+import { endpoints, unwrap } from "./api.js?v=v31-production-deploy-ready-keep-dev-files";
 import { enableWebPushSubscription } from "./push.js?v=v31-production-deploy-ready-keep-dev-files";
 
 const app = document.querySelector("#app");
@@ -2164,15 +2164,12 @@ async function renderLocations() {
   };
   app.querySelectorAll("[data-send-my-location]").forEach((button) => button.addEventListener("click", () => sendMyLocation().catch((error) => setMessage("", error.message))));
   app.querySelectorAll("[data-request-live-location]").forEach((button) => button.addEventListener("click", async () => {
-    const employee = byEmployee.get(button.dataset.requestLiveLocation);
-    await endpoints.createLocationRequest({
-      employeeId: button.dataset.requestLiveLocation,
-      purpose: "فتح الموقع وإرسال اللوكيشن المباشر",
-      title: "فتح الموقع وإرسال اللوكيشن المباشر",
-      requestReason: "",
-      status: "PENDING",
-    });
-    setMessage(`تم إنشاء طلب الموقع، وقد لا يصل الإشعار الخارجي إذا كان غير مفعل.`, "");
+    try {
+      await endpoints.requestLiveLocation(button.dataset.requestLiveLocation, { reason: "متابعة من الإدارة (Admin)" });
+      setMessage("تم إنشاء طلب الموقع وتم إرسال الإشعار للموظف بنجاح.", "");
+    } catch (error) {
+      setMessage("", error.message || "تعذر طلب الموقع.");
+    }
     render();
   }));
 }
