@@ -492,6 +492,53 @@ async function employeeById(employeeId) {
   return enrichEmployee(data, c);
 }
 
+async function employeeAccountUserId(employeeId) {
+  if (!employeeId) return "";
+  const client = await sb();
+  const { data } = await client.from("profiles").select("id").eq("employee_id", employeeId).maybeSingle().catch(() => ({ data: null }));
+  return data?.id || "";
+}
+
+function employeeDeliveryScore(employee) {
+  const phone = normalizeLoginPhone(employee?.phone);
+  const email = String(employee?.email || "");
+  let score = employee?.userId ? 100 : 0;
+  if (phone) score += 20;
+  if (!/^PHONE_PLACEHOLDER_/i.test(String(employee?.phone || ""))) score += 10;
+  if (email && !/@ahla\.local$/i.test(email)) score += 5;
+  return score;
+}
+
+function employeeNameKey(employee) {
+  return String(employee?.fullName || employee?.name || "").trim().replace(/\s+/g, " ");
+}
+
+function orphanDemoEmployee(employee) {
+  return !employee?.userId && (/^PHONE_PLACEHOLDER_/i.test(String(employee?.phone || "")) || /^emp\.demo/i.test(String(employee?.email || "")));
+}
+
+async function resolveDeliverableEmployee(employeeId) {
+  const target = await employeeById(employeeId);
+  if (!target?.id) throw new Error("الموظف المطلوب غير موجود.");
+  const directUserId = target.userId || await employeeAccountUserId(target.id);
+  if (directUserId) return { ...target, userId: directUserId };
+
+  const client = await sb();
+  const c = await core();
+  const samePhone = normalizeLoginPhone(target.phone);
+  let query = client.from("employees").select("*").neq("id", target.id).not("user_id", "is", null).limit(20);
+  if (samePhone) query = query.eq("phone", samePhone);
+  else query = query.eq("full_name", target.fullName || target.name || "");
+  const { data, error } = await query;
+  fail(error, "تعذر البحث عن حساب الموظف المرتبط.");
+  const candidates = (data || []).map((row) => enrichEmployee(row, c)).filter(Boolean).sort((a, b) => employeeDeliveryScore(b) - employeeDeliveryScore(a));
+  const replacement = candidates[0] || null;
+  if (!replacement?.id) throw new Error("هذا الموظف غير مربوط بحساب دخول، لذلك لا يمكن إرسال طلب موقع له قبل ربط الحساب بالموظف.");
+  const replacementUserId = replacement.userId || await employeeAccountUserId(replacement.id);
+  if (!replacementUserId) throw new Error("هذا الموظف غير مربوط بحساب دخول، لذلك لا يمكن إرسال طلب موقع له قبل ربط الحساب بالموظف.");
+  return { ...replacement, userId: replacementUserId };
+}
+
 async function myEmployee() {
   const user = await currentUser();
   if (!user?.employeeId) throw new Error("هذا الحساب غير مرتبط بملف موظف.");
@@ -1173,7 +1220,9 @@ export const supabaseEndpoints = {
     const data = (await selectAll("employees", "*", { limit: 1000 }))
       .filter((row) => row.is_deleted !== true)
       .sort((a, b) => String(a.full_name || "").localeCompare(String(b.full_name || ""), "ar"));
-    const employees = (data || []).map((row) => enrichEmployee(row, c));
+    const employeesRaw = (data || []).map((row) => enrichEmployee(row, c));
+    const linkedNames = new Set(employeesRaw.filter((employee) => employee?.userId).map(employeeNameKey).filter(Boolean));
+    const employees = employeesRaw.filter((employee) => !(orphanDemoEmployee(employee) && linkedNames.has(employeeNameKey(employee))));
     const byId = new Map(employees.map((e) => [e.id, e]));
     employees.forEach((e) => { e.manager = byId.get(e.managerEmployeeId) || null; });
     return employees;
@@ -2259,10 +2308,12 @@ export const supabaseEndpoints = {
   requestLiveLocation: async (employeeId, body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
-    const payload = { employee_id: employeeId, requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expires_at: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), created_at: now() };
+    const targetEmployee = await resolveDeliverableEmployee(employeeId);
+    const targetEmployeeId = targetEmployee.id;
+    const payload = { employee_id: targetEmployeeId, requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expires_at: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), created_at: now() };
     const { data, error } = await client.from("live_location_requests").insert(payload).select("*").single();
     fail(error, "تعذر إنشاء طلب الموقع المباشر. تأكد من تشغيل ملف SQL النهائي RUN_IN_SUPABASE_SQL_EDITOR.sql.");
-    const targetEmployee = await employeeById(employeeId).catch(() => null);
+    
     const notificationTitle = "طلب مشاركة موقعك الحالي";
     const notificationBody = payload.requested_by_name + " يطلب إرسال موقعك المباشر الآن. السبب: " + payload.reason;
     let notificationId = "";
@@ -2270,7 +2321,7 @@ export const supabaseEndpoints = {
     // If the SQL patch is not applied yet, the live-location request still remains created and push is attempted.
     const notificationInsert = await client.rpc("safe_create_notification", {
       p_user_id: targetEmployee?.userId || null,
-      p_employee_id: employeeId,
+      p_employee_id: targetEmployeeId,
       p_title: notificationTitle,
       p_body: notificationBody,
       p_type: "ACTION_REQUIRED",
@@ -2284,7 +2335,7 @@ export const supabaseEndpoints = {
         title: notificationTitle,
         body: notificationBody,
         tag: `live-location-${data.id}`,
-        targetEmployeeIds: [employeeId],
+        targetEmployeeIds: [targetEmployeeId],
         targetUserIds: targetEmployee?.userId ? [targetEmployee.userId] : [],
         notificationId,
         data: { route: "location", url: "./employee/index.html#location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
@@ -2293,7 +2344,7 @@ export const supabaseEndpoints = {
       console.warn("send-push-notifications failed; internal request was still created", error?.message || error);
       return null;
     });
-    await audit("live_location.request", "employee", employeeId, payload).catch(() => null);
+    await audit("live_location.request", "employee", targetEmployeeId, { ...payload, requestedEmployeeId: employeeId }).catch(() => null);
     return { ...toCamel(data), notificationId, push: pushResult?.data || null };
   },
   myLiveLocationRequests: async () => {

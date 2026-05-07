@@ -14,8 +14,8 @@
   }, cfg.attendance || {}, { qrRequired:false });
   cfg.security = Object.assign({ allowLocalFallback:false }, cfg.security || {});
   try { delete cfg.security.allowLocalDemo; } catch {}
-  cfg.cacheVersion = cfg.cacheVersion || 'v31-live-location-alert-fix-081';
-  cfg.deployment = Object.assign({}, cfg.deployment || {}, { packageVersion: 'v31-live-location-alert-fix-081' });
+  cfg.cacheVersion = cfg.cacheVersion || 'v31-live-location-alert-fix-082';
+  cfg.deployment = Object.assign({}, cfg.deployment || {}, { packageVersion: 'v31-live-location-alert-fix-082' });
   window.HR_QR_REQUIRED = false;
   window.HR_PRIVATE_DEPLOY_BUNDLE = true;
 
