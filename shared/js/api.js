@@ -1,5 +1,5 @@
-import { seedDatabase } from "./database.js?v=v16-location-device-hotfix-20260504";
-import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=v22-location-notify-photo-20260505";
+import { seedDatabase } from "./database.js?v=v31-live-location-alert-fix-080";
+import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=v31-live-location-alert-fix-080";
 
 const STORAGE_KEY = "hr-attendance.local-db.v19-management-suite";
 const LEGACY_KEYS = ["hr-attendance.local-db.v14", "hr-attendance.local-db.v13", "hr-attendance.local-db.v12", "hr-attendance.local-db.v11", "hr-attendance.local-db.v10", "hr-attendance.local-db.v9", "hr-attendance.local-db.v8", "hr-attendance.local-db.v7", "hr-attendance.local-db.v6", "hr-attendance.local-db.v5", "hr-attendance.local-db.v4", "hr-attendance.local-db.v3"];
@@ -36,10 +36,10 @@ function normalizeEmail(value = "") {
 
 function normalizePhone(value = "") {
   const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
   return String(value || "")
     .replace(/[٠-٩]/g, (d) => String(ar.indexOf(d)))
-    .replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)))
+    .replace(/[Û°-Û¹]/g, (d) => String(fa.indexOf(d)))
     .replace(/\s+/g, "")
     .trim();
 }
@@ -1667,7 +1667,7 @@ function employeeRequestSummary(db, employeeId) {
 function normalizeLoginPhone(value) {
   let text = String(value || "").trim();
   const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
   text = text.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)));
   let digits = text.replace(/\D/g, "");
   if (!digits) return "";
@@ -2523,7 +2523,7 @@ const localEndpoints = {
   validateImportBackup: async (payload = {}) => ok(validatePortableImport(payload)),
   importBackup: async (payload = {}) => {
     const validation = validatePortableImport(payload);
-    if (!validation.ok) throw new Error(validation.issues.join(" — "));
+    if (!validation.ok) throw new Error(validation.issues.join(" â€” "));
     const current = loadDb();
     const before = exportPortableData(current);
     const next = normalizeDb({ ...current, ...payload, meta: { ...(payload.meta || {}), orgProfile: "ahla-shabab-manil-shiha-v2" } });

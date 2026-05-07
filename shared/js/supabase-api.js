@@ -85,6 +85,57 @@ async function ignoreSupabaseError(operation) {
   try { await operation; } catch {}
 }
 
+function notificationSnake(row = {}) {
+  const data = row.data && typeof row.data === "object" ? row.data : {};
+  return {
+    user_id: row.user_id || row.userId || null,
+    employee_id: row.employee_id || row.employeeId || null,
+    title: row.title || "تنبيه",
+    body: row.body || row.message || "",
+    type: row.type || "INFO",
+    status: row.status || "UNREAD",
+    is_read: row.is_read === true || row.isRead === true,
+    route: row.route || data.route || "",
+    data,
+    created_at: row.created_at || row.createdAt || now(),
+  };
+}
+
+async function safeCreateNotifications(client, rows, options = {}) {
+  const list = (Array.isArray(rows) ? rows : [rows]).filter(Boolean).map(notificationSnake);
+  if (!list.length) return { created: 0, ids: [] };
+  const block = options.block === true;
+  const fallbackMessage = options.message || "تعذر إنشاء الإشعار الداخلي.";
+
+  // V26: prefer SECURITY DEFINER bulk RPC to avoid RLS and column-shape 400 errors.
+  try {
+    const { data, error } = await client.rpc("safe_create_notifications_bulk", { p_rows: list });
+    if (!error) return { created: Array.isArray(data) ? data.length : list.length, ids: Array.isArray(data) ? data.map((row) => row.id || row) : [] };
+    console.warn("safe_create_notifications_bulk skipped; apply SQL Patch 079", error.message || error);
+  } catch (error) {
+    console.warn("safe_create_notifications_bulk unavailable", error?.message || error);
+  }
+
+  try {
+    const { data, error } = await client.from("notifications").insert(list).select("id");
+    if (error) {
+      if (block) fail(error, fallbackMessage);
+      console.warn("notifications fallback insert skipped", error.message || error);
+      return { created: 0, ids: [] };
+    }
+    return { created: Array.isArray(data) ? data.length : list.length, ids: (data || []).map((row) => row.id) };
+  } catch (error) {
+    if (block) throw error;
+    console.warn("notifications fallback insert failed", error?.message || error);
+    return { created: 0, ids: [] };
+  }
+}
+
+async function safeCreateNotification(client, row, options = {}) {
+  const result = await safeCreateNotifications(client, [row], options);
+  return result.ids?.[0] || "";
+}
+
 function toSnake(row) {
   const out = {};
   for (const [key, value] of Object.entries(row || {})) out[snakeKey(key)] = value;
@@ -126,8 +177,29 @@ async function selectAll(table, query = "*", options = {}) {
 
 let _coreCache = null;
 let _coreExpiry = 0;
+const coreMapKeys = ["roles", "branches", "departments", "governorates", "complexes"];
+function serializeCoreCache(cache = {}) {
+  const out = {};
+  for (const key of coreMapKeys) out[key] = Array.from((cache[key] || new Map()).entries());
+  return out;
+}
+function hydrateCoreCache(cache = {}) {
+  const out = {};
+  for (const key of coreMapKeys) out[key] = cache[key] instanceof Map ? cache[key] : new Map(Array.isArray(cache[key]) ? cache[key] : Object.entries(cache[key] || {}));
+  return out;
+}
+function fromCoreMap(map, id) {
+  if (!map || !id) return null;
+  if (typeof map.get === "function") return map.get(id) || null;
+  return map[id] || null;
+}
 async function core({ force = false } = {}) {
   if (!force && _coreCache && Date.now() < _coreExpiry) return _coreCache;
+  try {
+    const cached = sessionStorage.getItem("hr.core");
+    const expiry = Number(sessionStorage.getItem("hr.core.exp") || 0);
+    if (!force && cached && Date.now() < expiry) return (_coreCache = hydrateCoreCache(JSON.parse(cached)));
+  } catch {}
   const [roles, branches, departments, governorates, complexes] = await Promise.all([
     selectAll("roles", "*", { limit: 1000 }),
     selectAll("branches", "*", { limit: 1000 }),
@@ -144,6 +216,10 @@ async function core({ force = false } = {}) {
     complexes: map(complexes),
   };
   _coreExpiry = Date.now() + 60_000;
+  try {
+    sessionStorage.setItem("hr.core", JSON.stringify(serializeCoreCache(_coreCache)));
+    sessionStorage.setItem("hr.core.exp", String(_coreExpiry));
+  } catch {}
   return _coreCache;
 }
 
@@ -154,11 +230,11 @@ function enrichEmployee(row, c = {}) {
     ...employee,
     photoUrl: employee.photoUrl || employee.avatarUrl || "",
     isDeleted: Boolean(employee.isDeleted),
-    role: c.roles?.get(employee.roleId) || null,
-    branch: c.branches?.get(employee.branchId) || null,
-    department: c.departments?.get(employee.departmentId) || null,
-    governorate: c.governorates?.get(employee.governorateId) || null,
-    complex: c.complexes?.get(employee.complexId) || null,
+    role: fromCoreMap(c.roles, employee.roleId),
+    branch: fromCoreMap(c.branches, employee.branchId),
+    department: fromCoreMap(c.departments, employee.departmentId),
+    governorate: fromCoreMap(c.governorates, employee.governorateId),
+    complex: fromCoreMap(c.complexes, employee.complexId),
     manager: null,
   };
 }
@@ -166,7 +242,7 @@ function enrichEmployee(row, c = {}) {
 function enrichProfile(row, c = {}) {
   const profile = toCamel(row);
   if (!profile) return null;
-  const role = c.roles?.get(profile.roleId) || null;
+  const role = fromCoreMap(c.roles, profile.roleId);
   return {
     ...profile,
     name: profile.fullName || profile.name || profile.email,
@@ -176,10 +252,10 @@ function enrichProfile(row, c = {}) {
     employeeId: profile.employeeId || "",
     role,
     permissions: rolePermissions(role),
-    branch: c.branches?.get(profile.branchId) || null,
-    department: c.departments?.get(profile.departmentId) || null,
-    governorate: c.governorates?.get(profile.governorateId) || null,
-    complex: c.complexes?.get(profile.complexId) || null,
+    branch: fromCoreMap(c.branches, profile.branchId),
+    department: fromCoreMap(c.departments, profile.departmentId),
+    governorate: fromCoreMap(c.governorates, profile.governorateId),
+    complex: fromCoreMap(c.complexes, profile.complexId),
   };
 }
 
@@ -305,9 +381,26 @@ async function currentUser() {
   const { data: profile, error } = await client.from("profiles").select("*").eq("id", authData.user.id).maybeSingle();
   fail(error);
   const enriched = enrichProfile(profile || { id: authData.user.id, email: authData.user.email, full_name: authData.user.email }, c);
+  let emp = null;
   if (enriched.employeeId) {
-    const { data: emp } = await client.from("employees").select("*").eq("id", enriched.employeeId).maybeSingle();
+    const { data } = await client.from("employees").select("*").eq("id", enriched.employeeId).maybeSingle();
+    emp = data || null;
+  }
+  // Production safety: some older databases have employees.user_id linked but profiles.employee_id still empty.
+  // The SQL patch 080 fixes this server-side, and this browser fallback keeps the app functional during rollout.
+  if (!emp) {
+    const byUser = await client.from("employees").select("*").eq("user_id", authData.user.id).maybeSingle().catch(() => ({ data: null }));
+    emp = byUser?.data || null;
+  }
+  if (!emp && authData.user.email) {
+    const byEmail = await client.from("employees").select("*").ilike("email", authData.user.email).maybeSingle().catch(() => ({ data: null }));
+    emp = byEmail?.data || null;
+  }
+  if (emp) {
     enriched.employee = enrichEmployee(emp, c);
+    enriched.employeeId = enriched.employee?.id || enriched.employeeId || "";
+    enriched.role ||= enriched.employee?.role || null;
+    enriched.permissions = enriched.permissions?.length ? enriched.permissions : rolePermissions(enriched.role || enriched.employee?.role);
     if (!enriched.avatarUrl && enriched.employee?.photoUrl) enriched.avatarUrl = enriched.employee.photoUrl;
     if (!enriched.photoUrl && enriched.avatarUrl) enriched.photoUrl = enriched.avatarUrl;
   }
@@ -707,7 +800,7 @@ function csvEscape(value) {
 function normalizeLoginPhone(value) {
   let text = String(value || "").trim();
   const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
   text = text.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d)));
   let digits = text.replace(/\D/g, "");
   if (!digits) return "";
@@ -911,8 +1004,8 @@ export const supabaseEndpoints = {
     const employees = await supabaseEndpoints.employees().catch(() => []);
     const recipients = payload.scope === 'SELECTED' ? targetEmployeeIds : (employees || []).map((employee) => employee.id);
     if (recipients.length) {
-      await ignoreSupabaseError(client.from('notifications').insert(recipients.map((employeeId) => ({ employee_id: employeeId, title: 'قرار إداري جديد يحتاج اطلاع', body: payload.title, type: 'ACTION_REQUIRED', status: 'UNREAD', is_read: false, created_at: now() }))));
-      await client.functions.invoke('send-push-notification', { body: { targetEmployeeIds: recipients, title: 'قرار إداري جديد', body: payload.title, type: 'ACTION_REQUIRED' } }).catch(() => null);
+      await safeCreateNotifications(client, recipients.map((employeeId) => ({ employee_id: employeeId, title: 'قرار إداري جديد يحتاج اطلاع', body: payload.title, type: 'ACTION_REQUIRED', route: 'decisions', data: { route: 'decisions', decisionId: data?.id || '' } })));
+      await client.functions.invoke('send-push-notifications', { body: { targetEmployeeIds: recipients, title: 'قرار إداري جديد', body: payload.title, type: 'ACTION_REQUIRED' } }).catch(() => null);
     }
     await audit('admin_decision.create', 'admin_decision', data?.id || '', payload).catch(() => null);
     return toCamel(data);
@@ -1040,21 +1133,8 @@ export const supabaseEndpoints = {
     await audit("auth.login", "profile", user?.id, { identifier: String(identifier || "").trim(), resolvedEmail: email }).catch(() => null);
     return user;
   },
-  employeeRegister: async (body = {}) => {
-    const client = await sb();
-    const fullName = String(body.fullName || body.name || "").trim();
-    const phone = normalizeLoginPhone(body.phone || "");
-    const email = String(body.email || "").trim().toLowerCase();
-    const password = String(body.password || "");
-    if (!fullName) throw new Error("اكتب اسم الموظف.");
-    if (!phone && !email) throw new Error("اكتب رقم الهاتف أو البريد الإلكتروني.");
-    if (password.length < 8) throw new Error("كلمة المرور يجب ألا تقل عن 8 أحرف.");
-    const { data, error } = await client.functions.invoke("employee-register", { body: { fullName, phone, email, password } });
-    fail(error || (data?.error ? new Error(data.error) : null), "تعذر تسجيل الموظف. تأكد من نشر Edge Function employee-register وتطبيق Patch 036.");
-    const loginIdentifier = data?.email || email || phone;
-    const user = await supabaseEndpoints.login(loginIdentifier, password);
-    await audit("employee.self_register", "employee", data?.employeeId, { employeeId: data?.employeeId, userId: data?.userId }).catch(() => null);
-    return user;
+  employeeRegister: async () => {
+    throw new Error("التسجيل الذاتي متوقف. تتم إضافة الموظفين من لوحة HR فقط.");
   },
   forgotPassword: async (identifier) => {
     const client = await sb();
@@ -1110,7 +1190,7 @@ export const supabaseEndpoints = {
       else if (body.action === "notify") {
         const client = await sb();
         const { data: employee } = await client.from("employees").select("id,user_id").eq("id", id).maybeSingle();
-        await client.from("notifications").insert({ user_id: employee?.user_id || null, employee_id: id, title: body.title || "تنبيه من الإدارة", body: body.message || "يرجى مراجعة الإدارة.", type: body.type || "ACTION_REQUIRED", status: "UNREAD", is_read: false });
+        await safeCreateNotification(client, { user_id: employee?.user_id || null, employee_id: id, title: body.title || "تنبيه من الإدارة", body: body.message || "يرجى مراجعة الإدارة.", type: body.type || "ACTION_REQUIRED" });
       }
       updated += 1;
     }
@@ -1213,8 +1293,18 @@ export const supabaseEndpoints = {
         { label: 'طلبات معلقة', value: (pendingLeaves.count || 0) + (pendingMissions.count || 0), helper: 'إجازات ومأموريات' },
         { label: 'Supabase', value: 'Live', helper: 'Realtime/RLS' },
       ],
-      attendanceBreakdown: ['CHECK_IN', 'CHECK_OUT', 'LATE', 'REJECTED'].map((type) => ({ label: type, value: events.filter((e) => e.type === type || e.status === type).length })),
-      attendanceTrends: ['CHECK_IN', 'CHECK_OUT', 'LATE', 'REJECTED'].map((type) => ({ label: type, present: events.filter((e) => e.type === type || e.status === type).length, late: 0, mission: 0 })),
+      attendanceBreakdown: [
+        { type: 'CHECK_IN', label: 'حضور' },
+        { type: 'CHECK_OUT', label: 'انصراف' },
+        { type: 'LATE', label: 'تأخير' },
+        { type: 'REJECTED', label: 'مرفوض' },
+      ].map((item) => ({ label: item.label, value: events.filter((e) => e.type === item.type || e.status === item.type).length })),
+      attendanceTrends: [
+        { type: 'CHECK_IN', label: 'حضور' },
+        { type: 'CHECK_OUT', label: 'انصراف' },
+        { type: 'LATE', label: 'تأخير' },
+        { type: 'REJECTED', label: 'مرفوض' },
+      ].map((item) => ({ label: item.label, present: events.filter((e) => e.type === item.type || e.status === item.type).length, late: 0, mission: 0 })),
       latestEvents: events,
       latestAudit: toCamel(latestAudit.data || []),
     };
@@ -1438,8 +1528,8 @@ export const supabaseEndpoints = {
     const target = employees.filter((employee) => audience === "all" || audience === "managers" ? (audience === "all" || ["manager", "direct-manager", "hr-manager", "executive", "executive-secretary", "admin"].includes(employee.role?.slug)) : (employee.departmentId === audience || employee.branchId === audience));
     if (!target.length) return { created: 0, pushed: 0 };
     const rows = target.map((employee) => ({ user_id: employee.userId || null, employee_id: employee.id, title: body.title || "إعلان إداري", body: body.body || body.message || "", type: body.type || "ANNOUNCEMENT", status: "UNREAD", is_read: false, created_at: now() }));
-    const { error } = await client.from("notifications").insert(rows);
-    fail(error, "تعذر إرسال الإعلان.");
+    const noteResult = await safeCreateNotifications(client, rows, { block: true, message: "تعذر إرسال الإعلان." });
+    if (!noteResult.created) throw new Error("لم يتم إنشاء أي إشعار داخلي للإعلان.");
     await createOrUpdate("employee_announcements", {
       title: body.title || "إعلان إداري",
       body: body.body || body.message || "",
@@ -1447,7 +1537,7 @@ export const supabaseEndpoints = {
       targetValue: audience === "all" ? "" : audience,
     }).catch(() => null);
     let pushed = 0;
-    await client.functions.invoke("send-push-notification", { body: { title: body.title || "إعلان إداري", body: body.body || body.message || "", tag: "announcement", targetEmployeeIds: target.map((employee) => employee.id) } })
+    await client.functions.invoke("send-push-notifications", { body: { title: body.title || "إعلان إداري", body: body.body || body.message || "", tag: "announcement", targetEmployeeIds: target.map((employee) => employee.id) } })
       .then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); })
       .catch(() => null);
     return { created: rows.length, pushed };
@@ -1531,7 +1621,7 @@ export const supabaseEndpoints = {
     const client = await sb();
     const { data: profiles } = await client.from("profiles").select("id,employee_id,email").in("email", committeeEmails);
     const notes = (profiles || []).map((profile) => ({ user_id: profile.id, employee_id: profile.employee_id, title: "مشكلة جديدة للجنة حل المشاكل", body: body.title || "شكوى / خلاف", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false }));
-    if (notes.length) await ignoreSupabaseError(client.from("notifications").insert(notes));
+    if (notes.length) await safeCreateNotifications(client, notes).catch(() => null);
     return row;
   },
   updateDispute: async (id, body = {}) => createOrUpdate("dispute_cases", disputePayload(body), id),
@@ -1558,14 +1648,14 @@ export const supabaseEndpoints = {
     try {
       const client = await sb();
       const { data: employee } = await client.from("employees").select("id,user_id,full_name").eq("id", request.employeeId).maybeSingle();
-      await client.from("notifications").insert({
+      await safeCreateNotification(client, {
         user_id: employee?.user_id || null,
         employee_id: request.employeeId,
         title: "فتح الموقع وإرسال اللوكيشن",
         body: "من فضلك افتح صفحة طلبات وسجل المواقع واضغط إرسال موقعي الآن.",
         type: "ACTION_REQUIRED",
-        status: "UNREAD",
-        is_read: false,
+        route: "location",
+        data: { route: "location", locationRequestId: request.id || "" },
       });
     } catch (error) {
       console.warn("تعذر إنشاء إشعار الموقع، تم حفظ الطلب فقط.", error);
@@ -1697,20 +1787,26 @@ export const supabaseEndpoints = {
   subscribePush: async (body = {}) => {
     const client = await sb();
     const user = await currentUser().catch(() => null);
+    const keys = body.keys || body.payload?.keys || {};
     const payload = {
       user_id: user?.id || null,
       employee_id: user?.employeeId || user?.employee?.id || null,
       endpoint: body.endpoint,
-      keys: body.keys || {},
+      keys,
       payload: body,
+      p256dh: keys.p256dh || "",
+      auth: keys.auth || "",
       permission: body.permission || globalThis.Notification?.permission || "default",
       user_agent: body.userAgent || navigator.userAgent || "",
       platform: body.platform || navigator.platform || "browser",
       is_active: true,
+      status: "ACTIVE",
+      last_seen_at: now(),
+      last_error: "",
       updated_at: now(),
     };
     const { data, error } = await client.from("push_subscriptions").upsert(payload, { onConflict: "endpoint" }).select("*").single();
-    fail(error, "تعذر حفظ اشتراك Web Push. تأكد من تطبيق Patch 040.");
+    fail(error, "تعذر حفظ اشتراك Web Push. تأكد من تطبيق Patch 080 أو RUN_IN_SUPABASE_SQL_EDITOR.sql.");
     return toCamel(data);
   },
   uploadPunchSelfie: async (body = {}) => {
@@ -1791,17 +1887,16 @@ export const supabaseEndpoints = {
     let created = 0;
     for (const employee of employees || []) {
       if (seen.has(employee.id) || already.has(employee.id)) continue;
-      const { error } = await client.from("notifications").insert({
+      const result = await safeCreateNotifications(client, [{
         user_id: employee.userId || null,
         employee_id: employee.id,
         title: "تذكير بتسجيل البصمة",
         body: "لم يتم تسجيل بصمة حضور اليوم حتى الآن. افتح صفحة البصمة وسجل حضورك عند الوصول للمجمع.",
         type: "MISSING_PUNCH",
-        status: "UNREAD",
-        is_read: false,
         route: "punch",
-      });
-      if (!error) created += 1;
+        data: { route: "punch" },
+      }]);
+      if (result.created) created += 1;
     }
     await audit("notify.missing_punch", "attendance", "bulk", { created, pushed: 0, fallback: true }).catch(() => null);
     return { created, pushed: 0, fallback: true };
@@ -1960,7 +2055,7 @@ export const supabaseEndpoints = {
     const payload = { employee_id: body.employeeId || user?.employeeId || user?.employee?.id, assigned_by_employee_id: user?.employeeId || null, title: body.title || "مهمة جديدة", description: body.description || "", priority: body.priority || "MEDIUM", status: body.status || "OPEN", due_date: body.dueDate || null, created_at: now(), updated_at: now() };
     const { data, error } = await client.from("employee_tasks").insert(payload).select("*, employee:employees(*)").single();
     fail(error, "تعذر إنشاء المهمة.");
-    await ignoreSupabaseError(client.from("notifications").insert({ employee_id: payload.employee_id, title: "مهمة جديدة", body: payload.title, type: "ACTION_REQUIRED", status: "UNREAD", is_read: false }));
+    await safeCreateNotification(client, { employee_id: payload.employee_id, title: "مهمة جديدة", body: payload.title, type: "ACTION_REQUIRED", route: "tasks", data: { route: "tasks", taskId: data?.id || "" } }).catch(() => null);
     await audit("task.create", "employee_task", data.id, payload).catch(() => null);
     const { employee, ...row } = data;
     return { ...toCamel(row), employee: employee ? enrichEmployee(employee) : null };
@@ -2166,37 +2261,40 @@ export const supabaseEndpoints = {
     const user = await currentUser().catch(() => null);
     const payload = { employee_id: employeeId, requested_by_user_id: user?.id || null, requested_by_employee_id: user?.employeeId || null, requested_by_name: user?.fullName || user?.name || "الإدارة", reason: body.reason || "متابعة تنفيذية مباشرة", status: "PENDING", precision: body.precision || "HIGH", expires_at: body.expiresAt || new Date(Date.now() + 15 * 60000).toISOString(), created_at: now() };
     const { data, error } = await client.from("live_location_requests").insert(payload).select("*").single();
-    fail(error, "تعذر إنشاء طلب الموقع المباشر. تأكد من تطبيق Patch 023.");
+    fail(error, "تعذر إنشاء طلب الموقع المباشر. تأكد من تشغيل ملف SQL النهائي RUN_IN_SUPABASE_SQL_EDITOR.sql.");
     const targetEmployee = await employeeById(employeeId).catch(() => null);
     const notificationTitle = "طلب مشاركة موقعك الحالي";
     const notificationBody = payload.requested_by_name + " يطلب إرسال موقعك المباشر الآن. السبب: " + payload.reason;
-    const baseNotificationPayload = {
-      user_id: targetEmployee?.userId || null,
-      employee_id: employeeId,
-      title: notificationTitle,
-      body: notificationBody,
-      type: "ACTION_REQUIRED",
-      status: "UNREAD",
-      is_read: false,
-      created_at: now(),
-    };
-    const notificationInsert = await client.from("notifications").insert(baseNotificationPayload).select("id").single();
-    if (!notificationInsert.error && notificationInsert.data?.id) {
-      await ignoreSupabaseError(client.from("notifications").update({ route: "location" }).eq("id", notificationInsert.data.id));
-    } else {
-      console.warn("live location notification insert failed", notificationInsert.error?.message || notificationInsert.error);
-    }
-    await client.functions.invoke("send-push-notification", {
+    let notificationId = "";
+    // Create notifications through a SECURITY DEFINER RPC to avoid RLS/column-shape 400 errors.
+    // If the SQL patch is not applied yet, the live-location request still remains created and push is attempted.
+    const notificationInsert = await client.rpc("safe_create_notification", {
+      p_user_id: targetEmployee?.userId || null,
+      p_employee_id: employeeId,
+      p_title: notificationTitle,
+      p_body: notificationBody,
+      p_type: "ACTION_REQUIRED",
+      p_route: "location",
+      p_data: { route: "location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
+    });
+    if (!notificationInsert.error && notificationInsert.data) notificationId = String(notificationInsert.data);
+    else console.warn("safe_create_notification skipped; run RUN_IN_SUPABASE_SQL_EDITOR.sql for internal notification rows", notificationInsert.error?.message || notificationInsert.error);
+    const pushResult = await client.functions.invoke("send-push-notifications", {
       body: {
         title: notificationTitle,
         body: notificationBody,
         tag: `live-location-${data.id}`,
         targetEmployeeIds: [employeeId],
-        data: { route: "location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
+        targetUserIds: targetEmployee?.userId ? [targetEmployee.userId] : [],
+        notificationId,
+        data: { route: "location", url: "./employee/index.html#location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: data.id },
       },
-    }).catch(() => null);
+    }).catch((error) => {
+      console.warn("send-push-notifications failed; internal request was still created", error?.message || error);
+      return null;
+    });
     await audit("live_location.request", "employee", employeeId, payload).catch(() => null);
-    return toCamel(data);
+    return { ...toCamel(data), notificationId, push: pushResult?.data || null };
   },
   myLiveLocationRequests: async () => {
     const client = await sb();
@@ -2334,10 +2432,10 @@ export const supabaseEndpoints = {
     const team = (await supabaseEndpoints.employees().catch(() => [])).filter((employee) => employee.managerEmployeeId === managerId);
     if (!team.length) return { sent: 0, pushed: 0 };
     const rows = team.map((employee) => ({ employee_id: employee.id, user_id: employee.userId || null, title: "تذكير من المدير المباشر", body: body.message || "يرجى مراجعة الحضور والطلبات وKPI المطلوب.", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false, created_at: now() }));
-    const { error } = await client.from("notifications").insert(rows);
-    fail(error, "تعذر إرسال تذكير الفريق.");
+    const noteResult = await safeCreateNotifications(client, rows, { block: true, message: "تعذر إرسال تذكير الفريق." });
+    if (!noteResult.created) throw new Error("لم يتم إنشاء أي إشعار داخلي للفريق.");
     let pushed = 0;
-    await client.functions.invoke("send-push-notification", { body: { title: "تذكير من المدير المباشر", body: body.message || "يرجى مراجعة الحضور والطلبات وKPI المطلوب.", tag: "team-reminder", targetEmployeeIds: team.map((employee) => employee.id) } })
+    await client.functions.invoke("send-push-notifications", { body: { title: "تذكير من المدير المباشر", body: body.message || "يرجى مراجعة الحضور والطلبات وKPI المطلوب.", tag: "team-reminder", targetEmployeeIds: team.map((employee) => employee.id) } })
       .then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); })
       .catch(() => null);
     await audit("team.reminder", "employee", managerId, { sent: rows.length, pushed }).catch(() => null);
@@ -2466,7 +2564,7 @@ export const supabaseEndpoints = {
     if (!pending.length) return { sent: 0, pushed: 0 };
     await client.from("notifications").insert(pending.map((row) => ({ employee_id: row.employeeId, title: "تذكير تقييم KPI", body: "يرجى استكمال تقييم الأداء الشهري قبل الإغلاق.", type: "ACTION_REQUIRED", status: "UNREAD", is_read: false, created_at: now() })));
     let pushed = 0;
-    await client.functions.invoke("send-push-notification", { body: { title: "تذكير تقييم KPI", body: "يرجى استكمال تقييم الأداء الشهري قبل الإغلاق.", tag: "kpi-reminder", targetEmployeeIds: pending.map((row) => row.employeeId) } }).then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); }).catch(() => null);
+    await client.functions.invoke("send-push-notifications", { body: { title: "تذكير تقييم KPI", body: "يرجى استكمال تقييم الأداء الشهري قبل الإغلاق.", tag: "kpi-reminder", targetEmployeeIds: pending.map((row) => row.employeeId) } }).then(({ data, error }) => { if (!error) pushed = Number(data?.attempted || 0); }).catch(() => null);
     return { sent: pending.length, pushed };
   },
   smartAttendanceRules: async () => ({ rules: { absentAfterHour: 12, missingCheckoutAfterHour: 20, duplicateWindowMinutes: 10, maxAccuracyMeters: 90 }, runs: await maybeTableRows("attendance_rule_runs", "created_at", false).then(toCamel), settings: await supabaseEndpoints.settings().catch(() => ({})) }),
@@ -2579,7 +2677,7 @@ export const supabaseEndpoints = {
       { label: "Strict Mode", ok: cfg.strict !== false, detail: cfg.strict !== false ? "strict" : "fallback" },
       { label: "Patch 040", ok: true, detail: "040_runtime_alignment_fix.sql" },
     ];
-    return { mode: shouldUseSupabase() ? "supabase-configured" : "local-fallback", checks, recommended: "شغّل SQL حتى Patch 040 ثم انشر Edge Functions وخاصة send-push-notification." };
+    return { mode: shouldUseSupabase() ? "supabase-configured" : "local-fallback", checks, recommended: "شغّل RUN_IN_SUPABASE_SQL_EDITOR.sql ثم انشر Edge Functions وخاصة send-push-notifications." };
   },
   endOfDayReport: async (body = {}) => {
     const date = body.date || now().slice(0, 10);

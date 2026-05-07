@@ -1,5 +1,5 @@
-import { endpoints, unwrap } from "./api.js?v=v22-location-notify-photo-20260505";
-import { enableWebPushSubscription } from "./push.js?v=management-suite-20260502-production";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-080";
+import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-080";
 
 const app = document.querySelector("#app");
 
@@ -254,7 +254,7 @@ function isAdminPortalUser(user = state.user) {
 function normalizeGateIdentifier(value = "") {
   const raw = String(value || "").trim().toLowerCase();
   const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
   const digits = raw.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d))).replace(/\D/g, "");
   if (!digits) return raw;
   if (digits.startsWith("0020")) return `0${digits.slice(4)}`;
@@ -2034,10 +2034,10 @@ async function renderOrgChart() {
     .filter((employee, index, self) => self.findIndex((item) => item.id === employee.id) === index)
     .sort((a, b) => String(a.fullName || "").localeCompare(String(b.fullName || ""), "ar"));
   const executive = active.find((employee) => roleSlugOf(employee) === "executive")
-    || active.find((employee) => normalizedName(employee).includes("محمد يوسف") || String(employee.jobTitle || "").includes("تنفيذي"))
+    || active.find((employee) => String(employee.jobTitle || "").includes("تنفيذي"))
     || roots[0];
   const secretary = active.find((employee) => ["executive-secretary", "admin"].includes(roleSlugOf(employee)) && employee.id !== executive?.id)
-    || active.find((employee) => normalizedName(employee).includes("يحي") || normalizedName(employee).includes("يحيى"));
+    || active.find((employee) => String(employee.jobTitle || "").includes("سكرتير"));
   const managerLike = active.filter((employee) => employee.id !== executive?.id && employee.id !== secretary?.id)
     .filter((employee) => childrenOf(employee.id).length || ["manager", "direct-manager", "operations-manager-1", "operations-manager-2", "hr-manager"].includes(roleSlugOf(employee)));
   const firstLine = sortPeople([
@@ -2164,15 +2164,12 @@ async function renderLocations() {
   };
   app.querySelectorAll("[data-send-my-location]").forEach((button) => button.addEventListener("click", () => sendMyLocation().catch((error) => setMessage("", error.message))));
   app.querySelectorAll("[data-request-live-location]").forEach((button) => button.addEventListener("click", async () => {
-    const employee = byEmployee.get(button.dataset.requestLiveLocation);
-    await endpoints.createLocationRequest({
-      employeeId: button.dataset.requestLiveLocation,
-      purpose: "فتح الموقع وإرسال اللوكيشن المباشر",
-      title: "فتح الموقع وإرسال اللوكيشن المباشر",
-      requestReason: "",
-      status: "PENDING",
-    });
-    setMessage(`تم إرسال إشعار فتح الموقع وإرسال اللوكيشن إلى ${employee?.fullName || "الموظف"}.`, "");
+    try {
+      await endpoints.requestLiveLocation(button.dataset.requestLiveLocation, { reason: "متابعة من الإدارة (Admin)" });
+      setMessage("تم إنشاء طلب الموقع وتم إرسال الإشعار للموظف بنجاح.", "");
+    } catch (error) {
+      setMessage("", error.message || "تعذر طلب الموقع.");
+    }
     render();
   }));
 }
@@ -3309,7 +3306,7 @@ async function renderExecutiveMobile() {
     app.querySelector("[data-request-live]")?.addEventListener("click", async (event) => {
       const reason = await askText({ title: "طلب الموقع المباشر", message: "اكتب سبب طلب الموقع حتى يظهر للموظف بوضوح.", defaultValue: "متابعة تنفيذية مباشرة", confirmLabel: "إرسال الطلب", required: true });
       if (!reason) return;
-      try { await endpoints.requestLiveLocation(event.currentTarget.dataset.requestLive, { reason }); setMessage("تم إرسال إشعار طلب الموقع للموظف.", ""); location.hash = `executive-mobile?employeeId=${encodeURIComponent(event.currentTarget.dataset.requestLive)}`; render(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); render(); }
+      try { await endpoints.requestLiveLocation(event.currentTarget.dataset.requestLive, { reason }); setMessage("تم إنشاء طلب الموقع، وقد لا يصل الإشعار الخارجي إذا كان غير مفعل.", ""); location.hash = `executive-mobile?employeeId=${encodeURIComponent(event.currentTarget.dataset.requestLive)}`; render(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); render(); }
     });
     return;
   }
@@ -3348,9 +3345,21 @@ async function renderExecutiveMobile() {
   app.querySelector("#exec-search")?.addEventListener("submit", (event) => { event.preventDefault(); const values = readForm(event.currentTarget, { passwordPolicy: "none" }); location.hash = `executive-mobile?q=${encodeURIComponent(values.q || "")}`; });
   app.querySelectorAll("[data-view-exec]").forEach((button) => button.addEventListener("click", () => { location.hash = `executive-mobile?employeeId=${encodeURIComponent(button.dataset.viewExec)}`; }));
   app.querySelectorAll("[data-request-live]").forEach((button) => button.addEventListener("click", async () => {
+    if (button.disabled) return;
     const reason = await askText({ title: "طلب الموقع المباشر", message: "اكتب سبب طلب الموقع حتى يظهر للموظف بوضوح.", defaultValue: "متابعة تنفيذية مباشرة", confirmLabel: "إرسال الطلب", required: true });
-      if (!reason) return;
-    try { await endpoints.requestLiveLocation(button.dataset.requestLive, { reason }); setMessage("تم إرسال طلب الموقع للموظف.", ""); renderExecutiveMobile(); } catch (error) { setMessage("", error.message || "تعذر طلب الموقع."); renderExecutiveMobile(); }
+    if (!reason) return;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "جاري الإرسال...";
+    try {
+      await endpoints.requestLiveLocation(button.dataset.requestLive, { reason });
+      setMessage("تم إنشاء طلب الموقع، وقد لا يصل الإشعار الخارجي إذا كان غير مفعل.", "");
+      renderExecutiveMobile();
+    } catch (error) {
+      setMessage("", error.message || "تعذر طلب الموقع.");
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }));
 }
 

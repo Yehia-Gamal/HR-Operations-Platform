@@ -33,8 +33,7 @@ supabase functions deploy admin-create-user --project-ref YOUR_PROJECT_REF
 supabase functions deploy admin-update-user --project-ref YOUR_PROJECT_REF
 supabase functions deploy resolve-login-identifier --project-ref YOUR_PROJECT_REF
 supabase functions deploy passkey-register --project-ref YOUR_PROJECT_REF
-supabase functions deploy send-push-notification --project-ref YOUR_PROJECT_REF
-supabase functions deploy employee-register --project-ref YOUR_PROJECT_REF
+supabase functions deploy send-push-notifications --project-ref YOUR_PROJECT_REF
 ```
 
 ## 4) Storage Buckets
@@ -122,3 +121,8 @@ supabase functions deploy employee-register --project-ref YOUR_PROJECT_REF
 
 ## Patch 041 — Audit V7 hardening
 شغّل أيضًا `supabase/sql/patches/041_audit_v7_security_mobile_alignment.sql` بعد Patch 040 لتطبيق حماية خزنة كلمات المرور، Service Worker المنفصل، وتحسينات الموبايل.
+
+
+## V27 Clean Supabase Update
+
+استخدم الآن ملف SQL واحد فقط: `supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql`، ثم شغّل `DEPLOY_SUPABASE_PRODUCTION.ps1` أو `DEPLOY_SUPABASE_PRODUCTION.sh`. الملفات القديمة موجودة في `_archive` للرجوع فقط.

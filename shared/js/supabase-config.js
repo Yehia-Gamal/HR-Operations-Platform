@@ -83,14 +83,14 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     // Last SQL patch expected to be present on the database when this frontend is deployed
     expectedPatch: "074_e2e_test_readiness.sql",
     // Semantic version for the package; bump to force cache invalidation in SW
-    packageVersion: "full-workflow-live-20260504-private-v16-location-device-hotfix",
+    packageVersion: "v31-live-location-alert-fix-080",
   },
   // Used by service workers to invalidate old caches
-  cacheVersion: "full-workflow-live-20260504-private-v16-location-device-hotfix",
+  cacheVersion: "v31-live-location-alert-fix-080",
 });
 
 window.__HR_SUPABASE_CONFIG_LOADED__ = true;
-window.__HR_SUPABASE_CONFIG_VERSION__ = "full-workflow-live-20260504-private-v16-location-device-hotfix";
+window.__HR_SUPABASE_CONFIG_VERSION__ = "v31-live-location-alert-fix-080";
 
 (function markSupabaseMode() {
   const cfg = window.HR_SUPABASE_CONFIG || {};

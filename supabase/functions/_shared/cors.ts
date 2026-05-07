@@ -20,22 +20,37 @@ const devOrigins = [
   'http://localhost:3000',
 ];
 
+function originAllowed(origin: string, allowedOrigins: Set<string>) {
+  if (!origin) return true;
+  if (allowedOrigins.has(origin)) return true;
+  try {
+    const url = new URL(origin);
+    if (url.hostname === 'yehia-gamal.github.io') return true;
+    if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') return true;
+  } catch (_) {
+    return false;
+  }
+  return false;
+}
+
 export function buildCorsHeaders(req: Request) {
   const origin = req.headers.get('Origin') ?? '';
+  const requestHeaders = req.headers.get('Access-Control-Request-Headers') || 'authorization, x-client-info, apikey, content-type';
   const allowedOrigins = new Set([...defaultOrigins, ...envOrigins, ...devOrigins].filter(Boolean));
-  // Only echo the origin if it's allowed; otherwise return empty string (browser will block the response).
-  // Non-browser calls (no Origin header) still work — needed for server-to-server and Supabase admin tools.
-  const allowOrigin = origin && allowedOrigins.has(origin) ? origin : (origin ? '' : (envOrigins[0] || defaultOrigins.find(Boolean) || ''));
+  const allowOrigin = originAllowed(origin, allowedOrigins)
+    ? (origin || envOrigins[0] || 'https://yehia-gamal.github.io')
+    : 'https://yehia-gamal.github.io';
   return {
     'Access-Control-Allow-Origin': allowOrigin,
-    'Vary': 'Origin',
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Vary': 'Origin, Access-Control-Request-Headers',
+    'Access-Control-Allow-Headers': requestHeaders,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+    'Access-Control-Max-Age': '86400',
   };
 }
 
 export function options(req: Request) {
-  return new Response('ok', { headers: buildCorsHeaders(req) });
+  return new Response('ok', { status: 200, headers: buildCorsHeaders(req) });
 }
 
 export function json(req: Request, data: unknown, status = 200) {

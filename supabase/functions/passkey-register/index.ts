@@ -5,10 +5,10 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return options(req);
   if (req.method !== 'POST') return json(req, { error: 'METHOD_NOT_ALLOWED' }, 405);
 
-  if (Deno.env.get('WEBAUTHN_ENABLED') === 'false') {
+  if (Deno.env.get('WEBAUTHN_ENABLED') !== 'true') {
     return json(req, {
       error: 'PASSKEYS_DISABLED',
-      message: 'تم تعطيل مفاتيح المرور من إعدادات الخادم WEBAUTHN_ENABLED=false.'
+      message: 'تم تعطيل تسجيل Passkey مؤقتًا إلى أن يتم تفعيل تحقق WebAuthn الكامل من الخادم. اضبط WEBAUTHN_ENABLED=true فقط بعد تطبيق attestation/challenge verification.'
     }, 501);
   }
 
@@ -27,6 +27,22 @@ Deno.serve(async (req) => {
   }
   if (!body.attestationObject || !body.clientDataJSON) {
     return json(req, { error: 'INVALID_WEBAUTHN_RESPONSE', message: 'استجابة Passkey غير مكتملة.' }, 400);
+  }
+
+  try {
+    const b64 = String(body.clientDataJSON || '').replace(/-/g, '+').replace(/_/g, '/');
+    const padded = b64 + '='.repeat((4 - b64.length % 4) % 4);
+    const clientData = JSON.parse(atob(padded));
+    const expectedOrigins = String(Deno.env.get('ALLOWED_ORIGINS') || Deno.env.get('SITE_URL') || '')
+      .split(',')
+      .map((item) => item.trim().replace(/\/$/, ''))
+      .filter(Boolean);
+    const origin = String(clientData.origin || '').replace(/\/$/, '');
+    if (clientData.type !== 'webauthn.create' || (expectedOrigins.length && !expectedOrigins.includes(origin))) {
+      return json(req, { error: 'INVALID_WEBAUTHN_ORIGIN', message: 'مصدر Passkey غير مطابق لإعدادات النظام.' }, 400);
+    }
+  } catch {
+    return json(req, { error: 'INVALID_WEBAUTHN_CLIENT_DATA', message: 'بيانات Passkey غير قابلة للتحقق.' }, 400);
   }
 
   const { data: profile } = await client

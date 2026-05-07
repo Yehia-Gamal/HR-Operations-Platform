@@ -11,6 +11,11 @@ const files = [
   'shared/js/supabase-api.js',
   'shared/js/register-sw.js',
   'sw.js',
+  'sw-admin.js',
+  'sw-employee.js',
+  'sw-executive.js',
+  'shared/js/v9-hardening.js',
+  'shared/js/v10-private-deploy-fixes.js',
 ];
 
 function moduleToScriptForSyntaxCheck(source) {

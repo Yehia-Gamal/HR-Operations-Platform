@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import pkg from 'pg';
 const { Client } = pkg;
@@ -13,13 +13,8 @@ if (!connectionString && (!projectRef || !password)) {
 }
 
 const root = process.cwd();
-const sqlFiles = [
-  join(root, 'supabase/sql/001_schema_rls_seed.sql'),
-  ...readdirSync(join(root, 'supabase/sql/patches'))
-    .filter((name) => /^\d{3}_.+\.sql$/.test(name))
-    .sort()
-    .map((name) => join(root, 'supabase/sql/patches', name)),
-];
+const sqlFile = join(root, 'supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql');
+const verifyFile = join(root, 'supabase/sql/VERIFY_AFTER_SUPABASE_DEPLOY.sql');
 
 const client = new Client(connectionString ? {
   connectionString,
@@ -36,57 +31,15 @@ const client = new Client(connectionString ? {
 
 try {
   await client.connect();
-
   if (process.env.VERIFY_ONLY !== '1') {
-    for (const file of sqlFiles) {
-      const relative = file.slice(root.length + 1).replaceAll('\\', '/');
-      process.stdout.write(`Applying ${relative} ... `);
-      await client.query(readFileSync(file, 'utf8'));
-      console.log('OK');
-    }
+    console.log('Applying supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql ...');
+    await client.query(readFileSync(sqlFile, 'utf8'));
+    console.log('SQL apply OK');
   }
-
-  const expectedTables = [
-    'permissions',
-    'roles',
-    'governorates',
-    'complexes',
-    'branches',
-    'departments',
-    'employees',
-    'profiles',
-    'attendance_events',
-    'attendance_daily',
-    'leave_requests',
-    'missions',
-    'dispute_cases',
-    'employee_policies',
-    'daily_reports',
-    'smart_alerts',
-    'attendance_rule_runs',
-    'database_migration_status',
-    'push_subscriptions',
-    'notification_delivery_log',
-    'kpi_cycles',
-  ];
-
-  const { rows } = await client.query(
-    `select table_name
-       from information_schema.tables
-      where table_schema = 'public'
-        and table_type = 'BASE TABLE'
-        and table_name = any($1)
-      order by table_name`,
-    [expectedTables],
-  );
-
-  const found = new Set(rows.map((row) => row.table_name));
-  const missing = expectedTables.filter((name) => !found.has(name));
-  console.log(`Verified ${rows.length}/${expectedTables.length} expected public tables.`);
-  if (missing.length) {
-    console.error(`Missing tables: ${missing.join(', ')}`);
-    process.exitCode = 2;
-  }
+  console.log('Running supabase/sql/VERIFY_AFTER_SUPABASE_DEPLOY.sql ...');
+  const result = await client.query(readFileSync(verifyFile, 'utf8'));
+  console.log('Verify OK');
+  if (result?.rows?.length) console.table(result.rows);
 } finally {
   await client.end().catch(() => null);
 }

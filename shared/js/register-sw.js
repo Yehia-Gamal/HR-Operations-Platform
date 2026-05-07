@@ -1,6 +1,6 @@
 // Service Worker registration is portal-scoped so employee devices do not cache admin UI.
-const HR_SW_CACHE_NAME = "hr-attendance-full-workflow-live-20260504-v22-location-notify-photo";
-const HR_SW_VERSION = "full-workflow-live-20260504-v22-location-notify-photo";
+const HR_SW_CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-080";
+const HR_SW_VERSION = "v31-live-location-alert-fix-080";
 
 function portalServiceWorkerConfig() {
   const path = location.pathname.toLowerCase();
@@ -22,12 +22,15 @@ async function clearOldHrCaches() {
 
 async function unregisterLegacyRootWorkers(expectedUrl) {
   const regs = await navigator.serviceWorker.getRegistrations();
+  const expectedName = String(expectedUrl || "").split("?")[0].split("/").pop();
   await Promise.all(regs.map(async (reg) => {
     const script = reg.active?.scriptURL || reg.installing?.scriptURL || reg.waiting?.scriptURL || "";
-    const sameScript = expectedUrl && script.endsWith(expectedUrl.split("?")[0]);
-    const rootScope = new URL(reg.scope).pathname === "/";
-    if (rootScope || (!sameScript && /\/sw\.js(\?|$)|\/sw-(employee|admin|executive)\.js(\?|$)/.test(script))) {
-      await reg.unregister();
+    const scriptName = script.split("?")[0].split("/").pop();
+    const scopePath = new URL(reg.scope).pathname;
+    const rootScope = scopePath === "/" || scopePath === "/HR-Operations-Platform/";
+    // Keep the current portal worker; only remove old root/global workers that can hijack fetches.
+    if (rootScope && scriptName !== expectedName) {
+      await reg.unregister().catch(() => undefined);
     }
   }));
 }
@@ -42,11 +45,16 @@ async function registerPortalServiceWorker(swUrl, scope) {
   } catch (error) {
     if (error?.name !== "AbortError") throw error;
     const existing = await navigator.serviceWorker.getRegistration(scope).catch(() => null);
-    await existing?.unregister?.().catch(() => null);
-    await wait(250);
-    const registration = await navigator.serviceWorker.register(swUrl, { scope, updateViaCache: "none" });
-    await registration.update().catch(() => null);
-    return registration;
+    await existing?.unregister?.().catch(() => undefined);
+    await wait(600);
+    try {
+      const registration = await navigator.serviceWorker.register(swUrl, { scope, updateViaCache: "none" });
+      await registration.update().catch(() => null);
+      return registration;
+    } catch (retryError) {
+      console.info("تأجيل تسجيل Service Worker لهذه الزيارة بعد تضارب تحديث مؤقت.", retryError?.message || retryError);
+      return existing || null;
+    }
   }
 }
 

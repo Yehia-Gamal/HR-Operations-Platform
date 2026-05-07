@@ -1,4 +1,4 @@
-import { endpoints, unwrap } from "./api.js?v=v22-location-notify-photo-20260505";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-080";
 
 const app = document.querySelector("#app");
 const EMPLOYEE_PORTAL = "../employee/index.html#home";
@@ -115,7 +115,7 @@ function canOpenAdminPortal(user = state.user) {
 function normalizeGateIdentifier(value = "") {
   const raw = String(value || "").trim().toLowerCase();
   const ar = "٠١٢٣٤٥٦٧٨٩";
-  const fa = "۰۱۲۳۴۵۶۷۸۹";
+  const fa = "Û°Û±Û²Û³Û´ÛµÛ¶Û·Û¸Û¹";
   const digits = raw.replace(/[٠-٩]/g, (d) => String(ar.indexOf(d))).replace(/[۰-۹]/g, (d) => String(fa.indexOf(d))).replace(/\D/g, "");
   if (!digits) return raw;
   if (digits.startsWith("0020")) return `0${digits.slice(4)}`;
@@ -737,17 +737,22 @@ async function renderEmployeeDetail(employeeId) {
 function bindEmployeeCardActions() {
   app.querySelectorAll("[data-view-employee]").forEach((button) => button.addEventListener("click", () => setRoute("employee", { id: button.dataset.viewEmployee })));
   app.querySelectorAll("[data-request-live]").forEach((button) => button.addEventListener("click", async () => {
+    if (button.disabled) return;
     const reason = await askText({ title: "طلب الموقع المباشر", message: "اكتب سبب طلب الموقع حتى يظهر للموظف بوضوح.", defaultValue: "متابعة تنفيذية مباشرة", confirmLabel: "إرسال الطلب" });
     if (reason === null) return;
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = "جاري الإرسال...";
     try {
       await endpoints.requestLiveLocation(button.dataset.requestLive, { reason });
       state.dataCache = null;
-      setMessage("تم إرسال إشعار طلب الموقع للموظف.", "");
+      setMessage("تم إنشاء طلب الموقع، وقد لا يصل الإشعار الخارجي إذا كان غير مفعل.", "");
       if (routeKey() === "employee") await renderEmployeeDetail(button.dataset.requestLive);
       else render();
     } catch (error) {
       setMessage("", error.message || "تعذر طلب الموقع.");
-      render();
+      button.disabled = false;
+      button.textContent = originalText;
     }
   }));
 }

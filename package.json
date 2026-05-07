@@ -1,6 +1,6 @@
 {
   "name": "ahla-shabab-hr-supabase",
-  "version": "1.4.0-full-workflow-live-20260504-v13-production-polish",
+  "version": "1.4.1-v31-live-location-alert-fix-080",
   "private": true,
   "type": "module",
   "scripts": {
@@ -24,7 +24,9 @@
     "generate:runtime-config": "node tools/generate-runtime-config.mjs",
     "check:theme": "node tools/check-theme.mjs",
     "check:live-deploy-readiness": "node tools/check-live-deploy-readiness.mjs",
-    "check:v13-production-polish": "node tools/check-v13-production-polish.mjs"
+    "check:v13-production-polish": "node tools/check-v13-production-polish.mjs",
+    "check:v31": "node tools/check-v31-final.mjs",
+    "build:exports": "node tools/build-v31-exports.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.1",

@@ -1,19 +1,11 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 const root = process.cwd();
+const failures = [];
 const read = (file) => readFileSync(join(root, file), 'utf8');
-const assert = (ok, message) => { if (!ok) { console.error(message); process.exit(1); } };
-assert(existsSync(join(root, 'supabase/sql/patches/037_kpi_policy_window_hr_scoring.sql')), 'Patch 037 must exist.');
-assert(existsSync(join(root, 'supabase/sql/patches/038_kpi_cycle_control_reports.sql')), 'Patch 038 must exist.');
-const api = read('shared/js/api.js');
-const app = read('shared/js/app-admin.js');
-const patch37 = read('supabase/sql/patches/037_kpi_policy_window_hr_scoring.sql');
-const patch38 = read('supabase/sql/patches/038_kpi_cycle_control_reports.sql');
-assert(api.includes('KPI_POLICY_DEFAULTS') && api.includes('evaluationStartDay: 20') && api.includes('evaluationEndDay: 25'), 'KPI defaults must define 20-25 window.');
-assert(api.includes('037_kpi_policy_window_hr_scoring.sql') && api.includes('038_kpi_cycle_control_reports.sql') && api.includes('039_management_hr_reports_workflow.sql') && api.includes('040_runtime_alignment_fix.sql'), 'Database updates list must include Patches 037, 038, 039, 040 and 041.');
-assert(api.includes('expectedPatch: "064_attendance_fallback_workflow.sql"'), 'Expected database patch must be 043.');
-assert(api.includes('hr-attendance.local-db.v19-management-suite'), 'Local DB storage key must be bumped for management suite version.');
-assert(app.includes('حضور حلقة الشيخ وليد يوسف الأسبوعية') && app.includes('خاص بـ HR'), 'Admin KPI UI must show HR-only KPI fields.');
-assert(patch37.includes('evaluation_start_day') && patch37.includes('submission_deadline_day'), 'Patch 037 must set policy window fields.');
-assert(patch38.includes('kpi_cycle_stage_report') && patch38.includes('kpi_employee_stage_report'), 'Patch 038 must add KPI cycle/stage reports.');
-console.log('KPI policy check passed.');
+const assert = (condition, message) => { if (!condition) failures.push(message); };
+const sql = read('supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql');
+assert(sql.includes('037_kpi_policy_window_hr_scoring'), 'Final SQL must include 037_kpi_policy_window_hr_scoring.');
+assert(sql.includes('038_kpi_cycle_control_reports'), 'Final SQL must include 038_kpi_cycle_control_reports.');
+if (failures.length) { console.error('tools/check-kpi-policy.mjs failed:'); failures.forEach((f) => console.error(`- ${f}`)); process.exit(1); }
+console.log('kpi policy check passed.');

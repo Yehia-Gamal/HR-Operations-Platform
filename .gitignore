@@ -1,4 +1,5 @@
 node_modules/
+exports/
 .git.zip
 scratch/
 .env

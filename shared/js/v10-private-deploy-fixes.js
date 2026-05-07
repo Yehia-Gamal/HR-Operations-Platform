@@ -1,14 +1,36 @@
-
 (function(){
   const cfg = (window.HR_SUPABASE_CONFIG = window.HR_SUPABASE_CONFIG || {});
-  cfg.attendance = Object.assign({ qrRequired:false, reminderInPageHour:10, reminderPushHour:9, reminderPushMinute:30 }, cfg.attendance || {});
+  cfg.attendance = Object.assign({
+    qrRequired:false,
+    reminderInPageHour:10,
+    reminderPushHour:9,
+    reminderPushMinute:30,
+    gpsSamples:18,
+    gpsSampleWindowMs:30000,
+    gpsTargetAccuracyMeters:15,
+    gpsMaxAcceptableAccuracyMeters:90,
+    gpsSafetyBufferMeters:90,
+    gpsUncertainReviewOnly:true
+  }, cfg.attendance || {}, { qrRequired:false });
+  cfg.security = Object.assign({ allowLocalFallback:false }, cfg.security || {});
+  try { delete cfg.security.allowLocalDemo; } catch {}
+  cfg.cacheVersion = cfg.cacheVersion || 'v31-live-location-alert-fix-080';
+  cfg.deployment = Object.assign({}, cfg.deployment || {}, { packageVersion: 'v31-live-location-alert-fix-080' });
   window.HR_QR_REQUIRED = false;
   window.HR_PRIVATE_DEPLOY_BUNDLE = true;
+
   function toast(msg,type='ok',ms=5000){
-    if(!msg) return; document.querySelectorAll('.hr-toast.v10').forEach(t=>t.remove());
-    const el=document.createElement('div'); el.className='hr-toast v10 '+(type==='error'?'error':'ok'); el.textContent=msg; el.setAttribute('role','status'); document.body.appendChild(el);
-    requestAnimationFrame(()=>el.classList.add('is-visible')); setTimeout(()=>{el.classList.remove('is-visible'); setTimeout(()=>el.remove(),260)},ms);
+    if(!msg) return;
+    document.querySelectorAll('.hr-toast.v10').forEach(t=>t.remove());
+    const el=document.createElement('div');
+    el.className='hr-toast v10 '+(type==='error'?'error':'ok');
+    el.textContent=msg;
+    el.setAttribute('role','status');
+    document.body.appendChild(el);
+    requestAnimationFrame(()=>el.classList.add('is-visible'));
+    setTimeout(()=>{el.classList.remove('is-visible'); setTimeout(()=>el.remove(),260)},ms);
   }
+
   function confirmDialog({title='تأكيد', message='', confirmLabel='تأكيد', cancelLabel='لاحقًا'}={}){
     return new Promise(resolve=>{
       const overlay=document.createElement('div');
@@ -30,10 +52,11 @@
       overlay.querySelector('[data-confirm]').focus();
     });
   }
+
   window.HRToast = toast;
   window.HRExplainAndEnablePush = async function(){
-    if(!('Notification' in window)) return toast('هذا المتصفح لا يدعم الإشعارات.', 'error');
-    if(!('serviceWorker' in navigator) || !('PushManager' in window)) return toast('إشعارات Web Push غير مدعومة على هذا الجهاز.', 'error');
+    if(!('Notification' in window)) { toast('هذا المتصفح لا يدعم الإشعارات.', 'error'); return false; }
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)) { toast('إشعارات Web Push غير مدعومة على هذا الجهاز.', 'error'); return false; }
     const ok = await confirmDialog({
       title:'تفعيل الإشعارات',
       message:'سيتم تفعيل إشعارات البصمة وطلب الموقع والقرارات الإدارية على هذا الجهاز. يمكنك إيقافها لاحقًا من إعدادات المتصفح.',
@@ -45,39 +68,20 @@
     toast(perm==='granted'?'تم السماح بالإشعارات.':'لم يتم السماح بالإشعارات.', perm==='granted'?'ok':'error');
     return perm==='granted';
   };
+
   window.HRExplainAndEnableLocation = async function(){
-    if(!navigator.geolocation) return toast('هذا الجهاز لا يدعم تحديد الموقع.', 'error');
+    if(!navigator.geolocation) { toast('هذا الجهاز لا يدعم تحديد الموقع.', 'error'); return null; }
     return new Promise(resolve=>navigator.geolocation.getCurrentPosition(
       pos=>{ toast('تم تفعيل الموقع وقراءة GPS بنجاح.'); resolve(pos); },
-      err=>{ toast('لم يتم السماح بالموقع. فعّل صلاحية الموقع من إعدادات المتصفح.', 'error'); resolve(null); },
+      err=>{ toast('لم يتم السماح بالموقع. فعل صلاحية الموقع من إعدادات المتصفح.', 'error'); resolve(null); },
       {enableHighAccuracy:true,timeout:20000,maximumAge:0}
     ));
   };
+
   document.addEventListener('click', (e)=>{
-    const btn=e.target.closest('[data-enable-push],[data-enable-notifications]'); if(btn){ e.preventDefault(); window.HRExplainAndEnablePush(); }
-    const loc=e.target.closest('[data-enable-location]'); if(loc){ e.preventDefault(); window.HRExplainAndEnableLocation(); }
+    const btn=e.target.closest('[data-enable-push],[data-enable-notifications]');
+    if(btn && !btn.dataset.hrPushBound){ e.preventDefault(); window.HRExplainAndEnablePush(); }
+    const loc=e.target.closest('[data-enable-location]');
+    if(loc && !loc.dataset.hrLocationBound){ e.preventDefault(); window.HRExplainAndEnableLocation(); }
   });
-})();
-
-
-// V11 private deploy alignment: QR is fully disabled by policy and push/GPS defaults are tightened.
-(function applyPrivateDeployV11(){
-  const cfg = window.HR_SUPABASE_CONFIG || {};
-  cfg.attendance = Object.assign({
-    qrRequired: false,
-    reminderInPageHour: 10,
-    reminderPushHour: 9,
-    reminderPushMinute: 30,
-    gpsSamples: 18,
-    gpsSampleWindowMs: 30000,
-    gpsTargetAccuracyMeters: 15,
-    gpsMaxAcceptableAccuracyMeters: 90,
-    gpsSafetyBufferMeters: 90,
-    gpsUncertainReviewOnly: true
-  }, cfg.attendance || {}, { qrRequired: false });
-  cfg.security = Object.assign({ allowLocalFallback: false }, cfg.security || {});
-  try { delete cfg.security.allowLocalDemo; } catch {}
-  cfg.cacheVersion = cfg.cacheVersion || 'full-workflow-live-20260504-private-v13';
-  window.HR_QR_REQUIRED = false;
-  window.HR_PRIVATE_DEPLOY_V11_APPLIED = true;
 })();

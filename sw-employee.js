@@ -1,5 +1,5 @@
 // Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
-const CACHE_NAME = "hr-attendance-full-workflow-live-20260504-employee-private-v22-location-notify-photo";
+const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-080";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./health.html",
@@ -43,7 +43,6 @@ self.addEventListener("activate", (event) => {
 
 function fallbackFor(request) {
   const url = new URL(request.url);
-  if (url.pathname.includes("/admin/")) return caches.match("./admin/index.html");
   if (url.pathname.includes("/executive/")) return caches.match("./executive/index.html");
   if (url.pathname.includes("/employee/")) return caches.match("./employee/index.html");
   return caches.match("./index.html");
@@ -51,8 +50,7 @@ function fallbackFor(request) {
 
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
-  if (url.pathname.startsWith("/api/") || url.pathname.includes("/rest/v1/") || url.hostname.endsWith("supabase.co")) {
-    event.respondWith(fetch(event.request));
+  if (url.pathname.startsWith("/api/") || url.pathname.includes("/rest/v1/") || url.pathname.includes("/functions/v1/") || url.hostname.endsWith("supabase.co")) {
     return;
   }
   if (event.request.method !== "GET") return;
@@ -68,10 +66,10 @@ self.addEventListener("fetch", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  let payload = { title: "نظام الحضور", body: "لديك تنبيه جديد" };
+  let payload = { title: "Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ±", body: "Ù„Ø¯ÙŠÙƒ ØªÙ†Ø¨ÙŠÙ‡ Ø¬Ø¯ÙŠØ¯" };
   try { payload = event.data ? event.data.json() : payload; } catch {}
-  event.waitUntil(self.registration.showNotification(payload.title || "نظام الحضور", {
-    body: payload.body || "لديك تنبيه جديد",
+  event.waitUntil(self.registration.showNotification(payload.title || "Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ±", {
+    body: payload.body || "Ù„Ø¯ÙŠÙƒ ØªÙ†Ø¨ÙŠÙ‡ Ø¬Ø¯ÙŠØ¯",
     icon: "./shared/images/icon-192.png",
     badge: "./shared/images/favicon-64.png",
     tag: payload.tag || "hr-notification",
@@ -81,15 +79,36 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const target = event.notification.data?.url || DEFAULT_OPEN_URL;
+  const target = notificationTargetUrl(event.notification.data || {});
   event.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {
+    const targetUrl = new URL(target);
     for (const client of clientList) {
-      if ("focus" in client) return client.focus();
+      const clientUrl = new URL(client.url);
+      const sameApp = clientUrl.origin === targetUrl.origin
+        && clientUrl.pathname.includes("/employee/")
+        && targetUrl.pathname.includes("/employee/");
+      if (sameApp && "navigate" in client) return client.navigate(target).then((focused) => focused?.focus?.() || focused);
+      if (sameApp && "focus" in client) return client.focus();
     }
     if (clients.openWindow) return clients.openWindow(target);
     return undefined;
   }));
 });
+
+function notificationTargetUrl(data = {}) {
+  const raw = String(data.url || "").trim();
+  if (data.route === "location" || data.type === "LIVE_LOCATION_REQUEST") {
+    const basePath = new URL(self.registration.scope).pathname;
+    const path = basePath.includes("/employee/") ? "./index.html#location" : "./employee/index.html#location";
+    return new URL(path, self.registration.scope).href;
+  }
+  if (raw.startsWith("/employee/")) {
+    const hash = raw.includes("#") ? raw.slice(raw.indexOf("#")) : "";
+    const basePath = new URL(self.registration.scope).pathname;
+    return new URL(basePath.includes("/employee/") ? `./index.html${hash}` : `.${raw}`, self.registration.scope).href;
+  }
+  return new URL(raw || DEFAULT_OPEN_URL, self.registration.scope).href;
+}
 
 self.addEventListener("sync", (event) => {
   if (event.tag === "hr-offline-sync") {

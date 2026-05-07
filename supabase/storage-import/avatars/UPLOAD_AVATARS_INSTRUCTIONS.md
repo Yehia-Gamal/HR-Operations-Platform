@@ -35,4 +35,4 @@ If your installed CLI does not support `storage cp` for remote projects, upload 
 
 ## Post Upload
 
-Run `supabase/sql/PRODUCTION_POST_DEPLOY_VERIFY.sql` and confirm the `storage_buckets` and roster checks return `OK`.
+Run `supabase/sql/VERIFY_AFTER_SUPABASE_DEPLOY.sql` and confirm the `storage_buckets` and roster checks return `OK`.
