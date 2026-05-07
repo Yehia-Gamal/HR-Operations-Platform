@@ -9,6 +9,13 @@ function base64UrlToUint8Array(base64Url) {
   return Uint8Array.from([...raw].map((char) => char.charCodeAt(0)));
 }
 
+function sameBytes(left, right) {
+  if (!left || !right || left.byteLength !== right.byteLength) return false;
+  const a = new Uint8Array(left);
+  const b = new Uint8Array(right);
+  return a.every((value, index) => value === b[index]);
+}
+
 function publicVapidKey() {
   return String(window.HR_SUPABASE_CONFIG?.push?.vapidPublicKey || "").trim();
 }
@@ -45,11 +52,16 @@ export async function enableWebPushSubscription(endpoints) {
   const vapidPublicKey = publicVapidKey();
   if (!vapidPublicKey) throw new Error("أضف VAPID public key داخل shared/js/supabase-config.js قبل تفعيل إشعارات Web Push الحقيقية.");
   const registration = await navigator.serviceWorker.ready;
+  const applicationServerKey = base64UrlToUint8Array(vapidPublicKey);
   let subscription = await registration.pushManager.getSubscription();
+  if (subscription?.options?.applicationServerKey && !sameBytes(subscription.options.applicationServerKey, applicationServerKey)) {
+    await subscription.unsubscribe().catch(() => false);
+    subscription = null;
+  }
   if (!subscription) {
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: base64UrlToUint8Array(vapidPublicKey),
+      applicationServerKey,
     });
   }
   const payload = subscription.toJSON ? subscription.toJSON() : { endpoint: subscription.endpoint };
