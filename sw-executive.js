@@ -1,5 +1,5 @@
 // Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
-const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-080";
+const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-081";
 const DEFAULT_OPEN_URL = "./executive/index.html";
 const ASSETS = [
   "./health.html",

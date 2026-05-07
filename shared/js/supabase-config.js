@@ -21,7 +21,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
   },
   push: {
     // Public VAPID key used for Push Notifications
-    vapidPublicKey: "BNf9nnoV6nLXQBA4anyKRN0aylPqS__DRABe3b1Qw2NDIQDg8cZlafffPvdCAxwF8-xtMaUuef055N0-J01ZtBA",
+    vapidPublicKey: "BFO13DLR--4dck34L6GN144yabyNosxX5ZndloXvrLHiGBInFXBrRpKSvLI8Suyy-i07br6cwxi274PPaoo2yfI",
   },
   security: {
     allowLocalFallback: false,
@@ -83,14 +83,14 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     // Last SQL patch expected to be present on the database when this frontend is deployed
     expectedPatch: "074_e2e_test_readiness.sql",
     // Semantic version for the package; bump to force cache invalidation in SW
-    packageVersion: "v31-live-location-alert-fix-080",
+    packageVersion: "v31-live-location-alert-fix-081",
   },
   // Used by service workers to invalidate old caches
-  cacheVersion: "v31-live-location-alert-fix-080",
+  cacheVersion: "v31-live-location-alert-fix-081",
 });
 
 window.__HR_SUPABASE_CONFIG_LOADED__ = true;
-window.__HR_SUPABASE_CONFIG_VERSION__ = "v31-live-location-alert-fix-080";
+window.__HR_SUPABASE_CONFIG_VERSION__ = "v31-live-location-alert-fix-081";
 
 (function markSupabaseMode() {
   const cfg = window.HR_SUPABASE_CONFIG || {};

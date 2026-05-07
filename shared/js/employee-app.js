@@ -1,8 +1,8 @@
-import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-080";
-import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-080";
-import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch, capturePunchSelfie } from "./attendance-identity.js?v=v31-live-location-alert-fix-080";
-import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-live-location-alert-fix-080";
-import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-live-location-alert-fix-080";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-081";
+import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-081";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch, capturePunchSelfie } from "./attendance-identity.js?v=v31-live-location-alert-fix-081";
+import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-live-location-alert-fix-081";
+import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-live-location-alert-fix-081";
 
 document.documentElement.classList.add("employee-portal-root");
 document.body.classList.add("employee-portal");
