@@ -1,5 +1,5 @@
-import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-082";
-import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-082";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-083";
+import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-083";
 
 const app = document.querySelector("#app");
 

@@ -3,7 +3,7 @@ set -euo pipefail
 
 PROJECT_REF="${SUPABASE_PROJECT_REF:-yemradvxmwadlldnxtpz}"
 
-printf '\n== v31-live-location-alert-fix-082 Supabase Production Deploy ==\n'
+printf '\n== v31-live-location-alert-fix-083 Supabase Production Deploy ==\n'
 printf 'Project ref: %s\n\n' "$PROJECT_REF"
 printf '1) Before running this script, apply:\n'
 printf '   supabase/sql/RUN_IN_SUPABASE_SQL_EDITOR.sql\n\n'

@@ -1,8 +1,8 @@
-import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-082";
-import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-082";
-import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch, capturePunchSelfie } from "./attendance-identity.js?v=v31-live-location-alert-fix-082";
-import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-live-location-alert-fix-082";
-import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-live-location-alert-fix-082";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-083";
+import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-083";
+import { getDeviceFingerprintHash, requestEmployeePasskey, filterEmployeePasskeys, calculateAttendanceRisk, rememberDevicePunch, capturePunchSelfie } from "./attendance-identity.js?v=v31-live-location-alert-fix-083";
+import { ensureAttendancePolicyAcknowledged, ensureTrustedDeviceApproval, requestBranchQrChallenge, analyzeLocationTrust, mergeRiskSignals, submitFallbackAttendanceRequest } from "./attendance-v3-security.js?v=v31-live-location-alert-fix-083";
+import { evaluateAttendanceV4Controls, mergeV4RiskSignals, createFormalFallbackRequest } from "./attendance-v4-ops.js?v=v31-live-location-alert-fix-083";
 
 document.documentElement.classList.add("employee-portal-root");
 document.body.classList.add("employee-portal");
@@ -332,7 +332,7 @@ function unlockAlertAudio() {
 document.addEventListener("pointerdown", unlockAlertAudio, { once: true, passive: true });
 document.addEventListener("keydown", unlockAlertAudio, { once: true });
 
-function playInternalAlertSound({ repeat = 2 } = {}) {
+function playInternalAlertSound({ repeat = 5 } = {}) {
   try {
     const ctx = unlockAlertAudio();
     if (!ctx) return;
@@ -340,15 +340,15 @@ function playInternalAlertSound({ repeat = 2 } = {}) {
     for (let i = 0; i < repeat; i += 1) {
       const gain = ctx.createGain();
       const osc = ctx.createOscillator();
-      gain.gain.setValueAtTime(0.0001, startAt + i * 0.26);
-      gain.gain.exponentialRampToValueAtTime(0.075, startAt + i * 0.26 + 0.025);
-      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + i * 0.26 + 0.18);
-      osc.frequency.setValueAtTime(i % 2 ? 1040 : 880, startAt + i * 0.26);
-      osc.type = "sine";
+      gain.gain.setValueAtTime(0.0001, startAt + i * 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.18, startAt + i * 0.3 + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startAt + i * 0.3 + 0.22);
+      osc.frequency.setValueAtTime(i % 2 ? 1320 : 980, startAt + i * 0.3);
+      osc.type = "square";
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(startAt + i * 0.26);
-      osc.stop(startAt + i * 0.26 + 0.2);
+      osc.start(startAt + i * 0.3);
+      osc.stop(startAt + i * 0.3 + 0.24);
     }
   } catch {}
 }
@@ -389,6 +389,14 @@ async function showBrowserLocalNotificationForLiveRequest(item = {}) {
       badge: "../shared/images/favicon-64.png",
       tag: `live-location-${item.id}`,
       requireInteraction: true,
+      renotify: true,
+      silent: false,
+      timestamp: Date.now(),
+      vibrate: [400, 140, 400, 140, 800, 180, 800],
+      actions: [
+        { action: "open-location", title: "فتح وإرسال الموقع" },
+        { action: "open-app", title: "فتح التطبيق" },
+      ],
       data: { route: "location", type: "LIVE_LOCATION_REQUEST", liveLocationRequestId: item.id, url: "./index.html#location" },
     });
   } catch {}
@@ -440,8 +448,8 @@ async function pollNotificationsForSound() {
   if (fresh.length) {
     fresh.forEach((item) => seen.add(item.id));
     saveSeenNotificationIds(seen);
-    playInternalAlertSound({ repeat: 2 });
-    haptic([80, 40, 80]);
+    playInternalAlertSound({ repeat: 4 });
+    haptic([160, 70, 160, 70, 260]);
     const first = fresh[0];
     showToast(first.title || "وصل تنبيه داخلي جديد", "ok");
     if (first.route === "location" || first.data?.route === "location" || first.data?.type === "LIVE_LOCATION_REQUEST") {
@@ -460,8 +468,8 @@ async function pollLiveLocationRequestsUrgent() {
   if (isFresh) {
     seen.add(pending.id);
     saveSeenLiveLocationRequestIds(seen);
-    playInternalAlertSound({ repeat: 4 });
-    haptic([100, 50, 100, 50, 160]);
+    playInternalAlertSound({ repeat: 7 });
+    haptic([300, 120, 300, 120, 600, 180, 600]);
     showToast("طلب موقع مباشر من الإدارة — افتح صفحة الموقع الآن", "ok");
     await showBrowserLocalNotificationForLiveRequest(pending);
   }

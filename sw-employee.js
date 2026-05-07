@@ -1,5 +1,5 @@
 // Versioned cache name; bump when updating deployment.packageVersion or cacheVersion
-const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-082";
+const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-083";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./health.html",
@@ -68,12 +68,23 @@ self.addEventListener("fetch", (event) => {
 self.addEventListener("push", (event) => {
   let payload = { title: "Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ±", body: "Ù„Ø¯ÙŠÙƒ ØªÙ†Ø¨ÙŠÙ‡ Ø¬Ø¯ÙŠØ¯" };
   try { payload = event.data ? event.data.json() : payload; } catch {}
+  const data = payload.data || {};
+  const urgentLocation = data.route === "location" || data.type === "LIVE_LOCATION_REQUEST";
   event.waitUntil(self.registration.showNotification(payload.title || "Ù†Ø¸Ø§Ù… Ø§Ù„Ø­Ø¶ÙˆØ±", {
     body: payload.body || "Ù„Ø¯ÙŠÙƒ ØªÙ†Ø¨ÙŠÙ‡ Ø¬Ø¯ÙŠØ¯",
     icon: "./shared/images/icon-192.png",
     badge: "./shared/images/favicon-64.png",
     tag: payload.tag || "hr-notification",
-    data: payload.data || {},
+    data,
+    requireInteraction: urgentLocation,
+    renotify: urgentLocation,
+    silent: false,
+    timestamp: Date.now(),
+    vibrate: urgentLocation ? [400, 140, 400, 140, 800, 180, 800] : [120, 60, 120],
+    actions: urgentLocation ? [
+      { action: "open-location", title: "فتح وإرسال الموقع" },
+      { action: "open-app", title: "فتح التطبيق" },
+    ] : [{ action: "open-app", title: "فتح التطبيق" }],
   }));
 });
 
