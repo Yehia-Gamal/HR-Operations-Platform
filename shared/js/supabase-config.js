@@ -54,7 +54,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     admin: {
       enabled: true,
       label: "بوابة HR / الإدارة",
-      code: "A7B3C9D4E6F8",
+      code: "00000000",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
       allowedPhones: ["01154869616", "010040455849", "01028403239"],
       allowedIdentifiers: ["yahia.gamal.idh@gmail.com", "01154869616", "010040455849", "01028403239"],
@@ -63,7 +63,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
     executive: {
       enabled: true,
       label: "بوابة المدير التنفيذي",
-      code: "EXEC-AHLA-2026",
+      code: "00000000",
       allowedEmails: ["yahia.gamal.idh@gmail.com"],
       allowedPhones: ["01154869616", "010040455849"],
       allowedIdentifiers: ["yahia.gamal.idh@gmail.com", "01154869616", "010040455849"],
@@ -73,7 +73,7 @@ window.HR_SUPABASE_CONFIG = Object.freeze({
   adminGateway: {
     enabled: true,
     // This code should be strong and changed for each deployment. See operations-gate/index.html for the hashed version.
-    accessCode: "A7B3C9D4E6F8",
+    accessCode: "00000000",
     // Shorten session duration to 4 hours for improved security
     sessionMinutes: 240,
     maxAttempts: 5,
