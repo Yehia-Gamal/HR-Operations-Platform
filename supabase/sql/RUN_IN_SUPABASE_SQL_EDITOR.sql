@@ -9190,7 +9190,7 @@ on conflict (patch_name) do update set status = excluded.status, details = exclu
 -- v31 production deploy ready marker
 -- =========================================================
 insert into public.database_migration_status (patch_name, status, details)
-values ('084_v31_production_deploy_ready_keep_dev_files', 'APPLIED', 'v31-live-location-alert-fix-083')
+values ('084_v31_production_deploy_ready_keep_dev_files', 'APPLIED', 'v31-live-location-alert-fix-084')
 on conflict (patch_name) do update
   set status = excluded.status,
       details = excluded.details,

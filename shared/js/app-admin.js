@@ -1,5 +1,5 @@
-import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-083";
-import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-083";
+import { endpoints, unwrap } from "./api.js?v=v31-live-location-alert-fix-084";
+import { enableWebPushSubscription } from "./push.js?v=v31-live-location-alert-fix-084";
 
 const app = document.querySelector("#app");
 
@@ -3269,6 +3269,15 @@ async function renderExecutiveMobile() {
     const employee = detail.employee || {};
     const today = detail.today || {};
     const loc = today.latestLocation || {};
+    const latestLiveRequest = [...(detail.liveRequests || [])].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))[0] || null;
+    const pendingLiveRequest = (detail.liveRequests || []).find((row) => String(row.status || "").toUpperCase() === "PENDING");
+    const locationMessage = loc.latitude && loc.longitude
+      ? `<div class="message"><strong>آخر موقع:</strong> ${escapeHtml(loc.latitude)}, ${escapeHtml(loc.longitude)} — <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${escapeHtml(loc.latitude)},${escapeHtml(loc.longitude)}">فتح على الخريطة</a></div>`
+      : pendingLiveRequest
+        ? `<div class="message warning">تم إرسال طلب الموقع للموظف وهو الآن بانتظار الرد. سيظهر GPS هنا بعد ضغط الموظف على "إرسال موقعي".</div>`
+        : latestLiveRequest && String(latestLiveRequest.status || "").toUpperCase() === "REJECTED"
+          ? `<div class="message warning">آخر طلب موقع تم رفضه من الموظف${latestLiveRequest.responseNote ? `: ${escapeHtml(latestLiveRequest.responseNote)}` : ""}.</div>`
+          : `<div class="message warning">لا يوجد موقع مباشر/بصمة GPS محفوظة لهذا الموظف حتى الآن.</div>`;
     shell(`
       <section class="grid executive-mobile-view">
         <article class="panel span-12">
@@ -3296,7 +3305,7 @@ async function renderExecutiveMobile() {
             <article class="metric"><span>وقت الانصراف</span><strong>${escapeHtml(date(today.checkOutAt))}</strong><small>آخر بصمة انصراف</small></article>
             <article class="metric"><span>آخر موقع</span><strong>${loc.latitude && loc.longitude ? formatMeters(loc.accuracyMeters) : "لا يوجد"}</strong><small>${escapeHtml(date(loc.capturedAt || loc.respondedAt || loc.date))}</small></article>
           </div>
-          ${loc.latitude && loc.longitude ? `<div class="message"><strong>آخر موقع:</strong> ${escapeHtml(loc.latitude)}, ${escapeHtml(loc.longitude)} — <a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${escapeHtml(loc.latitude)},${escapeHtml(loc.longitude)}">فتح على الخريطة</a></div>` : `<div class="message warning">لا يوجد موقع مباشر/بصمة GPS محفوظة لهذا الموظف حتى الآن.</div>`}
+          ${locationMessage}
         </article>
         <article class="panel span-6"><h3>آخر 7 أيام حضور</h3>${table(["النوع", "الوقت", "الحالة", "ملاحظات"], (detail.attendance || []).slice(0, 12).map((row) => `<tr><td>${escapeHtml(statusLabel(row.type || row.action))}</td><td>${escapeHtml(date(row.eventAt || row.createdAt))}</td><td>${badge(row.geofenceStatus || row.status || "")}</td><td>${escapeHtml(row.notes || row.source || "")}</td></tr>`))}</article>
         <article class="panel span-6"><h3>الإجازات والمأموريات</h3>${table(["النوع", "الفترة", "الحالة"], [...(detail.leaves || []).map((row) => [row.leaveType?.name || row.leaveType || "إجازة", `${row.startDate || "-"} → ${row.endDate || "-"}`, row.status]), ...(detail.missions || []).map((row) => [row.destinationName || row.title || "مأمورية", `${row.plannedStart || "-"} → ${row.plannedEnd || "-"}`, row.status])].slice(0, 12).map((row) => `<tr><td>${escapeHtml(row[0])}</td><td>${escapeHtml(row[1])}</td><td>${badge(row[2])}</td></tr>`))}</article>

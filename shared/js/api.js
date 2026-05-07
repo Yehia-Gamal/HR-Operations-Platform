@@ -1,5 +1,5 @@
-import { seedDatabase } from "./database.js?v=v31-live-location-alert-fix-083";
-import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=v31-live-location-alert-fix-083";
+import { seedDatabase } from "./database.js?v=v31-live-location-alert-fix-084";
+import { supabaseEndpoints, shouldUseSupabase, supabaseModeIsStrict } from "./supabase-api.js?v=v31-live-location-alert-fix-084";
 
 const STORAGE_KEY = "hr-attendance.local-db.v19-management-suite";
 const LEGACY_KEYS = ["hr-attendance.local-db.v14", "hr-attendance.local-db.v13", "hr-attendance.local-db.v12", "hr-attendance.local-db.v11", "hr-attendance.local-db.v10", "hr-attendance.local-db.v9", "hr-attendance.local-db.v8", "hr-attendance.local-db.v7", "hr-attendance.local-db.v6", "hr-attendance.local-db.v5", "hr-attendance.local-db.v4", "hr-attendance.local-db.v3"];

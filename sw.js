@@ -1,4 +1,4 @@
-const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-083";
+const CACHE_NAME = "hr-attendance-v31-live-location-alert-fix-084";
 const DEFAULT_OPEN_URL = "./employee/index.html#notifications";
 const ASSETS = [
   "./health.html",
