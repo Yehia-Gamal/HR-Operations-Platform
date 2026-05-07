@@ -51,8 +51,8 @@
       const cfg = window.HR_SUPABASE_CONFIG || {};
       const g = cfg.gateways || {};
       return {
-        admin: Object.assign({ code: cfg.adminGateway?.accessCode || 'A7B3C9D4E6F8', allowedEmails: [], allowedPhones: [], allowedIdentifiers: [], target: '../admin/' }, g.admin || {}),
-        executive: Object.assign({ code: 'EXEC-AHLA-2026', allowedEmails: [], allowedPhones: [], allowedIdentifiers: [], target: '../executive/' }, g.executive || {})
+        admin: Object.assign({ code: cfg.adminGateway?.accessCode || '00000000', allowedEmails: [], allowedPhones: [], allowedIdentifiers: [], target: '../admin/' }, g.admin || {}),
+        executive: Object.assign({ code: '00000000', allowedEmails: [], allowedPhones: [], allowedIdentifiers: [], target: '../executive/' }, g.executive || {})
       };
     }
     function normalizePhone(value) {
